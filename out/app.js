@@ -65,7 +65,7 @@ bot.on("messageCreate", (message) => __awaiter(void 0, void 0, void 0, function*
             usuario = yield bot.usuario(args, "username");
         }
         if (!usuario) {
-            message.react("❌");
+            return message.react("❌");
         }
         else {
             message.react("✅");
@@ -74,6 +74,15 @@ bot.on("messageCreate", (message) => __awaiter(void 0, void 0, void 0, function*
     }
     if (message.content.startsWith("!setup")) {
         const result = yield bot.setup(args, message);
+        if (result) {
+            message.react("✅");
+        }
+        else {
+            message.react("❌");
+        }
+    }
+    if (message.content.startsWith("!unsetup")) {
+        const result = yield bot.unsetup(message);
         if (result) {
             message.react("✅");
         }

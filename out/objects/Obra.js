@@ -14,6 +14,9 @@ class Obra {
     getFormato() {
         return this.media.format == null ? "?" : this.media.format.toString();
     }
+    getGeneros() {
+        return this.media.genres == null ? ["?"] : this.media.genres;
+    }
     getTipo() {
         return this.media.type == null ? "?" : this.media.type.toString();
     }
@@ -40,9 +43,6 @@ class Obra {
     }
     getVolumenes() {
         return this.media.volumes == null ? "?" : this.media.volumes.toString();
-    }
-    getGeneros() {
-        return this.media.genres == null ? "?" : this.media.genres.join(" - ").toString();
     }
     getPromedio() {
         return this.media.meanScore == null ? "?" : this.media.meanScore.toString();

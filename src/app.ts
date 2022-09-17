@@ -62,7 +62,7 @@ bot.on("messageCreate", async (message: Message) => {
         }
         
         if (!usuario) {
-            message.react("❌");
+            return message.react("❌");
         } else {
             message.react("✅");
         }
@@ -72,6 +72,16 @@ bot.on("messageCreate", async (message: Message) => {
 
     if (message.content.startsWith("!setup")) {
         const result = await bot.setup(args, message);
+
+        if (result) {
+            message.react("✅");
+        } else {
+            message.react("❌");
+        }
+    }
+
+    if (message.content.startsWith("!unsetup")) {
+        const result = await bot.unsetup(message);
 
         if (result) {
             message.react("✅");

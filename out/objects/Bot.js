@@ -116,6 +116,13 @@ class BOT {
                 // { name: "Volúmenes", value: obra.getVolumenes(), inline: true }
                 );
             }
+            let generosInfo = "``";
+            const generos = obra.getGeneros();
+            for (let i = 0; i < generos.length; i++) {
+                generosInfo += generos[i] + "`` - ";
+            }
+            EmbedInformacion
+                .addFields({ name: "Géneros", value: generosInfo, inline: false });
             const users = yield db_1.DB.buscar((_a = message.guild) === null || _a === void 0 ? void 0 : _a.id.toString());
             const usuariosObra = [];
             if (users.length > 0) {
@@ -468,7 +475,7 @@ class BOT {
             }
             else {
                 const u = yield AniUser_1.AniUser.findOne({ discordId: criterio });
-                if (!u)
+                if (u == null || u == undefined)
                     return null;
                 const query = `
             query ($name: String) {
@@ -599,6 +606,10 @@ class BOT {
             const usuario = yield this.usuario(username, "username");
             if (!usuario)
                 return false;
+            let svUsers = yield AniUser_1.AniUser.find({ serverId: message.guildId });
+            let dbUser = svUsers.find(u => u.discordId == message.author.id);
+            if (dbUser != null && dbUser != undefined)
+                return false;
             const aniuser = new AniUser_1.AniUser();
             aniuser.anilistUsername = usuario.getNombre();
             aniuser.anilistId = usuario.getID();
@@ -609,6 +620,20 @@ class BOT {
                 return false;
             });
             return true;
+        });
+    }
+    unsetup(message) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const svUsers = yield AniUser_1.AniUser.find({ serverId: message.guildId });
+            const result = svUsers.find(u => u.discordId == message.author.id);
+            try {
+                result === null || result === void 0 ? void 0 : result.delete();
+                return true;
+            }
+            catch (err) {
+                console.error(err);
+                return false;
+            }
         });
     }
 }

@@ -93,6 +93,19 @@ class BOT {
                 )
         }
 
+        let generosInfo = "``";
+
+        const generos = obra.getGeneros();
+
+        for (let i = 0; i < generos.length; i++) {
+            generosInfo += generos[i] + "`` - "
+        }
+
+        EmbedInformacion
+            .addFields(
+                { name: "Géneros", value: generosInfo, inline: false }
+            )
+
         const users = await DB.buscar(message.guild?.id.toString());
         const usuariosObra: any[] = [];
 
@@ -490,7 +503,7 @@ class BOT {
         } else {
             const u = await AniUser.findOne({ discordId: criterio });
 
-            if (!u) return null;
+            if (u == null || u == undefined) return null;
 
             const query = `
             query ($name: String) {
@@ -632,6 +645,11 @@ class BOT {
         
         if (!usuario) return false;
 
+        let svUsers = await AniUser.find({ serverId: message.guildId });
+        let dbUser = svUsers.find(u => u.discordId == message.author.id);
+
+        if (dbUser != null && dbUser != undefined) return false;
+
         const aniuser = new AniUser();
         aniuser.anilistUsername = usuario.getNombre();
         aniuser.anilistId = usuario.getID();
@@ -644,6 +662,19 @@ class BOT {
         });
 
         return true;
+    }
+
+    public async unsetup(message: Message): Promise<boolean> {
+        const svUsers = await AniUser.find({ serverId: message.guildId });
+        const result = svUsers.find(u => u.discordId == message.author.id);
+
+        try {
+            result?.delete();
+            return true;
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
     }
 }
 
