@@ -35,6 +35,9 @@ class Obra {
     getTemporada() {
         return this.media.season == null ? "?" : this.media.season.toString();
     }
+    getAnioEmision() {
+        return this.media.seasonYear == null ? "?" : this.media.seasonYear.toString();
+    }
     getDuracion() {
         return this.media.duration == null ? "?" : this.media.duration.toString();
     }

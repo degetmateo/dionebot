@@ -50,8 +50,9 @@ class BOT {
             `;
 
             const infoTEXT_2 = `
-                ‣ **Popularidad**: ${obra.getPopularidad()}\n‣ **Favoritos**: ${obra.getFavoritos()}\n‣ **Temporada**: ${obra.getTemporada()}\n‣ **Episodios**: ${obra.getEpisodios()}
+                ‣ **Popularidad**: ${obra.getPopularidad()}\n‣ **Favoritos**: ${obra.getFavoritos()}\n‣ **Temporada**: ${obra.getTemporada()}\n‣ **Año de Emisión**: ${obra.getAnioEmision()}\n‣ **Episodios**: ${obra.getEpisodios()}
             `;
+            
             EmbedInformacion
                 .setColor(0xff0000)
                 .addFields(

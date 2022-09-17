@@ -45,6 +45,10 @@ class Obra {
         return this.media.season == null ? "?" : this.media.season.toString();
     }
 
+    public getAnioEmision(): string {
+        return this.media.seasonYear == null ? "?" : this.media.seasonYear.toString();
+    }
+
     public getDuracion(): string {
         return this.media.duration == null ? "?" : this.media.duration.toString();
     }
