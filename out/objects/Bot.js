@@ -42,8 +42,10 @@ const toHex = __importStar(require("colornames"));
 const Obra_1 = require("./Obra");
 const Usuario_1 = require("./Usuario");
 const AniUser_1 = require("../models/AniUser");
+// import { Settings } from "../models/Settings";
 const db_1 = require("../db");
 class BOT {
+    // private prefix: String;
     constructor(client) {
         this.client = client;
     }
@@ -86,7 +88,75 @@ class BOT {
             const usuariosObra = [];
             // for (let i = 0; i < users.length; i++) {
             // }
-            yield this.buscarLista(users[0].anilistId, obra.getID());
+            if (users.length > 0) {
+                for (let i = 0; i < users.length; i++) {
+                    const userListInfo = yield this.buscarLista(users[i].anilistId, obra.getID());
+                    if (userListInfo != null) {
+                        userListInfo.username = users[i].anilistUsername;
+                        userListInfo.discordId = users[i].discordId;
+                        usuariosObra.push(userListInfo);
+                    }
+                }
+                const usuariosMapeados = [];
+                for (let i = 0; i < usuariosObra.length; i++) {
+                    // const discordUser = message.guild?.members.cache.find(m => m.id == usuariosObra[i].discordId);
+                    if (parseFloat(usuariosObra[i].score.toString()) > 10) {
+                        usuariosObra[i].score = (parseFloat(usuariosObra[i].score) / 10).toString();
+                    }
+                    const u = {
+                        name: usuariosObra[i].username,
+                        status: usuariosObra[i].status,
+                        progress: usuariosObra[i].progress,
+                        score: parseInt(usuariosObra[i].score.toString())
+                    };
+                    usuariosMapeados.push(u);
+                }
+                let completedTEXT = "";
+                let inProgressTEXT = "";
+                let droppedTEXT = "";
+                let pausedListTEXT = "";
+                for (let i = 0; i < usuariosMapeados.length; i++) {
+                    if (usuariosMapeados[i].status == "COMPLETED") {
+                        completedTEXT += `${usuariosMapeados[i].name} **[${usuariosMapeados[i].score}]** - `;
+                    }
+                    if (usuariosMapeados[i].status == "DROPPED") {
+                        droppedTEXT += `${usuariosMapeados[i].name} **(${usuariosMapeados[i].progress})** **[${usuariosMapeados[i].score}]** - `;
+                    }
+                    if (usuariosMapeados[i].status == "CURRENT") {
+                        inProgressTEXT += `${usuariosMapeados[i].name} **(${usuariosMapeados[i].progress})** - `;
+                    }
+                    if (usuariosMapeados[i].status == "PAUSED") {
+                        pausedListTEXT += `${usuariosMapeados[i].name} **[${usuariosMapeados[i].score}]** - `;
+                    }
+                }
+                if (completedTEXT.trim().endsWith("-")) {
+                    completedTEXT = completedTEXT.substring(0, completedTEXT.length - 2);
+                }
+                if (droppedTEXT.trim().endsWith("-")) {
+                    droppedTEXT = droppedTEXT.substring(0, droppedTEXT.length - 2);
+                }
+                if (inProgressTEXT.trim().endsWith("-")) {
+                    inProgressTEXT = inProgressTEXT.substring(0, inProgressTEXT.length - 2);
+                }
+                if (pausedListTEXT.trim().endsWith("-")) {
+                    pausedListTEXT = pausedListTEXT.substring(0, pausedListTEXT.length - 2);
+                }
+                if (completedTEXT.trim() == "") {
+                    completedTEXT = "Nadie";
+                }
+                if (droppedTEXT.trim() == "") {
+                    droppedTEXT = "Nadie";
+                }
+                if (inProgressTEXT.trim() == "") {
+                    inProgressTEXT = "Nadie";
+                }
+                if (pausedListTEXT.trim() == "") {
+                    pausedListTEXT = "Nadie";
+                }
+                EmbedInformacion
+                    .addFields({ name: "Terminados", value: completedTEXT, inline: false }, { name: "Dropeados", value: droppedTEXT, inline: false }, { name: "En Pausa", value: pausedListTEXT, inline: false }, { name: "En Progreso", value: inProgressTEXT, inline: false });
+            }
+            console.log(usuariosObra);
             this.enviarEmbed(message, EmbedInformacion);
         });
     }
@@ -98,14 +168,15 @@ class BOT {
             query ($id: Int, $mediaId: Int) {
                 MediaList(userId: $id, mediaId: $mediaId) {
                     id
-                    media {
-                        id
-                    }
+                    mediaId
+                    status
+                    score
+                    progress
                 }
             }`;
             const variables = {
                 id: id,
-                mediaId: mediaID
+                mediaId: mediaId
             };
             const url = 'https://graphql.anilist.co';
             const opciones = {
@@ -126,6 +197,7 @@ class BOT {
             if (!req.data)
                 return null;
             console.log(req.data);
+            return req.data.MediaList;
         });
     }
     anime(name) {
@@ -378,17 +450,11 @@ class BOT {
                 .setDescription(user.getBio())
                 .addFields({
                 name: "Animes",
-                value: `‣ Vistos: ${stats.anime.count}
-                            ‣ Nota Promedio: ${stats.anime.meanScore}
-                            ‣ Días Vistos: ${((stats.anime.minutesWatched / 60) / 24).toFixed()}
-                            ‣ Episodios Totales: ${stats.anime.episodesWatched}`,
+                value: `‣ Vistos: ${stats.anime.count}\n‣ Nota Promedio: ${stats.anime.meanScore}\n‣ Días Vistos: ${((stats.anime.minutesWatched / 60) / 24).toFixed()}\n‣ Episodios Totales: ${stats.anime.episodesWatched}`,
                 inline: false
             }, {
                 name: "Mangas",
-                value: `‣ Leídos: ${stats.manga.count}
-                            ‣ Nota Promedio: ${stats.manga.meanScore}
-                            ‣ Capítulos Leídos: ${stats.manga.chaptersRead}
-                            ‣ Volúmenes Leídos: ${stats.manga.volumesRead}`,
+                value: `‣ Leídos: ${stats.manga.count}\n‣ Nota Promedio: ${stats.manga.meanScore}\n‣ Capítulos Leídos: ${stats.manga.chaptersRead}\n‣ Volúmenes Leídos: ${stats.manga.volumesRead}`,
                 inline: false
             });
             this.enviarEmbed(message, EmbedInformacion);

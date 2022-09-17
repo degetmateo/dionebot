@@ -26,6 +26,7 @@ app.listen(app.get("port"), () => {
 });
 const discord_js_1 = require("discord.js");
 const Bot_1 = require("./objects/Bot");
+// import { AniUser } from "./models/AniUser";
 const client = new discord_js_1.Client({ intents: [discord_js_1.GatewayIntentBits.Guilds, discord_js_1.GatewayIntentBits.GuildMessages, discord_js_1.GatewayIntentBits.MessageContent] });
 const bot = new Bot_1.BOT(client);
 bot.on("ready", () => {
@@ -55,8 +56,8 @@ bot.on("messageCreate", (message) => __awaiter(void 0, void 0, void 0, function*
         bot.enviarInfoMedia(message, manga);
     }
     if (message.content.startsWith("!user")) {
-        const usuario = yield bot.usuario(args);
-        if (!usuario)
+        const usuario = bot.usuario(args);
+        if (usuario == null)
             return;
         bot.enviarInfoUser(message, usuario);
     }
