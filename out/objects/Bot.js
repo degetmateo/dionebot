@@ -100,7 +100,7 @@ class BOT {
                 ‣ **Tipo**: ${obra.getTipo()}\n‣ **Formato**: ${obra.getFormato()}\n‣ **Estado**: ${obra.getEstado()}\n‣ **Calificación**: ${obra.getPromedio()}/100
             `;
                 const infoTEXT_2 = `
-            ‣ **Popularidad**: ${obra.getPopularidad()}\n‣ **Favoritos**: ${obra.getFavoritos()}\n‣ **Capítulos**: ${obra.getCapitulos()}\n‣ **Volúmenes**: ${obra.getVolumenes()}
+                ‣ **Popularidad**: ${obra.getPopularidad()}\n‣ **Favoritos**: ${obra.getFavoritos()}\n‣ **Capítulos**: ${obra.getCapitulos()}\n‣ **Volúmenes**: ${obra.getVolumenes()}
             `;
                 EmbedInformacion
                     .setColor(0xFFFF00)
@@ -118,8 +118,6 @@ class BOT {
             }
             const users = yield db_1.DB.buscar((_a = message.guild) === null || _a === void 0 ? void 0 : _a.id.toString());
             const usuariosObra = [];
-            // for (let i = 0; i < users.length; i++) {
-            // }
             if (users.length > 0) {
                 for (let i = 0; i < users.length; i++) {
                     const userListInfo = yield this.buscarLista(users[i].anilistId, obra.getID());
@@ -368,104 +366,207 @@ class BOT {
             return new Obra_1.Obra(req.data.Media);
         });
     }
-    usuario(username) {
+    usuario(criterio, tipo) {
         return __awaiter(this, void 0, void 0, function* () {
-            const query = `
-        query ($name: String) {
-            User(name: $name) {
-                name
-                id
-                about
-                avatar {
-                    large
-                    medium
-                }
-                bannerImage
-                options {
-                    profileColor
-                }
-                statistics {
-                    anime {
-                        count
-                        meanScore
-                        standardDeviation
-                        minutesWatched
-                        episodesWatched
-                        formats {
+            if (tipo == "username") {
+                const query = `
+            query ($name: String) {
+                User(name: $name) {
+                    name
+                    id
+                    about
+                    avatar {
+                        large
+                        medium
+                    }
+                    bannerImage
+                    options {
+                        profileColor
+                    }
+                    statistics {
+                        anime {
                             count
-                            format
-                        }
-                        statuses {
-                            count
-                            status
-                        }
-                        releaseYears {
-                            count
-                            releaseYear
-                        }
-                        startYears {
-                            count
-                            startYear
-                        }
-                        genres {
-                            count
-                            genre
                             meanScore
+                            standardDeviation
                             minutesWatched
+                            episodesWatched
+                            formats {
+                                count
+                                format
+                            }
+                            statuses {
+                                count
+                                status
+                            }
+                            releaseYears {
+                                count
+                                releaseYear
+                            }
+                            startYears {
+                                count
+                                startYear
+                            }
+                            genres {
+                                count
+                                genre
+                                meanScore
+                                minutesWatched
+                            }
                         }
-                    }
-                    manga {
-                        count
-                        meanScore
-                        standardDeviation
-                        chaptersRead
-                        volumesRead
-                        statuses {
+                        manga {
                             count
-                            status
-                        }
-                        releaseYears {
-                            count
-                            releaseYear
-                        }
-                        startYears {
-                            count
-                            startYear
-                        }
-                        genres {
-                            count
-                            genre
                             meanScore
+                            standardDeviation
                             chaptersRead
+                            volumesRead
+                            statuses {
+                                count
+                                status
+                            }
+                            releaseYears {
+                                count
+                                releaseYear
+                            }
+                            startYears {
+                                count
+                                startYear
+                            }
+                            genres {
+                                count
+                                genre
+                                meanScore
+                                chaptersRead
+                            }
                         }
                     }
+                    siteUrl
+                    updatedAt
                 }
-                siteUrl
-                updatedAt
+            }`;
+                const variables = {
+                    name: criterio
+                };
+                const url = 'https://graphql.anilist.co';
+                const opciones = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: query,
+                        variables: variables
+                    })
+                };
+                const response = yield (0, node_fetch_1.default)(url, opciones);
+                const req = yield response.json();
+                if (!req.data.User)
+                    return null;
+                console.log(req.data.User);
+                console.log(req.data.User.statistics);
+                return new Usuario_1.Usuario(req.data.User);
             }
-        }`;
-            const variables = {
-                name: username
-            };
-            const url = 'https://graphql.anilist.co';
-            const opciones = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                    query: query,
-                    variables: variables
-                })
-            };
-            const response = yield (0, node_fetch_1.default)(url, opciones);
-            const req = yield response.json();
-            if (!req.data.User)
-                return null;
-            console.log(req.data.User);
-            console.log(req.data.User.statistics);
-            return new Usuario_1.Usuario(req.data.User);
+            else {
+                const u = yield AniUser_1.AniUser.findOne({ discordId: criterio });
+                if (!u)
+                    return null;
+                const query = `
+            query ($name: String) {
+                User(name: $name) {
+                    name
+                    id
+                    about
+                    avatar {
+                        large
+                        medium
+                    }
+                    bannerImage
+                    options {
+                        profileColor
+                    }
+                    statistics {
+                        anime {
+                            count
+                            meanScore
+                            standardDeviation
+                            minutesWatched
+                            episodesWatched
+                            formats {
+                                count
+                                format
+                            }
+                            statuses {
+                                count
+                                status
+                            }
+                            releaseYears {
+                                count
+                                releaseYear
+                            }
+                            startYears {
+                                count
+                                startYear
+                            }
+                            genres {
+                                count
+                                genre
+                                meanScore
+                                minutesWatched
+                            }
+                        }
+                        manga {
+                            count
+                            meanScore
+                            standardDeviation
+                            chaptersRead
+                            volumesRead
+                            statuses {
+                                count
+                                status
+                            }
+                            releaseYears {
+                                count
+                                releaseYear
+                            }
+                            startYears {
+                                count
+                                startYear
+                            }
+                            genres {
+                                count
+                                genre
+                                meanScore
+                                chaptersRead
+                            }
+                        }
+                    }
+                    siteUrl
+                    updatedAt
+                }
+            }`;
+                const variables = {
+                    name: u.anilistUsername
+                };
+                const url = 'https://graphql.anilist.co';
+                const opciones = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: query,
+                        variables: variables
+                    })
+                };
+                const response = yield (0, node_fetch_1.default)(url, opciones);
+                const req = yield response.json();
+                if (!req.data.User)
+                    return null;
+                console.log(req.data.User);
+                console.log(req.data.User.statistics);
+                return new Usuario_1.Usuario(req.data.User);
+            }
         });
     }
     enviarInfoUser(message, user) {
@@ -495,7 +596,7 @@ class BOT {
     setup(username, message) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const usuario = yield this.usuario(username);
+            const usuario = yield this.usuario(username, "username");
             if (!usuario)
                 return false;
             const aniuser = new AniUser_1.AniUser();

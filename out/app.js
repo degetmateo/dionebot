@@ -56,9 +56,20 @@ bot.on("messageCreate", (message) => __awaiter(void 0, void 0, void 0, function*
         bot.enviarInfoMedia(message, manga);
     }
     if (message.content.startsWith("!user")) {
-        const usuario = bot.usuario(args);
-        if (usuario == null)
-            return;
+        let usuario;
+        if (args.trim() == "" || !args) {
+            const userID = message.author.id.toString();
+            usuario = yield bot.usuario(userID, "id");
+        }
+        else {
+            usuario = yield bot.usuario(args, "username");
+        }
+        if (!usuario) {
+            message.react("❌");
+        }
+        else {
+            message.react("✅");
+        }
         bot.enviarInfoUser(message, usuario);
     }
     if (message.content.startsWith("!setup")) {
