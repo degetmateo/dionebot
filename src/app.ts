@@ -19,6 +19,7 @@ app.listen(app.get("port"), () => {
 
 import { Client, GatewayIntentBits, Message } from "discord.js";
 import { BOT } from "./objects/Bot";
+// import { AniUser } from "./models/AniUser";
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 const bot = new BOT(client);
@@ -51,8 +52,8 @@ bot.on("messageCreate", async (message: Message) => {
     }
 
     if (message.content.startsWith("!user")) {
-        const usuario  = await bot.usuario(args);
-        if (!usuario) return;
+        const usuario = bot.usuario(args);
+        if (usuario == null) return;
         bot.enviarInfoUser(message, usuario);
     }
 
