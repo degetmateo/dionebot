@@ -116,11 +116,12 @@ class BOT {
                 // { name: "Volúmenes", value: obra.getVolumenes(), inline: true }
                 );
             }
-            let generosInfo = "``";
+            let generosInfo = "";
             const generos = obra.getGeneros();
             for (let i = 0; i < generos.length; i++) {
-                generosInfo += generos[i] + "`` - ";
+                generosInfo += "`" + generos[i] + "` - ";
             }
+            generosInfo = generosInfo.substring(0, generosInfo.length - 3);
             EmbedInformacion
                 .addFields({ name: "Géneros", value: generosInfo, inline: false });
             const users = yield db_1.DB.buscar((_a = message.guild) === null || _a === void 0 ? void 0 : _a.id.toString());
@@ -137,14 +138,14 @@ class BOT {
                 const usuariosMapeados = [];
                 for (let i = 0; i < usuariosObra.length; i++) {
                     // const discordUser = message.guild?.members.cache.find(m => m.id == usuariosObra[i].discordId);
-                    if (parseFloat(usuariosObra[i].score.toString()) > 10) {
-                        usuariosObra[i].score = (parseFloat(usuariosObra[i].score) / 10).toString();
+                    if (parseFloat(usuariosObra[i].score.toString()) <= 10) {
+                        usuariosObra[i].score = parseFloat((usuariosObra[i].score * 10).toString());
                     }
                     const u = {
                         name: usuariosObra[i].username,
                         status: usuariosObra[i].status,
                         progress: usuariosObra[i].progress,
-                        score: parseInt(usuariosObra[i].score.toString())
+                        score: parseFloat(usuariosObra[i].score.toString())
                     };
                     usuariosMapeados.push(u);
                 }
