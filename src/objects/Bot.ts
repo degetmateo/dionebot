@@ -73,7 +73,7 @@ class BOT {
             `;
 
             const infoTEXT_2 = `
-            ‣ **Popularidad**: ${obra.getPopularidad()}\n‣ **Favoritos**: ${obra.getFavoritos()}\n‣ **Capítulos**: ${obra.getCapitulos()}\n‣ **Volúmenes**: ${obra.getVolumenes()}
+                ‣ **Popularidad**: ${obra.getPopularidad()}\n‣ **Favoritos**: ${obra.getFavoritos()}\n‣ **Capítulos**: ${obra.getCapitulos()}\n‣ **Volúmenes**: ${obra.getVolumenes()}
             `;
 
             EmbedInformacion
@@ -95,10 +95,6 @@ class BOT {
 
         const users = await DB.buscar(message.guild?.id.toString());
         const usuariosObra: any[] = [];
-        
-        // for (let i = 0; i < users.length; i++) {
-
-        // }
 
         if (users.length > 0) {
             for (let i = 0; i < users.length; i++) {
@@ -386,111 +382,220 @@ class BOT {
         return new Obra(req.data.Media);
     }
 
-    public async usuario(username: string) {
-
-        const query = `
-        query ($name: String) {
-            User(name: $name) {
-                name
-                id
-                about
-                avatar {
-                    large
-                    medium
-                }
-                bannerImage
-                options {
-                    profileColor
-                }
-                statistics {
-                    anime {
-                        count
-                        meanScore
-                        standardDeviation
-                        minutesWatched
-                        episodesWatched
-                        formats {
+    public async usuario(criterio: string, tipo: string) {
+        if (tipo == "username") {
+            const query = `
+            query ($name: String) {
+                User(name: $name) {
+                    name
+                    id
+                    about
+                    avatar {
+                        large
+                        medium
+                    }
+                    bannerImage
+                    options {
+                        profileColor
+                    }
+                    statistics {
+                        anime {
                             count
-                            format
-                        }
-                        statuses {
-                            count
-                            status
-                        }
-                        releaseYears {
-                            count
-                            releaseYear
-                        }
-                        startYears {
-                            count
-                            startYear
-                        }
-                        genres {
-                            count
-                            genre
                             meanScore
+                            standardDeviation
                             minutesWatched
+                            episodesWatched
+                            formats {
+                                count
+                                format
+                            }
+                            statuses {
+                                count
+                                status
+                            }
+                            releaseYears {
+                                count
+                                releaseYear
+                            }
+                            startYears {
+                                count
+                                startYear
+                            }
+                            genres {
+                                count
+                                genre
+                                meanScore
+                                minutesWatched
+                            }
                         }
-                    }
-                    manga {
-                        count
-                        meanScore
-                        standardDeviation
-                        chaptersRead
-                        volumesRead
-                        statuses {
+                        manga {
                             count
-                            status
-                        }
-                        releaseYears {
-                            count
-                            releaseYear
-                        }
-                        startYears {
-                            count
-                            startYear
-                        }
-                        genres {
-                            count
-                            genre
                             meanScore
+                            standardDeviation
                             chaptersRead
+                            volumesRead
+                            statuses {
+                                count
+                                status
+                            }
+                            releaseYears {
+                                count
+                                releaseYear
+                            }
+                            startYears {
+                                count
+                                startYear
+                            }
+                            genres {
+                                count
+                                genre
+                                meanScore
+                                chaptersRead
+                            }
                         }
                     }
+                    siteUrl
+                    updatedAt
                 }
-                siteUrl
-                updatedAt
-            }
-        }`;
+            }`;
+    
+            const variables = {
+                name: criterio
+            };
+    
+    
+            const url = 'https://graphql.anilist.co';
+    
+            const opciones = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: query,
+                    variables: variables
+                })
+            };
+    
+            const response = await fetch(url, opciones);
+            const req = await response.json();
+    
+            if (!req.data.User) return null;
+    
+            console.log(req.data.User)
+            console.log(req.data.User.statistics)
+    
+            return new Usuario(req.data.User);
+        } else {
+            const u = await AniUser.findOne({ discordId: criterio });
 
-        const variables = {
-            name: username
-        };
+            if (!u) return null;
 
-
-        const url = 'https://graphql.anilist.co';
-
-        const opciones = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                query: query,
-                variables: variables
-            })
-        };
-
-        const response = await fetch(url, opciones);
-        const req = await response.json();
-
-        if (!req.data.User) return null;
-
-        console.log(req.data.User)
-        console.log(req.data.User.statistics)
-
-        return new Usuario(req.data.User);
+            const query = `
+            query ($name: String) {
+                User(name: $name) {
+                    name
+                    id
+                    about
+                    avatar {
+                        large
+                        medium
+                    }
+                    bannerImage
+                    options {
+                        profileColor
+                    }
+                    statistics {
+                        anime {
+                            count
+                            meanScore
+                            standardDeviation
+                            minutesWatched
+                            episodesWatched
+                            formats {
+                                count
+                                format
+                            }
+                            statuses {
+                                count
+                                status
+                            }
+                            releaseYears {
+                                count
+                                releaseYear
+                            }
+                            startYears {
+                                count
+                                startYear
+                            }
+                            genres {
+                                count
+                                genre
+                                meanScore
+                                minutesWatched
+                            }
+                        }
+                        manga {
+                            count
+                            meanScore
+                            standardDeviation
+                            chaptersRead
+                            volumesRead
+                            statuses {
+                                count
+                                status
+                            }
+                            releaseYears {
+                                count
+                                releaseYear
+                            }
+                            startYears {
+                                count
+                                startYear
+                            }
+                            genres {
+                                count
+                                genre
+                                meanScore
+                                chaptersRead
+                            }
+                        }
+                    }
+                    siteUrl
+                    updatedAt
+                }
+            }`;
+    
+            const variables = {
+                name: u.anilistUsername
+            };
+    
+    
+            const url = 'https://graphql.anilist.co';
+    
+            const opciones = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: query,
+                    variables: variables
+                })
+            };
+    
+            const response = await fetch(url, opciones);
+            const req = await response.json();
+    
+            if (!req.data.User) return null;
+    
+            console.log(req.data.User)
+            console.log(req.data.User.statistics)
+    
+            return new Usuario(req.data.User);
+        }
     }
 
     public async enviarInfoUser(message: Message, user: any) {
@@ -523,7 +628,7 @@ class BOT {
     }
 
     public async setup(username: string, message: Message): Promise<boolean> {
-        const usuario = await this.usuario(username);
+        const usuario = await this.usuario(username, "username");
         
         if (!usuario) return false;
 

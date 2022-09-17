@@ -52,8 +52,21 @@ bot.on("messageCreate", async (message: Message) => {
     }
 
     if (message.content.startsWith("!user")) {
-        const usuario = bot.usuario(args);
-        if (usuario == null) return;
+        let usuario;
+
+        if (args.trim() == "" || !args) {
+            const userID = message.author.id.toString();
+            usuario = await bot.usuario(userID, "id");
+        } else {
+            usuario = await bot.usuario(args, "username");
+        }
+        
+        if (!usuario) {
+            message.react("❌");
+        } else {
+            message.react("✅");
+        }
+
         bot.enviarInfoUser(message, usuario);
     }
 
