@@ -45,32 +45,51 @@ class BOT {
             .setFooter({ text: obra.getTitulos().romaji + " | " + obra.getTitulos().english });
 
         if (obra.getTipo() == "ANIME") {
+            const infoTEXT_1 = `
+                ‣ **Tipo**: ${obra.getTipo()}\n‣ **Formato**: ${obra.getFormato()}\n‣ **Estado**: ${obra.getEstado()}\n‣ **Calificación**: ${obra.getPromedio()}/100
+            `;
+
+            const infoTEXT_2 = `
+                ‣ **Popularidad**: ${obra.getPopularidad()}\n‣ **Favoritos**: ${obra.getFavoritos()}\n‣ **Temporada**: ${obra.getTemporada()}\n‣ **Episodios**: ${obra.getEpisodios()}
+            `;
             EmbedInformacion
                 .setColor(0xff0000)
                 .addFields(
-                    { name: "Tipo", value: obra.getTipo(), inline: true },
-                    { name: "Formato", value: obra.getFormato(), inline: true },
-                    { name: "Estado", value: obra.getEstado(), inline: true },
-                    { name: "Calificación", value: obra.getPromedio() + "/100", inline: true },
-                    { name: "Popularidad", value: obra.getPopularidad(), inline: true },
-                    { name: "Favoritos", value: obra.getFavoritos(), inline: true },
-                    { name: "Temporada", value: obra.getTemporada(), inline: true },
-                    { name: "Episodios", value: obra.getEpisodios(), inline: true },
-                    { name: "Duracion", value: obra.getDuracion(), inline: true }
+                    { name: "▽", value: infoTEXT_1, inline: true },
+                    { name: "▽", value: infoTEXT_2, inline: true }
+                    // { name: "Tipo", value: obra.getTipo(), inline: true },
+                    // { name: "Formato", value: obra.getFormato(), inline: true },
+                    // { name: "Estado", value: obra.getEstado(), inline: true },
+                    // { name: "Calificación", value: obra.getPromedio() + "/100", inline: true },
+                    // { name: "Popularidad", value: obra.getPopularidad(), inline: true },
+                    // { name: "Favoritos", value: obra.getFavoritos(), inline: true },
+                    // { name: "Temporada", value: obra.getTemporada(), inline: true },
+                    // { name: "Episodios", value: obra.getEpisodios(), inline: true },
+                    // { name: "Duracion", value: obra.getDuracion(), inline: true }
                 )
         } else {
+            const infoTEXT_1 = `
+                ‣ **Tipo**: ${obra.getTipo()}\n‣ **Formato**: ${obra.getFormato()}\n‣ **Estado**: ${obra.getEstado()}\n‣ **Calificación**: ${obra.getPromedio()}/100
+            `;
+
+            const infoTEXT_2 = `
+            ‣ **Popularidad**: ${obra.getPopularidad()}\n‣ **Favoritos**: ${obra.getFavoritos()}\n‣ **Capítulos**: ${obra.getCapitulos()}\n‣ **Volúmenes**: ${obra.getVolumenes()}
+            `;
+
             EmbedInformacion
                 .setColor(0xFFFF00)
                 .addFields(
-                    { name: "Tipo", value: obra.getTipo(), inline: true },
-                    { name: "Formato", value: obra.getFormato(), inline: true },
-                    { name: "Estado", value: obra.getEstado(), inline: true },
-                    { name: "Calificación", value: obra.getPromedio() + "/100", inline: true },
-                    { name: "Popularidad", value: obra.getPopularidad(), inline: true },
-                    { name: "Favoritos", value: obra.getFavoritos(), inline: true },
-                    { name: "Temporada", value: obra.getTemporada(), inline: true },
-                    { name: "Capítulos", value: obra.getCapitulos(), inline: true },
-                    { name: "Volúmenes", value: obra.getVolumenes(), inline: true }
+                    { name: "▽", value: infoTEXT_1, inline: true },
+                    { name: "▽", value: infoTEXT_2, inline: true }
+                    // { name: "Tipo", value: obra.getTipo(), inline: true },
+                    // { name: "Formato", value: obra.getFormato(), inline: true },
+                    // { name: "Estado", value: obra.getEstado(), inline: true },
+                    // { name: "Calificación", value: obra.getPromedio() + "/100", inline: true },
+                    // { name: "Popularidad", value: obra.getPopularidad(), inline: true },
+                    // { name: "Favoritos", value: obra.getFavoritos(), inline: true },
+                    // { name: "Temporada", value: obra.getTemporada(), inline: true },
+                    // { name: "Capítulos", value: obra.getCapitulos(), inline: true },
+                    // { name: "Volúmenes", value: obra.getVolumenes(), inline: true }
                 )
         }
 
