@@ -153,6 +153,7 @@ class BOT {
                 let inProgressTEXT = "";
                 let droppedTEXT = "";
                 let pausedListTEXT = "";
+                let planningTEXT = "";
                 for (let i = 0; i < usuariosMapeados.length; i++) {
                     if (usuariosMapeados[i].status == "COMPLETED") {
                         completedTEXT += `${usuariosMapeados[i].name} **[${usuariosMapeados[i].score}]** - `;
@@ -165,6 +166,9 @@ class BOT {
                     }
                     if (usuariosMapeados[i].status == "PAUSED") {
                         pausedListTEXT += `${usuariosMapeados[i].name} **[${usuariosMapeados[i].score}]** - `;
+                    }
+                    if (usuariosMapeados[i].status == "PLANNING") {
+                        planningTEXT += `${usuariosMapeados[i].name} - `;
                     }
                 }
                 if (completedTEXT.trim().endsWith("-")) {
@@ -179,6 +183,9 @@ class BOT {
                 if (pausedListTEXT.trim().endsWith("-")) {
                     pausedListTEXT = pausedListTEXT.substring(0, pausedListTEXT.length - 2);
                 }
+                if (planningTEXT.trim().endsWith("-")) {
+                    planningTEXT = planningTEXT.substring(0, planningTEXT.length - 2);
+                }
                 if (completedTEXT.trim() == "") {
                     completedTEXT = "Nadie";
                 }
@@ -191,8 +198,11 @@ class BOT {
                 if (pausedListTEXT.trim() == "") {
                     pausedListTEXT = "Nadie";
                 }
+                if (planningTEXT.trim() == "") {
+                    planningTEXT = "Nadie";
+                }
                 EmbedInformacion
-                    .addFields({ name: "Terminados", value: completedTEXT, inline: false }, { name: "Dropeados", value: droppedTEXT, inline: false }, { name: "En Pausa", value: pausedListTEXT, inline: false }, { name: "En Progreso", value: inProgressTEXT, inline: false });
+                    .addFields({ name: "Terminados", value: completedTEXT, inline: false }, { name: "Dropeados", value: droppedTEXT, inline: false }, { name: "En Pausa", value: pausedListTEXT, inline: false }, { name: "En Progreso", value: inProgressTEXT, inline: false }, { name: "Planeados", value: planningTEXT, inline: false });
             }
             console.log(usuariosObra);
             this.enviarEmbed(message, EmbedInformacion);

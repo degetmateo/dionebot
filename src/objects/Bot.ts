@@ -52,7 +52,7 @@ class BOT {
             const infoTEXT_2 = `
                 ‣ **Popularidad**: ${obra.getPopularidad()}\n‣ **Favoritos**: ${obra.getFavoritos()}\n‣ **Temporada**: ${obra.getTemporada()}\n‣ **Año de Emisión**: ${obra.getAnioEmision()}\n‣ **Episodios**: ${obra.getEpisodios()}
             `;
-            
+
             EmbedInformacion
                 .setColor(0xff0000)
                 .addFields(
@@ -146,6 +146,7 @@ class BOT {
             let inProgressTEXT = "";
             let droppedTEXT = "";
             let pausedListTEXT = "";
+            let planningTEXT = "";
 
             for (let i = 0; i < usuariosMapeados.length; i++) {
                 if (usuariosMapeados[i].status == "COMPLETED") {
@@ -162,6 +163,10 @@ class BOT {
 
                 if (usuariosMapeados[i].status == "PAUSED") {
                     pausedListTEXT += `${usuariosMapeados[i].name} **[${usuariosMapeados[i].score}]** - `;
+                }
+
+                if (usuariosMapeados[i].status == "PLANNING") {
+                    planningTEXT += `${usuariosMapeados[i].name} - `;
                 }
             }
 
@@ -181,6 +186,10 @@ class BOT {
                 pausedListTEXT = pausedListTEXT.substring(0, pausedListTEXT.length - 2);
             }
 
+            if (planningTEXT.trim().endsWith("-")) {
+                planningTEXT = planningTEXT.substring(0, planningTEXT.length - 2);
+            }
+
             if (completedTEXT.trim() == "") {
                 completedTEXT = "Nadie"
             }
@@ -197,12 +206,17 @@ class BOT {
                 pausedListTEXT = "Nadie"
             }
 
+            if (planningTEXT.trim() == "") {
+                planningTEXT = "Nadie"
+            }
+
             EmbedInformacion
                 .addFields(
                     { name: "Terminados", value: completedTEXT, inline: false },
                     { name: "Dropeados", value: droppedTEXT, inline: false },
                     { name: "En Pausa", value: pausedListTEXT, inline: false },
-                    { name: "En Progreso", value: inProgressTEXT, inline: false }
+                    { name: "En Progreso", value: inProgressTEXT, inline: false },
+                    { name: "Planeados", value: planningTEXT, inline: false }
                 )
         }
 
