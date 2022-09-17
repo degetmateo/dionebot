@@ -77,7 +77,8 @@ class Obra {
             .split("<b>").join("")
             .split("</b>").join("")
             .split("&ldquo;").join("*")
-            .split("&rdquo;").join("*");
+            .split("&rdquo;").join("*")
+            .split("&rsquo;").join("'");
     }
     getCoverImageURL() {
         return this.media.coverImage.extraLarge == null ? "?" : this.media.coverImage.extraLarge.toString();

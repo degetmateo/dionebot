@@ -98,7 +98,8 @@ class Obra {
             .split("<b>").join("")
             .split("</b>").join("")
             .split("&ldquo;").join("*")
-            .split("&rdquo;").join("*");
+            .split("&rdquo;").join("*")
+            .split("&rsquo;").join("'");
     }
 
     public getCoverImageURL(): string {
