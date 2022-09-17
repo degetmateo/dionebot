@@ -162,7 +162,7 @@ class BOT {
                         droppedTEXT += `${usuariosMapeados[i].name} **(${usuariosMapeados[i].progress})** **[${usuariosMapeados[i].score}]** - `;
                     }
                     if (usuariosMapeados[i].status == "CURRENT") {
-                        inProgressTEXT += `${usuariosMapeados[i].name} **(${usuariosMapeados[i].progress})** - `;
+                        inProgressTEXT += `${usuariosMapeados[i].name} **(${usuariosMapeados[i].progress})** **[${usuariosMapeados[i].score}]** - `;
                     }
                     if (usuariosMapeados[i].status == "PAUSED") {
                         pausedListTEXT += `${usuariosMapeados[i].name} **[${usuariosMapeados[i].score}]** - `;

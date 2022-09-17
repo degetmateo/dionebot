@@ -158,7 +158,7 @@ class BOT {
                 }
 
                 if (usuariosMapeados[i].status == "CURRENT") {
-                    inProgressTEXT += `${usuariosMapeados[i].name} **(${usuariosMapeados[i].progress})** - `;
+                    inProgressTEXT += `${usuariosMapeados[i].name} **(${usuariosMapeados[i].progress})** **[${usuariosMapeados[i].score}]** - `;
                 }
 
                 if (usuariosMapeados[i].status == "PAUSED") {
