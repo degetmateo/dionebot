@@ -1,5 +1,9 @@
 require("dotenv").config();
 
+import { DB } from "./db";
+
+const db = new DB();
+
 import express from "express";
 const app = express();
 
@@ -14,7 +18,7 @@ app.listen(app.get("port"), () => {
 });
 
 import { Client, GatewayIntentBits, Message } from "discord.js";
-import { BOT } from "./Bot";
+import { BOT } from "./objects/Bot";
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 const bot = new BOT(client);
@@ -25,6 +29,7 @@ bot.on("ready", () => {
 
 bot.on("messageCreate", async (message: Message) => {
     if (message.content == "") return;
+    if (!message.guild) return;
 
     const contenido = message.content.split(" ");
     const args = contenido.splice(1).join(" ");
@@ -36,13 +41,29 @@ bot.on("messageCreate", async (message: Message) => {
     if (message.content.startsWith("!anime")) {
         const anime = await bot.anime(args);
         if (!anime) return;
-        bot.enviarInfo(message, anime);
+        bot.enviarInfoMedia(message, anime);
     }
 
     if (message.content.startsWith("!manga")) {
         const manga = await bot.manga(args);
         if (!manga) return;
-        bot.enviarInfo(message, manga);
+        bot.enviarInfoMedia(message, manga);
+    }
+
+    if (message.content.startsWith("!user")) {
+        const usuario  = await bot.usuario(args);
+        if (!usuario) return;
+        bot.enviarInfoUser(message, usuario);
+    }
+
+    if (message.content.startsWith("!setup")) {
+        const result = await bot.setup(args, message);
+
+        if (result) {
+            message.react("✅");
+        } else {
+            message.react("❌");
+        }
     }
 
     if (message.content.endsWith("13") || message.content.endsWith("trece")) {
@@ -62,4 +83,5 @@ bot.on("messageCreate", async (message: Message) => {
     }
 });
 
+db.conectar(process.env.DB);
 client.login(process.env.TOKEN);

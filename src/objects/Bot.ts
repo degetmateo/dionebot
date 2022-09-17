@@ -1,7 +1,11 @@
 import fetch from "node-fetch";
 
-import { Client, ClientEvents, Message, EmbedBuilder, Embed } from "discord.js";
+import { Client, ClientEvents, Message, EmbedBuilder, ColorResolvable } from "discord.js";
+import * as toHex from "colornames";
 import { Obra } from "./Obra";
+import { Usuario } from "./Usuario";
+import { AniUser } from "../models/AniUser";
+import { DB } from "../db";
 
 class BOT {
     private client: Client;
@@ -26,7 +30,7 @@ class BOT {
         message.channel.send({ embeds: [embed] });
     }
 
-    public enviarInfo(message: Message, obra: Obra): void {
+    public async enviarInfoMedia(message: Message, obra: Obra) {
         const EmbedInformacion = new EmbedBuilder()
             .setTitle(obra.getTitulos().native)
             .setURL(obra.getURL())
@@ -68,7 +72,57 @@ class BOT {
                 )
         }
 
+        const users = await DB.buscar(message.guild?.id.toString());
+        const usuariosObra = [];
+        
+        // for (let i = 0; i < users.length; i++) {
+
+        // }
+
+        await this.buscarLista(users[0].anilistId, obra.getID());
+
         this.enviarEmbed(message, EmbedInformacion);
+    }
+
+    private async buscarLista(userID: any, mediaID: any) {
+        const id = parseInt(userID);
+        const mediaId = parseInt(mediaID);
+        const query = `
+            query ($id: Int, $mediaId: Int) {
+                MediaList(userId: $id, mediaId: $mediaId) {
+                    id
+                    media {
+                        id
+                    }
+                }
+            }`;
+
+        const variables = {
+            id: id,
+            mediaId: mediaID
+        };
+
+        const url = 'https://graphql.anilist.co';
+
+        const opciones = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                query: query,
+                variables: variables
+            })
+        };
+
+        const response = await fetch(url, opciones);
+        const req = await response.json();
+
+        console.log("LISTA LISTA LISTA")
+        console.log(id);
+        if (!req.data) return null;
+        console.log(req.data);
     }
 
     public async anime(name: String) {
@@ -214,6 +268,166 @@ class BOT {
         if (!req.data.Media) return null;
 
         return new Obra(req.data.Media);
+    }
+
+    public async usuario(username: string) {
+        const query = `
+        query ($name: String) {
+            User(name: $name) {
+                name
+                id
+                about
+                avatar {
+                    large
+                    medium
+                }
+                bannerImage
+                options {
+                    profileColor
+                }
+                statistics {
+                    anime {
+                        count
+                        meanScore
+                        standardDeviation
+                        minutesWatched
+                        episodesWatched
+                        formats {
+                            count
+                            format
+                        }
+                        statuses {
+                            count
+                            status
+                        }
+                        releaseYears {
+                            count
+                            releaseYear
+                        }
+                        startYears {
+                            count
+                            startYear
+                        }
+                        genres {
+                            count
+                            genre
+                            meanScore
+                            minutesWatched
+                        }
+                    }
+                    manga {
+                        count
+                        meanScore
+                        standardDeviation
+                        chaptersRead
+                        volumesRead
+                        statuses {
+                            count
+                            status
+                        }
+                        releaseYears {
+                            count
+                            releaseYear
+                        }
+                        startYears {
+                            count
+                            startYear
+                        }
+                        genres {
+                            count
+                            genre
+                            meanScore
+                            chaptersRead
+                        }
+                    }
+                }
+                siteUrl
+                updatedAt
+            }
+        }`;
+
+        const variables = {
+            name: username
+        };
+
+
+        const url = 'https://graphql.anilist.co';
+
+        const opciones = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                query: query,
+                variables: variables
+            })
+        };
+
+        const response = await fetch(url, opciones);
+        const req = await response.json();
+
+        if (!req.data.User) return null;
+
+        console.log(req.data.User)
+        console.log(req.data.User.statistics)
+
+        return new Usuario(req.data.User);
+    }
+
+    public async enviarInfoUser(message: Message, user: Usuario) {
+        const hexColor = toHex.get(user.getColorName()).value;
+        const color = "0x" + hexColor;
+
+        const stats = user.getEstadisticas();
+
+        const EmbedInformacion = new EmbedBuilder()
+            .setTitle(user.getNombre())
+            .setURL(user.getURL())
+            .setColor(color as ColorResolvable)
+            .setThumbnail(user.getAvatarURL())
+            .setImage(user.getBannerImage())
+            .setDescription(user.getBio())
+            .addFields(
+                { 
+                    name: "Animes",
+                    value: `‣ Vistos: ${stats.anime.count}
+                            ‣ Nota Promedio: ${stats.anime.meanScore}
+                            ‣ Días Vistos: ${((stats.anime.minutesWatched / 60) / 24).toFixed()}
+                            ‣ Episodios Totales: ${stats.anime.episodesWatched}`,
+                    inline: false
+                },
+                { 
+                    name: "Mangas",
+                    value: `‣ Leídos: ${stats.manga.count}
+                            ‣ Nota Promedio: ${stats.manga.meanScore}
+                            ‣ Capítulos Leídos: ${stats.manga.chaptersRead}
+                            ‣ Volúmenes Leídos: ${stats.manga.volumesRead}`,
+                    inline: false
+                },
+            )
+
+        this.enviarEmbed(message, EmbedInformacion);
+    }
+
+    public async setup(username: string, message: Message): Promise<boolean> {
+        const usuario = await this.usuario(username);
+        
+        if (!usuario) return false;
+
+        const aniuser = new AniUser();
+        aniuser.anilistUsername = usuario.getNombre();
+        aniuser.anilistId = usuario.getID();
+        aniuser.discordId = message.author.id;
+        aniuser.serverId = message.guild?.id;
+
+        aniuser.save((err) => {
+            console.error(err);
+            return false;
+        });
+
+        return true;
     }
 }
 
