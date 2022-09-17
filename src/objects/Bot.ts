@@ -1,12 +1,13 @@
 import fetch from "node-fetch";
 
-import { Client, ClientEvents, Message, EmbedBuilder, ColorResolvable, GuildMember } from "discord.js";
+import { Client, ClientEvents, Message, EmbedBuilder, ColorResolvable, GuildMember, Embed } from "discord.js";
 import * as toHex from "colornames";
 import { Obra } from "./Obra";
 import { Usuario } from "./Usuario";
 import { AniUser } from "../models/AniUser";
 // import { Settings } from "../models/Settings";
 import { DB } from "../db";
+// import { AnimeUserCountries } from "anilist-node/lib/types";
 
 class BOT {
     private client: Client;
@@ -114,7 +115,7 @@ class BOT {
 
         if (users.length > 0) {
             for (let i = 0; i < users.length; i++) {
-                const userListInfo = await this.buscarLista(users[i].anilistId, obra.getID());
+                const userListInfo = await this.buscarMedia(users[i].anilistId, obra.getID());
 
                 if (userListInfo != null) {
                     userListInfo.username = users[i].anilistUsername;
@@ -224,7 +225,7 @@ class BOT {
         this.enviarEmbed(message, EmbedInformacion);
     }
 
-    private async buscarLista(userID: any, mediaID: any) {
+    private async buscarMedia(userID: any, mediaID: any) {
         const id = parseInt(userID);
         const mediaId = parseInt(mediaID);
         const query = `
@@ -265,6 +266,61 @@ class BOT {
         if (!req.data) return null;
         console.log(req.data);
         return req.data.MediaList;
+    }
+
+    private async buscarLista(username: string | undefined) {
+        const query = `
+            query ($username: String) {
+                animeList: MediaListCollection(userName: $username, type: ANIME) {
+                    user {
+                        name
+                        avatar {
+                            large
+                        }
+                        options {
+                            profileColor
+                        }
+                        siteUrl
+                    }
+                    lists {
+                        entries {
+                            mediaId,
+                            score(format: POINT_100)
+                        }
+                    }
+                }
+                mangaList: MediaListCollection(userName: $username, type: MANGA) {
+                    lists {
+                        entries {
+                            mediaId,
+                            score(format: POINT_100)
+                        }
+                    }
+                }
+            }`;
+
+        const variables = {
+            username: username
+        }
+
+        const url = 'https://graphql.anilist.co';
+
+        const opciones = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                query: query,
+                variables: variables
+            })
+        };
+
+        const response = await fetch(url, opciones);
+        const req = await response.json();
+
+        return req;
     }
 
     public async anime(name: String) {
@@ -412,7 +468,7 @@ class BOT {
         return new Obra(req.data.Media);
     }
 
-    public async usuario(criterio: string, tipo: string) {
+    public async usuario(criterio: any, tipo: string) {
         if (tipo == "username") {
             const query = `
             query ($name: String) {
@@ -512,9 +568,6 @@ class BOT {
             const req = await response.json();
     
             if (!req.data.User) return null;
-    
-            console.log(req.data.User)
-            console.log(req.data.User.statistics)
     
             return new Usuario(req.data.User);
         } else {
@@ -621,9 +674,6 @@ class BOT {
     
             if (!req.data.User) return null;
     
-            console.log(req.data.User)
-            console.log(req.data.User.statistics)
-    
             return new Usuario(req.data.User);
         }
     }
@@ -692,6 +742,92 @@ class BOT {
             console.error(err);
             return false;
         }
+    }
+
+    private async calcularAfinidad(l1: Array<{ mediaId: number, score: number }>, l2: Array<{ mediaId: number, score: number }>) {
+        let afinidad = 0;
+
+        const cantidadAnimes = l1.length;
+
+        for (let i = 0; i < l1.length; i++) {
+            const l1MediaId = l1[i].mediaId;
+            const l1MediaScore = l1[i].score;
+
+            const sharedMedia = l2.find(e => e.mediaId == l1MediaId);
+
+            if (!sharedMedia) continue;
+            if (sharedMedia.score == l1MediaScore) afinidad++;
+        }
+
+        console.log(cantidadAnimes)
+        console.log(afinidad)
+
+        afinidad = parseFloat(((afinidad * 100) / cantidadAnimes).toFixed(1));
+
+        return afinidad;
+    }
+
+    public async afinidad(message: Message): Promise<boolean> {
+        const userID = message.author.id;
+        const serverID = message.guildId;
+
+        const usuariosRegistrados = await AniUser.find({ serverId: serverID });
+        const usuario = usuariosRegistrados.find(u => u.discordId == userID);
+
+        const aniuser1 = await this.usuario(usuario?.anilistUsername, "username");
+        const userList1 = await this.buscarLista(aniuser1?.getNombre());
+        const user1AnimeList = userList1.data.animeList.lists[0].entries;
+
+        let afinidades = [];
+
+        let i = 0;
+        while (i < usuariosRegistrados.length) {
+            if (usuariosRegistrados[i].anilistUsername == usuario?.anilistUsername) {
+                i++;
+                continue;
+            }
+
+            const aniuser2 = await this.usuario(usuariosRegistrados[i].anilistUsername, "username");
+            const userList2 = await this.buscarLista(aniuser2?.getNombre());
+            const user2AnimeList = userList2.data.animeList.lists[0].entries;
+
+            const resultado = await this.calcularAfinidad(user1AnimeList, user2AnimeList);
+
+            afinidades.push({ username: aniuser2?.getNombre(), afinidad: resultado });
+
+            i++;
+        }
+
+        afinidades = afinidades.sort((a, b) => {
+            if (a.afinidad < b.afinidad) {
+                return 1;
+            }
+
+            if (a.afinidad > b.afinidad) {
+                return -1;
+            }
+
+            return 0;
+        });
+
+        let textoAfinidad = "";
+
+        for (let i = 0; i < afinidades.length && i < 10; i++) {
+            textoAfinidad += `▻ ${afinidades[i].username} - **${afinidades[i].afinidad}%**\n`;
+        }
+
+        const hexColor = toHex.get(aniuser1 == null ? "black" : aniuser1.getColorName()).value;
+        const color = "0x" + hexColor;
+
+        const EmbedAfinidad = new EmbedBuilder()
+            .setTitle("Afinidad de " + aniuser1?.getNombre())
+            .setThumbnail(aniuser1 == null ? null : aniuser1.getAvatarURL())
+            .setDescription(textoAfinidad)
+            .setColor(color as ColorResolvable)
+
+        this.enviarEmbed(message, EmbedAfinidad);
+
+        return true;
     }
 }
 

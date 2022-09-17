@@ -5,6 +5,10 @@ class Usuario {
         this.user = user;
     }
 
+    public getUserData() {
+        return this.user;
+    }
+
     public getID(): string {
         return this.user.id == null ? null : this.user.id.toString();
     }

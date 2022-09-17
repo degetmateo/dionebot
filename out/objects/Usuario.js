@@ -5,6 +5,9 @@ class Usuario {
     constructor(user) {
         this.user = user;
     }
+    getUserData() {
+        return this.user;
+    }
     getID() {
         return this.user.id == null ? null : this.user.id.toString();
     }
