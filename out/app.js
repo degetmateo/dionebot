@@ -33,24 +33,22 @@ bot.on("messageCreate", (message) => __awaiter(void 0, void 0, void 0, function*
     if (message.content == "")
         return;
     const contenido = message.content.split(" ");
-    const args = contenido.splice(1);
+    const args = contenido.splice(1).join(" ");
     if (message.content === "Hola") {
         message.reply(`${message.client.emojis.cache.find((e => e.name === "pala"))}`);
     }
     ;
     if (message.content.startsWith("!anime")) {
-        const anime = yield bot.anime(args[0]);
-        const respuesta = `ID: ${anime.id}\n\n` +
-            `Título: (Romaji: ${anime.title.romaji} | Inglés: ${anime.title.english} | Original: ${anime.title.native})\n\n` +
-            `Descripción: ${anime.getDescripcion()}`;
-        bot.enviar(message, respuesta);
+        const anime = yield bot.anime(args);
+        if (!anime)
+            return;
+        bot.enviarInfo(message, anime);
     }
     if (message.content.startsWith("!manga")) {
-        const manga = yield bot.manga(args[0]);
-        const respuesta = `ID: ${manga.id}\n\n` +
-            `Título: (Romaji: ${manga.title.romaji} | Inglés: ${manga.title.english} | Original: ${manga.title.native})\n\n` +
-            `Descripción: ${manga.getDescripcion()}`;
-        bot.enviar(message, respuesta);
+        const manga = yield bot.manga(args);
+        if (!manga)
+            return;
+        bot.enviarInfo(message, manga);
     }
     if (message.content.endsWith("13") || message.content.endsWith("trece")) {
         bot.responder(message, "¿Dijiste 13? Aquí tiene pa' que me la bese, entre más me la beses más me crece, busca un cura pa' que me la rese, y trae un martillo pa' que me la endereces, por el chiquito se te aparece toas las veces y cuando te estreses aquí te tengo éste pa' que te desestreses, con este tallo el jopo se te esflorece, se cumple el ciclo hasta que anochece, to' los días y toas las veces, de tanto entablar la raja del jopo se te desaparece, porque este sable no se compadece, si pides ñapa se te ofrece, y si repites se te agradece, no te hace rico pero tampoco te empobrece, no te hace inteligente pero tampoco te embrutece, y no paro aquí compa que éste nuevamente se endurece, hasta que amanece, cambie esa cara que parece que se entristece, si te haces viejo éste te rejuvenece, no te hago bulla porque depronto te ensordece, y ese cuadro no te favorece, pero tranquilo que éste te abastece, porque allá abajo se te humedece, viendo como el que me cuelga resplandece, si a ti te da miedo a mí me enorgullece, y así toas las vece ¿que te parece?, y tranquilo mijo que aquí éste reaparece, no haga fuerza porque éste se sobrecrece, una fresadora te traigo pa' que me la freses, así se fortalece y de nuevo la historia se establece, que no se te nuble la vista porque éste te la aclarece, y sino le entendiste nuevamente la explicación se te ofrece, pa' que por el chiquito éste de nuevo te empiece... Aquí tienes para que me la beses, entre más me la beses más me crece, busca un cura para que me la rece, un martillo para que me la endereces, un chef para que me la aderece, 8000 mondas por el culo se te aparecen, si me la sobas haces que se me espese, si quieres la escaneas y te la llevas para que en tu hoja de vida la anexes, me culeo a tu maldita madre y qué te parece le meti la monda a tú mamá hace 9 meses y después la puse a escuchar René de Calle 13 Te la meto por debajo del agua como los peces, y aquella flor de monda que en tu culo crece, reposa sobre tus nalgas a veces y una vez más...");

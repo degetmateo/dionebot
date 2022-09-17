@@ -27,30 +27,22 @@ bot.on("messageCreate", async (message: Message) => {
     if (message.content == "") return;
 
     const contenido = message.content.split(" ");
-    const args = contenido.splice(1);
+    const args = contenido.splice(1).join(" ");
 
     if (message.content === "Hola") {
         message.reply(`${message.client.emojis.cache.find((e => e.name === "pala"))}`);
     };
 
     if (message.content.startsWith("!anime")) {
-        const anime = await bot.anime(args[0]);
-
-        const respuesta = `ID: ${anime.id}\n\n` +
-        `Título: (Romaji: ${anime.title.romaji} | Inglés: ${anime.title.english} | Original: ${anime.title.native})\n\n` +
-        `Descripción: ${anime.getDescripcion()}`;
-
-        bot.enviar(message, respuesta);
+        const anime = await bot.anime(args);
+        if (!anime) return;
+        bot.enviarInfo(message, anime);
     }
 
     if (message.content.startsWith("!manga")) {
-        const manga = await bot.manga(args[0]);
-
-        const respuesta = `ID: ${manga.id}\n\n` +
-        `Título: (Romaji: ${manga.title.romaji} | Inglés: ${manga.title.english} | Original: ${manga.title.native})\n\n` +
-        `Descripción: ${manga.getDescripcion()}`;
-
-        bot.enviar(message, respuesta);
+        const manga = await bot.manga(args);
+        if (!manga) return;
+        bot.enviarInfo(message, manga);
     }
 
     if (message.content.endsWith("13") || message.content.endsWith("trece")) {
