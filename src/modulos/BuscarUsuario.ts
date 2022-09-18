@@ -20,7 +20,7 @@ async function BuscarUsuario(bot: BOT, args: string): Promise<any> {
         }
 
         const data = await bot.request(queryUsername, variables);
-        console.log(data)
+        
         return (data == null || data.User == null) ? null : data.User;
     }
 }

@@ -41,14 +41,17 @@ const toHex = __importStar(require("colornames"));
 const discord_js_1 = require("discord.js");
 const Obra_1 = require("./Obra");
 const Usuario_1 = require("./Usuario");
-const Database_1 = require("./Database");
 const AniUser_1 = require("../models/AniUser");
 const Mensaje_1 = require("./Mensaje");
 const BuscarUsuario_1 = require("../modulos/BuscarUsuario");
 const BuscarMediaNombre_1 = require("../modulos/BuscarMediaNombre");
-const CargarMedia_1 = require("../modulos/CargarMedia");
+const GetDatosMedia_1 = require("../modulos/GetDatosMedia");
 const BuscarMediaUsuario_1 = require("../modulos/BuscarMediaUsuario");
 const BuscarListaUsuario_1 = require("../modulos/BuscarListaUsuario");
+const GetUsuariosMedia_1 = require("../modulos/GetUsuariosMedia");
+const SetupUsuario_1 = require("../modulos/SetupUsuario");
+const UnsetupUsuario_1 = require("../modulos/UnsetupUsuario");
+const GetAfinidadUsuario_1 = require("../modulos/GetAfinidadUsuario");
 class BOT {
     constructor(client, db) {
         this.client = client;
@@ -72,7 +75,8 @@ class BOT {
                 else {
                     message.react("✅");
                 }
-                this.enviarInfoMedia(message, anime);
+                const embedInformacion = yield this.EmbedInformacionMedia(message, anime);
+                this.enviarEmbed(message, embedInformacion);
             }
             if (comando == "!manga") {
                 const manga = yield this.manga(args.join(" "));
@@ -82,7 +86,8 @@ class BOT {
                 else {
                     message.react("✅");
                 }
-                this.enviarInfoMedia(message, manga);
+                const embedInformacion = yield this.EmbedInformacionMedia(message, manga);
+                this.enviarEmbed(message, embedInformacion);
             }
             if (comando == "!user") {
                 let usuario;
@@ -98,7 +103,8 @@ class BOT {
                 else {
                     message.react("✅");
                 }
-                this.enviarInfoUser(message, usuario);
+                const embedInformacion = yield this.EmbedInformacionUsuario(usuario);
+                this.enviarEmbed(message, embedInformacion);
             }
             if (comando == "!setup") {
                 const result = yield this.setup(args[0], message);
@@ -163,19 +169,16 @@ class BOT {
     enviarEmbed(message, embed) {
         message.channel.send({ embeds: [embed] });
     }
-    enviarInfoMedia(message, obra) {
+    EmbedInformacionMedia(message, obra) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            const titulos = obra.getTitulos();
             const EmbedInformacion = new discord_js_1.EmbedBuilder()
-                .setTitle(obra.getTitulos().native)
+                .setTitle(titulos.romaji == null ? titulos.native : titulos.romaji)
                 .setURL(obra.getURL())
-                // .setAuthor({ name: 'Some name', iconURL: 'https://i.imgur.com/AfFp7pu.png', url: 'https://discord.js.org' })
                 .setDescription(obra.getDescripcion())
                 .setThumbnail(obra.getCoverImageURL())
-                // .addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
-                // .setImage('https://i.imgur.com/AfFp7pu.png')
-                // .setTimestamp()
-                .setFooter({ text: obra.getTitulos().romaji + " | " + obra.getTitulos().english });
+                .setFooter({ text: obra.getTitulos().native + " | " + obra.getTitulos().english });
             if (obra.getTipo() == "ANIME") {
                 const infoTEXT_1 = `
                 ‣ **Tipo**: ${obra.getTipo()}\n‣ **Formato**: ${obra.getFormato()}\n‣ **Estado**: ${obra.getEstado()}\n‣ **Calificación**: ${obra.getPromedio()}/100
@@ -185,17 +188,7 @@ class BOT {
             `;
                 EmbedInformacion
                     .setColor(0xff0000)
-                    .addFields({ name: "▽", value: infoTEXT_1, inline: true }, { name: "▽", value: infoTEXT_2, inline: true }
-                // { name: "Tipo", value: obra.getTipo(), inline: true },
-                // { name: "Formato", value: obra.getFormato(), inline: true },
-                // { name: "Estado", value: obra.getEstado(), inline: true },
-                // { name: "Calificación", value: obra.getPromedio() + "/100", inline: true },
-                // { name: "Popularidad", value: obra.getPopularidad(), inline: true },
-                // { name: "Favoritos", value: obra.getFavoritos(), inline: true },
-                // { name: "Temporada", value: obra.getTemporada(), inline: true },
-                // { name: "Episodios", value: obra.getEpisodios(), inline: true },
-                // { name: "Duracion", value: obra.getDuracion(), inline: true }
-                );
+                    .addFields({ name: "▽", value: infoTEXT_1, inline: true }, { name: "▽", value: infoTEXT_2, inline: true });
             }
             else {
                 const infoTEXT_1 = `
@@ -206,17 +199,7 @@ class BOT {
             `;
                 EmbedInformacion
                     .setColor(0xFFFF00)
-                    .addFields({ name: "▽", value: infoTEXT_1, inline: true }, { name: "▽", value: infoTEXT_2, inline: true }
-                // { name: "Tipo", value: obra.getTipo(), inline: true },
-                // { name: "Formato", value: obra.getFormato(), inline: true },
-                // { name: "Estado", value: obra.getEstado(), inline: true },
-                // { name: "Calificación", value: obra.getPromedio() + "/100", inline: true },
-                // { name: "Popularidad", value: obra.getPopularidad(), inline: true },
-                // { name: "Favoritos", value: obra.getFavoritos(), inline: true },
-                // { name: "Temporada", value: obra.getTemporada(), inline: true },
-                // { name: "Capítulos", value: obra.getCapitulos(), inline: true },
-                // { name: "Volúmenes", value: obra.getVolumenes(), inline: true }
-                );
+                    .addFields({ name: "▽", value: infoTEXT_1, inline: true }, { name: "▽", value: infoTEXT_2, inline: true });
             }
             let generosInfo = "";
             const generos = obra.getGeneros();
@@ -227,52 +210,29 @@ class BOT {
             if (!generosInfo || generosInfo.length < 0)
                 generosInfo = "`Desconocidos`";
             EmbedInformacion
-                .addFields({ name: "Géneros", value: generosInfo, inline: false });
-            const users = yield Database_1.DB.buscar((_a = message.guild) === null || _a === void 0 ? void 0 : _a.id.toString());
-            const usuariosObra = [];
-            if (users.length > 0) {
-                for (let i = 0; i < users.length; i++) {
-                    const userListInfo = yield (0, BuscarMediaUsuario_1.BuscarMediaUsuario)(this, users[i].anilistId, obra.getID());
-                    if (userListInfo != null) {
-                        userListInfo.username = users[i].anilistUsername;
-                        userListInfo.discordId = users[i].discordId;
-                        usuariosObra.push(userListInfo);
-                    }
-                }
-                const usuariosMapeados = [];
-                for (let i = 0; i < usuariosObra.length; i++) {
-                    // const discordUser = message.guild?.members.cache.find(m => m.id == usuariosObra[i].discordId);
-                    if (parseFloat(usuariosObra[i].score.toString()) <= 10) {
-                        usuariosObra[i].score = parseFloat((usuariosObra[i].score * 10).toString());
-                    }
-                    const u = {
-                        name: usuariosObra[i].username,
-                        status: usuariosObra[i].status,
-                        progress: usuariosObra[i].progress,
-                        score: parseFloat(usuariosObra[i].score.toString())
-                    };
-                    usuariosMapeados.push(u);
-                }
+                .addFields({ name: "▿ Géneros", value: generosInfo, inline: false });
+            const uMedia = yield this.getUsuariosMedia((_a = message.guild) === null || _a === void 0 ? void 0 : _a.id, obra);
+            if (uMedia.length > 0) {
                 let completedTEXT = "";
                 let inProgressTEXT = "";
                 let droppedTEXT = "";
                 let pausedListTEXT = "";
                 let planningTEXT = "";
-                for (let i = 0; i < usuariosMapeados.length; i++) {
-                    if (usuariosMapeados[i].status == "COMPLETED") {
-                        completedTEXT += `${usuariosMapeados[i].name} **[${usuariosMapeados[i].score}]** - `;
+                for (let i = 0; i < uMedia.length; i++) {
+                    if (uMedia[i].status == "COMPLETED") {
+                        completedTEXT += `${uMedia[i].name} **[${uMedia[i].score}]** - `;
                     }
-                    if (usuariosMapeados[i].status == "DROPPED") {
-                        droppedTEXT += `${usuariosMapeados[i].name} **(${usuariosMapeados[i].progress})** **[${usuariosMapeados[i].score}]** - `;
+                    if (uMedia[i].status == "DROPPED") {
+                        droppedTEXT += `${uMedia[i].name} **(${uMedia[i].progress})** **[${uMedia[i].score}]** - `;
                     }
-                    if (usuariosMapeados[i].status == "CURRENT") {
-                        inProgressTEXT += `${usuariosMapeados[i].name} **(${usuariosMapeados[i].progress})** **[${usuariosMapeados[i].score}]** - `;
+                    if (uMedia[i].status == "CURRENT") {
+                        inProgressTEXT += `${uMedia[i].name} **(${uMedia[i].progress})** **[${uMedia[i].score}]** - `;
                     }
-                    if (usuariosMapeados[i].status == "PAUSED") {
-                        pausedListTEXT += `${usuariosMapeados[i].name} **[${usuariosMapeados[i].score}]** - `;
+                    if (uMedia[i].status == "PAUSED") {
+                        pausedListTEXT += `${uMedia[i].name} **[${uMedia[i].score}]** - `;
                     }
-                    if (usuariosMapeados[i].status == "PLANNING") {
-                        planningTEXT += `${usuariosMapeados[i].name} - `;
+                    if (uMedia[i].status == "PLANNING") {
+                        planningTEXT += `${uMedia[i].name} - `;
                     }
                 }
                 if (completedTEXT.trim().endsWith("-")) {
@@ -306,32 +266,37 @@ class BOT {
                     planningTEXT = "Nadie";
                 }
                 EmbedInformacion
-                    .addFields({ name: "Terminados", value: completedTEXT, inline: false }, { name: "Dropeados", value: droppedTEXT, inline: false }, { name: "En Pausa", value: pausedListTEXT, inline: false }, { name: "En Progreso", value: inProgressTEXT, inline: false }, { name: "Planeados", value: planningTEXT, inline: false });
+                    .addFields({ name: "▿ Completado por", value: completedTEXT, inline: false }, { name: "▿ Dropeado por", value: droppedTEXT, inline: false }, { name: "▿ Pausado por", value: pausedListTEXT, inline: false }, { name: "▿ Iniciado por", value: inProgressTEXT, inline: false }, { name: "▿ Planeado por", value: planningTEXT, inline: false });
             }
-            this.enviarEmbed(message, EmbedInformacion);
+            return EmbedInformacion;
         });
     }
     anime(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.BuscarMedia("ANIME", args);
+            return yield this.buscarMedia("ANIME", args);
         });
     }
     manga(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.BuscarMedia("MANGA", args);
+            return yield this.buscarMedia("MANGA", args);
         });
     }
-    BuscarMedia(tipo, args) {
+    buscarMedia(tipo, args) {
         return __awaiter(this, void 0, void 0, function* () {
             if (isNaN(parseInt(args))) {
                 const mediaID = yield (0, BuscarMediaNombre_1.BuscarMediaNombre)(this, tipo, args);
-                const media = yield (0, CargarMedia_1.CargarMedia)(this, tipo, mediaID);
+                const media = yield (0, GetDatosMedia_1.GetDatosMedia)(this, tipo, mediaID);
                 return new Obra_1.Obra(media);
             }
             else {
-                const media = yield (0, CargarMedia_1.CargarMedia)(this, tipo, args);
+                const media = yield (0, GetDatosMedia_1.GetDatosMedia)(this, tipo, args);
                 return new Obra_1.Obra(media);
             }
+        });
+    }
+    getUsuariosMedia(serverID, media) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield (0, GetUsuariosMedia_1.GetUsuariosMedia)(this, serverID, media);
         });
     }
     request(query, variables) {
@@ -352,24 +317,34 @@ class BOT {
             return response.data;
         });
     }
+    buscarMediaUsuario(userID, mediaID) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield (0, BuscarMediaUsuario_1.BuscarMediaUsuario)(this, userID, mediaID);
+        });
+    }
+    buscarListaUsuario(username) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield (0, BuscarListaUsuario_1.BuscarListaUsuario)(this, username);
+        });
+    }
     usuario(args) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield (0, BuscarUsuario_1.BuscarUsuario)(this, args);
             return user == null ? null : new Usuario_1.Usuario(user);
         });
     }
-    enviarInfoUser(message, user) {
+    EmbedInformacionUsuario(usuario) {
         return __awaiter(this, void 0, void 0, function* () {
-            const hexColor = toHex.get(user.getColorName()).value;
+            const hexColor = toHex.get(usuario.getColorName()).value;
             const color = "0x" + hexColor;
-            const stats = user.getEstadisticas();
+            const stats = usuario.getEstadisticas();
             const EmbedInformacion = new discord_js_1.EmbedBuilder()
-                .setTitle(user.getNombre())
-                .setURL(user.getURL())
+                .setTitle(usuario.getNombre())
+                .setURL(usuario.getURL())
                 .setColor(color)
-                .setThumbnail(user.getAvatarURL())
-                .setImage(user.getBannerImage())
-                .setDescription(user.getBio())
+                .setThumbnail(usuario.getAvatarURL())
+                .setImage(usuario.getBannerImage())
+                .setDescription(usuario.getBio())
                 .addFields({
                 name: "Animes",
                 value: `‣ Vistos: ${stats.anime.count}\n‣ Nota Promedio: ${stats.anime.meanScore}\n‣ Días Vistos: ${((stats.anime.minutesWatched / 60) / 24).toFixed()}\n‣ Episodios Totales: ${stats.anime.episodesWatched}`,
@@ -379,43 +354,17 @@ class BOT {
                 value: `‣ Leídos: ${stats.manga.count}\n‣ Nota Promedio: ${stats.manga.meanScore}\n‣ Capítulos Leídos: ${stats.manga.chaptersRead}\n‣ Volúmenes Leídos: ${stats.manga.volumesRead}`,
                 inline: false
             });
-            this.enviarEmbed(message, EmbedInformacion);
+            return EmbedInformacion;
         });
     }
     setup(username, message) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const usuario = yield this.usuario(username);
-            if (!usuario)
-                return false;
-            let svUsers = yield AniUser_1.AniUser.find({ serverId: message.guildId });
-            let dbUser = svUsers.find(u => u.discordId == message.author.id);
-            if (dbUser != null && dbUser != undefined)
-                return false;
-            const aniuser = new AniUser_1.AniUser();
-            aniuser.anilistUsername = usuario.getNombre();
-            aniuser.anilistId = usuario.getID();
-            aniuser.discordId = message.author.id;
-            aniuser.serverId = (_a = message.guild) === null || _a === void 0 ? void 0 : _a.id;
-            aniuser.save((err) => {
-                console.error(err);
-                return false;
-            });
-            return true;
+            return yield (0, SetupUsuario_1.SetupUsuario)(this, username, message);
         });
     }
     unsetup(message) {
         return __awaiter(this, void 0, void 0, function* () {
-            const svUsers = yield AniUser_1.AniUser.find({ serverId: message.guildId });
-            const result = svUsers.find(u => u.discordId == message.author.id);
-            try {
-                result === null || result === void 0 ? void 0 : result.delete();
-                return true;
-            }
-            catch (err) {
-                console.error(err);
-                return false;
-            }
+            return yield (0, UnsetupUsuario_1.UnsetupUsuario)(this, message);
         });
     }
     calcularAfinidad(l1, l2) {
@@ -435,38 +384,29 @@ class BOT {
             return afinidad;
         });
     }
-    afinidad(message) {
+    getAfinidadUsuario(userID, serverID) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userID = message.author.id;
-            const serverID = message.guildId;
-            const usuariosRegistrados = yield AniUser_1.AniUser.find({ serverId: serverID });
-            const usuario = usuariosRegistrados.find(u => u.discordId == userID);
-            const aniuser1 = yield this.usuario((usuario === null || usuario === void 0 ? void 0 : usuario.anilistUsername) || "");
-            const userList1 = yield (0, BuscarListaUsuario_1.BuscarListaUsuario)(this, aniuser1 === null || aniuser1 === void 0 ? void 0 : aniuser1.getNombre());
-            const user1AnimeList = userList1.animeList.lists[0].entries;
-            let afinidades = [];
-            let i = 0;
-            while (i < usuariosRegistrados.length) {
-                if (usuariosRegistrados[i].anilistUsername == (usuario === null || usuario === void 0 ? void 0 : usuario.anilistUsername)) {
-                    i++;
-                    continue;
-                }
-                const aniuser2 = yield this.usuario(usuariosRegistrados[i].anilistUsername || "");
-                const userList2 = yield (0, BuscarListaUsuario_1.BuscarListaUsuario)(this, aniuser2 === null || aniuser2 === void 0 ? void 0 : aniuser2.getNombre());
-                const user2AnimeList = userList2.animeList.lists[0].entries;
-                const resultado = yield this.calcularAfinidad(user1AnimeList, user2AnimeList);
-                afinidades.push({ username: aniuser2 === null || aniuser2 === void 0 ? void 0 : aniuser2.getNombre(), afinidad: resultado });
-                i++;
+            return yield (0, GetAfinidadUsuario_1.GetAfinidadUsuario)(this, userID, serverID);
+        });
+    }
+    ordenarAfinidades(afinidades) {
+        return afinidades.sort((a, b) => {
+            if (a.afinidad < b.afinidad) {
+                return 1;
             }
-            afinidades = afinidades.sort((a, b) => {
-                if (a.afinidad < b.afinidad) {
-                    return 1;
-                }
-                if (a.afinidad > b.afinidad) {
-                    return -1;
-                }
-                return 0;
-            });
+            if (a.afinidad > b.afinidad) {
+                return -1;
+            }
+            return 0;
+        });
+    }
+    afinidad(message) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            const uRegistrados = yield AniUser_1.AniUser.find({ serverId: (_a = message.guild) === null || _a === void 0 ? void 0 : _a.id });
+            const usuario = uRegistrados.find(u => u.discordId == message.author.id);
+            const aniuser1 = yield this.usuario((usuario === null || usuario === void 0 ? void 0 : usuario.anilistUsername) || "");
+            let afinidades = this.ordenarAfinidades(yield this.getAfinidadUsuario(aniuser1, uRegistrados));
             let textoAfinidad = "";
             for (let i = 0; i < afinidades.length && i < 10; i++) {
                 textoAfinidad += `▹ ${afinidades[i].username} - **${afinidades[i].afinidad}%**\n`;

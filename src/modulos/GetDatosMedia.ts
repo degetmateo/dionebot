@@ -1,6 +1,6 @@
 import { BOT } from "../objects/Bot";
 
-async function CargarMedia(bot: BOT, tipo: string, args: string): Promise<any> {
+async function GetDatosMedia(bot: BOT, tipo: string, args: string): Promise<any> {
     const variables = {
         id: parseInt(args),
         type: tipo.toUpperCase()
@@ -44,4 +44,4 @@ const queryID = `
     }
 `;
 
-export { CargarMedia };
+export { GetDatosMedia };

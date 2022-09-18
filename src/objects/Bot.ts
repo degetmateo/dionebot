@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import * as toHex from "colornames";
-import { Client, ClientEvents, Message, EmbedBuilder, ColorResolvable, GuildMember, Embed } from "discord.js";
+import { Client, ClientEvents, Message, EmbedBuilder, ColorResolvable } from "discord.js";
 import { Obra } from "./Obra";
 import { Usuario } from "./Usuario";
 import { DB } from "./Database";
@@ -10,9 +10,13 @@ import { Mensaje } from "./Mensaje";
 
 import { BuscarUsuario } from "../modulos/BuscarUsuario";
 import { BuscarMediaNombre } from "../modulos/BuscarMediaNombre";
-import { CargarMedia } from "../modulos/CargarMedia";
+import { GetDatosMedia } from "../modulos/GetDatosMedia";
 import { BuscarMediaUsuario } from "../modulos/BuscarMediaUsuario";
 import { BuscarListaUsuario } from "../modulos/BuscarListaUsuario";
+import { GetUsuariosMedia } from "../modulos/GetUsuariosMedia";
+import { SetupUsuario } from "../modulos/SetupUsuario";
+import { UnsetupUsuario } from "../modulos/UnsetupUsuario";
+import { GetAfinidadUsuario } from "../modulos/GetAfinidadUsuario";
 
 class BOT {
     private client: Client;
@@ -44,7 +48,8 @@ class BOT {
                     message.react("✅");
                 }
 
-                this.enviarInfoMedia(message, anime);
+                const embedInformacion = await this.EmbedInformacionMedia(message, anime);
+                this.enviarEmbed(message, embedInformacion);
             }
         
             if (comando == "!manga") {
@@ -56,7 +61,8 @@ class BOT {
                     message.react("✅");
                 }
 
-                this.enviarInfoMedia(message, manga);
+                const embedInformacion = await this.EmbedInformacionMedia(message, manga);
+                this.enviarEmbed(message, embedInformacion);
             }
         
             if (comando == "!user") {
@@ -74,7 +80,8 @@ class BOT {
                     message.react("✅");
                 }
         
-                this.enviarInfoUser(message, usuario);
+                const embedInformacion = await this.EmbedInformacionUsuario(usuario);
+                this.enviarEmbed(message, embedInformacion);
             }
         
             if (comando == "!setup") {
@@ -134,33 +141,31 @@ class BOT {
         this.client.login(process.env.TOKEN);
     }
 
-    public on(event: keyof ClientEvents, func: any) {
+    private on(event: keyof ClientEvents, func: any) {
         this.client.on(event, func);
     }
 
-    public responder(message: Message, text: string) {
+    private responder(message: Message, text: string) {
         message.reply(text);
     }
 
-    public enviar(message: Message, text: string) {
+    private  enviar(message: Message, text: string) {
         message.channel.send(text);
     }
 
-    public enviarEmbed(message: Message, embed: EmbedBuilder) {
+    private enviarEmbed(message: Message, embed: EmbedBuilder) {
         message.channel.send({ embeds: [embed] });
     }
 
-    public async enviarInfoMedia(message: Message, obra: Obra) {
+    private async EmbedInformacionMedia(message: Message, obra: Obra): Promise<EmbedBuilder> {
+        const titulos = obra.getTitulos();
+
         const EmbedInformacion = new EmbedBuilder()
-            .setTitle(obra.getTitulos().native)
+            .setTitle(titulos.romaji == null ? titulos.native : titulos.romaji)
             .setURL(obra.getURL())
-            // .setAuthor({ name: 'Some name', iconURL: 'https://i.imgur.com/AfFp7pu.png', url: 'https://discord.js.org' })
             .setDescription(obra.getDescripcion())
             .setThumbnail(obra.getCoverImageURL())
-            // .addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
-            // .setImage('https://i.imgur.com/AfFp7pu.png')
-            // .setTimestamp()
-            .setFooter({ text: obra.getTitulos().romaji + " | " + obra.getTitulos().english });
+            .setFooter({ text: obra.getTitulos().native + " | " + obra.getTitulos().english });
 
         if (obra.getTipo() == "ANIME") {
             const infoTEXT_1 = `
@@ -176,15 +181,6 @@ class BOT {
                 .addFields(
                     { name: "▽", value: infoTEXT_1, inline: true },
                     { name: "▽", value: infoTEXT_2, inline: true }
-                    // { name: "Tipo", value: obra.getTipo(), inline: true },
-                    // { name: "Formato", value: obra.getFormato(), inline: true },
-                    // { name: "Estado", value: obra.getEstado(), inline: true },
-                    // { name: "Calificación", value: obra.getPromedio() + "/100", inline: true },
-                    // { name: "Popularidad", value: obra.getPopularidad(), inline: true },
-                    // { name: "Favoritos", value: obra.getFavoritos(), inline: true },
-                    // { name: "Temporada", value: obra.getTemporada(), inline: true },
-                    // { name: "Episodios", value: obra.getEpisodios(), inline: true },
-                    // { name: "Duracion", value: obra.getDuracion(), inline: true }
                 )
         } else {
             const infoTEXT_1 = `
@@ -200,15 +196,6 @@ class BOT {
                 .addFields(
                     { name: "▽", value: infoTEXT_1, inline: true },
                     { name: "▽", value: infoTEXT_2, inline: true }
-                    // { name: "Tipo", value: obra.getTipo(), inline: true },
-                    // { name: "Formato", value: obra.getFormato(), inline: true },
-                    // { name: "Estado", value: obra.getEstado(), inline: true },
-                    // { name: "Calificación", value: obra.getPromedio() + "/100", inline: true },
-                    // { name: "Popularidad", value: obra.getPopularidad(), inline: true },
-                    // { name: "Favoritos", value: obra.getFavoritos(), inline: true },
-                    // { name: "Temporada", value: obra.getTemporada(), inline: true },
-                    // { name: "Capítulos", value: obra.getCapitulos(), inline: true },
-                    // { name: "Volúmenes", value: obra.getVolumenes(), inline: true }
                 )
         }
 
@@ -226,67 +213,38 @@ class BOT {
 
         EmbedInformacion
             .addFields(
-                { name: "Géneros", value: generosInfo, inline: false }
-            )
+                { name: "▿ Géneros", value: generosInfo, inline: false }
+            );
 
-        const users = await DB.buscar(message.guild?.id.toString());
-        const usuariosObra: any[] = [];
 
-        if (users.length > 0) {
-            for (let i = 0; i < users.length; i++) {
-                const userListInfo = await BuscarMediaUsuario(this, users[i].anilistId, obra.getID());
+        const uMedia = await this.getUsuariosMedia(message.guild?.id, obra);
 
-                if (userListInfo != null) {
-                    userListInfo.username = users[i].anilistUsername;
-                    userListInfo.discordId = users[i].discordId;
-                    usuariosObra.push(userListInfo);
-                }
-            }
-
-            const usuariosMapeados = [];
-
-            for (let i = 0; i < usuariosObra.length; i++) {
-                // const discordUser = message.guild?.members.cache.find(m => m.id == usuariosObra[i].discordId);
-
-                if (parseFloat(usuariosObra[i].score.toString()) <= 10) {
-                    usuariosObra[i].score = parseFloat((usuariosObra[i].score * 10).toString());
-                }
-
-                const u = {
-                    name: usuariosObra[i].username,
-                    status: usuariosObra[i].status,
-                    progress: usuariosObra[i].progress,
-                    score: parseFloat(usuariosObra[i].score.toString())
-                }
-
-                usuariosMapeados.push(u);
-            }
-
+        if (uMedia.length > 0) {
             let completedTEXT = "";
             let inProgressTEXT = "";
             let droppedTEXT = "";
             let pausedListTEXT = "";
             let planningTEXT = "";
 
-            for (let i = 0; i < usuariosMapeados.length; i++) {
-                if (usuariosMapeados[i].status == "COMPLETED") {
-                    completedTEXT += `${usuariosMapeados[i].name} **[${usuariosMapeados[i].score}]** - `;
+            for (let i = 0; i < uMedia.length; i++) {
+                if (uMedia[i].status == "COMPLETED") {
+                    completedTEXT += `${uMedia[i].name} **[${uMedia[i].score}]** - `;
                 }
 
-                if (usuariosMapeados[i].status == "DROPPED") {
-                    droppedTEXT += `${usuariosMapeados[i].name} **(${usuariosMapeados[i].progress})** **[${usuariosMapeados[i].score}]** - `;
+                if (uMedia[i].status == "DROPPED") {
+                    droppedTEXT += `${uMedia[i].name} **(${uMedia[i].progress})** **[${uMedia[i].score}]** - `;
                 }
 
-                if (usuariosMapeados[i].status == "CURRENT") {
-                    inProgressTEXT += `${usuariosMapeados[i].name} **(${usuariosMapeados[i].progress})** **[${usuariosMapeados[i].score}]** - `;
+                if (uMedia[i].status == "CURRENT") {
+                    inProgressTEXT += `${uMedia[i].name} **(${uMedia[i].progress})** **[${uMedia[i].score}]** - `;
                 }
 
-                if (usuariosMapeados[i].status == "PAUSED") {
-                    pausedListTEXT += `${usuariosMapeados[i].name} **[${usuariosMapeados[i].score}]** - `;
+                if (uMedia[i].status == "PAUSED") {
+                    pausedListTEXT += `${uMedia[i].name} **[${uMedia[i].score}]** - `;
                 }
 
-                if (usuariosMapeados[i].status == "PLANNING") {
-                    planningTEXT += `${usuariosMapeados[i].name} - `;
+                if (uMedia[i].status == "PLANNING") {
+                    planningTEXT += `${uMedia[i].name} - `;
                 }
             }
 
@@ -332,34 +290,38 @@ class BOT {
 
             EmbedInformacion
                 .addFields(
-                    { name: "Terminados", value: completedTEXT, inline: false },
-                    { name: "Dropeados", value: droppedTEXT, inline: false },
-                    { name: "En Pausa", value: pausedListTEXT, inline: false },
-                    { name: "En Progreso", value: inProgressTEXT, inline: false },
-                    { name: "Planeados", value: planningTEXT, inline: false }
+                    { name: "▿ Completado por", value: completedTEXT, inline: false },
+                    { name: "▿ Dropeado por", value: droppedTEXT, inline: false },
+                    { name: "▿ Pausado por", value: pausedListTEXT, inline: false },
+                    { name: "▿ Iniciado por", value: inProgressTEXT, inline: false },
+                    { name: "▿ Planeado por", value: planningTEXT, inline: false }
                 )
         }
 
-        this.enviarEmbed(message, EmbedInformacion);
+        return EmbedInformacion;
     }
 
-    public async anime(args: string) {
-        return await this.BuscarMedia("ANIME", args);
+    private async anime(args: string) {
+        return await this.buscarMedia("ANIME", args);
     }
 
-    public async manga(args: string) {
-        return await this.BuscarMedia("MANGA", args);
+    private async manga(args: string) {
+        return await this.buscarMedia("MANGA", args);
     }
 
-    private async BuscarMedia(tipo: string, args: string) {
+    private async buscarMedia(tipo: string, args: string) {
         if (isNaN(parseInt(args))) {
             const mediaID = await BuscarMediaNombre(this, tipo, args);
-            const media = await CargarMedia(this, tipo, mediaID);
+            const media = await GetDatosMedia(this, tipo, mediaID);
             return new Obra(media);
         } else {
-            const media = await CargarMedia(this, tipo, args);
+            const media = await GetDatosMedia(this, tipo, args);
             return new Obra(media);
         }
+    }
+
+    private async getUsuariosMedia(serverID: any, media: Obra) {
+        return await GetUsuariosMedia(this, serverID, media);
     }
 
     public async request(query: string, variables: any): Promise<any> {
@@ -384,24 +346,32 @@ class BOT {
         return response.data;
     }
 
+    public async buscarMediaUsuario(userID: string | undefined, mediaID: string) {
+        return await BuscarMediaUsuario(this, userID, mediaID);
+    }
+
+    public async buscarListaUsuario(username: string) {
+        return await BuscarListaUsuario(this, username);
+    }
+
     public async usuario(args: string): Promise<any> {
         const user = await BuscarUsuario(this, args);
         return user == null ? null : new Usuario(user);
     }
 
-    public async enviarInfoUser(message: Message, user: any) {
-        const hexColor = toHex.get(user.getColorName()).value;
+    private async EmbedInformacionUsuario(usuario: any) {
+        const hexColor = toHex.get(usuario.getColorName()).value;
         const color = "0x" + hexColor;
 
-        const stats = user.getEstadisticas();
+        const stats = usuario.getEstadisticas();
 
         const EmbedInformacion = new EmbedBuilder()
-            .setTitle(user.getNombre())
-            .setURL(user.getURL())
+            .setTitle(usuario.getNombre())
+            .setURL(usuario.getURL())
             .setColor(color as ColorResolvable)
-            .setThumbnail(user.getAvatarURL())
-            .setImage(user.getBannerImage())
-            .setDescription(user.getBio())
+            .setThumbnail(usuario.getAvatarURL())
+            .setImage(usuario.getBannerImage())
+            .setDescription(usuario.getBio())
             .addFields(
                 { 
                     name: "Animes",
@@ -415,47 +385,18 @@ class BOT {
                 },
             )
 
-        this.enviarEmbed(message, EmbedInformacion);
+        return EmbedInformacion;
     }
 
-    public async setup(username: string, message: Message): Promise<boolean> {
-        const usuario = await this.usuario(username);
-        
-        if (!usuario) return false;
-
-        let svUsers = await AniUser.find({ serverId: message.guildId });
-        let dbUser = svUsers.find(u => u.discordId == message.author.id);
-
-        if (dbUser != null && dbUser != undefined) return false;
-
-        const aniuser = new AniUser();
-        aniuser.anilistUsername = usuario.getNombre();
-        aniuser.anilistId = usuario.getID();
-        aniuser.discordId = message.author.id;
-        aniuser.serverId = message.guild?.id;
-
-        aniuser.save((err) => {
-            console.error(err);
-            return false;
-        });
-
-        return true;
+    private async setup(username: string, message: Message): Promise<boolean> {
+        return await SetupUsuario(this, username, message);
     }
 
-    public async unsetup(message: Message): Promise<boolean> {
-        const svUsers = await AniUser.find({ serverId: message.guildId });
-        const result = svUsers.find(u => u.discordId == message.author.id);
-
-        try {
-            result?.delete();
-            return true;
-        } catch (err) {
-            console.error(err);
-            return false;
-        }
+    private async unsetup(message: Message): Promise<boolean> {
+        return await UnsetupUsuario(this, message);
     }
 
-    private async calcularAfinidad(l1: Array<{ mediaId: number, score: number }>, l2: Array<{ mediaId: number, score: number }>) {
+    public async calcularAfinidad(l1: Array<{ mediaId: number, score: number }>, l2: Array<{ mediaId: number, score: number }>) {
         let afinidad = 0;
 
         const cantidadAnimes = l1.length;
@@ -475,38 +416,12 @@ class BOT {
         return afinidad;
     }
 
-    public async afinidad(message: Message): Promise<boolean> {
-        const userID = message.author.id;
-        const serverID = message.guildId;
+    private async getAfinidadUsuario(userID: string, serverID: string | any): Promise<Array<any>> {
+        return await GetAfinidadUsuario(this, userID, serverID);
+    }
 
-        const usuariosRegistrados = await AniUser.find({ serverId: serverID });
-        const usuario = usuariosRegistrados.find(u => u.discordId == userID);
-
-        const aniuser1 = await this.usuario(usuario?.anilistUsername || "");
-        const userList1 = await BuscarListaUsuario(this, aniuser1?.getNombre());
-        const user1AnimeList = userList1.animeList.lists[0].entries;
-
-        let afinidades = [];
-
-        let i = 0;
-        while (i < usuariosRegistrados.length) {
-            if (usuariosRegistrados[i].anilistUsername == usuario?.anilistUsername) {
-                i++;
-                continue;
-            }
-
-            const aniuser2 = await this.usuario(usuariosRegistrados[i].anilistUsername || "");
-            const userList2 = await BuscarListaUsuario(this, aniuser2?.getNombre());
-            const user2AnimeList = userList2.animeList.lists[0].entries;
-
-            const resultado = await this.calcularAfinidad(user1AnimeList, user2AnimeList);
-
-            afinidades.push({ username: aniuser2?.getNombre(), afinidad: resultado });
-
-            i++;
-        }
-
-        afinidades = afinidades.sort((a, b) => {
+    private ordenarAfinidades(afinidades: Array<any>): Array<any> {
+        return afinidades.sort((a, b) => {
             if (a.afinidad < b.afinidad) {
                 return 1;
             }
@@ -517,6 +432,14 @@ class BOT {
 
             return 0;
         });
+    }
+
+    private async afinidad(message: Message): Promise<boolean> {
+        const uRegistrados = await AniUser.find({ serverId: message.guild?.id });
+        const usuario = uRegistrados.find(u => u.discordId == message.author.id);
+        const aniuser1 = await this.usuario(usuario?.anilistUsername || "");
+
+        let afinidades = this.ordenarAfinidades(await this.getAfinidadUsuario(aniuser1, uRegistrados));
 
         let textoAfinidad = "";
 

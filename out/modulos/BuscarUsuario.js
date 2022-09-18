@@ -28,7 +28,6 @@ function BuscarUsuario(bot, args) {
                 name: user === null || user === void 0 ? void 0 : user.anilistUsername
             };
             const data = yield bot.request(queryUsername, variables);
-            console.log(data);
             return (data == null || data.User == null) ? null : data.User;
         }
     });

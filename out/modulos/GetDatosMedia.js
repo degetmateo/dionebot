@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CargarMedia = void 0;
-function CargarMedia(bot, tipo, args) {
+exports.GetDatosMedia = void 0;
+function GetDatosMedia(bot, tipo, args) {
     return __awaiter(this, void 0, void 0, function* () {
         const variables = {
             id: parseInt(args),
@@ -20,7 +20,7 @@ function CargarMedia(bot, tipo, args) {
         return (response == null || response.Media == null) ? null : response.Media;
     });
 }
-exports.CargarMedia = CargarMedia;
+exports.GetDatosMedia = GetDatosMedia;
 const queryID = `
     query ($id: Int, $type: MediaType) { # Define which variables will be used in the query (id)
         Media (id: $id, type: $type) { # Insert our variables into the query arguments (id) (type: ANIME is hard-coded in the query)
