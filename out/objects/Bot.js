@@ -710,7 +710,7 @@ class BOT {
             }
             console.log(cantidadAnimes);
             console.log(afinidad);
-            afinidad = parseFloat(((afinidad * 100) / cantidadAnimes).toFixed(1));
+            afinidad = parseFloat(((afinidad * 100) / cantidadAnimes).toFixed(2));
             return afinidad;
         });
     }
@@ -748,7 +748,7 @@ class BOT {
             });
             let textoAfinidad = "";
             for (let i = 0; i < afinidades.length && i < 10; i++) {
-                textoAfinidad += `▻ ${afinidades[i].username} - **${afinidades[i].afinidad}%**\n`;
+                textoAfinidad += `▹ ${afinidades[i].username} - **${afinidades[i].afinidad}%**\n`;
             }
             const hexColor = toHex.get(aniuser1 == null ? "black" : aniuser1.getColorName()).value;
             const color = "0x" + hexColor;
