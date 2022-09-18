@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv").config();
-const db_1 = require("./db");
-const db = new db_1.DB();
+const Database_1 = require("./objects/Database");
+const db = new Database_1.DB();
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 app.set("port", process.env.PORT || 3000);

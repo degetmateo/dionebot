@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-import { DB } from "./db";
+import { DB } from "./objects/Database";
 
 const db = new DB();
 

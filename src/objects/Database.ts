@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { AniUser } from "./models/AniUser";
+import { AniUser } from "../models/AniUser";
 
 class DB {
     public async conectar(url: any) {

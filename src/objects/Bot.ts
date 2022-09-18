@@ -3,10 +3,16 @@ import * as toHex from "colornames";
 import { Client, ClientEvents, Message, EmbedBuilder, ColorResolvable, GuildMember, Embed } from "discord.js";
 import { Obra } from "./Obra";
 import { Usuario } from "./Usuario";
-import { DB } from "../db";
+import { DB } from "./Database";
 import { AniUser } from "../models/AniUser";
 
 import { Mensaje } from "./Mensaje";
+
+import { BuscarUsuario } from "../modulos/BuscarUsuario";
+import { BuscarMediaNombre } from "../modulos/BuscarMediaNombre";
+import { CargarMedia } from "../modulos/CargarMedia";
+import { BuscarMediaUsuario } from "../modulos/BuscarMediaUsuario";
+import { BuscarListaUsuario } from "../modulos/BuscarListaUsuario";
 
 class BOT {
     private client: Client;
@@ -31,24 +37,35 @@ class BOT {
         
             if (comando == "!anime") {
                 const anime = await this.anime(args.join(" "));
-                if (!anime) return;
+
+                if (!anime) {
+                    return message.react("❌");
+                } else {
+                    message.react("✅");
+                }
+
                 this.enviarInfoMedia(message, anime);
             }
         
             if (comando == "!manga") {
                 const manga = await this.manga(args.join(" "));
-                if (!manga) return;
+                
+                if (!manga) {
+                    return message.react("❌");
+                } else {
+                    message.react("✅");
+                }
+
                 this.enviarInfoMedia(message, manga);
             }
         
             if (comando == "!user") {
                 let usuario;
         
-                if (args[0] == "" || !args[0]) {
-                    const userID = message.author.id.toString();
-                    usuario = await this.usuario(userID, "id");
+                if (!args[0] || args[0].length <= 0) {
+                    usuario = await this.usuario(message.author.id);
                 } else {
-                    usuario = await this.usuario(args[0], "username");
+                    usuario = await this.usuario(args[0]);
                 }
                 
                 if (!usuario) {
@@ -217,7 +234,7 @@ class BOT {
 
         if (users.length > 0) {
             for (let i = 0; i < users.length; i++) {
-                const userListInfo = await this.buscarMedia(users[i].anilistId, obra.getID());
+                const userListInfo = await BuscarMediaUsuario(this, users[i].anilistId, obra.getID());
 
                 if (userListInfo != null) {
                     userListInfo.username = users[i].anilistUsername;
@@ -231,7 +248,7 @@ class BOT {
             for (let i = 0; i < usuariosObra.length; i++) {
                 // const discordUser = message.guild?.members.cache.find(m => m.id == usuariosObra[i].discordId);
 
-                if (parseFloat(usuariosObra[i].score.toString()) <= 10) {
+                if (parseFloat(usuariosObra[i].score.toString()) < 10) {
                     usuariosObra[i].score = parseFloat((usuariosObra[i].score * 10).toString());
                 }
 
@@ -323,173 +340,34 @@ class BOT {
                 )
         }
 
-        console.log(usuariosObra);
         this.enviarEmbed(message, EmbedInformacion);
     }
 
-    private async buscarMedia(userID: any, mediaID: any) {
-        const id = parseInt(userID);
-        const mediaId = parseInt(mediaID);
-        const query = `
-            query ($id: Int, $mediaId: Int) {
-                MediaList(userId: $id, mediaId: $mediaId) {
-                    id
-                    mediaId
-                    status
-                    score
-                    progress
-                }
-            }`;
-
-        const variables = {
-            id: id,
-            mediaId: mediaId
-        };
-
-        const url = 'https://graphql.anilist.co';
-
-        const opciones = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                query: query,
-                variables: variables
-            })
-        };
-
-        const response = await fetch(url, opciones);
-        const req = await response.json();
-
-        console.log("LISTA LISTA LISTA")
-        console.log(id);
-        if (!req.data) return null;
-        console.log(req.data);
-        return req.data.MediaList;
+    public async anime(args: string) {
+        return await this.BuscarMedia("ANIME", args);
     }
 
-    private async buscarLista(username: string | undefined) {
-        const query = `
-            query ($username: String) {
-                animeList: MediaListCollection(userName: $username, type: ANIME) {
-                    user {
-                        name
-                        avatar {
-                            large
-                        }
-                        options {
-                            profileColor
-                        }
-                        siteUrl
-                    }
-                    lists {
-                        entries {
-                            mediaId,
-                            score(format: POINT_100)
-                        }
-                    }
-                }
-                mangaList: MediaListCollection(userName: $username, type: MANGA) {
-                    lists {
-                        entries {
-                            mediaId,
-                            score(format: POINT_100)
-                        }
-                    }
-                }
-            }`;
+    public async manga(args: string) {
+        return await this.BuscarMedia("MANGA", args);
+    }
 
-        const variables = {
-            username: username
+    private async BuscarMedia(tipo: string, args: string) {
+        if (isNaN(parseInt(args))) {
+            const mediaID = await BuscarMediaNombre(this, tipo, args);
+            const media = await CargarMedia(this, tipo, mediaID);
+            return new Obra(media);
+        } else {
+            const media = await CargarMedia(this, tipo, args);
+            return new Obra(media);
         }
+    }
 
+    public async request(query: string, variables: any): Promise<any> {
         const url = 'https://graphql.anilist.co';
-
+    
         const opciones = {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                query: query,
-                variables: variables
-            })
-        };
-
-        const response = await fetch(url, opciones);
-        const req = await response.json();
-
-        return req;
-    }
-
-    public async anime(name: String) {
-        return await this.buscar("ANIME", name);
-    }
-
-    public async manga(name: String) {
-        return await this.buscar("MANGA", name);
-    }
-
-    private async buscar(tipo: String, nombre: String) {
-        const query = `
-        query ($page: Int, $perPage: Int, $search: String, $type: MediaType) {
-            Page (page: $page, perPage: $perPage) {
-                pageInfo {
-                    total
-                    currentPage
-                    lastPage
-                    hasNextPage
-                    perPage
-                }
-                media (search: $search, type: $type) {
-                    id
-                    idMal
-                    title {
-                        english
-                        romaji
-                        native
-                    }
-                    type
-                    format
-                    status
-                    description
-                    season
-                    seasonYear
-                    episodes
-                    duration
-                    chapters
-                    volumes
-                    coverImage {
-                        extraLarge
-                    }
-                    genres
-                    synonyms
-                    meanScore
-                    popularity
-                    favourites
-                    siteUrl
-                }
-            }
-        }
-        `;
-
-        // Define our query variables and values that will be used in the query request
-        const variables = {
-            search: nombre,
-            type: tipo.toUpperCase(),
-            page: 1,
-            perPage: 1
-        };
-
-        // Define the config we'll need for our Api request
-        const url = 'https://graphql.anilist.co';
-
-        const opciones = {
-            method: 'POST',
-
+            
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
@@ -498,286 +376,17 @@ class BOT {
             body: JSON.stringify({ query, variables })
         };
 
-        const response = await fetch(url, opciones);
-        const meta = await response.json();
+        const data = await fetch(url, opciones);
+        const response = await data.json();
 
-        return await this.cargar(tipo, meta.data.Page.media[0].id);
+        if (!response || !response.data) return null;
+
+        return response.data;
     }
 
-    private async cargar(tipo: String, id: String): Promise<Obra | null> {
-        if (!id) return null;
-
-        const query = `
-            query ($id: Int) { # Define which variables will be used in the query (id)
-                Media (id: $id, type: ${tipo}) { # Insert our variables into the query arguments (id) (type: ANIME is hard-coded in the query)
-                    id
-                    idMal
-                    title {
-                        english
-                        romaji
-                        native
-                    }
-                    type
-                    format
-                    status
-                    description
-                    season
-                    seasonYear
-                    episodes
-                    duration
-                    chapters
-                    volumes
-                    coverImage {
-                        extraLarge
-                    }
-                    genres
-                    synonyms
-                    meanScore
-                    popularity
-                    favourites
-                    siteUrl
-                }
-            }
-        `;
-        
-        // Define our query variables and values that will be used in the query request
-        const variables = {
-            id: id
-        };
-        
-        // Define the config we'll need for our Api request
-        const url = 'https://graphql.anilist.co';
-
-        const opciones = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                query: query,
-                variables: variables
-            })
-        };
-
-        const response = await fetch(url, opciones);
-        const req = await response.json();
-
-        console.log(req.data.Media);
-
-        if (!req.data.Media) return null;
-
-        return new Obra(req.data.Media);
-    }
-
-    public async usuario(criterio: any, tipo: string) {
-        if (tipo == "username") {
-            const query = `
-            query ($name: String) {
-                User(name: $name) {
-                    name
-                    id
-                    about
-                    avatar {
-                        large
-                        medium
-                    }
-                    bannerImage
-                    options {
-                        profileColor
-                    }
-                    statistics {
-                        anime {
-                            count
-                            meanScore
-                            standardDeviation
-                            minutesWatched
-                            episodesWatched
-                            formats {
-                                count
-                                format
-                            }
-                            statuses {
-                                count
-                                status
-                            }
-                            releaseYears {
-                                count
-                                releaseYear
-                            }
-                            startYears {
-                                count
-                                startYear
-                            }
-                            genres {
-                                count
-                                genre
-                                meanScore
-                                minutesWatched
-                            }
-                        }
-                        manga {
-                            count
-                            meanScore
-                            standardDeviation
-                            chaptersRead
-                            volumesRead
-                            statuses {
-                                count
-                                status
-                            }
-                            releaseYears {
-                                count
-                                releaseYear
-                            }
-                            startYears {
-                                count
-                                startYear
-                            }
-                            genres {
-                                count
-                                genre
-                                meanScore
-                                chaptersRead
-                            }
-                        }
-                    }
-                    siteUrl
-                    updatedAt
-                }
-            }`;
-    
-            const variables = {
-                name: criterio
-            };
-    
-    
-            const url = 'https://graphql.anilist.co';
-    
-            const opciones = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                    query: query,
-                    variables: variables
-                })
-            };
-    
-            const response = await fetch(url, opciones);
-            const req = await response.json();
-    
-            if (!req.data.User) return null;
-    
-            return new Usuario(req.data.User);
-        } else {
-            const u = await AniUser.findOne({ discordId: criterio });
-
-            if (u == null || u == undefined) return null;
-
-            const query = `
-            query ($name: String) {
-                User(name: $name) {
-                    name
-                    id
-                    about
-                    avatar {
-                        large
-                        medium
-                    }
-                    bannerImage
-                    options {
-                        profileColor
-                    }
-                    statistics {
-                        anime {
-                            count
-                            meanScore
-                            standardDeviation
-                            minutesWatched
-                            episodesWatched
-                            formats {
-                                count
-                                format
-                            }
-                            statuses {
-                                count
-                                status
-                            }
-                            releaseYears {
-                                count
-                                releaseYear
-                            }
-                            startYears {
-                                count
-                                startYear
-                            }
-                            genres {
-                                count
-                                genre
-                                meanScore
-                                minutesWatched
-                            }
-                        }
-                        manga {
-                            count
-                            meanScore
-                            standardDeviation
-                            chaptersRead
-                            volumesRead
-                            statuses {
-                                count
-                                status
-                            }
-                            releaseYears {
-                                count
-                                releaseYear
-                            }
-                            startYears {
-                                count
-                                startYear
-                            }
-                            genres {
-                                count
-                                genre
-                                meanScore
-                                chaptersRead
-                            }
-                        }
-                    }
-                    siteUrl
-                    updatedAt
-                }
-            }`;
-    
-            const variables = {
-                name: u.anilistUsername
-            };
-    
-    
-            const url = 'https://graphql.anilist.co';
-    
-            const opciones = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                    query: query,
-                    variables: variables
-                })
-            };
-    
-            const response = await fetch(url, opciones);
-            const req = await response.json();
-    
-            if (!req.data.User) return null;
-    
-            return new Usuario(req.data.User);
-        }
+    public async usuario(args: string): Promise<any> {
+        const user = await BuscarUsuario(this, args);
+        return user == null ? null : new Usuario(user);
     }
 
     public async enviarInfoUser(message: Message, user: any) {
@@ -810,7 +419,7 @@ class BOT {
     }
 
     public async setup(username: string, message: Message): Promise<boolean> {
-        const usuario = await this.usuario(username, "username");
+        const usuario = await this.usuario(username);
         
         if (!usuario) return false;
 
@@ -861,9 +470,6 @@ class BOT {
             if (sharedMedia.score == l1MediaScore) afinidad++;
         }
 
-        console.log(cantidadAnimes)
-        console.log(afinidad)
-
         afinidad = parseFloat(((afinidad * 100) / cantidadAnimes).toFixed(2));
 
         return afinidad;
@@ -876,9 +482,9 @@ class BOT {
         const usuariosRegistrados = await AniUser.find({ serverId: serverID });
         const usuario = usuariosRegistrados.find(u => u.discordId == userID);
 
-        const aniuser1 = await this.usuario(usuario?.anilistUsername, "username");
-        const userList1 = await this.buscarLista(aniuser1?.getNombre());
-        const user1AnimeList = userList1.data.animeList.lists[0].entries;
+        const aniuser1 = await this.usuario(usuario?.anilistUsername || "");
+        const userList1 = await BuscarListaUsuario(this, aniuser1?.getNombre());
+        const user1AnimeList = userList1.animeList.lists[0].entries;
 
         let afinidades = [];
 
@@ -889,9 +495,9 @@ class BOT {
                 continue;
             }
 
-            const aniuser2 = await this.usuario(usuariosRegistrados[i].anilistUsername, "username");
-            const userList2 = await this.buscarLista(aniuser2?.getNombre());
-            const user2AnimeList = userList2.data.animeList.lists[0].entries;
+            const aniuser2 = await this.usuario(usuariosRegistrados[i].anilistUsername || "");
+            const userList2 = await BuscarListaUsuario(this, aniuser2?.getNombre());
+            const user2AnimeList = userList2.animeList.lists[0].entries;
 
             const resultado = await this.calcularAfinidad(user1AnimeList, user2AnimeList);
 
