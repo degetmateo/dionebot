@@ -73,7 +73,7 @@ class BOT {
             }
             if (comando == "!user") {
                 let usuario;
-                if (args[0].trim() == "" || !args[0]) {
+                if (args[0] == "" || !args[0]) {
                     const userID = message.author.id.toString();
                     usuario = yield this.usuario(userID, "id");
                 }
@@ -212,6 +212,8 @@ class BOT {
                 generosInfo += "`" + generos[i] + "` - ";
             }
             generosInfo = generosInfo.substring(0, generosInfo.length - 3);
+            if (!generosInfo || generosInfo.length < 0)
+                generosInfo = "`Desconocidos`";
             EmbedInformacion
                 .addFields({ name: "Géneros", value: generosInfo, inline: false });
             const users = yield db_1.DB.buscar((_a = message.guild) === null || _a === void 0 ? void 0 : _a.id.toString());

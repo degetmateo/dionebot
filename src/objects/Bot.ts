@@ -44,7 +44,7 @@ class BOT {
             if (comando == "!user") {
                 let usuario;
         
-                if (args[0].trim() == "" || !args[0]) {
+                if (args[0] == "" || !args[0]) {
                     const userID = message.author.id.toString();
                     usuario = await this.usuario(userID, "id");
                 } else {
@@ -204,6 +204,8 @@ class BOT {
         }
 
         generosInfo = generosInfo.substring(0, generosInfo.length - 3);
+
+        if (!generosInfo || generosInfo.length < 0) generosInfo = "`Desconocidos`"
 
         EmbedInformacion
             .addFields(
