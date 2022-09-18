@@ -242,7 +242,7 @@ class BOT {
                 const usuariosMapeados = [];
                 for (let i = 0; i < usuariosObra.length; i++) {
                     // const discordUser = message.guild?.members.cache.find(m => m.id == usuariosObra[i].discordId);
-                    if (parseFloat(usuariosObra[i].score.toString()) < 10) {
+                    if (parseFloat(usuariosObra[i].score.toString()) <= 10) {
                         usuariosObra[i].score = parseFloat((usuariosObra[i].score * 10).toString());
                     }
                     const u = {
