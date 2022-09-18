@@ -30,13 +30,13 @@ class BOT {
             };
         
             if (comando == "!anime") {
-                const anime = await this.anime(args[0]);
+                const anime = await this.anime(args.join(" "));
                 if (!anime) return;
                 this.enviarInfoMedia(message, anime);
             }
         
             if (comando == "!manga") {
-                const manga = await this.manga(args[0]);
+                const manga = await this.manga(args.join(" "));
                 if (!manga) return;
                 this.enviarInfoMedia(message, manga);
             }
