@@ -405,6 +405,9 @@ class BOT {
         return __awaiter(this, void 0, void 0, function* () {
             const uRegistrados = yield AniUser_1.AniUser.find({ serverId: (_a = message.guild) === null || _a === void 0 ? void 0 : _a.id });
             const usuario = uRegistrados.find(u => u.discordId == message.author.id);
+            if (!usuario)
+                return false;
+            message.channel.sendTyping();
             const aniuser1 = yield this.usuario((usuario === null || usuario === void 0 ? void 0 : usuario.anilistUsername) || "");
             let afinidades = this.ordenarAfinidades(yield this.getAfinidadUsuario(aniuser1, uRegistrados));
             let textoAfinidad = "";

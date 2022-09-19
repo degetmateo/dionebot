@@ -437,6 +437,11 @@ class BOT {
     private async afinidad(message: Message): Promise<boolean> {
         const uRegistrados = await AniUser.find({ serverId: message.guild?.id });
         const usuario = uRegistrados.find(u => u.discordId == message.author.id);
+
+        if (!usuario) return false;
+
+        message.channel.sendTyping();
+
         const aniuser1 = await this.usuario(usuario?.anilistUsername || "");
 
         let afinidades = this.ordenarAfinidades(await this.getAfinidadUsuario(aniuser1, uRegistrados));
