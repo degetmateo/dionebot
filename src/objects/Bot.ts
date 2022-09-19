@@ -107,10 +107,23 @@ class BOT {
             if (comando == "!afinidad") {
                 let resultado: boolean;
 
+                const serverID = message.guildId == null ? "" : message.guildId;
+
                 if (!args[0]) {
-                    resultado = await this.afinidad(message);
+                    resultado = await this.afinidad(message, message.author.id, serverID);
                 } else {
-                    resultado = false;
+                    if (message.mentions.members?.first()) {
+                        const uMencionado = message.mentions.members.first();
+                        const userID = uMencionado == null ? "" : uMencionado.id;
+
+                        resultado = await this.afinidad(message, userID, serverID);
+                    } else {
+                        const username = args[0];
+                        const user = await AniUser.findOne({ anilistUsername: username });
+                        const userID = user?.discordId == undefined ? "" : user?.discordId;
+
+                        resultado = user == undefined ? false : await this.afinidad(message, userID, serverID);
+                    }
                 }
         
                 if (resultado) {
@@ -312,11 +325,11 @@ class BOT {
     private async buscarMedia(tipo: string, args: string) {
         if (isNaN(parseInt(args))) {
             const mediaID = await BuscarMediaNombre(this, tipo, args);
-            const media = await GetDatosMedia(this, tipo, mediaID);
-            return new Obra(media);
+            const media = mediaID == null ? null : await GetDatosMedia(this, tipo, mediaID);
+            return media == null ? null : new Obra(media);
         } else {
             const media = await GetDatosMedia(this, tipo, args);
-            return new Obra(media);
+            return media == null ? null : new Obra(media);
         }
     }
 
@@ -396,10 +409,9 @@ class BOT {
         return await UnsetupUsuario(this, message);
     }
 
-    public async calcularAfinidad(l1: Array<{ mediaId: number, score: number }>, l2: Array<{ mediaId: number, score: number }>) {
-        let afinidad = 0;
-
-        const cantidadAnimes = l1.length >= l2.length ? l2.length : l1.length;
+    public GetSharedMedia(l1: Array<{ mediaId: number, score: number }>, l2: Array<{ mediaId: number, score: number }>) {
+        const mediaCantidad = l1.length > l2.length ? l2.length : l1.length;
+        let notasCompartidas = 0;
 
         for (let i = 0; i < l1.length; i++) {
             const l1MediaId = l1[i].mediaId;
@@ -408,13 +420,77 @@ class BOT {
             const sharedMedia = l2.find(e => e.mediaId == l1MediaId);
 
             if (!sharedMedia) continue;
-            if (sharedMedia.score == l1MediaScore) afinidad++;
+            if (sharedMedia.score == l1MediaScore) notasCompartidas++;
         }
 
-        afinidad = parseFloat(((afinidad * 100) / cantidadAnimes).toFixed(2));
-
-        return afinidad;
+        return parseFloat(((notasCompartidas * 100) / mediaCantidad).toFixed(2));
     }
+
+    private SumarNumerosLista(lista: Array<number>): number {
+        let suma: number = 0;
+
+        for (let i = 0; i < lista.length; i++) {
+            suma += lista[i];
+        }
+
+        return suma;
+    }
+
+    // public CalcularAfinidad(sharedMedia: Array<{ id: number, scoreA: number, scoreB: number }>): number {
+        // const scoresA: Array<number> = sharedMedia.map(e => e.scoreA);
+        // const scoresB: Array<number> = sharedMedia.map(e => e.scoreB);
+
+        // const promedio = (l: Array<any>) => l.reduce((s: number, a: number) => s + a, 0) / l.length;
+        // const calc = (v: Array<any>, prom: any) => Math.sqrt(v.reduce((s: number, a: number) => (s + a * a), 0) - n * prom * prom);
+
+        // let n = scoresA.length
+
+        // let nn = 0
+        
+        // for (let i = 0; i < n; i++, nn++) {
+        //   if ((!scoresA[i] && scoresA[i] !== 0) || (!scoresB[i] && scoresB[i] !== 0)) {
+        //     nn--
+        //     continue
+        //   }
+
+        //   scoresA[nn] = scoresA[i]
+        //   scoresB[nn] = scoresB[i]
+        // }
+
+        // if (n !== nn) {
+        //     scoresA = scoresA.splice(0, nn)
+        //     scoresB = scoresB.splice(0, nn)
+        //     n = nn
+        // }
+
+        // const prom_x = promedio(scoresA);
+        // const prom_y = promedio(scoresB);
+
+        // return (scoresA
+        //     .map((e, i) => ({ x: e, y: scoresB[i] }))
+        //     .reduce((v, a) => v + a.x * a.y, 0) - n * prom_x * prom_y) / (calc(scoresA, prom_x) * calc(scoresB, prom_y));
+
+
+        // const ma = this.SumarNumerosLista(scoresA) / scoresA.length;
+        // const mb = this.SumarNumerosLista(scoresB) / scoresB.length;
+
+        // const am = scoresA.map(x => x - ma);
+        // const bm = scoresB.map(x => x - ma);
+
+        // const sa = am.map(x => Math.pow(x, 2));
+        // const sb = bm.map(x => Math.pow(x, 2));
+
+        // const zip: Array<{ a: number, b: number }> = [];
+
+        // for (let i = 0; i < am.length; i++) {
+        //     zip.push({ a: am[i], b: bm[i] });
+        // }
+
+        // const numerador = this.SumarNumerosLista(zip.map(x => x.a * x.b));
+        // const denominador = Math.sqrt(this.SumarNumerosLista(sa) * this.SumarNumerosLista(sb));
+
+        // return denominador == 0 ? 0 : numerador / denominador;
+    // }
 
     private async getAfinidadUsuario(userID: string, serverID: string | any): Promise<Array<any>> {
         return await GetAfinidadUsuario(this, userID, serverID);
@@ -434,9 +510,9 @@ class BOT {
         });
     }
 
-    private async afinidad(message: Message): Promise<boolean> {
-        const uRegistrados = await AniUser.find({ serverId: message.guild?.id });
-        const usuario = uRegistrados.find(u => u.discordId == message.author.id);
+    private async afinidad(message: Message, userID: string, serverID: string): Promise<boolean> {
+        const uRegistrados = await AniUser.find({ serverId: serverID });
+        const usuario = uRegistrados.find(u => u.discordId == userID);
 
         if (!usuario) return false;
 

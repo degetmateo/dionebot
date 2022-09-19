@@ -60,6 +60,7 @@ class BOT {
     iniciar() {
         this.on("ready", () => console.log("BOT preparado!"));
         this.on("messageCreate", (message) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const mensaje = new Mensaje_1.Mensaje(message);
             const comando = mensaje.getComando();
             const args = mensaje.getArgumentos();
@@ -126,11 +127,22 @@ class BOT {
             }
             if (comando == "!afinidad") {
                 let resultado;
+                const serverID = message.guildId == null ? "" : message.guildId;
                 if (!args[0]) {
-                    resultado = yield this.afinidad(message);
+                    resultado = yield this.afinidad(message, message.author.id, serverID);
                 }
                 else {
-                    resultado = false;
+                    if ((_a = message.mentions.members) === null || _a === void 0 ? void 0 : _a.first()) {
+                        const uMencionado = message.mentions.members.first();
+                        const userID = uMencionado == null ? "" : uMencionado.id;
+                        resultado = yield this.afinidad(message, userID, serverID);
+                    }
+                    else {
+                        const username = args[0];
+                        const user = yield AniUser_1.AniUser.findOne({ anilistUsername: username });
+                        const userID = (user === null || user === void 0 ? void 0 : user.discordId) == undefined ? "" : user === null || user === void 0 ? void 0 : user.discordId;
+                        resultado = user == undefined ? false : yield this.afinidad(message, userID, serverID);
+                    }
                 }
                 if (resultado) {
                     message.react("✅");
@@ -285,12 +297,12 @@ class BOT {
         return __awaiter(this, void 0, void 0, function* () {
             if (isNaN(parseInt(args))) {
                 const mediaID = yield (0, BuscarMediaNombre_1.BuscarMediaNombre)(this, tipo, args);
-                const media = yield (0, GetDatosMedia_1.GetDatosMedia)(this, tipo, mediaID);
-                return new Obra_1.Obra(media);
+                const media = mediaID == null ? null : yield (0, GetDatosMedia_1.GetDatosMedia)(this, tipo, mediaID);
+                return media == null ? null : new Obra_1.Obra(media);
             }
             else {
                 const media = yield (0, GetDatosMedia_1.GetDatosMedia)(this, tipo, args);
-                return new Obra_1.Obra(media);
+                return media == null ? null : new Obra_1.Obra(media);
             }
         });
     }
@@ -367,23 +379,66 @@ class BOT {
             return yield (0, UnsetupUsuario_1.UnsetupUsuario)(this, message);
         });
     }
-    calcularAfinidad(l1, l2) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let afinidad = 0;
-            const cantidadAnimes = l1.length >= l2.length ? l2.length : l1.length;
-            for (let i = 0; i < l1.length; i++) {
-                const l1MediaId = l1[i].mediaId;
-                const l1MediaScore = l1[i].score;
-                const sharedMedia = l2.find(e => e.mediaId == l1MediaId);
-                if (!sharedMedia)
-                    continue;
-                if (sharedMedia.score == l1MediaScore)
-                    afinidad++;
-            }
-            afinidad = parseFloat(((afinidad * 100) / cantidadAnimes).toFixed(2));
-            return afinidad;
-        });
+    GetSharedMedia(l1, l2) {
+        const mediaCantidad = l1.length > l2.length ? l2.length : l1.length;
+        let notasCompartidas = 0;
+        for (let i = 0; i < l1.length; i++) {
+            const l1MediaId = l1[i].mediaId;
+            const l1MediaScore = l1[i].score;
+            const sharedMedia = l2.find(e => e.mediaId == l1MediaId);
+            if (!sharedMedia)
+                continue;
+            if (sharedMedia.score == l1MediaScore)
+                notasCompartidas++;
+        }
+        return parseFloat(((notasCompartidas * 100) / mediaCantidad).toFixed(2));
     }
+    SumarNumerosLista(lista) {
+        let suma = 0;
+        for (let i = 0; i < lista.length; i++) {
+            suma += lista[i];
+        }
+        return suma;
+    }
+    // public CalcularAfinidad(sharedMedia: Array<{ id: number, scoreA: number, scoreB: number }>): number {
+    // const scoresA: Array<number> = sharedMedia.map(e => e.scoreA);
+    // const scoresB: Array<number> = sharedMedia.map(e => e.scoreB);
+    // const promedio = (l: Array<any>) => l.reduce((s: number, a: number) => s + a, 0) / l.length;
+    // const calc = (v: Array<any>, prom: any) => Math.sqrt(v.reduce((s: number, a: number) => (s + a * a), 0) - n * prom * prom);
+    // let n = scoresA.length
+    // let nn = 0
+    // for (let i = 0; i < n; i++, nn++) {
+    //   if ((!scoresA[i] && scoresA[i] !== 0) || (!scoresB[i] && scoresB[i] !== 0)) {
+    //     nn--
+    //     continue
+    //   }
+    //   scoresA[nn] = scoresA[i]
+    //   scoresB[nn] = scoresB[i]
+    // }
+    // if (n !== nn) {
+    //     scoresA = scoresA.splice(0, nn)
+    //     scoresB = scoresB.splice(0, nn)
+    //     n = nn
+    // }
+    // const prom_x = promedio(scoresA);
+    // const prom_y = promedio(scoresB);
+    // return (scoresA
+    //     .map((e, i) => ({ x: e, y: scoresB[i] }))
+    //     .reduce((v, a) => v + a.x * a.y, 0) - n * prom_x * prom_y) / (calc(scoresA, prom_x) * calc(scoresB, prom_y));
+    // const ma = this.SumarNumerosLista(scoresA) / scoresA.length;
+    // const mb = this.SumarNumerosLista(scoresB) / scoresB.length;
+    // const am = scoresA.map(x => x - ma);
+    // const bm = scoresB.map(x => x - ma);
+    // const sa = am.map(x => Math.pow(x, 2));
+    // const sb = bm.map(x => Math.pow(x, 2));
+    // const zip: Array<{ a: number, b: number }> = [];
+    // for (let i = 0; i < am.length; i++) {
+    //     zip.push({ a: am[i], b: bm[i] });
+    // }
+    // const numerador = this.SumarNumerosLista(zip.map(x => x.a * x.b));
+    // const denominador = Math.sqrt(this.SumarNumerosLista(sa) * this.SumarNumerosLista(sb));
+    // return denominador == 0 ? 0 : numerador / denominador;
+    // }
     getAfinidadUsuario(userID, serverID) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield (0, GetAfinidadUsuario_1.GetAfinidadUsuario)(this, userID, serverID);
@@ -400,11 +455,10 @@ class BOT {
             return 0;
         });
     }
-    afinidad(message) {
-        var _a;
+    afinidad(message, userID, serverID) {
         return __awaiter(this, void 0, void 0, function* () {
-            const uRegistrados = yield AniUser_1.AniUser.find({ serverId: (_a = message.guild) === null || _a === void 0 ? void 0 : _a.id });
-            const usuario = uRegistrados.find(u => u.discordId == message.author.id);
+            const uRegistrados = yield AniUser_1.AniUser.find({ serverId: serverID });
+            const usuario = uRegistrados.find(u => u.discordId == userID);
             if (!usuario)
                 return false;
             message.channel.sendTyping();

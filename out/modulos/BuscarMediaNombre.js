@@ -19,7 +19,8 @@ function BuscarMediaNombre(bot, tipo, args) {
             perPage: 1
         };
         const response = yield bot.request(queryName, variables);
-        return (response == null || response.Page == null || response.Page == null) ? null : response.Page.media[0].id;
+        return (response == null || response.Page == null || response.Page.media == null || response.Page.media[0] == null) ?
+            null : response.Page.media[0].id;
     });
 }
 exports.BuscarMediaNombre = BuscarMediaNombre;

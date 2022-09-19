@@ -17,9 +17,10 @@ async function GetAfinidadUsuario(bot: BOT, aniuser1: any, uRegistrados: Array<a
         const userList2 = await bot.buscarListaUsuario(aniuser2?.getNombre());
         const user2AnimeList = userList2.animeList.lists[0].entries;
 
-        const resultado = await bot.calcularAfinidad(user1AnimeList, user2AnimeList);
+        const sharedMedia = bot.GetSharedMedia(user1AnimeList, user2AnimeList);
+        // const resultado = bot.GetSharedMedia(sharedMedia);
 
-        afinidades.push({ username: aniuser2?.getNombre(), afinidad: resultado });
+        afinidades.push({ username: aniuser2?.getNombre(), afinidad: sharedMedia });
 
         i++;
     }

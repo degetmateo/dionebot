@@ -10,7 +10,8 @@ async function BuscarMediaNombre(bot: BOT, tipo: string, args: string): Promise<
 
     const response = await bot.request(queryName, variables);
 
-    return (response == null || response.Page == null || response.Page == null) ? null : response.Page.media[0].id;
+    return (response == null || response.Page == null || response.Page.media == null || response.Page.media[0] == null) ? 
+        null : response.Page.media[0].id;
 }
 
 const queryName = `

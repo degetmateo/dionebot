@@ -24,8 +24,9 @@ function GetAfinidadUsuario(bot, aniuser1, uRegistrados) {
             const aniuser2 = yield bot.usuario(uRegistrados[i].anilistUsername || "");
             const userList2 = yield bot.buscarListaUsuario(aniuser2 === null || aniuser2 === void 0 ? void 0 : aniuser2.getNombre());
             const user2AnimeList = userList2.animeList.lists[0].entries;
-            const resultado = yield bot.calcularAfinidad(user1AnimeList, user2AnimeList);
-            afinidades.push({ username: aniuser2 === null || aniuser2 === void 0 ? void 0 : aniuser2.getNombre(), afinidad: resultado });
+            const sharedMedia = bot.GetSharedMedia(user1AnimeList, user2AnimeList);
+            // const resultado = bot.GetSharedMedia(sharedMedia);
+            afinidades.push({ username: aniuser2 === null || aniuser2 === void 0 ? void 0 : aniuser2.getNombre(), afinidad: sharedMedia });
             i++;
         }
         return afinidades;
