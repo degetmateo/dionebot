@@ -370,7 +370,7 @@ class BOT {
     calcularAfinidad(l1, l2) {
         return __awaiter(this, void 0, void 0, function* () {
             let afinidad = 0;
-            const cantidadAnimes = l1.length;
+            const cantidadAnimes = l1.length >= l2.length ? l2.length : l1.length;
             for (let i = 0; i < l1.length; i++) {
                 const l1MediaId = l1[i].mediaId;
                 const l1MediaScore = l1[i].score;

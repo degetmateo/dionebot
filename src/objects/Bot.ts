@@ -399,7 +399,7 @@ class BOT {
     public async calcularAfinidad(l1: Array<{ mediaId: number, score: number }>, l2: Array<{ mediaId: number, score: number }>) {
         let afinidad = 0;
 
-        const cantidadAnimes = l1.length;
+        const cantidadAnimes = l1.length >= l2.length ? l2.length : l1.length;
 
         for (let i = 0; i < l1.length; i++) {
             const l1MediaId = l1[i].mediaId;
