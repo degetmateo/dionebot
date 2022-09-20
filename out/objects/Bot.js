@@ -58,116 +58,133 @@ class BOT {
         this.db = db;
     }
     iniciar() {
-        this.on("ready", () => console.log("BOT preparado!"));
-        this.on("messageCreate", (message) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            const mensaje = new Mensaje_1.Mensaje(message);
-            const comando = mensaje.getComando();
-            const args = mensaje.getArgumentos();
-            if (comando === "Hola") {
-                message.reply(`${message.client.emojis.cache.find((e => e.name === "pala"))}`);
-            }
-            ;
-            if (comando == "!anime") {
-                const anime = yield this.anime(args.join(" "));
-                if (!anime) {
-                    return message.react("❌");
+        return __awaiter(this, void 0, void 0, function* () {
+            this.on("ready", () => console.log("BOT preparado!"));
+            // const servidores = await Settings.find();
+            this.on("messageCreate", (message) => __awaiter(this, void 0, void 0, function* () {
+                var _a;
+                if (!message)
+                    return;
+                if (message.author.bot)
+                    return;
+                if (!message.guild)
+                    return;
+                // const svMessage = servidores.find(sv => sv.server_id == message.guild?.id);
+                // if (!svMessage) {
+                //     new Settings({ server_id: message.guild.id, prefix: "!" })
+                //         .save(err => {
+                //             console.error(err);
+                //         });
+                // }
+                // const prefix = svMessage == undefined ? "!" : svMessage.prefix;
+                const mensaje = new Mensaje_1.Mensaje(message);
+                const comando = mensaje.getComando();
+                const args = mensaje.getArgumentos();
+                if (comando === "Hola") {
+                    message.reply(`${message.client.emojis.cache.find((e => e.name === "pala"))}`);
                 }
-                else {
-                    message.react("✅");
-                }
-                const embedInformacion = yield this.EmbedInformacionMedia(message, anime);
-                this.enviarEmbed(message, embedInformacion);
-            }
-            if (comando == "!manga") {
-                const manga = yield this.manga(args.join(" "));
-                if (!manga) {
-                    return message.react("❌");
-                }
-                else {
-                    message.react("✅");
-                }
-                const embedInformacion = yield this.EmbedInformacionMedia(message, manga);
-                this.enviarEmbed(message, embedInformacion);
-            }
-            if (comando == "!user") {
-                let usuario;
-                if (!args[0] || args[0].length <= 0) {
-                    usuario = yield this.usuario(message.author.id);
-                }
-                else {
-                    usuario = yield this.usuario(args[0]);
-                }
-                if (!usuario) {
-                    return message.react("❌");
-                }
-                else {
-                    message.react("✅");
-                }
-                const embedInformacion = yield this.EmbedInformacionUsuario(usuario);
-                this.enviarEmbed(message, embedInformacion);
-            }
-            if (comando == "!setup") {
-                const result = yield this.setup(args[0], message);
-                if (result) {
-                    message.react("✅");
-                }
-                else {
-                    message.react("❌");
-                }
-            }
-            if (comando == "!unsetup") {
-                const result = yield this.unsetup(message);
-                if (result) {
-                    message.react("✅");
-                }
-                else {
-                    message.react("❌");
-                }
-            }
-            if (comando == "!afinidad") {
-                let resultado;
-                const serverID = message.guildId == null ? "" : message.guildId;
-                if (!args[0]) {
-                    resultado = yield this.afinidad(message, message.author.id, serverID);
-                }
-                else {
-                    if ((_a = message.mentions.members) === null || _a === void 0 ? void 0 : _a.first()) {
-                        const uMencionado = message.mentions.members.first();
-                        const userID = uMencionado == null ? "" : uMencionado.id;
-                        resultado = yield this.afinidad(message, userID, serverID);
+                ;
+                if (comando == "!anime") {
+                    const anime = yield this.anime(args.join(" "));
+                    if (!anime) {
+                        return message.react("❌");
                     }
                     else {
-                        const username = args[0];
-                        const user = yield AniUser_1.AniUser.findOne({ anilistUsername: username });
-                        const userID = (user === null || user === void 0 ? void 0 : user.discordId) == undefined ? "" : user === null || user === void 0 ? void 0 : user.discordId;
-                        resultado = user == undefined ? false : yield this.afinidad(message, userID, serverID);
+                        message.react("✅");
+                    }
+                    const embedInformacion = yield this.EmbedInformacionMedia(message, anime);
+                    this.enviarEmbed(message, embedInformacion);
+                }
+                if (comando == "!manga") {
+                    const manga = yield this.manga(args.join(" "));
+                    if (!manga) {
+                        return message.react("❌");
+                    }
+                    else {
+                        message.react("✅");
+                    }
+                    const embedInformacion = yield this.EmbedInformacionMedia(message, manga);
+                    this.enviarEmbed(message, embedInformacion);
+                }
+                if (comando == "!user") {
+                    let usuario;
+                    if (!args[0] || args[0].length <= 0) {
+                        usuario = yield this.usuario(message.author.id);
+                    }
+                    else {
+                        usuario = yield this.usuario(args[0]);
+                    }
+                    if (!usuario) {
+                        return message.react("❌");
+                    }
+                    else {
+                        message.react("✅");
+                    }
+                    const embedInformacion = yield this.EmbedInformacionUsuario(usuario);
+                    this.enviarEmbed(message, embedInformacion);
+                }
+                if (comando == "!setup") {
+                    const result = yield this.setup(args[0], message);
+                    if (result) {
+                        message.react("✅");
+                    }
+                    else {
+                        message.react("❌");
                     }
                 }
-                if (resultado) {
-                    message.react("✅");
+                if (comando == "!unsetup") {
+                    const result = yield this.unsetup(message);
+                    if (result) {
+                        message.react("✅");
+                    }
+                    else {
+                        message.react("❌");
+                    }
                 }
-                else {
-                    message.react("❌");
+                if (comando == "!afinidad") {
+                    let resultado;
+                    const serverID = message.guildId == null ? "" : message.guildId;
+                    if (!args[0]) {
+                        resultado = yield this.afinidad(message, message.author.id, serverID);
+                    }
+                    else {
+                        if ((_a = message.mentions.members) === null || _a === void 0 ? void 0 : _a.first()) {
+                            const uMencionado = message.mentions.members.first();
+                            const userID = uMencionado == null ? "" : uMencionado.id;
+                            resultado = yield this.afinidad(message, userID, serverID);
+                        }
+                        else {
+                            const username = args[0];
+                            const user = yield AniUser_1.AniUser.findOne({ anilistUsername: username });
+                            const userID = (user === null || user === void 0 ? void 0 : user.discordId) == undefined ? "" : user === null || user === void 0 ? void 0 : user.discordId;
+                            resultado = user == undefined ? false : yield this.afinidad(message, userID, serverID);
+                        }
+                    }
+                    if (resultado) {
+                        message.react("✅");
+                    }
+                    else {
+                        message.react("❌");
+                    }
                 }
-            }
-            if (message.content.endsWith("13") || message.content.endsWith("trece")) {
-                this.responder(message, "¿Dijiste 13? Aquí tiene pa' que me la bese, entre más me la beses más me crece, busca un cura pa' que me la rese, y trae un martillo pa' que me la endereces, por el chiquito se te aparece toas las veces y cuando te estreses aquí te tengo éste pa' que te desestreses, con este tallo el jopo se te esflorece, se cumple el ciclo hasta que anochece, to' los días y toas las veces, de tanto entablar la raja del jopo se te desaparece, porque este sable no se compadece, si pides ñapa se te ofrece, y si repites se te agradece, no te hace rico pero tampoco te empobrece, no te hace inteligente pero tampoco te embrutece, y no paro aquí compa que éste nuevamente se endurece, hasta que amanece, cambie esa cara que parece que se entristece, si te haces viejo éste te rejuvenece, no te hago bulla porque depronto te ensordece, y ese cuadro no te favorece, pero tranquilo que éste te abastece, porque allá abajo se te humedece, viendo como el que me cuelga resplandece, si a ti te da miedo a mí me enorgullece, y así toas las vece ¿que te parece?, y tranquilo mijo que aquí éste reaparece, no haga fuerza porque éste se sobrecrece, una fresadora te traigo pa' que me la freses, así se fortalece y de nuevo la historia se establece, que no se te nuble la vista porque éste te la aclarece, y sino le entendiste nuevamente la explicación se te ofrece, pa' que por el chiquito éste de nuevo te empiece... Aquí tienes para que me la beses, entre más me la beses más me crece, busca un cura para que me la rece, un martillo para que me la endereces, un chef para que me la aderece, 8000 mondas por el culo se te aparecen, si me la sobas haces que se me espese, si quieres la escaneas y te la llevas para que en tu hoja de vida la anexes, me culeo a tu maldita madre y qué te parece le meti la monda a tú mamá hace 9 meses y después la puse a escuchar René de Calle 13 Te la meto por debajo del agua como los peces, y aquella flor de monda que en tu culo crece, reposa sobre tus nalgas a veces y una vez más...");
-            }
-            ;
-            if (message.content.endsWith("12") || message.content.endsWith("doce")) {
-                this.responder(message, "las de doce son goood");
-            }
-            ;
-            if (message.content.endsWith("5") || message.content.endsWith("cinco")) {
-                this.responder(message, "por el culo te la hinco");
-            }
-            if (message.content.endsWith("contexto")) {
-                this.responder(message, "Espera dijiste contexto? Te la tragas sin pretexto, así no estés dispuesto, pero tal vez alguna vez te lo has propuesto, y te seré honesto te haré el favor y te lo presto, tan fuerte que tal vez me den arresto, ya no aguantas ni el sexto, así que lo dejamos pospuesto, pero te falta afecto y te lo dejo otra vez puesto, te aplastó en la pared como insecto tan duro que sale polvo de asbesto, llamo al arquitecto Alberto y al modesto Ernesto, y terminas más abierto que portón de asentamiento, ya no tenes más almacenamiento así que necesitas asesoramiento y a tu madre llamamos para darle su afecto así hasta el agotamiento y al siguiente día repetimos y así terminó y te la meto sin pretexto, así no estés dispuesto, pero tal vez alguna vez te lo has propuesto, y te seré honesto te haré el favor y te lo presto, tan fuerte que tal vez me den arresto, ya no aguantas ni el sexto, así que lo dejamos pospuesto, pero te falta afecto y te lo dejo otra vez puesto, te aplastó en la pared como insecto tan duro que sale polvo de asbesto, llamo al arquitecto Alberto y al modesto Ernesto, y terminas más abierto que portón de asentamiento, ya no tenes más almacenamiento así que necesitas asesoramiento y a tu madre llamamos para darle su afecto así hasta el agotamiento y al siguiente día repetimos pero ya estás descompuesto así que para mí continuar sería incorrecto y me voy sin mostrar algún gesto, dispuesto a seguir apenas y ya estés compuesto voy y te doy el impuesto pero no sin antes avisarte que este es el contexto 👍.");
-            }
-        }));
-        this.db.conectar(process.env.DB);
-        this.client.login(process.env.TOKEN);
+                if (message.content.endsWith("13") || message.content.endsWith("trece")) {
+                    this.responder(message, "¿Dijiste 13? Aquí tiene pa' que me la bese, entre más me la beses más me crece, busca un cura pa' que me la rese, y trae un martillo pa' que me la endereces, por el chiquito se te aparece toas las veces y cuando te estreses aquí te tengo éste pa' que te desestreses, con este tallo el jopo se te esflorece, se cumple el ciclo hasta que anochece, to' los días y toas las veces, de tanto entablar la raja del jopo se te desaparece, porque este sable no se compadece, si pides ñapa se te ofrece, y si repites se te agradece, no te hace rico pero tampoco te empobrece, no te hace inteligente pero tampoco te embrutece, y no paro aquí compa que éste nuevamente se endurece, hasta que amanece, cambie esa cara que parece que se entristece, si te haces viejo éste te rejuvenece, no te hago bulla porque depronto te ensordece, y ese cuadro no te favorece, pero tranquilo que éste te abastece, porque allá abajo se te humedece, viendo como el que me cuelga resplandece, si a ti te da miedo a mí me enorgullece, y así toas las vece ¿que te parece?, y tranquilo mijo que aquí éste reaparece, no haga fuerza porque éste se sobrecrece, una fresadora te traigo pa' que me la freses, así se fortalece y de nuevo la historia se establece, que no se te nuble la vista porque éste te la aclarece, y sino le entendiste nuevamente la explicación se te ofrece, pa' que por el chiquito éste de nuevo te empiece... Aquí tienes para que me la beses, entre más me la beses más me crece, busca un cura para que me la rece, un martillo para que me la endereces, un chef para que me la aderece, 8000 mondas por el culo se te aparecen, si me la sobas haces que se me espese, si quieres la escaneas y te la llevas para que en tu hoja de vida la anexes, me culeo a tu maldita madre y qué te parece le meti la monda a tú mamá hace 9 meses y después la puse a escuchar René de Calle 13 Te la meto por debajo del agua como los peces, y aquella flor de monda que en tu culo crece, reposa sobre tus nalgas a veces y una vez más...");
+                }
+                ;
+                if (message.content.endsWith("12") || message.content.endsWith("doce")) {
+                    this.responder(message, "las de doce son goood");
+                }
+                ;
+                if (message.content.endsWith("5") || message.content.endsWith("cinco")) {
+                    this.responder(message, "por el culo te la hinco");
+                }
+                if (message.content.endsWith("contexto")) {
+                    this.responder(message, "Espera dijiste contexto? Te la tragas sin pretexto, así no estés dispuesto, pero tal vez alguna vez te lo has propuesto, y te seré honesto te haré el favor y te lo presto, tan fuerte que tal vez me den arresto, ya no aguantas ni el sexto, así que lo dejamos pospuesto, pero te falta afecto y te lo dejo otra vez puesto, te aplastó en la pared como insecto tan duro que sale polvo de asbesto, llamo al arquitecto Alberto y al modesto Ernesto, y terminas más abierto que portón de asentamiento, ya no tenes más almacenamiento así que necesitas asesoramiento y a tu madre llamamos para darle su afecto así hasta el agotamiento y al siguiente día repetimos y así terminó y te la meto sin pretexto, así no estés dispuesto, pero tal vez alguna vez te lo has propuesto, y te seré honesto te haré el favor y te lo presto, tan fuerte que tal vez me den arresto, ya no aguantas ni el sexto, así que lo dejamos pospuesto, pero te falta afecto y te lo dejo otra vez puesto, te aplastó en la pared como insecto tan duro que sale polvo de asbesto, llamo al arquitecto Alberto y al modesto Ernesto, y terminas más abierto que portón de asentamiento, ya no tenes más almacenamiento así que necesitas asesoramiento y a tu madre llamamos para darle su afecto así hasta el agotamiento y al siguiente día repetimos pero ya estás descompuesto así que para mí continuar sería incorrecto y me voy sin mostrar algún gesto, dispuesto a seguir apenas y ya estés compuesto voy y te doy el impuesto pero no sin antes avisarte que este es el contexto 👍.");
+                }
+            }));
+            this.db.conectar(process.env.DB);
+            this.client.login(process.env.TOKEN);
+        });
     }
     on(event, func) {
         this.client.on(event, func);
@@ -380,65 +397,49 @@ class BOT {
         });
     }
     GetSharedMedia(l1, l2) {
-        const mediaCantidad = l1.length > l2.length ? l2.length : l1.length;
-        let notasCompartidas = 0;
+        const sharedMedia = [];
         for (let i = 0; i < l1.length; i++) {
             const l1MediaId = l1[i].mediaId;
             const l1MediaScore = l1[i].score;
-            const sharedMedia = l2.find(e => e.mediaId == l1MediaId);
-            if (!sharedMedia)
+            if (l1MediaScore == 0)
                 continue;
-            if (sharedMedia.score == l1MediaScore)
-                notasCompartidas++;
+            const l2Media = l2.find(e => e.mediaId == l1MediaId);
+            if (!l2Media || l2Media.score == 0)
+                continue;
+            // if (sharedMedia.score == l1MediaScore) notasCompartidas++;
+            sharedMedia.push({ id: l1MediaId, scoreA: l1MediaScore, scoreB: l2Media.score });
         }
-        return parseFloat(((notasCompartidas * 100) / mediaCantidad).toFixed(2));
+        return sharedMedia;
     }
-    SumarNumerosLista(lista) {
+    /**
+     *
+     * @param lista Arreglo de números
+     * @returns La suma de todos los números del arreglo
+     */
+    SumarLista(lista) {
         let suma = 0;
         for (let i = 0; i < lista.length; i++) {
             suma += lista[i];
         }
         return suma;
     }
-    // public CalcularAfinidad(sharedMedia: Array<{ id: number, scoreA: number, scoreB: number }>): number {
-    // const scoresA: Array<number> = sharedMedia.map(e => e.scoreA);
-    // const scoresB: Array<number> = sharedMedia.map(e => e.scoreB);
-    // const promedio = (l: Array<any>) => l.reduce((s: number, a: number) => s + a, 0) / l.length;
-    // const calc = (v: Array<any>, prom: any) => Math.sqrt(v.reduce((s: number, a: number) => (s + a * a), 0) - n * prom * prom);
-    // let n = scoresA.length
-    // let nn = 0
-    // for (let i = 0; i < n; i++, nn++) {
-    //   if ((!scoresA[i] && scoresA[i] !== 0) || (!scoresB[i] && scoresB[i] !== 0)) {
-    //     nn--
-    //     continue
-    //   }
-    //   scoresA[nn] = scoresA[i]
-    //   scoresB[nn] = scoresB[i]
-    // }
-    // if (n !== nn) {
-    //     scoresA = scoresA.splice(0, nn)
-    //     scoresB = scoresB.splice(0, nn)
-    //     n = nn
-    // }
-    // const prom_x = promedio(scoresA);
-    // const prom_y = promedio(scoresB);
-    // return (scoresA
-    //     .map((e, i) => ({ x: e, y: scoresB[i] }))
-    //     .reduce((v, a) => v + a.x * a.y, 0) - n * prom_x * prom_y) / (calc(scoresA, prom_x) * calc(scoresB, prom_y));
-    // const ma = this.SumarNumerosLista(scoresA) / scoresA.length;
-    // const mb = this.SumarNumerosLista(scoresB) / scoresB.length;
-    // const am = scoresA.map(x => x - ma);
-    // const bm = scoresB.map(x => x - ma);
-    // const sa = am.map(x => Math.pow(x, 2));
-    // const sb = bm.map(x => Math.pow(x, 2));
-    // const zip: Array<{ a: number, b: number }> = [];
-    // for (let i = 0; i < am.length; i++) {
-    //     zip.push({ a: am[i], b: bm[i] });
-    // }
-    // const numerador = this.SumarNumerosLista(zip.map(x => x.a * x.b));
-    // const denominador = Math.sqrt(this.SumarNumerosLista(sa) * this.SumarNumerosLista(sb));
-    // return denominador == 0 ? 0 : numerador / denominador;
-    // }
+    promedio(lista) {
+        return this.SumarLista(lista) / lista.length;
+    }
+    CalcularAfinidad(sharedMedia) {
+        const scoresA = sharedMedia.map(media => media.scoreA);
+        const scoresB = sharedMedia.map(media => media.scoreB);
+        const ma = this.promedio(scoresA);
+        const mb = this.promedio(scoresB);
+        const am = scoresA.map(score => score - ma);
+        const bm = scoresB.map(score => score - mb);
+        const sa = am.map(x => Math.pow(x, 2));
+        const sb = bm.map(x => Math.pow(x, 2));
+        const zip = (a, b) => a.map((k, i) => [k, b[i]]);
+        const numerador = this.SumarLista(zip(am, bm).map(tupla => tupla[0] * tupla[1]));
+        const denominador = Math.sqrt(this.SumarLista(sa) * this.SumarLista(sb));
+        return (denominador == 0 ? 0 : numerador / denominador) * 100;
+    }
     getAfinidadUsuario(userID, serverID) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield (0, GetAfinidadUsuario_1.GetAfinidadUsuario)(this, userID, serverID);
