@@ -17,7 +17,8 @@ import { BuscarListaUsuario } from "../modulos/BuscarListaUsuario";
 import { GetUsuariosMedia } from "../modulos/GetUsuariosMedia";
 import { SetupUsuario } from "../modulos/SetupUsuario";
 import { UnsetupUsuario } from "../modulos/UnsetupUsuario";
-import { GetAfinidadUsuario } from "../modulos/GetAfinidadUsuario";
+
+import { Afinidad } from "../modulos/Afinidad";
 
 class BOT {
     private client: Client;
@@ -384,7 +385,7 @@ class BOT {
         return await BuscarListaUsuario(this, username);
     }
 
-    public async usuario(args: string): Promise<any> {
+    public async usuario(args: string): Promise<Usuario | null> {
         const user = await BuscarUsuario(this, args);
         return user == null ? null : new Usuario(user);
     }
@@ -426,85 +427,6 @@ class BOT {
         return await UnsetupUsuario(this, message);
     }
 
-    public GetSharedMedia(l1: Array<{ mediaId: number, score: number }>, l2: Array<{ mediaId: number, score: number }>) {
-        const sharedMedia: Array<{ id: number, scoreA: number, scoreB: number }> = [];
-
-        for (let i = 0; i < l1.length; i++) {
-            const l1MediaId = l1[i].mediaId;
-            const l1MediaScore = l1[i].score;
-
-            if (l1MediaScore == 0) continue;
-
-            const l2Media = l2.find(e => e.mediaId == l1MediaId);
-
-            if (!l2Media || l2Media.score == 0) continue;
-            // if (sharedMedia.score == l1MediaScore) notasCompartidas++;
-
-            sharedMedia.push({ id: l1MediaId, scoreA: l1MediaScore, scoreB: l2Media.score });
-        }
-
-        return sharedMedia;
-    }
-
-    /**
-     * 
-     * @param lista Arreglo de números
-     * @returns La suma de todos los números del arreglo
-     */
-
-    private SumarLista(lista: Array<number>): number {
-        let suma: number = 0;
-
-        for (let i = 0; i < lista.length; i++) {
-            suma += lista[i];
-        }
-
-        return suma;
-    }
-
-    private promedio(lista: Array<number>): number {
-        return this.SumarLista(lista) / lista.length;
-    }
-
-    public CalcularAfinidad(sharedMedia: Array<{ id: number, scoreA: number, scoreB: number }>): number {
-        const scoresA: Array<number> = sharedMedia.map(media => media.scoreA);
-        const scoresB: Array<number> = sharedMedia.map(media => media.scoreB);
-
-        const ma = this.promedio(scoresA);
-        const mb = this.promedio(scoresB);
-
-        const am = scoresA.map(score => score - ma);
-        const bm = scoresB.map(score => score - mb);
-
-        const sa = am.map(x => Math.pow(x, 2));
-        const sb = bm.map(x => Math.pow(x, 2));
-
-        const zip = (a: Array<number>, b: Array<number>) => a.map((k, i) => [k, b[i]]);
-
-        const numerador = this.SumarLista(zip(am, bm).map(tupla => tupla[0] * tupla[1]));
-        const denominador = Math.sqrt(this.SumarLista(sa) * this.SumarLista(sb));
-
-        return (denominador == 0 ? 0 : numerador / denominador) * 100;
-    }
-
-    private async getAfinidadUsuario(userID: string, serverID: string | any): Promise<Array<any>> {
-        return await GetAfinidadUsuario(this, userID, serverID);
-    }
-
-    private ordenarAfinidades(afinidades: Array<any>): Array<any> {
-        return afinidades.sort((a, b) => {
-            if (a.afinidad < b.afinidad) {
-                return 1;
-            }
-
-            if (a.afinidad > b.afinidad) {
-                return -1;
-            }
-
-            return 0;
-        });
-    }
-
     private async afinidad(message: Message, userID: string, serverID: string): Promise<boolean> {
         const uRegistrados = await AniUser.find({ serverId: serverID });
         const usuario = uRegistrados.find(u => u.discordId == userID);
@@ -515,8 +437,9 @@ class BOT {
 
         const aniuser1 = await this.usuario(usuario?.anilistUsername || "");
 
-        let afinidades = this.ordenarAfinidades(await this.getAfinidadUsuario(aniuser1, uRegistrados));
+        if (!aniuser1) return false;
 
+        let afinidades = await Afinidad.GetAfinidadUsuario(this, aniuser1, uRegistrados);
         let textoAfinidad = "";
 
         for (let i = 0; i < afinidades.length && i < 10; i++) {
@@ -527,8 +450,8 @@ class BOT {
         const color = "0x" + hexColor;
 
         const EmbedAfinidad = new EmbedBuilder()
-            .setTitle("Afinidad de " + aniuser1?.getNombre())
-            .setThumbnail(aniuser1 == null ? null : aniuser1.getAvatarURL())
+            .setTitle("Afinidad de " + aniuser1.getNombre())
+            .setThumbnail(aniuser1.getAvatarURL())
             .setDescription(textoAfinidad)
             .setColor(color as ColorResolvable)
 

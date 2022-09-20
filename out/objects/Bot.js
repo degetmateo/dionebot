@@ -51,7 +51,7 @@ const BuscarListaUsuario_1 = require("../modulos/BuscarListaUsuario");
 const GetUsuariosMedia_1 = require("../modulos/GetUsuariosMedia");
 const SetupUsuario_1 = require("../modulos/SetupUsuario");
 const UnsetupUsuario_1 = require("../modulos/UnsetupUsuario");
-const GetAfinidadUsuario_1 = require("../modulos/GetAfinidadUsuario");
+const Afinidad_1 = require("../modulos/Afinidad");
 class BOT {
     constructor(client, db) {
         this.client = client;
@@ -396,66 +396,6 @@ class BOT {
             return yield (0, UnsetupUsuario_1.UnsetupUsuario)(this, message);
         });
     }
-    GetSharedMedia(l1, l2) {
-        const sharedMedia = [];
-        for (let i = 0; i < l1.length; i++) {
-            const l1MediaId = l1[i].mediaId;
-            const l1MediaScore = l1[i].score;
-            if (l1MediaScore == 0)
-                continue;
-            const l2Media = l2.find(e => e.mediaId == l1MediaId);
-            if (!l2Media || l2Media.score == 0)
-                continue;
-            // if (sharedMedia.score == l1MediaScore) notasCompartidas++;
-            sharedMedia.push({ id: l1MediaId, scoreA: l1MediaScore, scoreB: l2Media.score });
-        }
-        return sharedMedia;
-    }
-    /**
-     *
-     * @param lista Arreglo de números
-     * @returns La suma de todos los números del arreglo
-     */
-    SumarLista(lista) {
-        let suma = 0;
-        for (let i = 0; i < lista.length; i++) {
-            suma += lista[i];
-        }
-        return suma;
-    }
-    promedio(lista) {
-        return this.SumarLista(lista) / lista.length;
-    }
-    CalcularAfinidad(sharedMedia) {
-        const scoresA = sharedMedia.map(media => media.scoreA);
-        const scoresB = sharedMedia.map(media => media.scoreB);
-        const ma = this.promedio(scoresA);
-        const mb = this.promedio(scoresB);
-        const am = scoresA.map(score => score - ma);
-        const bm = scoresB.map(score => score - mb);
-        const sa = am.map(x => Math.pow(x, 2));
-        const sb = bm.map(x => Math.pow(x, 2));
-        const zip = (a, b) => a.map((k, i) => [k, b[i]]);
-        const numerador = this.SumarLista(zip(am, bm).map(tupla => tupla[0] * tupla[1]));
-        const denominador = Math.sqrt(this.SumarLista(sa) * this.SumarLista(sb));
-        return (denominador == 0 ? 0 : numerador / denominador) * 100;
-    }
-    getAfinidadUsuario(userID, serverID) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield (0, GetAfinidadUsuario_1.GetAfinidadUsuario)(this, userID, serverID);
-        });
-    }
-    ordenarAfinidades(afinidades) {
-        return afinidades.sort((a, b) => {
-            if (a.afinidad < b.afinidad) {
-                return 1;
-            }
-            if (a.afinidad > b.afinidad) {
-                return -1;
-            }
-            return 0;
-        });
-    }
     afinidad(message, userID, serverID) {
         return __awaiter(this, void 0, void 0, function* () {
             const uRegistrados = yield AniUser_1.AniUser.find({ serverId: serverID });
@@ -464,7 +404,9 @@ class BOT {
                 return false;
             message.channel.sendTyping();
             const aniuser1 = yield this.usuario((usuario === null || usuario === void 0 ? void 0 : usuario.anilistUsername) || "");
-            let afinidades = this.ordenarAfinidades(yield this.getAfinidadUsuario(aniuser1, uRegistrados));
+            if (!aniuser1)
+                return false;
+            let afinidades = yield Afinidad_1.Afinidad.GetAfinidadUsuario(this, aniuser1, uRegistrados);
             let textoAfinidad = "";
             for (let i = 0; i < afinidades.length && i < 10; i++) {
                 textoAfinidad += `▹ ${afinidades[i].username} - **${afinidades[i].afinidad}%**\n`;
@@ -472,8 +414,8 @@ class BOT {
             const hexColor = toHex.get(aniuser1 == null ? "black" : aniuser1.getColorName()).value;
             const color = "0x" + hexColor;
             const EmbedAfinidad = new discord_js_1.EmbedBuilder()
-                .setTitle("Afinidad de " + (aniuser1 === null || aniuser1 === void 0 ? void 0 : aniuser1.getNombre()))
-                .setThumbnail(aniuser1 == null ? null : aniuser1.getAvatarURL())
+                .setTitle("Afinidad de " + aniuser1.getNombre())
+                .setThumbnail(aniuser1.getAvatarURL())
                 .setDescription(textoAfinidad)
                 .setColor(color);
             this.enviarEmbed(message, EmbedAfinidad);
