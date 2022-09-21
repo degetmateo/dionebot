@@ -89,7 +89,13 @@ class BOT {
                 if (!args[0] || args[0].length <= 0) {
                     usuario = await this.usuario(message.guild.id, message.author.id);
                 } else {
-                    usuario = await this.usuario(message.guild.id, args[0]);
+                    const usuarioMencionado = message.mentions.members?.first();
+                    
+                    if (usuarioMencionado) {
+                        usuario = await this.usuario(message.guild.id, usuarioMencionado.id);
+                    } else {
+                        usuario = await this.usuario(message.guild.id, args[0]);
+                    }
                 }
                 
                 if (!usuario) {

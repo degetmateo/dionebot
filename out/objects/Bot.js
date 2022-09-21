@@ -62,7 +62,7 @@ class BOT {
             this.on("ready", () => console.log("BOT preparado!"));
             // const servidores = await Settings.find();
             this.on("messageCreate", (message) => __awaiter(this, void 0, void 0, function* () {
-                var _a;
+                var _a, _b;
                 if (!message)
                     return;
                 if (message.author.bot)
@@ -112,7 +112,13 @@ class BOT {
                         usuario = yield this.usuario(message.guild.id, message.author.id);
                     }
                     else {
-                        usuario = yield this.usuario(message.guild.id, args[0]);
+                        const usuarioMencionado = (_a = message.mentions.members) === null || _a === void 0 ? void 0 : _a.first();
+                        if (usuarioMencionado) {
+                            usuario = yield this.usuario(message.guild.id, usuarioMencionado.id);
+                        }
+                        else {
+                            usuario = yield this.usuario(message.guild.id, args[0]);
+                        }
                     }
                     if (!usuario) {
                         return message.react("❌");
@@ -148,7 +154,7 @@ class BOT {
                         resultado = yield this.afinidad(message, message.author.id, serverID);
                     }
                     else {
-                        if ((_a = message.mentions.members) === null || _a === void 0 ? void 0 : _a.first()) {
+                        if ((_b = message.mentions.members) === null || _b === void 0 ? void 0 : _b.first()) {
                             const uMencionado = message.mentions.members.first();
                             const userID = uMencionado == null ? "" : uMencionado.id;
                             resultado = yield this.afinidad(message, userID, serverID);
