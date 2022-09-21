@@ -36,6 +36,7 @@ const queryLista = `
                     mediaId,
                     score(format: POINT_100)
                 }
+                status
             }
         }
         mangaList: MediaListCollection(userName: $username, type: MANGA) {

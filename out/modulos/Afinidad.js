@@ -14,7 +14,8 @@ class Afinidad {
     static GetAfinidadUsuario(bot, aniuser1, uRegistrados) {
         return __awaiter(this, void 0, void 0, function* () {
             const userList1 = yield bot.buscarListaUsuario(aniuser1 === null || aniuser1 === void 0 ? void 0 : aniuser1.getNombre());
-            const user1AnimeList = userList1.animeList.lists[0].entries;
+            let user1AnimeList = this.FiltrarCompletados(userList1.animeList.lists);
+            user1AnimeList = user1AnimeList == undefined ? null : user1AnimeList.entries;
             const afinidades = [];
             let i = 0;
             while (i < uRegistrados.length) {
@@ -24,7 +25,8 @@ class Afinidad {
                 }
                 const aniuser2 = yield bot.usuario(uRegistrados[i].anilistUsername || "");
                 const userList2 = yield bot.buscarListaUsuario(aniuser2 == null ? "" : aniuser2.getNombre());
-                const user2AnimeList = userList2.animeList.lists[0].entries;
+                let user2AnimeList = this.FiltrarCompletados(userList2.animeList.lists);
+                user2AnimeList = user2AnimeList == undefined ? null : user2AnimeList.entries;
                 const sharedMedia = yield this.GetSharedMedia(user1AnimeList, user2AnimeList);
                 const resultado = this.CalcularAfinidad(sharedMedia);
                 afinidades.push({ username: aniuser2 == null ? "" : aniuser2.getNombre(), afinidad: parseFloat(resultado.toFixed(2)) });
@@ -32,6 +34,9 @@ class Afinidad {
             }
             return this.OrdenarAfinidades(afinidades);
         });
+    }
+    static FiltrarCompletados(listas) {
+        return listas.find(lista => lista.status == "COMPLETED");
     }
     static GetSharedMedia(l1, l2) {
         return __awaiter(this, void 0, void 0, function* () {

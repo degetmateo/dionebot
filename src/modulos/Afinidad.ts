@@ -4,8 +4,10 @@ import { Usuario } from "../objects/Usuario";
 class Afinidad {
     public static async GetAfinidadUsuario(bot: BOT, aniuser1: Usuario, uRegistrados: Array<any>) {
         const userList1 = await bot.buscarListaUsuario(aniuser1?.getNombre());
-        const user1AnimeList = userList1.animeList.lists[0].entries;
-    
+
+        let user1AnimeList = this.FiltrarCompletados(userList1.animeList.lists);
+        user1AnimeList = user1AnimeList == undefined ? null : user1AnimeList.entries;
+
         const afinidades: Array<{ username: string, afinidad: number }> = [];
     
         let i = 0;
@@ -18,7 +20,9 @@ class Afinidad {
             const aniuser2 = await bot.usuario(uRegistrados[i].anilistUsername || "");
 
             const userList2 = await bot.buscarListaUsuario(aniuser2 == null ? "" : aniuser2.getNombre());
-            const user2AnimeList = userList2.animeList.lists[0].entries;
+            
+            let user2AnimeList = this.FiltrarCompletados(userList2.animeList.lists);
+            user2AnimeList = user2AnimeList == undefined ? null : user2AnimeList.entries;
 
             const sharedMedia = await this.GetSharedMedia(user1AnimeList, user2AnimeList);
 
@@ -30,6 +34,10 @@ class Afinidad {
         }
     
         return this.OrdenarAfinidades(afinidades);
+    }
+
+    public static FiltrarCompletados(listas: Array<{ entries: Array<any>, status: string }>): any {
+        return listas.find(lista => lista.status == "COMPLETED");
     }
 
     public static async GetSharedMedia(l1: Array<{ mediaId: number, score: number }>, l2: Array<{ mediaId: number, score: number }>) {
