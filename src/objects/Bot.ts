@@ -9,16 +9,10 @@ import { Settings } from "../models/Settings";
 
 import { Mensaje } from "./Mensaje";
 
-import { BuscarUsuario } from "../modulos/BuscarUsuario";
-import { BuscarMediaNombre } from "../modulos/BuscarMediaNombre";
-import { GetDatosMedia } from "../modulos/GetDatosMedia";
-import { BuscarMediaUsuario } from "../modulos/BuscarMediaUsuario";
-import { BuscarListaUsuario } from "../modulos/BuscarListaUsuario";
-import { GetUsuariosMedia } from "../modulos/GetUsuariosMedia";
-import { SetupUsuario } from "../modulos/SetupUsuario";
-import { UnsetupUsuario } from "../modulos/UnsetupUsuario";
-
+import { Media } from "../modulos/Media";
+import { Usuarios } from "../modulos/Usuarios";
 import { Afinidad } from "../modulos/Afinidad";
+import { Setup } from "../modulos/Setup";
 
 class BOT {
     private client: Client;
@@ -66,7 +60,20 @@ class BOT {
                     message.react("✅");
                 }
 
-                const embedInformacion = await this.EmbedInformacionMedia(message, anime);
+                const embedInformacion = await this.EmbedInformacionMedia(message, anime, false);
+                this.enviarEmbed(message, embedInformacion);
+            }
+
+            if (comando == "!animeb") {
+                const anime = await this.anime(args.join(" "));
+
+                if (!anime) {
+                    return message.react("❌");
+                } else {
+                    message.react("✅");
+                }
+
+                const embedInformacion = await this.EmbedInformacionMedia(message, anime, true);
                 this.enviarEmbed(message, embedInformacion);
             }
         
@@ -79,7 +86,7 @@ class BOT {
                     message.react("✅");
                 }
 
-                const embedInformacion = await this.EmbedInformacionMedia(message, manga);
+                const embedInformacion = await this.EmbedInformacionMedia(message, manga, false);
                 this.enviarEmbed(message, embedInformacion);
             }
         
@@ -156,6 +163,16 @@ class BOT {
                     message.react("❌");
                 }
             }
+
+            if (comando == "!help") {
+                const descripcion = "▹ `!setup [anilist username]` - Guardar tu usuario de anilist para mostrar tus notas.\n▹ `!unsetup` - Elimina tu usuario de anilist.\n▹ `!user | [anilist username] | [discord mention]` - Ver la información del perfil de anilist de un usuario.\n▹ `!afinidad | [anilist username] | [discord mention]` - Muestra tu afinidad o la otro usuario con el resto del servidor.\n▹ `!manga o !anime [nombre] | [id]` - Muestra la información de un anime o manga.";
+                
+                const EmbedInformacion = new EmbedBuilder()
+                    .setTitle("▾ Comandos")
+                    .setDescription(descripcion.trim());
+
+                this.enviarEmbed(message, EmbedInformacion);
+            }
         
             if (message.content.endsWith("13") || message.content.endsWith("trece")) {
                 this.responder(message, "¿Dijiste 13? Aquí tiene pa' que me la bese, entre más me la beses más me crece, busca un cura pa' que me la rese, y trae un martillo pa' que me la endereces, por el chiquito se te aparece toas las veces y cuando te estreses aquí te tengo éste pa' que te desestreses, con este tallo el jopo se te esflorece, se cumple el ciclo hasta que anochece, to' los días y toas las veces, de tanto entablar la raja del jopo se te desaparece, porque este sable no se compadece, si pides ñapa se te ofrece, y si repites se te agradece, no te hace rico pero tampoco te empobrece, no te hace inteligente pero tampoco te embrutece, y no paro aquí compa que éste nuevamente se endurece, hasta que amanece, cambie esa cara que parece que se entristece, si te haces viejo éste te rejuvenece, no te hago bulla porque depronto te ensordece, y ese cuadro no te favorece, pero tranquilo que éste te abastece, porque allá abajo se te humedece, viendo como el que me cuelga resplandece, si a ti te da miedo a mí me enorgullece, y así toas las vece ¿que te parece?, y tranquilo mijo que aquí éste reaparece, no haga fuerza porque éste se sobrecrece, una fresadora te traigo pa' que me la freses, así se fortalece y de nuevo la historia se establece, que no se te nuble la vista porque éste te la aclarece, y sino le entendiste nuevamente la explicación se te ofrece, pa' que por el chiquito éste de nuevo te empiece... Aquí tienes para que me la beses, entre más me la beses más me crece, busca un cura para que me la rece, un martillo para que me la endereces, un chef para que me la aderece, 8000 mondas por el culo se te aparecen, si me la sobas haces que se me espese, si quieres la escaneas y te la llevas para que en tu hoja de vida la anexes, me culeo a tu maldita madre y qué te parece le meti la monda a tú mamá hace 9 meses y después la puse a escuchar René de Calle 13 Te la meto por debajo del agua como los peces, y aquella flor de monda que en tu culo crece, reposa sobre tus nalgas a veces y una vez más...");
@@ -194,13 +211,13 @@ class BOT {
         message.channel.send({ embeds: [embed] });
     }
 
-    private async EmbedInformacionMedia(message: Message, obra: Obra): Promise<EmbedBuilder> {
+    private async EmbedInformacionMedia(message: Message, obra: Obra, traducir: boolean): Promise<EmbedBuilder> {
         const titulos = obra.getTitulos();
 
         const EmbedInformacion = new EmbedBuilder()
             .setTitle(titulos.romaji == null ? titulos.native : titulos.romaji)
             .setURL(obra.getURL())
-            .setDescription(obra.getDescripcion())
+            .setDescription(traducir == true ? await obra.getDescripcionTraducida() : obra.getDescripcion())
             .setThumbnail(obra.getCoverImageURL())
             .setFooter({ text: obra.getTitulos().native + " | " + obra.getTitulos().english });
 
@@ -348,17 +365,17 @@ class BOT {
 
     private async buscarMedia(tipo: string, args: string) {
         if (isNaN(parseInt(args))) {
-            const mediaID = await BuscarMediaNombre(this, tipo, args);
-            const media = mediaID == null ? null : await GetDatosMedia(this, tipo, mediaID);
+            const mediaID = await Media.BuscarMedia(this, tipo, args);
+            const media = mediaID == null ? null : await Media.GetDatosMedia(this, tipo, mediaID);
             return media == null ? null : new Obra(media);
         } else {
-            const media = await GetDatosMedia(this, tipo, args);
+            const media = await Media.GetDatosMedia(this, tipo, args);
             return media == null ? null : new Obra(media);
         }
     }
 
     private async getUsuariosMedia(serverID: any, media: Obra) {
-        return await GetUsuariosMedia(this, serverID, media);
+        return await Usuarios.GetUsuariosMedia(this, serverID, media);
     }
 
     public async request(query: string, variables: any): Promise<any> {
@@ -384,15 +401,15 @@ class BOT {
     }
 
     public async buscarMediaUsuario(userID: string | undefined, mediaID: string) {
-        return await BuscarMediaUsuario(this, userID, mediaID);
+        return await Usuarios.GetStatsMedia(this, userID, mediaID);
     }
 
     public async buscarListaUsuario(username: string) {
-        return await BuscarListaUsuario(this, username);
+        return await Usuarios.GetEntradas(this, username);
     }
 
     public async usuario(serverID: string, args: string): Promise<Usuario | null> {
-        const user = await BuscarUsuario(this, serverID, args);
+        const user = await Usuarios.BuscarUsuario(this, serverID, args);
         return user == null ? null : new Usuario(user);
     }
 
@@ -426,11 +443,11 @@ class BOT {
     }
 
     private async setup(username: string, message: Message): Promise<boolean> {
-        return await SetupUsuario(this, username, message);
+        return await Setup.SetupUsuario(this, username, message);
     }
 
     private async unsetup(message: Message): Promise<boolean> {
-        return await UnsetupUsuario(this, message);
+        return await Setup.UnsetupUsuario(this, message);
     }
 
     private async afinidad(message: Message, userID: string, serverID: string): Promise<boolean> {

@@ -1,8 +1,11 @@
+const translate = require("translate");
+
 class Obra {
     private media: any;
 
     constructor(media: any) {
         this.media = media;
+        translate.engine = "google";
     }
 
     public getID(): string {
@@ -100,6 +103,19 @@ class Obra {
             .split("&ldquo;").join("*")
             .split("&rdquo;").join("*")
             .split("&rsquo;").join("'");
+    }
+
+    public async getDescripcionTraducida(): Promise<string> {
+        return await translate(this.media.description == null ? "?" : this.media.description.trim()
+            .split("<br>").join("")
+            .split("</br>").join("")
+            .split("<i>").join("")
+            .split("</i>").join("")
+            .split("<b>").join("")
+            .split("</b>").join("")
+            .split("&ldquo;").join("*")
+            .split("&rdquo;").join("*")
+            .split("&rsquo;").join("'"), "es");
     }
 
     public getCoverImageURL(): string {

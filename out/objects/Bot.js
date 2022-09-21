@@ -43,15 +43,10 @@ const Obra_1 = require("./Obra");
 const Usuario_1 = require("./Usuario");
 const AniUser_1 = require("../models/AniUser");
 const Mensaje_1 = require("./Mensaje");
-const BuscarUsuario_1 = require("../modulos/BuscarUsuario");
-const BuscarMediaNombre_1 = require("../modulos/BuscarMediaNombre");
-const GetDatosMedia_1 = require("../modulos/GetDatosMedia");
-const BuscarMediaUsuario_1 = require("../modulos/BuscarMediaUsuario");
-const BuscarListaUsuario_1 = require("../modulos/BuscarListaUsuario");
-const GetUsuariosMedia_1 = require("../modulos/GetUsuariosMedia");
-const SetupUsuario_1 = require("../modulos/SetupUsuario");
-const UnsetupUsuario_1 = require("../modulos/UnsetupUsuario");
+const Media_1 = require("../modulos/Media");
+const Usuarios_1 = require("../modulos/Usuarios");
 const Afinidad_1 = require("../modulos/Afinidad");
+const Setup_1 = require("../modulos/Setup");
 class BOT {
     constructor(client, db) {
         this.client = client;
@@ -92,7 +87,18 @@ class BOT {
                     else {
                         message.react("✅");
                     }
-                    const embedInformacion = yield this.EmbedInformacionMedia(message, anime);
+                    const embedInformacion = yield this.EmbedInformacionMedia(message, anime, false);
+                    this.enviarEmbed(message, embedInformacion);
+                }
+                if (comando == "!animeb") {
+                    const anime = yield this.anime(args.join(" "));
+                    if (!anime) {
+                        return message.react("❌");
+                    }
+                    else {
+                        message.react("✅");
+                    }
+                    const embedInformacion = yield this.EmbedInformacionMedia(message, anime, true);
                     this.enviarEmbed(message, embedInformacion);
                 }
                 if (comando == "!manga") {
@@ -103,7 +109,7 @@ class BOT {
                     else {
                         message.react("✅");
                     }
-                    const embedInformacion = yield this.EmbedInformacionMedia(message, manga);
+                    const embedInformacion = yield this.EmbedInformacionMedia(message, manga, false);
                     this.enviarEmbed(message, embedInformacion);
                 }
                 if (comando == "!user") {
@@ -173,6 +179,13 @@ class BOT {
                         message.react("❌");
                     }
                 }
+                if (comando == "!help") {
+                    const descripcion = "▹ `!setup [anilist username]` - Guardar tu usuario de anilist para mostrar tus notas.\n▹ `!unsetup` - Elimina tu usuario de anilist.\n▹ `!user | [anilist username] | [discord mention]` - Ver la información del perfil de anilist de un usuario.\n▹ `!afinidad | [anilist username] | [discord mention]` - Muestra tu afinidad o la otro usuario con el resto del servidor.\n▹ `!manga o !anime [nombre] | [id]` - Muestra la información de un anime o manga.";
+                    const EmbedInformacion = new discord_js_1.EmbedBuilder()
+                        .setTitle("▾ Comandos")
+                        .setDescription(descripcion.trim());
+                    this.enviarEmbed(message, EmbedInformacion);
+                }
                 if (message.content.endsWith("13") || message.content.endsWith("trece")) {
                     this.responder(message, "¿Dijiste 13? Aquí tiene pa' que me la bese, entre más me la beses más me crece, busca un cura pa' que me la rese, y trae un martillo pa' que me la endereces, por el chiquito se te aparece toas las veces y cuando te estreses aquí te tengo éste pa' que te desestreses, con este tallo el jopo se te esflorece, se cumple el ciclo hasta que anochece, to' los días y toas las veces, de tanto entablar la raja del jopo se te desaparece, porque este sable no se compadece, si pides ñapa se te ofrece, y si repites se te agradece, no te hace rico pero tampoco te empobrece, no te hace inteligente pero tampoco te embrutece, y no paro aquí compa que éste nuevamente se endurece, hasta que amanece, cambie esa cara que parece que se entristece, si te haces viejo éste te rejuvenece, no te hago bulla porque depronto te ensordece, y ese cuadro no te favorece, pero tranquilo que éste te abastece, porque allá abajo se te humedece, viendo como el que me cuelga resplandece, si a ti te da miedo a mí me enorgullece, y así toas las vece ¿que te parece?, y tranquilo mijo que aquí éste reaparece, no haga fuerza porque éste se sobrecrece, una fresadora te traigo pa' que me la freses, así se fortalece y de nuevo la historia se establece, que no se te nuble la vista porque éste te la aclarece, y sino le entendiste nuevamente la explicación se te ofrece, pa' que por el chiquito éste de nuevo te empiece... Aquí tienes para que me la beses, entre más me la beses más me crece, busca un cura para que me la rece, un martillo para que me la endereces, un chef para que me la aderece, 8000 mondas por el culo se te aparecen, si me la sobas haces que se me espese, si quieres la escaneas y te la llevas para que en tu hoja de vida la anexes, me culeo a tu maldita madre y qué te parece le meti la monda a tú mamá hace 9 meses y después la puse a escuchar René de Calle 13 Te la meto por debajo del agua como los peces, y aquella flor de monda que en tu culo crece, reposa sobre tus nalgas a veces y una vez más...");
                 }
@@ -204,14 +217,14 @@ class BOT {
     enviarEmbed(message, embed) {
         message.channel.send({ embeds: [embed] });
     }
-    EmbedInformacionMedia(message, obra) {
+    EmbedInformacionMedia(message, obra, traducir) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const titulos = obra.getTitulos();
             const EmbedInformacion = new discord_js_1.EmbedBuilder()
                 .setTitle(titulos.romaji == null ? titulos.native : titulos.romaji)
                 .setURL(obra.getURL())
-                .setDescription(obra.getDescripcion())
+                .setDescription(traducir == true ? yield obra.getDescripcionTraducida() : obra.getDescripcion())
                 .setThumbnail(obra.getCoverImageURL())
                 .setFooter({ text: obra.getTitulos().native + " | " + obra.getTitulos().english });
             if (obra.getTipo() == "ANIME") {
@@ -319,19 +332,19 @@ class BOT {
     buscarMedia(tipo, args) {
         return __awaiter(this, void 0, void 0, function* () {
             if (isNaN(parseInt(args))) {
-                const mediaID = yield (0, BuscarMediaNombre_1.BuscarMediaNombre)(this, tipo, args);
-                const media = mediaID == null ? null : yield (0, GetDatosMedia_1.GetDatosMedia)(this, tipo, mediaID);
+                const mediaID = yield Media_1.Media.BuscarMedia(this, tipo, args);
+                const media = mediaID == null ? null : yield Media_1.Media.GetDatosMedia(this, tipo, mediaID);
                 return media == null ? null : new Obra_1.Obra(media);
             }
             else {
-                const media = yield (0, GetDatosMedia_1.GetDatosMedia)(this, tipo, args);
+                const media = yield Media_1.Media.GetDatosMedia(this, tipo, args);
                 return media == null ? null : new Obra_1.Obra(media);
             }
         });
     }
     getUsuariosMedia(serverID, media) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield (0, GetUsuariosMedia_1.GetUsuariosMedia)(this, serverID, media);
+            return yield Usuarios_1.Usuarios.GetUsuariosMedia(this, serverID, media);
         });
     }
     request(query, variables) {
@@ -354,17 +367,17 @@ class BOT {
     }
     buscarMediaUsuario(userID, mediaID) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield (0, BuscarMediaUsuario_1.BuscarMediaUsuario)(this, userID, mediaID);
+            return yield Usuarios_1.Usuarios.GetStatsMedia(this, userID, mediaID);
         });
     }
     buscarListaUsuario(username) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield (0, BuscarListaUsuario_1.BuscarListaUsuario)(this, username);
+            return yield Usuarios_1.Usuarios.GetEntradas(this, username);
         });
     }
     usuario(serverID, args) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield (0, BuscarUsuario_1.BuscarUsuario)(this, serverID, args);
+            const user = yield Usuarios_1.Usuarios.BuscarUsuario(this, serverID, args);
             return user == null ? null : new Usuario_1.Usuario(user);
         });
     }
@@ -394,12 +407,12 @@ class BOT {
     }
     setup(username, message) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield (0, SetupUsuario_1.SetupUsuario)(this, username, message);
+            return yield Setup_1.Setup.SetupUsuario(this, username, message);
         });
     }
     unsetup(message) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield (0, UnsetupUsuario_1.UnsetupUsuario)(this, message);
+            return yield Setup_1.Setup.UnsetupUsuario(this, message);
         });
     }
     afinidad(message, userID, serverID) {
