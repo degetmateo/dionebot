@@ -14,7 +14,7 @@ const AniUser_1 = require("../models/AniUser");
 function SetupUsuario(bot, username, message) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const usuario = yield bot.usuario(username);
+        const usuario = yield bot.usuario(message.guild == null ? "" : message.guild.id, username);
         if (!usuario)
             return false;
         let uRegistrados = yield AniUser_1.AniUser.find({ serverId: message.guildId });

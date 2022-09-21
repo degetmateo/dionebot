@@ -23,7 +23,7 @@ class Afinidad {
                     i++;
                     continue;
                 }
-                const aniuser2 = yield bot.usuario(uRegistrados[i].anilistUsername || "");
+                const aniuser2 = yield bot.usuario(uRegistrados[i].serverId, uRegistrados[i].anilistUsername || "");
                 const userList2 = yield bot.buscarListaUsuario(aniuser2 == null ? "" : aniuser2.getNombre());
                 let user2AnimeList = this.FiltrarCompletados(userList2.animeList.lists);
                 user2AnimeList = user2AnimeList == undefined ? null : user2AnimeList.entries;

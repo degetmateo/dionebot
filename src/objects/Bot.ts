@@ -85,11 +85,11 @@ class BOT {
         
             if (comando == "!user") {
                 let usuario;
-        
+
                 if (!args[0] || args[0].length <= 0) {
-                    usuario = await this.usuario(message.author.id);
+                    usuario = await this.usuario(message.guild.id, message.author.id);
                 } else {
-                    usuario = await this.usuario(args[0]);
+                    usuario = await this.usuario(message.guild.id, args[0]);
                 }
                 
                 if (!usuario) {
@@ -385,8 +385,8 @@ class BOT {
         return await BuscarListaUsuario(this, username);
     }
 
-    public async usuario(args: string): Promise<Usuario | null> {
-        const user = await BuscarUsuario(this, args);
+    public async usuario(serverID: string, args: string): Promise<Usuario | null> {
+        const user = await BuscarUsuario(this, serverID, args);
         return user == null ? null : new Usuario(user);
     }
 
@@ -435,7 +435,7 @@ class BOT {
 
         message.channel.sendTyping();
 
-        const aniuser1 = await this.usuario(usuario?.anilistUsername || "");
+        const aniuser1 = await this.usuario(message.guildId == null ? "" : message.guildId, usuario?.anilistUsername || "");
 
         if (!aniuser1) return false;
 

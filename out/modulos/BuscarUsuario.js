@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BuscarUsuario = void 0;
 const AniUser_1 = require("../models/AniUser");
-function BuscarUsuario(bot, args) {
+function BuscarUsuario(bot, serverID, args) {
     return __awaiter(this, void 0, void 0, function* () {
         if (isNaN(parseInt(args))) {
             const variables = {
@@ -21,11 +21,11 @@ function BuscarUsuario(bot, args) {
             return (data == null || data.User == null) ? null : data.User;
         }
         else {
-            const user = yield AniUser_1.AniUser.findOne({ discordId: args });
+            const user = yield AniUser_1.AniUser.findOne({ serverId: serverID, discordId: args });
             if (!user)
                 return null;
             const variables = {
-                name: user === null || user === void 0 ? void 0 : user.anilistUsername
+                name: user.anilistUsername
             };
             const data = yield bot.request(queryUsername, variables);
             return (data == null || data.User == null) ? null : data.User;

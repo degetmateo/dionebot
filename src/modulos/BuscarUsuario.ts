@@ -1,7 +1,7 @@
 import { BOT } from "../objects/Bot";
 import { AniUser } from "../models/AniUser";
 
-async function BuscarUsuario(bot: BOT, args: string): Promise<any> {
+async function BuscarUsuario(bot: BOT, serverID: string, args: string): Promise<any> {
     if (isNaN(parseInt(args))) {
         const variables = {
             name: args
@@ -11,12 +11,12 @@ async function BuscarUsuario(bot: BOT, args: string): Promise<any> {
         
         return (data == null || data.User == null) ? null : data.User;
     } else {
-        const user = await AniUser.findOne({ discordId: args });
+        const user = await AniUser.findOne({ serverId: serverID, discordId: args });
 
         if (!user) return null;
 
         const variables = {
-            name: user?.anilistUsername
+            name: user.anilistUsername
         }
 
         const data = await bot.request(queryUsername, variables);

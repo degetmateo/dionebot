@@ -109,10 +109,10 @@ class BOT {
                 if (comando == "!user") {
                     let usuario;
                     if (!args[0] || args[0].length <= 0) {
-                        usuario = yield this.usuario(message.author.id);
+                        usuario = yield this.usuario(message.guild.id, message.author.id);
                     }
                     else {
-                        usuario = yield this.usuario(args[0]);
+                        usuario = yield this.usuario(message.guild.id, args[0]);
                     }
                     if (!usuario) {
                         return message.react("❌");
@@ -356,9 +356,9 @@ class BOT {
             return yield (0, BuscarListaUsuario_1.BuscarListaUsuario)(this, username);
         });
     }
-    usuario(args) {
+    usuario(serverID, args) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield (0, BuscarUsuario_1.BuscarUsuario)(this, args);
+            const user = yield (0, BuscarUsuario_1.BuscarUsuario)(this, serverID, args);
             return user == null ? null : new Usuario_1.Usuario(user);
         });
     }
@@ -403,7 +403,7 @@ class BOT {
             if (!usuario)
                 return false;
             message.channel.sendTyping();
-            const aniuser1 = yield this.usuario((usuario === null || usuario === void 0 ? void 0 : usuario.anilistUsername) || "");
+            const aniuser1 = yield this.usuario(message.guildId == null ? "" : message.guildId, (usuario === null || usuario === void 0 ? void 0 : usuario.anilistUsername) || "");
             if (!aniuser1)
                 return false;
             let afinidades = yield Afinidad_1.Afinidad.GetAfinidadUsuario(this, aniuser1, uRegistrados);

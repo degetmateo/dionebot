@@ -17,7 +17,7 @@ class Afinidad {
                 continue;
             }
     
-            const aniuser2 = await bot.usuario(uRegistrados[i].anilistUsername || "");
+            const aniuser2 = await bot.usuario(uRegistrados[i].serverId, uRegistrados[i].anilistUsername || "");
 
             const userList2 = await bot.buscarListaUsuario(aniuser2 == null ? "" : aniuser2.getNombre());
             

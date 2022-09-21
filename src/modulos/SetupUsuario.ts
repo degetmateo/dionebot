@@ -3,7 +3,7 @@ import { AniUser } from "../models/AniUser";
 import { Message } from "discord.js";
 
 async function SetupUsuario(bot: BOT, username: string, message: Message): Promise<boolean> {
-    const usuario = await bot.usuario(username);
+    const usuario = await bot.usuario(message.guild == null ? "" : message.guild.id, username);
         
     if (!usuario) return false;
 
