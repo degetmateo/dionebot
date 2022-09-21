@@ -112,6 +112,17 @@ class BOT {
                     const embedInformacion = yield this.EmbedInformacionMedia(message, manga, false);
                     this.enviarEmbed(message, embedInformacion);
                 }
+                if (comando == "!mangab") {
+                    const manga = yield this.manga(args.join(" "));
+                    if (!manga) {
+                        return message.react("❌");
+                    }
+                    else {
+                        message.react("✅");
+                    }
+                    const embedInformacion = yield this.EmbedInformacionMedia(message, manga, true);
+                    this.enviarEmbed(message, embedInformacion);
+                }
                 if (comando == "!user") {
                     let usuario;
                     if (!args[0] || args[0].length <= 0) {

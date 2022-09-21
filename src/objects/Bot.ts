@@ -90,6 +90,19 @@ class BOT {
                 this.enviarEmbed(message, embedInformacion);
             }
         
+            if (comando == "!mangab") {
+                const manga = await this.manga(args.join(" "));
+                
+                if (!manga) {
+                    return message.react("❌");
+                } else {
+                    message.react("✅");
+                }
+
+                const embedInformacion = await this.EmbedInformacionMedia(message, manga, true);
+                this.enviarEmbed(message, embedInformacion);
+            }
+
             if (comando == "!user") {
                 let usuario;
 
