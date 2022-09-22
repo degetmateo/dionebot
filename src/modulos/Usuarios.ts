@@ -48,7 +48,7 @@ class Usuarios {
                 name: uMedia[i].username,
                 status: uMedia[i].status,
                 progress: uMedia[i].progress,
-                score: parseFloat(uMedia[i].score.toString())
+                score: uMedia[i].score
             }
     
             uMapeados.push(u);
@@ -192,7 +192,7 @@ const queryMedia = `
             id
             mediaId
             status
-            score
+            score(format: POINT_100)
             progress
         }
     }
