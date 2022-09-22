@@ -355,12 +355,11 @@ class BOT {
     buscarMedia(tipo, args) {
         return __awaiter(this, void 0, void 0, function* () {
             if (isNaN(parseInt(args))) {
-                const mediaID = yield Media_1.Media.BuscarMedia(this, tipo, args);
-                const media = mediaID == null ? null : yield Media_1.Media.GetDatosMedia(this, tipo, mediaID);
+                const media = yield Media_1.Media.BuscarMedia(this, tipo, args);
                 return media == null ? null : new Obra_1.Obra(media);
             }
             else {
-                const media = yield Media_1.Media.GetDatosMedia(this, tipo, args);
+                const media = yield Media_1.Media.BuscarMediaID(this, tipo, args);
                 return media == null ? null : new Obra_1.Obra(media);
             }
         });

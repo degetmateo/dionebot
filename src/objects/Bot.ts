@@ -397,11 +397,10 @@ class BOT {
 
     private async buscarMedia(tipo: string, args: string) {
         if (isNaN(parseInt(args))) {
-            const mediaID = await Media.BuscarMedia(this, tipo, args);
-            const media = mediaID == null ? null : await Media.GetDatosMedia(this, tipo, mediaID);
+            const media = await Media.BuscarMedia(this, tipo, args);
             return media == null ? null : new Obra(media);
         } else {
-            const media = await Media.GetDatosMedia(this, tipo, args);
+            const media = await Media.BuscarMediaID(this, tipo, args);
             return media == null ? null : new Obra(media);
         }
     }

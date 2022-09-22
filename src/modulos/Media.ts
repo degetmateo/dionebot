@@ -12,12 +12,12 @@ class Media {
         const response = await bot.request(queryName, variables);
     
         return (response == null || response.Page == null || response.Page.media == null || response.Page.media[0] == null) ? 
-            null : response.Page.media[0].id;
+            null : response.Page.media[0];
     }
 
-    public static async GetDatosMedia(bot: BOT, tipo: string, args: string): Promise<any> {
+    public static async BuscarMediaID(bot: BOT, tipo: string, id: string): Promise<any> {
         const variables = {
-            id: parseInt(args),
+            id: parseInt(id),
             type: tipo.toUpperCase()
         };
     
@@ -57,6 +57,13 @@ const queryName = `
                 duration
                 chapters
                 volumes
+                studios {
+                    nodes {
+                        id
+                        name
+                        siteUrl
+                    }
+                }
                 coverImage {
                     extraLarge
                 }

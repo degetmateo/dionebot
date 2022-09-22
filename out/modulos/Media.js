@@ -21,13 +21,13 @@ class Media {
             };
             const response = yield bot.request(queryName, variables);
             return (response == null || response.Page == null || response.Page.media == null || response.Page.media[0] == null) ?
-                null : response.Page.media[0].id;
+                null : response.Page.media[0];
         });
     }
-    static GetDatosMedia(bot, tipo, args) {
+    static BuscarMediaID(bot, tipo, id) {
         return __awaiter(this, void 0, void 0, function* () {
             const variables = {
-                id: parseInt(args),
+                id: parseInt(id),
                 type: tipo.toUpperCase()
             };
             const response = yield bot.request(queryID, variables);
@@ -64,6 +64,13 @@ const queryName = `
                 duration
                 chapters
                 volumes
+                studios {
+                    nodes {
+                        id
+                        name
+                        siteUrl
+                    }
+                }
                 coverImage {
                     extraLarge
                 }
