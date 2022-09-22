@@ -97,6 +97,13 @@ const queryID = `
             duration
             chapters
             volumes
+            studios {
+                nodes {
+                    id
+                    name
+                    siteUrl
+                }
+            }
             coverImage {
                 extraLarge
             }

@@ -22,7 +22,7 @@ class Media {
         };
     
         const response = await bot.request(queryID, variables);
-    
+
         return (response == null || response.Media == null) ? null : response.Media;
     }
 }
@@ -91,6 +91,13 @@ const queryID = `
             duration
             chapters
             volumes
+            studios {
+                nodes {
+                    id
+                    name
+                    siteUrl
+                }
+            }
             coverImage {
                 extraLarge
             }

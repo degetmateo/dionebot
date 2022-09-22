@@ -22,6 +22,12 @@ class Obra {
     getMalID() {
         return this.media.idMal == null ? "?" : this.media.idMal.toString();
     }
+    getEstudios() {
+        return this.media.studios.nodes == null ? null : this.media.studios.nodes;
+    }
+    // public getStaff() {
+    //     return 
+    // }
     getFormato() {
         return this.media.format == null ? "?" : this.media.format.toString();
     }

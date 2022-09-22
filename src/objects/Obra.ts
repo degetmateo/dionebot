@@ -16,6 +16,14 @@ class Obra {
         return this.media.idMal == null ? "?" : this.media.idMal.toString();
     }
 
+    public getEstudios(): Array<{ id: number, name: string, siteUrl: string }> {
+        return this.media.studios.nodes == null ? null : this.media.studios.nodes;
+    }
+
+    // public getStaff() {
+    //     return 
+    // }
+
     public getFormato(): string {
         return this.media.format == null ? "?" : this.media.format.toString();
     }

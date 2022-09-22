@@ -260,6 +260,18 @@ class BOT {
                     .setColor(0xFFFF00)
                     .addFields({ name: "▽", value: infoTEXT_1, inline: true }, { name: "▽", value: infoTEXT_2, inline: true });
             }
+            let estudiosInfo = "";
+            const estudios = obra.getEstudios();
+            for (let i = 0; i < estudios.length; i++) {
+                estudiosInfo += "`" + estudios[i].name + "` - ";
+            }
+            estudiosInfo = estudiosInfo.substring(0, estudiosInfo.length - 3);
+            if (!estudiosInfo || estudiosInfo.length < 0)
+                estudiosInfo = "`Desconocidos`";
+            if (obra.getTipo() == "ANIME") {
+                EmbedInformacion
+                    .addFields({ name: "▿ Estudios", value: estudiosInfo, inline: false });
+            }
             let generosInfo = "";
             const generos = obra.getGeneros();
             for (let i = 0; i < generos.length; i++) {
