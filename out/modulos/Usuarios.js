@@ -47,9 +47,6 @@ class Usuarios {
             }
             const uMapeados = [];
             for (let i = 0; i < uMedia.length; i++) {
-                if (parseFloat(uMedia[i].score.toString()) <= 10) {
-                    uMedia[i].score = parseFloat((uMedia[i].score * 10).toString());
-                }
                 const u = {
                     name: uMedia[i].username,
                     status: uMedia[i].status,
