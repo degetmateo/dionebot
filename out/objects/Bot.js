@@ -55,7 +55,6 @@ class BOT {
     iniciar() {
         return __awaiter(this, void 0, void 0, function* () {
             this.on("ready", () => console.log("BOT preparado!"));
-            // const servidores = await Settings.find();
             this.on("messageCreate", (message) => __awaiter(this, void 0, void 0, function* () {
                 var _a, _b;
                 if (!message)
@@ -64,14 +63,6 @@ class BOT {
                     return;
                 if (!message.guild)
                     return;
-                // const svMessage = servidores.find(sv => sv.server_id == message.guild?.id);
-                // if (!svMessage) {
-                //     new Settings({ server_id: message.guild.id, prefix: "!" })
-                //         .save(err => {
-                //             console.error(err);
-                //         });
-                // }
-                // const prefix = svMessage == undefined ? "!" : svMessage.prefix;
                 const mensaje = new Mensaje_1.Mensaje(message);
                 const comando = mensaje.getComando();
                 const args = mensaje.getArgumentos();
@@ -354,7 +345,7 @@ class BOT {
     }
     buscarMedia(tipo, args) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (isNaN(parseInt(args))) {
+            if (isNaN(+args) || isNaN(parseFloat(args))) {
                 const media = yield Media_1.Media.BuscarMedia(this, tipo, args);
                 return media == null ? null : new Obra_1.Obra(media);
             }

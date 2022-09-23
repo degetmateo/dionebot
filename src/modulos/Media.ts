@@ -10,7 +10,7 @@ class Media {
         };
     
         const response = await bot.request(queryName, variables);
-    
+
         return (response == null || response.Page == null || response.Page.media == null || response.Page.media[0] == null) ? 
             null : response.Page.media[0];
     }

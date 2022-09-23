@@ -1,11 +1,12 @@
 import fetch from "node-fetch";
 import * as toHex from "colornames";
+
 import { Client, ClientEvents, Message, EmbedBuilder, ColorResolvable } from "discord.js";
+
 import { Obra } from "./Obra";
 import { Usuario } from "./Usuario";
 import { DB } from "./Database";
 import { AniUser } from "../models/AniUser";
-import { Settings } from "../models/Settings";
 
 import { Mensaje } from "./Mensaje";
 
@@ -25,24 +26,13 @@ class BOT {
 
     public async iniciar() {
         this.on("ready", () => console.log("BOT preparado!"));
-        
-        // const servidores = await Settings.find();
+
 
         this.on("messageCreate", async (message: Message) => {
             if (!message) return;
             if (message.author.bot) return;
             if (!message.guild) return;
 
-            // const svMessage = servidores.find(sv => sv.server_id == message.guild?.id);
-
-            // if (!svMessage) {
-            //     new Settings({ server_id: message.guild.id, prefix: "!" })
-            //         .save(err => {
-            //             console.error(err);
-            //         });
-            // }
-            
-            // const prefix = svMessage == undefined ? "!" : svMessage.prefix;
             const mensaje = new Mensaje(message);
             const comando = mensaje.getComando();
             const args = mensaje.getArgumentos();
@@ -216,7 +206,7 @@ class BOT {
         message.reply(text);
     }
 
-    private  enviar(message: Message, text: string) {
+    private enviar(message: Message, text: string) {
         message.channel.send(text);
     }
 
@@ -396,7 +386,7 @@ class BOT {
     }
 
     private async buscarMedia(tipo: string, args: string) {
-        if (isNaN(parseInt(args))) {
+        if (isNaN(+args) || isNaN(parseFloat(args))) {
             const media = await Media.BuscarMedia(this, tipo, args);
             return media == null ? null : new Obra(media);
         } else {
