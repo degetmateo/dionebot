@@ -10,26 +10,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Afinidad = void 0;
+const Usuarios_1 = require("./Usuarios");
 class Afinidad {
-    static GetAfinidadUsuario(bot, aniuser1, uRegistrados) {
+    static GetAfinidadUsuario(bot, user_1, uRegistrados) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userList1 = yield bot.buscarListaUsuario(aniuser1 === null || aniuser1 === void 0 ? void 0 : aniuser1.getNombre());
-            let user1AnimeList = this.FiltrarCompletados(userList1.animeList.lists);
-            user1AnimeList = user1AnimeList == undefined ? null : user1AnimeList.entries;
+            const listaUsuario_1 = yield Usuarios_1.Usuarios.GetEntradas(bot, user_1.getNombre());
+            let animesUsuario_1 = this.FiltrarCompletados(listaUsuario_1.animeList.lists);
+            animesUsuario_1 = animesUsuario_1 == undefined ? null : animesUsuario_1.entries;
             const afinidades = [];
             let i = 0;
             while (i < uRegistrados.length) {
-                if (uRegistrados[i].anilistUsername == aniuser1.getNombre()) {
+                if (uRegistrados[i].anilistUsername == user_1.getNombre()) {
                     i++;
                     continue;
                 }
-                const aniuser2 = yield bot.usuario(uRegistrados[i].serverId, uRegistrados[i].anilistUsername || "");
-                const userList2 = yield bot.buscarListaUsuario(aniuser2 == null ? "" : aniuser2.getNombre());
-                let user2AnimeList = this.FiltrarCompletados(userList2.animeList.lists);
-                user2AnimeList = user2AnimeList == undefined ? null : user2AnimeList.entries;
-                const sharedMedia = yield this.GetSharedMedia(user1AnimeList, user2AnimeList);
+                const user_2 = yield bot.usuario(uRegistrados[i].serverId, uRegistrados[i].anilistUsername || "");
+                const listaUsuario_2 = yield Usuarios_1.Usuarios.GetEntradas(bot, user_2 == null ? "" : user_2.getNombre());
+                let animesUsuario_2 = this.FiltrarCompletados(listaUsuario_2.animeList.lists);
+                animesUsuario_2 = animesUsuario_2 == undefined ? null : animesUsuario_2.entries;
+                const sharedMedia = yield this.GetSharedMedia(animesUsuario_1, animesUsuario_2);
                 const resultado = this.CalcularAfinidad(sharedMedia);
-                afinidades.push({ username: aniuser2 == null ? "" : aniuser2.getNombre(), afinidad: parseFloat(resultado.toFixed(2)) });
+                afinidades.push({ username: user_2 == null ? "" : user_2.getNombre(), afinidad: parseFloat(resultado.toFixed(2)) });
                 i++;
             }
             return this.OrdenarAfinidades(afinidades);

@@ -4,7 +4,7 @@ import { Obra } from "../objects/Obra";
 
 class Usuarios {
     public static async BuscarUsuario(bot: BOT, serverID: string, args: string): Promise<any> {
-        if (isNaN(parseInt(args))) {
+        if (isNaN(+args) || isNaN(parseFloat(args))) {
             const variables = {
                 name: args
             };

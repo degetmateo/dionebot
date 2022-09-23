@@ -383,11 +383,6 @@ class BOT {
             return yield Usuarios_1.Usuarios.GetStatsMedia(this, userID, mediaID);
         });
     }
-    buscarListaUsuario(username) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield Usuarios_1.Usuarios.GetEntradas(this, username);
-        });
-    }
     usuario(serverID, args) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield Usuarios_1.Usuarios.BuscarUsuario(this, serverID, args);

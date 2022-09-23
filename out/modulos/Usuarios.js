@@ -14,7 +14,7 @@ const AniUser_1 = require("../models/AniUser");
 class Usuarios {
     static BuscarUsuario(bot, serverID, args) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (isNaN(parseInt(args))) {
+            if (isNaN(+args) || isNaN(parseFloat(args))) {
                 const variables = {
                     name: args
                 };

@@ -1,34 +1,33 @@
 import { BOT } from "../objects/Bot";
 import { Usuario } from "../objects/Usuario";
+import { Usuarios } from "./Usuarios";
 
 class Afinidad {
-    public static async GetAfinidadUsuario(bot: BOT, aniuser1: Usuario, uRegistrados: Array<any>) {
-        const userList1 = await bot.buscarListaUsuario(aniuser1?.getNombre());
+    public static async GetAfinidadUsuario(bot: BOT, user_1: Usuario, uRegistrados: Array<any>) {
+        const listaUsuario_1 = await Usuarios.GetEntradas(bot, user_1.getNombre());
 
-        let user1AnimeList = this.FiltrarCompletados(userList1.animeList.lists);
-        user1AnimeList = user1AnimeList == undefined ? null : user1AnimeList.entries;
+        let animesUsuario_1 = this.FiltrarCompletados(listaUsuario_1.animeList.lists);
+        animesUsuario_1 = animesUsuario_1 == undefined ? null : animesUsuario_1.entries;
 
         const afinidades: Array<{ username: string, afinidad: number }> = [];
     
         let i = 0;
         while (i < uRegistrados.length) {
-            if (uRegistrados[i].anilistUsername == aniuser1.getNombre()) {
+            if (uRegistrados[i].anilistUsername == user_1.getNombre()) {
                 i++;
                 continue;
             }
     
-            const aniuser2 = await bot.usuario(uRegistrados[i].serverId, uRegistrados[i].anilistUsername || "");
-
-            const userList2 = await bot.buscarListaUsuario(aniuser2 == null ? "" : aniuser2.getNombre());
+            const user_2 = await bot.usuario(uRegistrados[i].serverId, uRegistrados[i].anilistUsername || "");
+            const listaUsuario_2 = await Usuarios.GetEntradas(bot, user_2 == null ? "" : user_2.getNombre());
             
-            let user2AnimeList = this.FiltrarCompletados(userList2.animeList.lists);
-            user2AnimeList = user2AnimeList == undefined ? null : user2AnimeList.entries;
+            let animesUsuario_2 = this.FiltrarCompletados(listaUsuario_2.animeList.lists);
+            animesUsuario_2 = animesUsuario_2 == undefined ? null : animesUsuario_2.entries;
 
-            const sharedMedia = await this.GetSharedMedia(user1AnimeList, user2AnimeList);
-
+            const sharedMedia = await this.GetSharedMedia(animesUsuario_1, animesUsuario_2);
             const resultado = this.CalcularAfinidad(sharedMedia);
 
-            afinidades.push({ username: aniuser2 == null ? "" : aniuser2.getNombre(), afinidad: parseFloat(resultado.toFixed(2)) });
+            afinidades.push({ username: user_2 == null ? "" : user_2.getNombre(), afinidad: parseFloat(resultado.toFixed(2)) });
     
             i++;
         }

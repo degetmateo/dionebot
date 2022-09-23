@@ -425,10 +425,6 @@ class BOT {
         return await Usuarios.GetStatsMedia(this, userID, mediaID);
     }
 
-    public async buscarListaUsuario(username: string) {
-        return await Usuarios.GetEntradas(this, username);
-    }
-
     public async usuario(serverID: string, args: string): Promise<Usuario | null> {
         const user = await Usuarios.BuscarUsuario(this, serverID, args);
         return user == null ? null : new Usuario(user);
