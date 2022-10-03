@@ -10,11 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Afinidad = void 0;
+const Usuario_1 = require("../modelos/Usuario");
 const Usuarios_1 = require("./Usuarios");
 class Afinidad {
-    static GetAfinidadUsuario(bot, user_1, uRegistrados) {
+    static GetAfinidadUsuario(user_1, uRegistrados) {
         return __awaiter(this, void 0, void 0, function* () {
-            const listaUsuario_1 = yield Usuarios_1.Usuarios.GetEntradas(bot, user_1.getNombre());
+            const listaUsuario_1 = yield Usuarios_1.Usuarios.GetEntradas(user_1.getNombre());
             let animesUsuario_1 = this.FiltrarCompletados(listaUsuario_1.animeList.lists);
             animesUsuario_1 = animesUsuario_1 == undefined ? null : animesUsuario_1.entries;
             const afinidades = [];
@@ -24,8 +25,8 @@ class Afinidad {
                     i++;
                     continue;
                 }
-                const user_2 = yield bot.usuario(uRegistrados[i].serverId, uRegistrados[i].anilistUsername || "");
-                const listaUsuario_2 = yield Usuarios_1.Usuarios.GetEntradas(bot, user_2 == null ? "" : user_2.getNombre());
+                const user_2 = new Usuario_1.Usuario(yield Usuarios_1.Usuarios.BuscarUsuario(uRegistrados[i].serverId, uRegistrados[i].anilistUsername || ""));
+                const listaUsuario_2 = yield Usuarios_1.Usuarios.GetEntradas(user_2 == null ? "" : user_2.getNombre());
                 let animesUsuario_2 = this.FiltrarCompletados(listaUsuario_2.animeList.lists);
                 animesUsuario_2 = animesUsuario_2 == undefined ? null : animesUsuario_2.entries;
                 const sharedMedia = yield this.GetSharedMedia(animesUsuario_1, animesUsuario_2);

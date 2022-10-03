@@ -1,19 +1,19 @@
-import { BOT } from "../objects/Bot";
-import { AniUser } from "../models/AniUser";
-import { Obra } from "../objects/Obra";
+import { Fetch } from "./Fetch";
+import { User } from "../modelos_db/User";
+import { Obra } from "../modelos/Obra";
 
 class Usuarios {
-    public static async BuscarUsuario(bot: BOT, serverID: string, args: string): Promise<any> {
+    public static async BuscarUsuario(serverID: string, args: string): Promise<any> {
         if (isNaN(+args) || isNaN(parseFloat(args))) {
             const variables = {
                 name: args
             };
-    
-            const data = await bot.request(queryUsername, variables);
-            
-            return (data == null || data.User == null) ? null : data.User;
+
+            const response = await Fetch.request(queryUsername, variables);
+
+            return (response == null || response.User == null) ? null : response.User;
         } else {
-            const user = await AniUser.findOne({ serverId: serverID, discordId: args });
+            const user = await User.findOne({ serverId: serverID, discordId: args });
     
             if (!user) return null;
     
@@ -21,18 +21,18 @@ class Usuarios {
                 name: user.anilistUsername
             }
     
-            const data = await bot.request(queryUsername, variables);
+            const response = await Fetch.request(queryUsername, variables);
             
-            return (data == null || data.User == null) ? null : data.User;
+            return (response == null || response.User == null) ? null : response.User;
         }
     }
 
-    public static async GetUsuariosMedia(bot: BOT, serverID: any, media: Obra): Promise<any> {
-        const uRegistrados = await AniUser.find({ serverId: serverID });
+    public static async GetUsuariosMedia(serverID: any, media: Obra): Promise<any> {
+        const uRegistrados = await User.find({ serverId: serverID });
         const uMedia = [];
     
         for (let i = 0; i < uRegistrados.length; i++) {
-            const uLista = await bot.buscarMediaUsuario(uRegistrados[i].anilistId, media.getID());
+            const uLista = await this.GetStatsMedia(uRegistrados[i].anilistId, media.getID());
     
             if (uLista != null) {
                 uLista.username = uRegistrados[i].anilistUsername;
@@ -57,20 +57,20 @@ class Usuarios {
         return uMapeados;
     }
 
-    public static async GetEntradas(bot: BOT, username: string): Promise<any> {
+    public static async GetEntradas(username: string): Promise<any> {
         const variables = { username };
-        const response = await bot.request(queryLista, variables);
+        const response = await Fetch.request(queryLista, variables);
     
         return (response == null) ? null : response;
     }
 
-    public static async GetStatsMedia(bot: BOT, uID: any, mID: string): Promise<any> {
+    public static async GetStatsMedia(uID: any, mID: string): Promise<any> {
         const userID = parseInt(uID);
         const mediaID = parseInt(mID);
     
         const variables = { userID, mediaID };
     
-        const response = await bot.request(queryMedia, variables);
+        const response = await Fetch.request(queryMedia, variables);
     
         return (response == null || response.MediaList == null) ? null : response.MediaList;
     }

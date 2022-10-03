@@ -10,8 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Media = void 0;
+const Fetch_1 = require("./Fetch");
 class Media {
-    static BuscarMedia(bot, tipo, args) {
+    static BuscarMedia(tipo, args) {
         return __awaiter(this, void 0, void 0, function* () {
             const variables = {
                 search: args,
@@ -19,18 +20,18 @@ class Media {
                 page: 1,
                 perPage: 1
             };
-            const response = yield bot.request(queryName, variables);
+            const response = yield Fetch_1.Fetch.request(queryName, variables);
             return (response == null || response.Page == null || response.Page.media == null || response.Page.media[0] == null) ?
                 null : response.Page.media[0];
         });
     }
-    static BuscarMediaID(bot, tipo, id) {
+    static BuscarMediaID(tipo, id) {
         return __awaiter(this, void 0, void 0, function* () {
             const variables = {
                 id: parseInt(id),
                 type: tipo.toUpperCase()
             };
-            const response = yield bot.request(queryID, variables);
+            const response = yield Fetch_1.Fetch.request(queryID, variables);
             return (response == null || response.Media == null) ? null : response.Media;
         });
     }

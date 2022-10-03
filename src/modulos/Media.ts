@@ -1,7 +1,7 @@
-import { BOT } from "../objects/Bot";
+import { Fetch } from "./Fetch";
 
 class Media {
-    public static async BuscarMedia(bot: BOT, tipo: string, args: string): Promise<any> {
+    public static async BuscarMedia(tipo: string, args: string): Promise<any> {
         const variables = {
             search: args,
             type: tipo.toUpperCase(),
@@ -9,19 +9,19 @@ class Media {
             perPage: 1
         };
     
-        const response = await bot.request(queryName, variables);
+        const response = await Fetch.request(queryName, variables);
 
         return (response == null || response.Page == null || response.Page.media == null || response.Page.media[0] == null) ? 
             null : response.Page.media[0];
     }
 
-    public static async BuscarMediaID(bot: BOT, tipo: string, id: string): Promise<any> {
+    public static async BuscarMediaID(tipo: string, id: string): Promise<any> {
         const variables = {
             id: parseInt(id),
             type: tipo.toUpperCase()
         };
     
-        const response = await bot.request(queryID, variables);
+        const response = await Fetch.request(queryID, variables);
 
         return (response == null || response.Media == null) ? null : response.Media;
     }

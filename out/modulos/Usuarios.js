@@ -10,35 +10,36 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Usuarios = void 0;
-const AniUser_1 = require("../models/AniUser");
+const Fetch_1 = require("./Fetch");
+const User_1 = require("../modelos_db/User");
 class Usuarios {
-    static BuscarUsuario(bot, serverID, args) {
+    static BuscarUsuario(serverID, args) {
         return __awaiter(this, void 0, void 0, function* () {
             if (isNaN(+args) || isNaN(parseFloat(args))) {
                 const variables = {
                     name: args
                 };
-                const data = yield bot.request(queryUsername, variables);
-                return (data == null || data.User == null) ? null : data.User;
+                const response = yield Fetch_1.Fetch.request(queryUsername, variables);
+                return (response == null || response.User == null) ? null : response.User;
             }
             else {
-                const user = yield AniUser_1.AniUser.findOne({ serverId: serverID, discordId: args });
+                const user = yield User_1.User.findOne({ serverId: serverID, discordId: args });
                 if (!user)
                     return null;
                 const variables = {
                     name: user.anilistUsername
                 };
-                const data = yield bot.request(queryUsername, variables);
-                return (data == null || data.User == null) ? null : data.User;
+                const response = yield Fetch_1.Fetch.request(queryUsername, variables);
+                return (response == null || response.User == null) ? null : response.User;
             }
         });
     }
-    static GetUsuariosMedia(bot, serverID, media) {
+    static GetUsuariosMedia(serverID, media) {
         return __awaiter(this, void 0, void 0, function* () {
-            const uRegistrados = yield AniUser_1.AniUser.find({ serverId: serverID });
+            const uRegistrados = yield User_1.User.find({ serverId: serverID });
             const uMedia = [];
             for (let i = 0; i < uRegistrados.length; i++) {
-                const uLista = yield bot.buscarMediaUsuario(uRegistrados[i].anilistId, media.getID());
+                const uLista = yield this.GetStatsMedia(uRegistrados[i].anilistId, media.getID());
                 if (uLista != null) {
                     uLista.username = uRegistrados[i].anilistUsername;
                     uLista.discordId = uRegistrados[i].discordId;
@@ -58,19 +59,19 @@ class Usuarios {
             return uMapeados;
         });
     }
-    static GetEntradas(bot, username) {
+    static GetEntradas(username) {
         return __awaiter(this, void 0, void 0, function* () {
             const variables = { username };
-            const response = yield bot.request(queryLista, variables);
+            const response = yield Fetch_1.Fetch.request(queryLista, variables);
             return (response == null) ? null : response;
         });
     }
-    static GetStatsMedia(bot, uID, mID) {
+    static GetStatsMedia(uID, mID) {
         return __awaiter(this, void 0, void 0, function* () {
             const userID = parseInt(uID);
             const mediaID = parseInt(mID);
             const variables = { userID, mediaID };
-            const response = yield bot.request(queryMedia, variables);
+            const response = yield Fetch_1.Fetch.request(queryMedia, variables);
             return (response == null || response.MediaList == null) ? null : response.MediaList;
         });
     }

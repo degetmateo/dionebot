@@ -10,19 +10,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Setup = void 0;
-const AniUser_1 = require("../models/AniUser");
+const User_1 = require("../modelos_db/User");
+const Usuario_1 = require("../modelos/Usuario");
+const Usuarios_1 = require("./Usuarios");
 class Setup {
-    static SetupUsuario(bot, username, message) {
+    static SetupUsuario(username, message) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const usuario = yield bot.usuario(message.guild == null ? "" : message.guild.id, username);
+            const usuario = new Usuario_1.Usuario(yield Usuarios_1.Usuarios.BuscarUsuario(message.guild == null ? "" : message.guild.id, username));
             if (!usuario)
                 return false;
-            let uRegistrados = yield AniUser_1.AniUser.find({ serverId: message.guildId });
+            let uRegistrados = yield User_1.User.find({ serverId: message.guildId });
             let uRegistrado = uRegistrados.find(u => u.discordId == message.author.id);
             if (uRegistrado != null && uRegistrado != undefined)
                 return false;
-            const aniuser = new AniUser_1.AniUser();
+            const aniuser = new User_1.User();
             aniuser.anilistUsername = usuario.getNombre();
             aniuser.anilistId = usuario.getID();
             aniuser.discordId = message.author.id;
@@ -34,9 +36,9 @@ class Setup {
             return true;
         });
     }
-    static UnsetupUsuario(bot, message) {
+    static UnsetupUsuario(message) {
         return __awaiter(this, void 0, void 0, function* () {
-            const uRegistrados = yield AniUser_1.AniUser.find({ serverId: message.guildId });
+            const uRegistrados = yield User_1.User.find({ serverId: message.guildId });
             const uRegistrado = uRegistrados.find(u => u.discordId == message.author.id);
             try {
                 yield (uRegistrado === null || uRegistrado === void 0 ? void 0 : uRegistrado.delete());

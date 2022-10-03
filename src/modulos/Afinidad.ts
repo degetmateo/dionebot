@@ -1,10 +1,9 @@
-import { BOT } from "../objects/Bot";
-import { Usuario } from "../objects/Usuario";
+import { Usuario } from "../modelos/Usuario";
 import { Usuarios } from "./Usuarios";
 
 class Afinidad {
-    public static async GetAfinidadUsuario(bot: BOT, user_1: Usuario, uRegistrados: Array<any>) {
-        const listaUsuario_1 = await Usuarios.GetEntradas(bot, user_1.getNombre());
+    public static async GetAfinidadUsuario(user_1: Usuario, uRegistrados: Array<any>) {
+        const listaUsuario_1 = await Usuarios.GetEntradas(user_1.getNombre());
 
         let animesUsuario_1 = this.FiltrarCompletados(listaUsuario_1.animeList.lists);
         animesUsuario_1 = animesUsuario_1 == undefined ? null : animesUsuario_1.entries;
@@ -18,8 +17,8 @@ class Afinidad {
                 continue;
             }
     
-            const user_2 = await bot.usuario(uRegistrados[i].serverId, uRegistrados[i].anilistUsername || "");
-            const listaUsuario_2 = await Usuarios.GetEntradas(bot, user_2 == null ? "" : user_2.getNombre());
+            const user_2 = new Usuario(await Usuarios.BuscarUsuario(uRegistrados[i].serverId, uRegistrados[i].anilistUsername || ""));
+            const listaUsuario_2 = await Usuarios.GetEntradas(user_2 == null ? "" : user_2.getNombre());
             
             let animesUsuario_2 = this.FiltrarCompletados(listaUsuario_2.animeList.lists);
             animesUsuario_2 = animesUsuario_2 == undefined ? null : animesUsuario_2.entries;

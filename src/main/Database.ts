@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { AniUser } from "../models/AniUser";
 
 class DB {
     public conectar(url: any) {

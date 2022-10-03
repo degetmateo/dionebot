@@ -10,5 +10,5 @@ const Model = new Schema({
     buff: Buffer
 });
 
-const AniUser = mongoose.model('AniUser', Model);
-export { AniUser };
+const User = mongoose.model('AniUser', Model);
+export { User };
