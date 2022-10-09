@@ -32,7 +32,7 @@ class BOT {
         return __awaiter(this, void 0, void 0, function* () {
             this.on("ready", () => console.log("BOT preparado!"));
             this.on("messageCreate", (message) => __awaiter(this, void 0, void 0, function* () {
-                var _a, _b;
+                var _a, _b, _c, _d, _e;
                 if (!message)
                     return;
                 if (message.author.bot)
@@ -46,6 +46,18 @@ class BOT {
                     message.reply(`${message.client.emojis.cache.find((e => e.name === "pala"))}`);
                 }
                 ;
+                if (comando === "!ruleta") {
+                    const number = Math.floor(Math.random() * 6);
+                    if (number === 1) {
+                        if ((_a = message.member) === null || _a === void 0 ? void 0 : _a.permissions.has("Administrator"))
+                            return;
+                        (_b = message.member) === null || _b === void 0 ? void 0 : _b.kick();
+                        message.channel.send(`${(_c = message.member) === null || _c === void 0 ? void 0 : _c.user.username} fue expulsado...`);
+                    }
+                    else {
+                        message.channel.send("...");
+                    }
+                }
                 if (comando == "!anime") {
                     const anime = yield this.anime(args.join(" "));
                     if (!anime) {
@@ -96,7 +108,7 @@ class BOT {
                         usuario = yield this.usuario(message.guild.id, message.author.id);
                     }
                     else {
-                        const usuarioMencionado = (_a = message.mentions.members) === null || _a === void 0 ? void 0 : _a.first();
+                        const usuarioMencionado = (_d = message.mentions.members) === null || _d === void 0 ? void 0 : _d.first();
                         if (usuarioMencionado) {
                             usuario = yield this.usuario(message.guild.id, usuarioMencionado.id);
                         }
@@ -137,7 +149,7 @@ class BOT {
                         this.EnviarAfinidad(message, message.author.id, serverID);
                     }
                     else {
-                        if ((_b = message.mentions.members) === null || _b === void 0 ? void 0 : _b.first()) {
+                        if ((_e = message.mentions.members) === null || _e === void 0 ? void 0 : _e.first()) {
                             const uMencionado = message.mentions.members.first();
                             const userID = uMencionado == null ? "" : uMencionado.id;
                             this.EnviarAfinidad(message, userID, serverID);
