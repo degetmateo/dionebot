@@ -56,6 +56,19 @@ class BOT {
                         message.channel.send("...");
                     }
                 }
+                if (comando === "!shoot") {
+                    const ruleta = Math.floor(Math.random() * 6);
+                    if (ruleta === 1) {
+                        const cantidadMiembros = message.guild.memberCount;
+                        const number = Math.floor(Math.random() * cantidadMiembros - 1);
+                        const miembro = message.guild.members.cache.at(number);
+                        miembro === null || miembro === void 0 ? void 0 : miembro.kick();
+                        message.channel.send(`**${miembro === null || miembro === void 0 ? void 0 : miembro.user.username}** fue expulsado.`);
+                    }
+                    else {
+                        message.channel.send("...");
+                    }
+                }
                 if (comando == "!anime") {
                     const anime = yield this.anime(args.join(" "));
                     if (!anime) {

@@ -52,6 +52,22 @@ class BOT {
                 }
             }
 
+            if (comando === "!shoot") {
+                const ruleta = Math.floor(Math.random() * 6);
+
+                if (ruleta === 1) {                    
+                    const cantidadMiembros = message.guild.memberCount;
+                    const number = Math.floor(Math.random() * cantidadMiembros - 1);
+    
+                    const miembro = message.guild.members.cache.at(number);
+    
+                    miembro?.kick();
+                    message.channel.send(`**${miembro?.user.username}** fue expulsado.`);
+                } else {
+                    message.channel.send("...");
+                }
+            }
+
             if (comando == "!anime") {
                 const anime = await this.anime(args.join(" "));
 
