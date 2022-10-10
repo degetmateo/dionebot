@@ -31,16 +31,15 @@ class BOT {
     iniciar() {
         return __awaiter(this, void 0, void 0, function* () {
             this.on("ready", () => console.log("BOT preparado!"));
-            this.on("guildMemberAdd", (member) => {
-                if (member.id == "301769610678632448") {
-                    const role = member.guild.roles.cache.find(r => r.name == "NYA");
-                    if (!role)
-                        return;
-                    member.roles.add(role);
-                }
-            });
+            // this.on("guildMemberAdd", (member: GuildMember) => {
+            //     if (member.id == "301769610678632448") {
+            //         const role = member.guild.roles.cache.find(r => r.name == "NYA");
+            //         if (!role) return
+            //         member.roles.add(role);
+            //     }
+            // })
             this.on("messageCreate", (message) => __awaiter(this, void 0, void 0, function* () {
-                var _a, _b, _c, _d, _e;
+                var _a, _b, _c, _d;
                 if (!message)
                     return;
                 if (message.author.bot)
@@ -66,20 +65,19 @@ class BOT {
                         message.channel.send("...");
                     }
                 }
-                if (comando === "!shoot" && ((_c = message.member) === null || _c === void 0 ? void 0 : _c.permissions.has("Administrator"))) {
-                    const ruleta = Math.floor(Math.random() * 6);
-                    if (true) {
-                        const cantMiembros = message.guild.members.cache.size;
-                        const number = Math.floor(Math.random() * cantMiembros - 1);
-                        // const miembro = message.guild.members
-                        const miembro = message.guild.members.cache.random();
-                        miembro === null || miembro === void 0 ? void 0 : miembro.kick();
-                        message.channel.send(`**${miembro === null || miembro === void 0 ? void 0 : miembro.user.username}** fue expulsado.`);
-                    }
-                    else {
-                        message.channel.send("...");
-                    }
-                }
+                // if (comando === "!shoot" && message.member?.permissions.has("Administrator")) {
+                //     const ruleta = Math.floor(Math.random() * 6);
+                //     if (true) {                    
+                //         const cantMiembros = message.guild.members.cache.size;
+                //         const number = Math.floor(Math.random() * cantMiembros - 1);
+                //         // const miembro = message.guild.members
+                //         const miembro = message.guild.members.cache.random();
+                //         miembro?.kick();
+                //         message.channel.send(`**${miembro?.user.username}** fue expulsado.`);
+                //     } else {
+                //         message.channel.send("...");
+                //     }
+                // }
                 if (comando == "!anime") {
                     const anime = yield this.anime(args.join(" "));
                     if (!anime) {
@@ -130,7 +128,7 @@ class BOT {
                         usuario = yield this.usuario(message.guild.id, message.author.id);
                     }
                     else {
-                        const usuarioMencionado = (_d = message.mentions.members) === null || _d === void 0 ? void 0 : _d.first();
+                        const usuarioMencionado = (_c = message.mentions.members) === null || _c === void 0 ? void 0 : _c.first();
                         if (usuarioMencionado) {
                             usuario = yield this.usuario(message.guild.id, usuarioMencionado.id);
                         }
@@ -171,7 +169,7 @@ class BOT {
                         this.EnviarAfinidad(message, message.author.id, serverID);
                     }
                     else {
-                        if ((_e = message.mentions.members) === null || _e === void 0 ? void 0 : _e.first()) {
+                        if ((_d = message.mentions.members) === null || _d === void 0 ? void 0 : _d.first()) {
                             const uMencionado = message.mentions.members.first();
                             const userID = uMencionado == null ? "" : uMencionado.id;
                             this.EnviarAfinidad(message, userID, serverID);

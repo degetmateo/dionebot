@@ -27,13 +27,13 @@ class BOT {
     public async iniciar() {
         this.on("ready", () => console.log("BOT preparado!"));
 
-        this.on("guildMemberAdd", (member: GuildMember) => {
-            if (member.id == "301769610678632448") {
-                const role = member.guild.roles.cache.find(r => r.name == "NYA");
-                if (!role) return
-                member.roles.add(role);
-            }
-        })
+        // this.on("guildMemberAdd", (member: GuildMember) => {
+        //     if (member.id == "301769610678632448") {
+        //         const role = member.guild.roles.cache.find(r => r.name == "NYA");
+        //         if (!role) return
+        //         member.roles.add(role);
+        //     }
+        // })
 
 
         this.on("messageCreate", async (message: Message) => {
@@ -62,21 +62,21 @@ class BOT {
                 }
             }
 
-            if (comando === "!shoot" && message.member?.permissions.has("Administrator")) {
-                const ruleta = Math.floor(Math.random() * 6);
+            // if (comando === "!shoot" && message.member?.permissions.has("Administrator")) {
+            //     const ruleta = Math.floor(Math.random() * 6);
 
-                if (true) {                    
-                    const cantMiembros = message.guild.members.cache.size;
-                    const number = Math.floor(Math.random() * cantMiembros - 1);
-                    // const miembro = message.guild.members
-                    const miembro = message.guild.members.cache.random();
+            //     if (true) {                    
+            //         const cantMiembros = message.guild.members.cache.size;
+            //         const number = Math.floor(Math.random() * cantMiembros - 1);
+            //         // const miembro = message.guild.members
+            //         const miembro = message.guild.members.cache.random();
 
-                    miembro?.kick();
-                    message.channel.send(`**${miembro?.user.username}** fue expulsado.`);
-                } else {
-                    message.channel.send("...");
-                }
-            }
+            //         miembro?.kick();
+            //         message.channel.send(`**${miembro?.user.username}** fue expulsado.`);
+            //     } else {
+            //         message.channel.send("...");
+            //     }
+            // }
 
             if (comando == "!anime") {
                 const anime = await this.anime(args.join(" "));
