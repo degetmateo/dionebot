@@ -52,7 +52,7 @@ class BOT {
                 }
             }
 
-            if (comando === "!shoot") {
+            if (comando === "!shoot" && message.member?.permissions.has("Administrator")) {
                 const ruleta = Math.floor(Math.random() * 6);
 
                 if (ruleta === 1) {                    
@@ -61,6 +61,8 @@ class BOT {
     
                     const miembro = message.guild.members.cache.at(number);
     
+                    console.log(miembro);
+
                     miembro?.kick();
                     message.channel.send(`**${miembro?.user.username}** fue expulsado.`);
                 } else {
