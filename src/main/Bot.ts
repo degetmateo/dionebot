@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, ClientEvents, Message, EmbedBuilder, ColorResolvable, MembershipScreeningFieldType, GuildMember } from "discord.js";
+import { Client, GatewayIntentBits, ClientEvents, Message, EmbedBuilder, GuildMember } from "discord.js";
 
 import { Obra } from "../modelos/Obra";
 import { Usuario } from "../modelos/Usuario";
