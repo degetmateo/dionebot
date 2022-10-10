@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, ClientEvents, Message, EmbedBuilder, GuildMember } from "discord.js";
+import { Client, GatewayIntentBits, ClientEvents, Message, EmbedBuilder, GuildMember, ChannelType } from "discord.js";
 
 import { Obra } from "../modelos/Obra";
 import { Usuario } from "../modelos/Usuario";
@@ -27,13 +27,13 @@ class BOT {
     public async iniciar() {
         this.on("ready", () => console.log("BOT preparado!"));
 
-        // this.on("guildMemberAdd", (member: GuildMember) => {
-        //     if (member.id == "301769610678632448") {
-        //         const role = member.guild.roles.cache.find(r => r.name == "NYA");
-        //         if (!role) return
-        //         member.roles.add(role);
-        //     }
-        // })
+        this.on("guildMemberAdd", (member: GuildMember) => {
+            if (member.id == "301769610678632448") {
+                const role = member.guild.roles.cache.find(r => r.name == "NYA");
+                if (!role) return
+                member.roles.add(role);
+            }
+        })
 
 
         this.on("messageCreate", async (message: Message) => {
@@ -54,8 +54,14 @@ class BOT {
 
                 if (number === 1) {        
                     // const c = message.guild.invites.
-                    // const invitation = message.guild.invites.create();            
+
                     message.member?.kick();
+
+                    const channel = await message.channel.fetch();
+                    const invite = channel.type === ChannelType.GuildText ? await channel.createInvite() : null;
+
+                    invite ? await message.member?.user.send(invite.url) : null;
+
                     message.channel.send(`${message.member?.user.username} fue expulsado...`)
                 } else {
                     message.channel.send("...");

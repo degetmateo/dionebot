@@ -31,15 +31,16 @@ class BOT {
     iniciar() {
         return __awaiter(this, void 0, void 0, function* () {
             this.on("ready", () => console.log("BOT preparado!"));
-            // this.on("guildMemberAdd", (member: GuildMember) => {
-            //     if (member.id == "301769610678632448") {
-            //         const role = member.guild.roles.cache.find(r => r.name == "NYA");
-            //         if (!role) return
-            //         member.roles.add(role);
-            //     }
-            // })
+            this.on("guildMemberAdd", (member) => {
+                if (member.id == "301769610678632448") {
+                    const role = member.guild.roles.cache.find(r => r.name == "NYA");
+                    if (!role)
+                        return;
+                    member.roles.add(role);
+                }
+            });
             this.on("messageCreate", (message) => __awaiter(this, void 0, void 0, function* () {
-                var _a, _b, _c, _d;
+                var _a, _b, _c, _d, _e;
                 if (!message)
                     return;
                 if (message.author.bot)
@@ -57,9 +58,11 @@ class BOT {
                     const number = Math.floor(Math.random() * 6);
                     if (number === 1) {
                         // const c = message.guild.invites.
-                        // const invitation = message.guild.invites.create();            
                         (_a = message.member) === null || _a === void 0 ? void 0 : _a.kick();
-                        message.channel.send(`${(_b = message.member) === null || _b === void 0 ? void 0 : _b.user.username} fue expulsado...`);
+                        const channel = yield message.channel.fetch();
+                        const invite = channel.type === discord_js_1.ChannelType.GuildText ? yield channel.createInvite() : null;
+                        invite ? yield ((_b = message.member) === null || _b === void 0 ? void 0 : _b.user.send(invite.url)) : null;
+                        message.channel.send(`${(_c = message.member) === null || _c === void 0 ? void 0 : _c.user.username} fue expulsado...`);
                     }
                     else {
                         message.channel.send("...");
@@ -128,7 +131,7 @@ class BOT {
                         usuario = yield this.usuario(message.guild.id, message.author.id);
                     }
                     else {
-                        const usuarioMencionado = (_c = message.mentions.members) === null || _c === void 0 ? void 0 : _c.first();
+                        const usuarioMencionado = (_d = message.mentions.members) === null || _d === void 0 ? void 0 : _d.first();
                         if (usuarioMencionado) {
                             usuario = yield this.usuario(message.guild.id, usuarioMencionado.id);
                         }
@@ -169,7 +172,7 @@ class BOT {
                         this.EnviarAfinidad(message, message.author.id, serverID);
                     }
                     else {
-                        if ((_d = message.mentions.members) === null || _d === void 0 ? void 0 : _d.first()) {
+                        if ((_e = message.mentions.members) === null || _e === void 0 ? void 0 : _e.first()) {
                             const uMencionado = message.mentions.members.first();
                             const userID = uMencionado == null ? "" : uMencionado.id;
                             this.EnviarAfinidad(message, userID, serverID);
