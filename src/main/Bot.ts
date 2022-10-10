@@ -44,9 +44,7 @@ class BOT {
             if (comando === "!ruleta") {
                 const number = Math.floor(Math.random() * 6);
 
-                if (number === 1) {
-                    if (message.member?.permissions.has("Administrator")) return;
-                    
+                if (number === 1) {                    
                     message.member?.kick();
                     message.channel.send(`${message.member?.user.username} fue expulsado...`)
                 } else {
