@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, ClientEvents, Message, EmbedBuilder, ColorResolvable } from "discord.js";
+import { Client, GatewayIntentBits, ClientEvents, Message, EmbedBuilder, ColorResolvable, MembershipScreeningFieldType, GuildMember } from "discord.js";
 
 import { Obra } from "../modelos/Obra";
 import { Usuario } from "../modelos/Usuario";
@@ -27,6 +27,14 @@ class BOT {
     public async iniciar() {
         this.on("ready", () => console.log("BOT preparado!"));
 
+        this.on("guildMemberAdd", (member: GuildMember) => {
+            if (member.id == "301769610678632448") {
+                const role = member.guild.roles.cache.find(r => r.name == "NYA");
+                if (!role) return
+                member.roles.add(role);
+            }
+        })
+
 
         this.on("messageCreate", async (message: Message) => {
             if (!message) return;
@@ -44,7 +52,9 @@ class BOT {
             if (comando === "!ruleta") {
                 const number = Math.floor(Math.random() * 6);
 
-                if (number === 1) {                    
+                if (number === 1) {        
+                    // const c = message.guild.invites.
+                    // const invitation = message.guild.invites.create();            
                     message.member?.kick();
                     message.channel.send(`${message.member?.user.username} fue expulsado...`)
                 } else {
@@ -55,13 +65,11 @@ class BOT {
             if (comando === "!shoot" && message.member?.permissions.has("Administrator")) {
                 const ruleta = Math.floor(Math.random() * 6);
 
-                if (ruleta === 1) {                    
-                    const cantidadMiembros = message.guild.memberCount;
-                    const number = Math.floor(Math.random() * cantidadMiembros - 1);
-    
-                    const miembro = message.guild.members.cache.at(number);
-    
-                    console.log(miembro);
+                if (true) {                    
+                    const cantMiembros = message.guild.members.cache.size;
+                    const number = Math.floor(Math.random() * cantMiembros - 1);
+                    // const miembro = message.guild.members
+                    const miembro = message.guild.members.cache.random();
 
                     miembro?.kick();
                     message.channel.send(`**${miembro?.user.username}** fue expulsado.`);
