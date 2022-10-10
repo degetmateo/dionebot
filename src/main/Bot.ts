@@ -55,13 +55,12 @@ class BOT {
                 if (number === 1) {        
                     // const c = message.guild.invites.
 
+                    const channel = await message.channel.fetch();
+                    const invite = channel.type === ChannelType.GuildText ? await channel.createInvite() : null;
+
+                    invite ? await message.member?.user.send(invite.url) : null;
+
                     message.member?.kick();
-
-                    // const channel = await message.channel.fetch();
-                    // const invite = channel.type === ChannelType.GuildText ? await channel.createInvite() : null;
-
-                    // invite ? await message.member?.user.send(invite.url) : null;
-
                     message.channel.send(`${message.member?.user.username} fue expulsado...`)
                 } else {
                     message.channel.send("...");
