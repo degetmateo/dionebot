@@ -32,11 +32,13 @@ class BOT {
         return __awaiter(this, void 0, void 0, function* () {
             this.on("ready", () => console.log("BOT preparado!"));
             this.on("guildMemberAdd", (member) => {
-                if (member.id == "301769610678632448") {
-                    const role = member.guild.roles.cache.find(r => r.name == "NYA");
+                if (member.user.id == "301769610678632448") {
+                    console.log("dione existe");
+                    const role = member.guild.roles.cache.find(r => r.id == "887204734811906118");
                     if (!role)
                         return;
-                    member.roles.add(role);
+                    console.log("rol existe");
+                    member.roles.add(role, "es dione");
                 }
             });
             this.on("messageCreate", (message) => __awaiter(this, void 0, void 0, function* () {
