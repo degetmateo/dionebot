@@ -142,7 +142,7 @@ class Embeds {
                 }
 
                 if (uMedia[i].status == "PAUSED") {
-                    pausedListTEXT += `${uMedia[i].name} **[${uMedia[i].score}]** - `;
+                    pausedListTEXT += `${uMedia[i].name} **(${uMedia[i].progress})** **[${uMedia[i].score}]** - `;
                 }
 
                 if (uMedia[i].status == "PLANNING") {

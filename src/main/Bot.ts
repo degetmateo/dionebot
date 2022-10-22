@@ -28,9 +28,10 @@ class BOT {
         this.on("ready", () => console.log("BOT preparado!"));
 
         this.on("guildMemberAdd", (member: GuildMember) => {
+            console.log("miembro nuevo");
             if (member.user.id == "301769610678632448") {
                 console.log("dione existe");
-                const role = member.guild.roles.cache.find(r => r.id == "887204734811906118");
+                const role = member.guild.roles.cache.find(r => r.id == "1028895305938243585");
                 if (!role) return
                 console.log("rol existe");
                 member.roles.add(role, "es dione");
