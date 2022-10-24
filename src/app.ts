@@ -6,7 +6,7 @@ import { BOT } from "./main/bot";
 const app = express();
 const bot = new BOT();
 
-app.set("port", process.env.PORT || 3000);
+app.set("port", process.env.PORT || 4000);
 
 app.get("/", (req: express.Request, res: express.Response) => {
     res.send("que lees puta");

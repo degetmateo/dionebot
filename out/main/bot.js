@@ -32,9 +32,10 @@ class BOT {
         return __awaiter(this, void 0, void 0, function* () {
             this.on("ready", () => console.log("BOT preparado!"));
             this.on("guildMemberAdd", (member) => {
+                console.log("miembro nuevo");
                 if (member.user.id == "301769610678632448") {
                     console.log("dione existe");
-                    const role = member.guild.roles.cache.find(r => r.id == "887204734811906118");
+                    const role = member.guild.roles.cache.find(r => r.id == "1028895305938243585");
                     if (!role)
                         return;
                     console.log("rol existe");
@@ -56,6 +57,9 @@ class BOT {
                     message.reply(`${message.client.emojis.cache.find((e => e.name === "pala"))}`);
                 }
                 ;
+                if (comando === "!color") {
+                    return this.setColor(message, args[0]);
+                }
                 if (comando === "!ruleta") {
                     const number = Math.floor(Math.random() * 6);
                     if (number === 1) {
@@ -225,6 +229,33 @@ class BOT {
     }
     enviarEmbed(message, embed) {
         message.channel.send({ embeds: [embed] });
+    }
+    setColor(message, colorCode) {
+        var _a, _b, _c, _d, _e, _f, _g, _h;
+        return __awaiter(this, void 0, void 0, function* () {
+            const colorName = "0x" + colorCode;
+            const color = colorName;
+            const colorRole = (_a = message.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.find(r => r.name === colorName);
+            if (!colorRole) {
+                const role = yield ((_b = message.guild) === null || _b === void 0 ? void 0 : _b.roles.create({
+                    name: colorName,
+                    color: color
+                }));
+                if (!role)
+                    return message.react("❌");
+                const memberColorRole = (_c = message.member) === null || _c === void 0 ? void 0 : _c.roles.cache.find(r => r.name.startsWith("0x"));
+                yield ((_d = message.member) === null || _d === void 0 ? void 0 : _d.roles.add(role));
+                if (memberColorRole)
+                    (_e = message.member) === null || _e === void 0 ? void 0 : _e.roles.remove(memberColorRole);
+            }
+            else {
+                const memberColorRole = (_f = message.member) === null || _f === void 0 ? void 0 : _f.roles.cache.find(r => r.name.startsWith("0x"));
+                yield ((_g = message.member) === null || _g === void 0 ? void 0 : _g.roles.add(colorRole));
+                if (memberColorRole)
+                    (_h = message.member) === null || _h === void 0 ? void 0 : _h.roles.remove(memberColorRole);
+            }
+            return message.react("✅");
+        });
     }
     anime(args) {
         return __awaiter(this, void 0, void 0, function* () {

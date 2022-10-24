@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, ClientEvents, Message, EmbedBuilder, GuildMember, ChannelType } from "discord.js";
+import { Client, GatewayIntentBits, ClientEvents, Message, EmbedBuilder, GuildMember, ChannelType, ColorResolvable, MessageActivityType } from "discord.js";
 
 import { Obra } from "../modelos/Obra";
 import { Usuario } from "../modelos/Usuario";
@@ -51,6 +51,10 @@ class BOT {
                 message.reply(`${message.client.emojis.cache.find((e => e.name === "pala"))}`);
             };
         
+            if (comando === "!color") {
+                return this.setColor(message, args[0]);
+            }
+
             if (comando === "!ruleta") {
                 const number = Math.floor(Math.random() * 6);
 
@@ -249,6 +253,31 @@ class BOT {
 
     private enviarEmbed(message: Message, embed: EmbedBuilder) {
         message.channel.send({ embeds: [embed] });
+    }
+
+    private async setColor(message: Message, colorCode: string) {
+        const colorName = "0x" + colorCode;
+        const color = colorName as ColorResolvable;
+
+        const colorRole = message.guild?.roles.cache.find(r => r.name === colorName);
+
+        if (!colorRole) {
+            const role = await message.guild?.roles.create({
+                name: colorName,
+                color: color
+            });
+
+            if (!role) return message.react("❌");
+            const memberColorRole = message.member?.roles.cache.find(r => r.name.startsWith("0x"));
+            await message.member?.roles.add(role);
+            if (memberColorRole) message.member?.roles.remove(memberColorRole);
+        } else {
+            const memberColorRole = message.member?.roles.cache.find(r => r.name.startsWith("0x"));
+            await message.member?.roles.add(colorRole);
+            if (memberColorRole) message.member?.roles.remove(memberColorRole);
+        }
+
+        return message.react("✅");
     }
 
     private async anime(args: string) {
