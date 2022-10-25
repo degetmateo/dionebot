@@ -23,6 +23,34 @@ const Setup_1 = require("../modulos/Setup");
 const Embeds_1 = require("../modulos/Embeds");
 class BOT {
     constructor() {
+        this.setColor2 = (message, colorCode) => __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d, _e, _f;
+            const colorRoleCode = "0x" + (colorCode.split("#").join(""));
+            const color = colorRoleCode;
+            const memberColorRole = (_a = message.member) === null || _a === void 0 ? void 0 : _a.roles.cache.find(r => { var _a; return r.name === ((_a = message.member) === null || _a === void 0 ? void 0 : _a.user.username); });
+            if (!memberColorRole) {
+                const guildColorRole = (_b = message.guild) === null || _b === void 0 ? void 0 : _b.roles.cache.find(r => { var _a; return r.name === ((_a = message.member) === null || _a === void 0 ? void 0 : _a.user.username); });
+                if (!guildColorRole) {
+                    const newRole = yield ((_c = message.guild) === null || _c === void 0 ? void 0 : _c.roles.create({
+                        name: (_d = message.member) === null || _d === void 0 ? void 0 : _d.user.username,
+                        color: color
+                    }));
+                    if (!newRole)
+                        return message.react("❌");
+                    (_e = message.member) === null || _e === void 0 ? void 0 : _e.roles.add(newRole);
+                }
+                else {
+                    guildColorRole.setColor(color);
+                    (_f = message.member) === null || _f === void 0 ? void 0 : _f.roles.add(guildColorRole);
+                }
+            }
+            else {
+                const newMemberRole = yield memberColorRole.setColor(color);
+                if (!newMemberRole)
+                    return message.react("❌");
+            }
+            return message.react("✅");
+        });
         this.client = new discord_js_1.Client({
             intents: [discord_js_1.GatewayIntentBits.Guilds, discord_js_1.GatewayIntentBits.GuildMessages, discord_js_1.GatewayIntentBits.MessageContent]
         });
@@ -58,7 +86,7 @@ class BOT {
                 }
                 ;
                 if (comando === "!color") {
-                    return this.setColor(message, args[0]);
+                    return this.setColor2(message, args[0]);
                 }
                 if (comando === "!ruleta") {
                     const number = Math.floor(Math.random() * 6);
@@ -233,7 +261,7 @@ class BOT {
     setColor(message, colorCode) {
         var _a, _b, _c, _d, _e, _f, _g, _h;
         return __awaiter(this, void 0, void 0, function* () {
-            const colorName = "0x" + colorCode;
+            const colorName = "0x" + (colorCode.split("#").join(""));
             const color = colorName;
             const colorRole = (_a = message.guild) === null || _a === void 0 ? void 0 : _a.roles.cache.find(r => r.name === colorName);
             if (!colorRole) {

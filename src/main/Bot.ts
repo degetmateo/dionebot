@@ -52,7 +52,7 @@ class BOT {
             };
         
             if (comando === "!color") {
-                return this.setColor(message, args[0]);
+                return this.setColor2(message, args[0]);
             }
 
             if (comando === "!ruleta") {
@@ -256,7 +256,7 @@ class BOT {
     }
 
     private async setColor(message: Message, colorCode: string) {
-        const colorName = "0x" + colorCode;
+        const colorName = "0x" + (colorCode.split("#").join(""));
         const color = colorName as ColorResolvable;
 
         const colorRole = message.guild?.roles.cache.find(r => r.name === colorName);
@@ -275,6 +275,36 @@ class BOT {
             const memberColorRole = message.member?.roles.cache.find(r => r.name.startsWith("0x"));
             await message.member?.roles.add(colorRole);
             if (memberColorRole) message.member?.roles.remove(memberColorRole);
+        }
+
+        return message.react("✅");
+    }
+
+    private setColor2 = async (message: Message, colorCode: string) => {
+        const colorRoleCode = "0x" + (colorCode.split("#").join(""));
+        const color = colorRoleCode as ColorResolvable;
+
+        const memberColorRole = message.member?.roles.cache.find(r => r.name === message.member?.user.username);
+
+        if (!memberColorRole) {
+            const guildColorRole = message.guild?.roles.cache.find(r => r.name === message.member?.user.username);
+
+            if (!guildColorRole) {
+                const newRole = await message.guild?.roles.create({
+                    name: message.member?.user.username,
+                    color: color
+                });
+
+                if (!newRole) return message.react("❌");
+
+                message.member?.roles.add(newRole);
+            } else {
+                guildColorRole.setColor(color);
+                message.member?.roles.add(guildColorRole);
+            }
+        } else {
+            const newMemberRole = await memberColorRole.setColor(color);
+            if (!newMemberRole) return message.react("❌");
         }
 
         return message.react("✅");
