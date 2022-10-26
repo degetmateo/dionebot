@@ -214,7 +214,7 @@ class BOT {
             const mContent = message.content.toLowerCase()
                 .split("é").join("e");
 
-            if (mContent.endsWith("que") || mContent.endsWith("que?")) {
+            if (mContent.endsWith(" que") || mContent.endsWith(" que?")) {
                 return this.responder(message, "so");
             }
 
@@ -226,7 +226,7 @@ class BOT {
                 this.responder(message, "las de doce son goood");
             };
         
-            if (message.content.endsWith("5") || message.content.endsWith("cinco")) {
+            if (message.content.endsWith(" 5") || message.content.endsWith("cinco")) {
                 this.responder(message, "por el culo te la hinco");
             }
         
