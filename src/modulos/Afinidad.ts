@@ -49,7 +49,7 @@ class Afinidad {
             }
 
             const user_2 = new Usuario(responseUser);
-            const animesUsuario_2 = await this.GetCompletedMedia(serverID, user_2);
+            const animesUsuario_2 = await this.GetCompletedMedia(user_2);
 
             if (!animesUsuario_2) {
                 return {
@@ -74,7 +74,7 @@ class Afinidad {
         }
     }
 
-    private static GetCompletedMedia = async (serverID: any, user: Usuario) => {
+    private static GetCompletedMedia = async (user: Usuario) => {
         const listaUsuario_2 = await Usuarios.GetEntradas(user.getNombre());
         let animesUsuario_2 = this.FiltrarCompletados(listaUsuario_2.animeList.lists);
         return animesUsuario_2 = animesUsuario_2 == undefined ? null : animesUsuario_2.entries;

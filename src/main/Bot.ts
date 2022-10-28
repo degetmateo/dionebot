@@ -319,7 +319,10 @@ class BOT {
         this.buscando_afinidad = true;
 
         const serverID = message.guild?.id;
-        if (!serverID) return message.react("❌");
+        if (!serverID) {
+            this.buscando_afinidad = false; 
+            return message.react("❌");
+        }
 
         let userID: string;
 
@@ -329,36 +332,57 @@ class BOT {
 
         else if (message.mentions.members?.first()) {
             const uMencionado = message.mentions.members?.first();
-            if (!uMencionado) return message.react("❌");
+            if (!uMencionado) {
+                this.buscando_afinidad = false; 
+                return message.react("❌");
+            }
             userID = uMencionado.id;
         }
 
         else {
             const username = args[0];
             const user = await User.findOne({ anilistUsername: username });
-            if (!user) return message.react("❌");
-            if (!user?.discordId) return message.react("❌");
+            if (!user) {
+                this.buscando_afinidad = false; 
+                return message.react("❌");
+            }
+            if (!user?.discordId) {
+                this.buscando_afinidad = false; 
+                return message.react("❌");
+            }
             userID = user.discordId;
         }
 
         const uRegistrados = await User.find({ serverId: serverID });
         const usuario = uRegistrados.find(u => u.discordId == userID);
 
-        if (!usuario) return message.react("❌");
-        if (!usuario.anilistUsername) return message.react("❌");
+        if (!usuario) {
+            this.buscando_afinidad = false; 
+            return message.react("❌");
+        }
+        if (!usuario.anilistUsername) {
+            this.buscando_afinidad = false; 
+            return message.react("❌");
+        }
 
         message.channel.sendTyping();
 
         const aniuser1 = await this.usuario(serverID, usuario.anilistUsername);
-        if (!aniuser1) return message.react("❌");
+        if (!aniuser1) {
+            this.buscando_afinidad = false; 
+            return message.react("❌");
+        }
 
         const resultado: { error: boolean, message: string, afinidades: Array<any> } = await Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
 
-        if (resultado.error) return message.react("❌");
+        if (resultado.error) {
+            this.buscando_afinidad = false; 
+            return message.react("❌");
+        }
 
         this.enviarEmbed(message, Embeds.EmbedAfinidad(aniuser1, resultado.afinidades));
-        message.react("✅");
         this.buscando_afinidad = false;
+        message.react("✅");
     }
 }
 

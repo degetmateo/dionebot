@@ -64,43 +64,59 @@ class BOT {
             }
             this.buscando_afinidad = true;
             const serverID = (_g = message.guild) === null || _g === void 0 ? void 0 : _g.id;
-            if (!serverID)
+            if (!serverID) {
+                this.buscando_afinidad = false;
                 return message.react("❌");
+            }
             let userID;
             if (!args[0]) {
                 userID = message.author.id;
             }
             else if ((_h = message.mentions.members) === null || _h === void 0 ? void 0 : _h.first()) {
                 const uMencionado = (_j = message.mentions.members) === null || _j === void 0 ? void 0 : _j.first();
-                if (!uMencionado)
+                if (!uMencionado) {
+                    this.buscando_afinidad = false;
                     return message.react("❌");
+                }
                 userID = uMencionado.id;
             }
             else {
                 const username = args[0];
                 const user = yield User_1.User.findOne({ anilistUsername: username });
-                if (!user)
+                if (!user) {
+                    this.buscando_afinidad = false;
                     return message.react("❌");
-                if (!(user === null || user === void 0 ? void 0 : user.discordId))
+                }
+                if (!(user === null || user === void 0 ? void 0 : user.discordId)) {
+                    this.buscando_afinidad = false;
                     return message.react("❌");
+                }
                 userID = user.discordId;
             }
             const uRegistrados = yield User_1.User.find({ serverId: serverID });
             const usuario = uRegistrados.find(u => u.discordId == userID);
-            if (!usuario)
+            if (!usuario) {
+                this.buscando_afinidad = false;
                 return message.react("❌");
-            if (!usuario.anilistUsername)
+            }
+            if (!usuario.anilistUsername) {
+                this.buscando_afinidad = false;
                 return message.react("❌");
+            }
             message.channel.sendTyping();
             const aniuser1 = yield this.usuario(serverID, usuario.anilistUsername);
-            if (!aniuser1)
+            if (!aniuser1) {
+                this.buscando_afinidad = false;
                 return message.react("❌");
+            }
             const resultado = yield Afinidad_1.Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
-            if (resultado.error)
+            if (resultado.error) {
+                this.buscando_afinidad = false;
                 return message.react("❌");
+            }
             this.enviarEmbed(message, Embeds_1.Embeds.EmbedAfinidad(aniuser1, resultado.afinidades));
-            message.react("✅");
             this.buscando_afinidad = false;
+            message.react("✅");
         });
         this.client = new discord_js_1.Client({
             intents: [discord_js_1.GatewayIntentBits.Guilds, discord_js_1.GatewayIntentBits.GuildMessages, discord_js_1.GatewayIntentBits.MessageContent]

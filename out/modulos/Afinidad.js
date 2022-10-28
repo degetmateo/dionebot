@@ -116,7 +116,7 @@ Afinidad.GetAfinidadUsuario = (user_1, uRegistrados) => __awaiter(void 0, void 0
             };
         }
         const user_2 = new Usuario_1.Usuario(responseUser);
-        const animesUsuario_2 = yield _a.GetCompletedMedia(serverID, user_2);
+        const animesUsuario_2 = yield _a.GetCompletedMedia(user_2);
         if (!animesUsuario_2) {
             return {
                 error: true,
@@ -135,7 +135,7 @@ Afinidad.GetAfinidadUsuario = (user_1, uRegistrados) => __awaiter(void 0, void 0
         afinidades: _a.OrdenarAfinidades(afinidades)
     };
 });
-Afinidad.GetCompletedMedia = (serverID, user) => __awaiter(void 0, void 0, void 0, function* () {
+Afinidad.GetCompletedMedia = (user) => __awaiter(void 0, void 0, void 0, function* () {
     const listaUsuario_2 = yield Usuarios_1.Usuarios.GetEntradas(user.getNombre());
     let animesUsuario_2 = _a.FiltrarCompletados(listaUsuario_2.animeList.lists);
     return animesUsuario_2 = animesUsuario_2 == undefined ? null : animesUsuario_2.entries;
