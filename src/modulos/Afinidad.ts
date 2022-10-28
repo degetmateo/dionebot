@@ -2,11 +2,28 @@ import { Usuario } from "../modelos/Usuario";
 import { Usuarios } from "./Usuarios";
 
 class Afinidad {
-    public static async GetAfinidadUsuario(user_1: Usuario, uRegistrados: Array<any>) {
+    public static GetAfinidadUsuario = async (user_1: Usuario, uRegistrados: Array<any>) => {
         const listaUsuario_1 = await Usuarios.GetEntradas(user_1.getNombre());
+        const serverID = uRegistrados[0].serverId;
+
+        if (!listaUsuario_1) {
+            return {
+                error: true,
+                message: "No se han encontrados entradas de ese usuario.",
+                afinidades: []
+            }
+        }
 
         let animesUsuario_1 = this.FiltrarCompletados(listaUsuario_1.animeList.lists);
-        animesUsuario_1 = animesUsuario_1 == undefined ? null : animesUsuario_1.entries;
+        animesUsuario_1 = animesUsuario_1.entries;
+
+        if (!animesUsuario_1) {
+            return {
+                error:true,
+                message: "",
+                afinidades: []
+            }
+        }
 
         const afinidades: Array<{ username: string, afinidad: number }> = [];
     
@@ -17,13 +34,32 @@ class Afinidad {
                 continue;
             }
     
-            const user_2 = new Usuario(await Usuarios.BuscarUsuario(uRegistrados[i].serverId, uRegistrados[i].anilistUsername || ""));
-            const listaUsuario_2 = await Usuarios.GetEntradas(user_2 == null ? "" : user_2.getNombre());
-            
-            let animesUsuario_2 = this.FiltrarCompletados(listaUsuario_2.animeList.lists);
-            animesUsuario_2 = animesUsuario_2 == undefined ? null : animesUsuario_2.entries;
+            if (!uRegistrados[i].anilistUsername) {
+                continue;
+            }
 
-            const sharedMedia = await this.GetSharedMedia(animesUsuario_1, animesUsuario_2);
+            const responseUser = await Usuarios.BuscarUsuario(serverID, uRegistrados[i].anilistUsername);
+
+            if (!responseUser) {
+                return {
+                    error: true,
+                    message: "",
+                    afinidades: []
+                }
+            }
+
+            const user_2 = new Usuario(responseUser);
+            const animesUsuario_2 = await this.GetCompletedMedia(serverID, user_2);
+
+            if (!animesUsuario_2) {
+                return {
+                    error: true,
+                    message: "",
+                    afinidades: []
+                }
+            }
+
+            const sharedMedia = this.GetSharedMedia(animesUsuario_1, animesUsuario_2);
             const resultado = this.CalcularAfinidad(sharedMedia);
 
             afinidades.push({ username: user_2 == null ? "" : user_2.getNombre(), afinidad: parseFloat(resultado.toFixed(2)) });
@@ -31,14 +67,24 @@ class Afinidad {
             i++;
         }
     
-        return this.OrdenarAfinidades(afinidades);
+        return {
+            error: false,
+            message: "",
+            afinidades: this.OrdenarAfinidades(afinidades)
+        }
     }
 
-    public static FiltrarCompletados(listas: Array<{ entries: Array<any>, status: string }>): any {
+    private static GetCompletedMedia = async (serverID: any, user: Usuario) => {
+        const listaUsuario_2 = await Usuarios.GetEntradas(user.getNombre());
+        let animesUsuario_2 = this.FiltrarCompletados(listaUsuario_2.animeList.lists);
+        return animesUsuario_2 = animesUsuario_2 == undefined ? null : animesUsuario_2.entries;
+    }
+
+    private static FiltrarCompletados(listas: Array<{ entries: Array<any>, status: string }>): any {
         return listas.find(lista => lista.status == "COMPLETED");
     }
 
-    public static async GetSharedMedia(l1: Array<{ mediaId: number, score: number }>, l2: Array<{ mediaId: number, score: number }>) {
+    private static GetSharedMedia(l1: Array<{ mediaId: number, score: number }>, l2: Array<{ mediaId: number, score: number }>) {
         const sharedMedia: Array<{ id: number, scoreA: number, scoreB: number }> = [];
 
         for (let i = 0; i < l1.length; i++) {
@@ -70,7 +116,7 @@ class Afinidad {
      * @returns Porcentaje de la afinidad.
      */
 
-    public static CalcularAfinidad(sharedMedia: Array<{ id: number, scoreA: number, scoreB: number }>): number {
+    private static CalcularAfinidad(sharedMedia: Array<{ id: number, scoreA: number, scoreB: number }>): number {
         const scoresA: Array<number> = sharedMedia.map(media => media.scoreA);
         const scoresB: Array<number> = sharedMedia.map(media => media.scoreB);
 
@@ -83,13 +129,13 @@ class Afinidad {
         const sa = am.map(x => Math.pow(x, 2));
         const sb = bm.map(x => Math.pow(x, 2));
 
-        const zip = (a: Array<number>, b: Array<number>) => a.map((k, i) => [k, b[i]]);
-
-        const numerador = this.SumarLista(zip(am, bm).map(tupla => tupla[0] * tupla[1]));
+        const numerador = this.SumarLista(this.zip(am, bm).map(tupla => tupla[0] * tupla[1]));
         const denominador = Math.sqrt(this.SumarLista(sa) * this.SumarLista(sb));
 
         return (denominador == 0 ? 0 : numerador / denominador) * 100;
     }
+
+    private static zip = (a: Array<number>, b: Array<number>) => a.map((k, i) => [k, b[i]]);
 
     private static OrdenarAfinidades(afinidades: Array<{ username: string, afinidad: number }>): Array<{ username: string, afinidad: number }> {
         return afinidades.sort((a, b) => {

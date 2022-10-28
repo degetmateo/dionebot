@@ -15,6 +15,7 @@ import { Embeds } from "../modulos/Embeds";
 class BOT {
     private client: Client;
     private db: DB;
+    private buscando_afinidad: boolean;
 
     constructor() {
         this.client = new Client({
@@ -22,6 +23,7 @@ class BOT {
         });
 
         this.db = new DB();
+        this.buscando_afinidad = false;
     }
 
     public async iniciar() {
@@ -187,24 +189,7 @@ class BOT {
             }
         
             if (comando == "!afinidad") {
-                const serverID = message.guildId == null ? "" : message.guildId;
-
-                if (!args[0]) {
-                    this.EnviarAfinidad(message, message.author.id, serverID);
-                } else {
-                    if (message.mentions.members?.first()) {
-                        const uMencionado = message.mentions.members.first();
-                        const userID = uMencionado == null ? "" : uMencionado.id;
-
-                        this.EnviarAfinidad(message, userID, serverID);
-                    } else {
-                        const username = args[0];
-                        const user = await User.findOne({ anilistUsername: username });
-                        const userID = user?.discordId == undefined ? "" : user?.discordId;
-
-                        this.EnviarAfinidad(message, userID, serverID);
-                    }
-                }
+                this.afinidad(message, args);
             }
 
             if (comando == "!help") {
@@ -324,27 +309,56 @@ class BOT {
         return await Setup.UnsetupUsuario(message);
     }
 
-    private async EnviarAfinidad(message: Message, userID: string, serverID: string): Promise<void> {
+    private afinidad = async (message: Message, args: Array<string>) => {
+        if (this.buscando_afinidad) {
+            message.react("❌");
+            message.reply("Estoy calculando la afinidad de alguien más...");
+            return;
+        }
+
+        this.buscando_afinidad = true;
+
+        const serverID = message.guild?.id;
+        if (!serverID) return message.react("❌");
+
+        let userID: string;
+
+        if (!args[0]) {
+            userID = message.author.id;
+        }
+
+        else if (message.mentions.members?.first()) {
+            const uMencionado = message.mentions.members?.first();
+            if (!uMencionado) return message.react("❌");
+            userID = uMencionado.id;
+        }
+
+        else {
+            const username = args[0];
+            const user = await User.findOne({ anilistUsername: username });
+            if (!user) return message.react("❌");
+            if (!user?.discordId) return message.react("❌");
+            userID = user.discordId;
+        }
+
         const uRegistrados = await User.find({ serverId: serverID });
         const usuario = uRegistrados.find(u => u.discordId == userID);
 
-        if (!usuario) {
-            message.react("❌");
-            return;
-        }
+        if (!usuario) return message.react("❌");
+        if (!usuario.anilistUsername) return message.react("❌");
 
         message.channel.sendTyping();
 
-        const aniuser1 = await this.usuario(message.guildId == null ? "" : message.guildId, usuario?.anilistUsername || "");
+        const aniuser1 = await this.usuario(serverID, usuario.anilistUsername);
+        if (!aniuser1) return message.react("❌");
 
-        if (!aniuser1) {
-            message.react("❌");
-            return;
-        }
+        const resultado: { error: boolean, message: string, afinidades: Array<any> } = await Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
 
-        const afinidades = await Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
-        this.enviarEmbed(message, Embeds.EmbedAfinidad(aniuser1, afinidades));
+        if (resultado.error) return message.react("❌");
+
+        this.enviarEmbed(message, Embeds.EmbedAfinidad(aniuser1, resultado.afinidades));
         message.react("✅");
+        this.buscando_afinidad = false;
     }
 }
 

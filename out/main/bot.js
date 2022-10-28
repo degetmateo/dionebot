@@ -55,10 +55,58 @@ class BOT {
             }
             return message.react("✅");
         });
+        this.afinidad = (message, args) => __awaiter(this, void 0, void 0, function* () {
+            var _g, _h, _j;
+            if (this.buscando_afinidad) {
+                message.react("❌");
+                message.reply("Estoy calculando la afinidad de alguien más...");
+                return;
+            }
+            this.buscando_afinidad = true;
+            const serverID = (_g = message.guild) === null || _g === void 0 ? void 0 : _g.id;
+            if (!serverID)
+                return message.react("❌");
+            let userID;
+            if (!args[0]) {
+                userID = message.author.id;
+            }
+            else if ((_h = message.mentions.members) === null || _h === void 0 ? void 0 : _h.first()) {
+                const uMencionado = (_j = message.mentions.members) === null || _j === void 0 ? void 0 : _j.first();
+                if (!uMencionado)
+                    return message.react("❌");
+                userID = uMencionado.id;
+            }
+            else {
+                const username = args[0];
+                const user = yield User_1.User.findOne({ anilistUsername: username });
+                if (!user)
+                    return message.react("❌");
+                if (!(user === null || user === void 0 ? void 0 : user.discordId))
+                    return message.react("❌");
+                userID = user.discordId;
+            }
+            const uRegistrados = yield User_1.User.find({ serverId: serverID });
+            const usuario = uRegistrados.find(u => u.discordId == userID);
+            if (!usuario)
+                return message.react("❌");
+            if (!usuario.anilistUsername)
+                return message.react("❌");
+            message.channel.sendTyping();
+            const aniuser1 = yield this.usuario(serverID, usuario.anilistUsername);
+            if (!aniuser1)
+                return message.react("❌");
+            const resultado = yield Afinidad_1.Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
+            if (resultado.error)
+                return message.react("❌");
+            this.enviarEmbed(message, Embeds_1.Embeds.EmbedAfinidad(aniuser1, resultado.afinidades));
+            message.react("✅");
+            this.buscando_afinidad = false;
+        });
         this.client = new discord_js_1.Client({
             intents: [discord_js_1.GatewayIntentBits.Guilds, discord_js_1.GatewayIntentBits.GuildMessages, discord_js_1.GatewayIntentBits.MessageContent]
         });
         this.db = new Database_1.DB();
+        this.buscando_afinidad = false;
     }
     iniciar() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -75,7 +123,7 @@ class BOT {
                 }
             });
             this.on("messageCreate", (message) => __awaiter(this, void 0, void 0, function* () {
-                var _a, _b, _c, _d, _e;
+                var _a, _b, _c, _d;
                 if (!message)
                     return;
                 if (message.author.bot)
@@ -205,23 +253,7 @@ class BOT {
                     }
                 }
                 if (comando == "!afinidad") {
-                    const serverID = message.guildId == null ? "" : message.guildId;
-                    if (!args[0]) {
-                        this.EnviarAfinidad(message, message.author.id, serverID);
-                    }
-                    else {
-                        if ((_e = message.mentions.members) === null || _e === void 0 ? void 0 : _e.first()) {
-                            const uMencionado = message.mentions.members.first();
-                            const userID = uMencionado == null ? "" : uMencionado.id;
-                            this.EnviarAfinidad(message, userID, serverID);
-                        }
-                        else {
-                            const username = args[0];
-                            const user = yield User_1.User.findOne({ anilistUsername: username });
-                            const userID = (user === null || user === void 0 ? void 0 : user.discordId) == undefined ? "" : user === null || user === void 0 ? void 0 : user.discordId;
-                            this.EnviarAfinidad(message, userID, serverID);
-                        }
-                    }
+                    this.afinidad(message, args);
                 }
                 if (comando == "!help") {
                     this.enviarEmbed(message, Embeds_1.Embeds.EmbedInformacionHelp());
@@ -303,25 +335,6 @@ class BOT {
     unsetup(message) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield Setup_1.Setup.UnsetupUsuario(message);
-        });
-    }
-    EnviarAfinidad(message, userID, serverID) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const uRegistrados = yield User_1.User.find({ serverId: serverID });
-            const usuario = uRegistrados.find(u => u.discordId == userID);
-            if (!usuario) {
-                message.react("❌");
-                return;
-            }
-            message.channel.sendTyping();
-            const aniuser1 = yield this.usuario(message.guildId == null ? "" : message.guildId, (usuario === null || usuario === void 0 ? void 0 : usuario.anilistUsername) || "");
-            if (!aniuser1) {
-                message.react("❌");
-                return;
-            }
-            const afinidades = yield Afinidad_1.Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
-            this.enviarEmbed(message, Embeds_1.Embeds.EmbedAfinidad(aniuser1, afinidades));
-            message.react("✅");
         });
     }
 }
