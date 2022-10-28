@@ -255,34 +255,13 @@ class BOT {
         message.channel.send({ embeds: [embed] });
     }
 
-    private async setColor(message: Message, colorCode: string) {
-        const colorName = "0x" + (colorCode.split("#").join(""));
-        const color = colorName as ColorResolvable;
-
-        const colorRole = message.guild?.roles.cache.find(r => r.name === colorName);
-
-        if (!colorRole) {
-            const role = await message.guild?.roles.create({
-                name: colorName,
-                color: color
-            });
-
-            if (!role) return message.react("❌");
-            const memberColorRole = message.member?.roles.cache.find(r => r.name.startsWith("0x"));
-            await message.member?.roles.add(role);
-            if (memberColorRole) message.member?.roles.remove(memberColorRole);
-        } else {
-            const memberColorRole = message.member?.roles.cache.find(r => r.name.startsWith("0x"));
-            await message.member?.roles.add(colorRole);
-            if (memberColorRole) message.member?.roles.remove(memberColorRole);
-        }
-
-        return message.react("✅");
-    }
-
     private setColor2 = async (message: Message, colorCode: string) => {
+        if (!colorCode || colorCode.trim() == "" || colorCode.trim().length <= 0) return message.react("❌");
+
         const colorRoleCode = "0x" + (colorCode.split("#").join(""));
         const color = colorRoleCode as ColorResolvable;
+
+        if (!color) return message.react("❌");
 
         const memberColorRole = message.member?.roles.cache.find(r => r.name === message.member?.user.username);
 
