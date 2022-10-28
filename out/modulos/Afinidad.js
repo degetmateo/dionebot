@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Afinidad = void 0;
-const Usuario_1 = require("../modelos/Usuario");
 const Usuarios_1 = require("./Usuarios");
 class Afinidad {
     static FiltrarCompletados(listas) {
@@ -111,7 +110,6 @@ Afinidad.GetAfinidadUsuario = (user_1, uRegistrados) => __awaiter(void 0, void 0
         if (!datosUsuario || !datosUsuario.User || !datosUsuario.animeList) {
             continue;
         }
-        const user_2 = new Usuario_1.Usuario(datosUsuario.User);
         let animesUsuario_2 = _a.FiltrarCompletados(datosUsuario.animeList.lists);
         if (!animesUsuario_2) {
             continue;
@@ -122,7 +120,7 @@ Afinidad.GetAfinidadUsuario = (user_1, uRegistrados) => __awaiter(void 0, void 0
         }
         const sharedMedia = _a.GetSharedMedia(animesUsuario_1, animesUsuario_2);
         const resultado = _a.CalcularAfinidad(sharedMedia);
-        afinidades.push({ username: user_2 == null ? "" : user_2.getNombre(), afinidad: parseFloat(resultado.toFixed(2)) });
+        afinidades.push({ username: uRegistrados[i].anilistUsername, afinidad: parseFloat(resultado.toFixed(2)) });
         i++;
     }
     return {

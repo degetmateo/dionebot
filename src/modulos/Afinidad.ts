@@ -44,7 +44,6 @@ class Afinidad {
                 continue;
             }
 
-            const user_2 = new Usuario(datosUsuario.User);
             let animesUsuario_2 = this.FiltrarCompletados(datosUsuario.animeList.lists);
 
             if (!animesUsuario_2) {
@@ -60,7 +59,7 @@ class Afinidad {
             const sharedMedia = this.GetSharedMedia(animesUsuario_1, animesUsuario_2);
             const resultado = this.CalcularAfinidad(sharedMedia);
 
-            afinidades.push({ username: user_2 == null ? "" : user_2.getNombre(), afinidad: parseFloat(resultado.toFixed(2)) });
+            afinidades.push({ username: uRegistrados[i].anilistUsername, afinidad: parseFloat(resultado.toFixed(2)) });
     
             i++;
         }
