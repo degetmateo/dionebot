@@ -38,25 +38,23 @@ class Afinidad {
                 continue;
             }
 
-            const responseUser = await Usuarios.BuscarUsuario(serverID, uRegistrados[i].anilistUsername);
+            const datosUsuario = await Usuarios.GetEntradas(uRegistrados[i].anilistUsername);
 
-            if (!responseUser) {
-                return {
-                    error: true,
-                    message: "",
-                    afinidades: []
-                }
+            if (!datosUsuario || !datosUsuario.User || !datosUsuario.animeList) {
+                continue;
             }
 
-            const user_2 = new Usuario(responseUser);
-            const animesUsuario_2 = await this.GetCompletedMedia(user_2);
+            const user_2 = new Usuario(datosUsuario.User);
+            let animesUsuario_2 = this.FiltrarCompletados(datosUsuario.animeList.lists);
 
             if (!animesUsuario_2) {
-                return {
-                    error: true,
-                    message: "",
-                    afinidades: []
-                }
+                continue;
+            }
+
+            animesUsuario_2 = animesUsuario_2.entries;
+
+            if (!animesUsuario_2) {
+                continue;
             }
 
             const sharedMedia = this.GetSharedMedia(animesUsuario_1, animesUsuario_2);
@@ -72,12 +70,6 @@ class Afinidad {
             message: "",
             afinidades: this.OrdenarAfinidades(afinidades)
         }
-    }
-
-    private static GetCompletedMedia = async (user: Usuario) => {
-        const listaUsuario_2 = await Usuarios.GetEntradas(user.getNombre());
-        let animesUsuario_2 = this.FiltrarCompletados(listaUsuario_2.animeList.lists);
-        return animesUsuario_2 = animesUsuario_2 == undefined ? null : animesUsuario_2.entries;
     }
 
     private static FiltrarCompletados(listas: Array<{ entries: Array<any>, status: string }>): any {

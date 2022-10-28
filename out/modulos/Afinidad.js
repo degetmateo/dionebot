@@ -107,22 +107,18 @@ Afinidad.GetAfinidadUsuario = (user_1, uRegistrados) => __awaiter(void 0, void 0
         if (!uRegistrados[i].anilistUsername) {
             continue;
         }
-        const responseUser = yield Usuarios_1.Usuarios.BuscarUsuario(serverID, uRegistrados[i].anilistUsername);
-        if (!responseUser) {
-            return {
-                error: true,
-                message: "",
-                afinidades: []
-            };
+        const datosUsuario = yield Usuarios_1.Usuarios.GetEntradas(uRegistrados[i].anilistUsername);
+        if (!datosUsuario || !datosUsuario.User || !datosUsuario.animeList) {
+            continue;
         }
-        const user_2 = new Usuario_1.Usuario(responseUser);
-        const animesUsuario_2 = yield _a.GetCompletedMedia(user_2);
+        const user_2 = new Usuario_1.Usuario(datosUsuario.User);
+        let animesUsuario_2 = _a.FiltrarCompletados(datosUsuario.animeList.lists);
         if (!animesUsuario_2) {
-            return {
-                error: true,
-                message: "",
-                afinidades: []
-            };
+            continue;
+        }
+        animesUsuario_2 = animesUsuario_2.entries;
+        if (!animesUsuario_2) {
+            continue;
         }
         const sharedMedia = _a.GetSharedMedia(animesUsuario_1, animesUsuario_2);
         const resultado = _a.CalcularAfinidad(sharedMedia);
@@ -134,10 +130,5 @@ Afinidad.GetAfinidadUsuario = (user_1, uRegistrados) => __awaiter(void 0, void 0
         message: "",
         afinidades: _a.OrdenarAfinidades(afinidades)
     };
-});
-Afinidad.GetCompletedMedia = (user) => __awaiter(void 0, void 0, void 0, function* () {
-    const listaUsuario_2 = yield Usuarios_1.Usuarios.GetEntradas(user.getNombre());
-    let animesUsuario_2 = _a.FiltrarCompletados(listaUsuario_2.animeList.lists);
-    return animesUsuario_2 = animesUsuario_2 == undefined ? null : animesUsuario_2.entries;
 });
 Afinidad.zip = (a, b) => a.map((k, i) => [k, b[i]]);

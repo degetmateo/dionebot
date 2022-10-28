@@ -154,6 +154,77 @@ const queryUsername = `
 `;
 const queryLista = `
     query ($username: String) {
+        User(name: $username) {
+            name
+            id
+            about
+            avatar {
+                large
+                medium
+            }
+            bannerImage
+            options {
+                profileColor
+            }
+            statistics {
+                anime {
+                    count
+                    meanScore
+                    standardDeviation
+                    minutesWatched
+                    episodesWatched
+                    formats {
+                        count
+                        format
+                    }
+                    statuses {
+                        count
+                        status
+                    }
+                    releaseYears {
+                        count
+                        releaseYear
+                    }
+                    startYears {
+                        count
+                        startYear
+                    }
+                    genres {
+                        count
+                        genre
+                        meanScore
+                        minutesWatched
+                    }
+                }
+                manga {
+                    count
+                    meanScore
+                    standardDeviation
+                    chaptersRead
+                    volumesRead
+                    statuses {
+                        count
+                        status
+                    }
+                    releaseYears {
+                        count
+                        releaseYear
+                    }
+                    startYears {
+                        count
+                        startYear
+                    }
+                    genres {
+                        count
+                        genre
+                        meanScore
+                        chaptersRead
+                    }
+                }
+            }
+            siteUrl
+            updatedAt
+        }
         animeList: MediaListCollection(userName: $username, type: ANIME) {
             user {
                 name
