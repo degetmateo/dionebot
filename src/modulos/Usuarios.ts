@@ -60,7 +60,18 @@ class Usuarios {
     public static async GetEntradas(username: string): Promise<any> {
         const variables = { username };
         const response = await Fetch.request(queryLista, variables);
-    
+        return (response == null) ? null : response;
+    }
+
+    public static GetEntradasAnime = async (username: string): Promise<any> => {
+        const variables = { username };
+        const response = await Fetch.request(QUERY_LISTA_ANIMES, variables);
+        return (response == null) ? null : response;
+    }
+
+    public static GetEntradasManga = async (username: string): Promise<any> => {
+        const variables = { username };
+        const response = await Fetch.request(QUERY_LISTA_MANGAS, variables);
         return (response == null) ? null : response;
     }
 
@@ -175,6 +186,43 @@ const queryLista = `
                 status
             }
         }
+        mangaList: MediaListCollection(userName: $username, type: MANGA) {
+            lists {
+                entries {
+                    mediaId,
+                    score(format: POINT_100)
+                }
+            }
+        }
+    }
+`;
+
+const QUERY_LISTA_ANIMES = `
+    query ($username: String) {
+        animeList: MediaListCollection(userName: $username, type: ANIME) {
+            user {
+                name
+                avatar {
+                    large
+                }
+                options {
+                    profileColor
+                }
+                siteUrl
+            }
+            lists {
+                entries {
+                    mediaId,
+                    score(format: POINT_100)
+                }
+                status
+            }
+        }
+    }
+`;
+
+const QUERY_LISTA_MANGAS = `
+    query ($username: String) {
         mangaList: MediaListCollection(userName: $username, type: MANGA) {
             lists {
                 entries {

@@ -4,7 +4,6 @@ import { Usuarios } from "./Usuarios";
 class Afinidad {
     public static GetAfinidadUsuario = async (user_1: Usuario, uRegistrados: Array<any>) => {
         const listaUsuario_1 = await Usuarios.GetEntradas(user_1.getNombre());
-        const serverID = uRegistrados[0].serverId;
 
         if (!listaUsuario_1) {
             return {
@@ -39,7 +38,7 @@ class Afinidad {
                 continue;
             }
 
-            const datosUsuario = await Usuarios.GetEntradas(uRegistrados[i].anilistUsername);
+            const datosUsuario = await Usuarios.GetEntradasAnime(uRegistrados[i].anilistUsername);
             let animesUsuario_2 = this.FiltrarCompletados(datosUsuario.animeList.lists);
             animesUsuario_2 = animesUsuario_2.entries;
 

@@ -79,7 +79,6 @@ exports.Afinidad = Afinidad;
 _a = Afinidad;
 Afinidad.GetAfinidadUsuario = (user_1, uRegistrados) => __awaiter(void 0, void 0, void 0, function* () {
     const listaUsuario_1 = yield Usuarios_1.Usuarios.GetEntradas(user_1.getNombre());
-    const serverID = uRegistrados[0].serverId;
     if (!listaUsuario_1) {
         return {
             error: true,
@@ -107,7 +106,7 @@ Afinidad.GetAfinidadUsuario = (user_1, uRegistrados) => __awaiter(void 0, void 0
             i++;
             continue;
         }
-        const datosUsuario = yield Usuarios_1.Usuarios.GetEntradas(uRegistrados[i].anilistUsername);
+        const datosUsuario = yield Usuarios_1.Usuarios.GetEntradasAnime(uRegistrados[i].anilistUsername);
         let animesUsuario_2 = _a.FiltrarCompletados(datosUsuario.animeList.lists);
         animesUsuario_2 = animesUsuario_2.entries;
         if (!animesUsuario_2) {

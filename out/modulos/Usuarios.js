@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Usuarios = void 0;
 const Fetch_1 = require("./Fetch");
@@ -77,6 +78,17 @@ class Usuarios {
     }
 }
 exports.Usuarios = Usuarios;
+_a = Usuarios;
+Usuarios.GetEntradasAnime = (username) => __awaiter(void 0, void 0, void 0, function* () {
+    const variables = { username };
+    const response = yield Fetch_1.Fetch.request(QUERY_LISTA_ANIMES, variables);
+    return (response == null) ? null : response;
+});
+Usuarios.GetEntradasManga = (username) => __awaiter(void 0, void 0, void 0, function* () {
+    const variables = { username };
+    const response = yield Fetch_1.Fetch.request(QUERY_LISTA_MANGAS, variables);
+    return (response == null) ? null : response;
+});
 const queryUsername = `
     query ($name: String) {
         User(name: $name) {
@@ -173,6 +185,41 @@ const queryLista = `
                 status
             }
         }
+        mangaList: MediaListCollection(userName: $username, type: MANGA) {
+            lists {
+                entries {
+                    mediaId,
+                    score(format: POINT_100)
+                }
+            }
+        }
+    }
+`;
+const QUERY_LISTA_ANIMES = `
+    query ($username: String) {
+        animeList: MediaListCollection(userName: $username, type: ANIME) {
+            user {
+                name
+                avatar {
+                    large
+                }
+                options {
+                    profileColor
+                }
+                siteUrl
+            }
+            lists {
+                entries {
+                    mediaId,
+                    score(format: POINT_100)
+                }
+                status
+            }
+        }
+    }
+`;
+const QUERY_LISTA_MANGAS = `
+    query ($username: String) {
         mangaList: MediaListCollection(userName: $username, type: MANGA) {
             lists {
                 entries {
