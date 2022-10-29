@@ -312,7 +312,6 @@ class BOT {
     private afinidad = async (message: Message, args: Array<string>) => {
         if (this.buscando_afinidad) {
             message.react("❌");
-            message.reply("Estoy calculando la afinidad de alguien más...");
             return;
         }
 

@@ -59,7 +59,6 @@ class BOT {
             var _g, _h, _j;
             if (this.buscando_afinidad) {
                 message.react("❌");
-                message.reply("Estoy calculando la afinidad de alguien más...");
                 return;
             }
             this.buscando_afinidad = true;
