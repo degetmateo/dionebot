@@ -20,7 +20,7 @@ class Usuarios {
                 const variables = {
                     name: args
                 };
-                const response = yield Fetch_1.Fetch.request(queryUsername, variables);
+                const response = yield Fetch_1.Fetch.request(QUERY_USERNAME, variables);
                 return (response == null || response.User == null) ? null : response.User;
             }
             else {
@@ -30,7 +30,7 @@ class Usuarios {
                 const variables = {
                     name: user.anilistUsername
                 };
-                const response = yield Fetch_1.Fetch.request(queryUsername, variables);
+                const response = yield Fetch_1.Fetch.request(QUERY_USERNAME, variables);
                 return (response == null || response.User == null) ? null : response.User;
             }
         });
@@ -63,7 +63,7 @@ class Usuarios {
     static GetEntradas(username) {
         return __awaiter(this, void 0, void 0, function* () {
             const variables = { username };
-            const response = yield Fetch_1.Fetch.request(queryLista, variables);
+            const response = yield Fetch_1.Fetch.request(QUERY_LISTAS, variables);
             return (response == null) ? null : response;
         });
     }
@@ -72,7 +72,7 @@ class Usuarios {
             const userID = parseInt(uID);
             const mediaID = parseInt(mID);
             const variables = { userID, mediaID };
-            const response = yield Fetch_1.Fetch.request(queryMedia, variables);
+            const response = yield Fetch_1.Fetch.request(QUERY_MEDIA, variables);
             return (response == null || response.MediaList == null) ? null : response.MediaList;
         });
     }
@@ -89,7 +89,7 @@ Usuarios.GetEntradasManga = (username) => __awaiter(void 0, void 0, void 0, func
     const response = yield Fetch_1.Fetch.request(QUERY_LISTA_MANGAS, variables);
     return (response == null) ? null : response;
 });
-const queryUsername = `
+const QUERY_USERNAME = `
     query ($name: String) {
         User(name: $name) {
             name
@@ -164,7 +164,7 @@ const queryUsername = `
         }
     }
 `;
-const queryLista = `
+const QUERY_LISTAS = `
     query ($username: String) {
         animeList: MediaListCollection(userName: $username, type: ANIME) {
             user {
@@ -230,7 +230,7 @@ const QUERY_LISTA_MANGAS = `
         }
     }
 `;
-const queryMedia = `
+const QUERY_MEDIA = `
     query ($userID: Int, $mediaID: Int) {
         MediaList(userId: $userID, mediaId: $mediaID) {
             id

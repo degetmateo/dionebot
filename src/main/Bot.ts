@@ -311,15 +311,17 @@ class BOT {
 
     private afinidad = async (message: Message, args: Array<string>) => {
         if (this.buscando_afinidad) {
-            message.react("❌");
-            return;
+            return message.react("⛔");
         }
 
         this.buscando_afinidad = true;
 
+        const waitingReaction = await message.react("🔄");
+
         const serverID = message.guild?.id;
         if (!serverID) {
-            this.buscando_afinidad = false; 
+            this.buscando_afinidad = false;
+            waitingReaction.remove();
             return message.react("❌");
         }
 
@@ -332,7 +334,8 @@ class BOT {
         else if (message.mentions.members?.first()) {
             const uMencionado = message.mentions.members?.first();
             if (!uMencionado) {
-                this.buscando_afinidad = false; 
+                this.buscando_afinidad = false;
+                waitingReaction.remove();
                 return message.react("❌");
             }
             userID = uMencionado.id;
@@ -342,11 +345,13 @@ class BOT {
             const username = args[0];
             const user = await User.findOne({ anilistUsername: username });
             if (!user) {
-                this.buscando_afinidad = false; 
+                this.buscando_afinidad = false;
+                waitingReaction.remove();
                 return message.react("❌");
             }
             if (!user?.discordId) {
-                this.buscando_afinidad = false; 
+                this.buscando_afinidad = false;
+                waitingReaction.remove();
                 return message.react("❌");
             }
             userID = user.discordId;
@@ -356,11 +361,13 @@ class BOT {
         const usuario = uRegistrados.find(u => u.discordId == userID);
 
         if (!usuario) {
-            this.buscando_afinidad = false; 
+            this.buscando_afinidad = false;
+            waitingReaction.remove();
             return message.react("❌");
         }
         if (!usuario.anilistUsername) {
-            this.buscando_afinidad = false; 
+            this.buscando_afinidad = false;
+            waitingReaction.remove();
             return message.react("❌");
         }
 
@@ -368,19 +375,22 @@ class BOT {
 
         const aniuser1 = await this.usuario(serverID, usuario.anilistUsername);
         if (!aniuser1) {
-            this.buscando_afinidad = false; 
+            this.buscando_afinidad = false;
+            waitingReaction.remove();
             return message.react("❌");
         }
 
         const resultado: { error: boolean, message: string, afinidades: Array<any> } = await Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
 
         if (resultado.error) {
-            this.buscando_afinidad = false; 
+            this.buscando_afinidad = false;
+            waitingReaction.remove();
             return message.react("❌");
         }
 
         this.enviarEmbed(message, Embeds.EmbedAfinidad(aniuser1, resultado.afinidades));
         this.buscando_afinidad = false;
+        waitingReaction.remove();
         message.react("✅");
     }
 }
