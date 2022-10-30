@@ -73,7 +73,8 @@ class Embeds {
                 .setURL(obra.getURL())
                 .setDescription(traducir == true ? yield obra.getDescripcionTraducida() : obra.getDescripcion())
                 .setThumbnail(obra.getCoverImageURL())
-                .setFooter({ text: obra.getTitulos().native + " | " + obra.getTitulos().english });
+                .setFooter({ text: obra.getTitulos().native + " | " + obra.getTitulos().english })
+                .setColor(obra.getColorEstado());
             if (obra.getTipo() == "ANIME") {
                 const infoTEXT_1 = `
                 ‣ **Tipo**: ${obra.getTipo()}\n‣ **Formato**: ${obra.getFormato()}\n‣ **Estado**: ${obra.getEstado()}\n‣ **Calificación**: ${obra.getPromedio()}/100
@@ -82,7 +83,6 @@ class Embeds {
                 ‣ **Popularidad**: ${obra.getPopularidad()}\n‣ **Favoritos**: ${obra.getFavoritos()}\n‣ **Temporada**: ${obra.getTemporada()}\n‣ **Año de Emisión**: ${obra.getAnioEmision()}\n‣ **Episodios**: ${obra.getEpisodios()}
             `;
                 EmbedInformacion
-                    .setColor(0xff0000)
                     .addFields({ name: "▽", value: infoTEXT_1, inline: true }, { name: "▽", value: infoTEXT_2, inline: true });
             }
             else {
@@ -93,7 +93,6 @@ class Embeds {
                 ‣ **Popularidad**: ${obra.getPopularidad()}\n‣ **Favoritos**: ${obra.getFavoritos()}\n‣ **Capítulos**: ${obra.getCapitulos()}\n‣ **Volúmenes**: ${obra.getVolumenes()}
             `;
                 EmbedInformacion
-                    .setColor(0xFFFF00)
                     .addFields({ name: "▽", value: infoTEXT_1, inline: true }, { name: "▽", value: infoTEXT_2, inline: true });
             }
             let estudiosInfo = "";

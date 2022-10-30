@@ -55,6 +55,21 @@ class BOT {
             }
             return message.react("✅");
         });
+        this.anime = (message, args) => __awaiter(this, void 0, void 0, function* () {
+            if (this.buscando_media) {
+                message.react("⛔");
+                return;
+            }
+            const reaccionEspera = yield message.react("🔄");
+            const resultado = yield this.buscarMedia("ANIME", args.join(" "));
+            if (!resultado) {
+                message.react("❌");
+                return null;
+            }
+            reaccionEspera.remove();
+            message.react("✅");
+            return resultado;
+        });
         this.afinidad = (message, args) => __awaiter(this, void 0, void 0, function* () {
             var _g, _h, _j;
             if (this.buscando_afinidad) {
@@ -131,6 +146,7 @@ class BOT {
         });
         this.db = new Database_1.DB();
         this.buscando_afinidad = false;
+        this.buscando_media = false;
     }
     iniciar() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -178,60 +194,31 @@ class BOT {
                         message.channel.send("...");
                     }
                 }
-                // if (comando === "!shoot" && message.member?.permissions.has("Administrator")) {
-                //     const ruleta = Math.floor(Math.random() * 6);
-                //     if (true) {                    
-                //         const cantMiembros = message.guild.members.cache.size;
-                //         const number = Math.floor(Math.random() * cantMiembros - 1);
-                //         // const miembro = message.guild.members
-                //         const miembro = message.guild.members.cache.random();
-                //         miembro?.kick();
-                //         message.channel.send(`**${miembro?.user.username}** fue expulsado.`);
-                //     } else {
-                //         message.channel.send("...");
-                //     }
-                // }
                 if (comando == "!anime") {
-                    const anime = yield this.anime(args.join(" "));
-                    if (!anime) {
-                        return message.react("❌");
-                    }
-                    else {
-                        message.react("✅");
-                    }
+                    const anime = yield this.anime(message, args);
+                    if (!anime)
+                        return;
                     const embedInformacion = yield Embeds_1.Embeds.EmbedInformacionMedia(message, anime, false);
                     this.enviarEmbed(message, embedInformacion);
                 }
                 if (comando == "!animeb") {
-                    const anime = yield this.anime(args.join(" "));
-                    if (!anime) {
-                        return message.react("❌");
-                    }
-                    else {
-                        message.react("✅");
-                    }
+                    const anime = yield this.anime(message, args);
+                    if (!anime)
+                        return;
                     const embedInformacion = yield Embeds_1.Embeds.EmbedInformacionMedia(message, anime, true);
                     this.enviarEmbed(message, embedInformacion);
                 }
                 if (comando == "!manga") {
-                    const manga = yield this.manga(args.join(" "));
-                    if (!manga) {
-                        return message.react("❌");
-                    }
-                    else {
-                        message.react("✅");
-                    }
+                    const manga = yield this.manga(message, args);
+                    if (!manga)
+                        return;
                     const embedInformacion = yield Embeds_1.Embeds.EmbedInformacionMedia(message, manga, false);
                     this.enviarEmbed(message, embedInformacion);
                 }
                 if (comando == "!mangab") {
-                    const manga = yield this.manga(args.join(" "));
-                    if (!manga) {
-                        return message.react("❌");
-                    }
-                    else {
-                        message.react("✅");
-                    }
+                    const manga = yield this.manga(message, args);
+                    if (!manga)
+                        return;
                     const embedInformacion = yield Embeds_1.Embeds.EmbedInformacionMedia(message, manga, true);
                     this.enviarEmbed(message, embedInformacion);
                 }
@@ -312,20 +299,24 @@ class BOT {
     responder(message, text) {
         message.reply(text);
     }
-    enviar(message, text) {
-        message.channel.send(text);
-    }
     enviarEmbed(message, embed) {
         message.channel.send({ embeds: [embed] });
     }
-    anime(args) {
+    manga(message, args) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.buscarMedia("ANIME", args);
-        });
-    }
-    manga(args) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.buscarMedia("MANGA", args);
+            if (this.buscando_media) {
+                message.react("⛔");
+                return;
+            }
+            const reaccionEspera = yield message.react("🔄");
+            const resultado = yield this.buscarMedia("MANGA", args.join(" "));
+            if (!resultado) {
+                message.react("❌");
+                return null;
+            }
+            reaccionEspera.remove();
+            message.react("✅");
+            return resultado;
         });
     }
     buscarMedia(tipo, args) {

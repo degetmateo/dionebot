@@ -1,3 +1,5 @@
+import { ColorResolvable } from "discord.js";
+
 const translate = require("translate");
 
 class Obra {
@@ -42,6 +44,20 @@ class Obra {
 
     public getEstado(): string {
         return this.media.status == null ? "?" : this.media.status.toString();
+    }
+
+    public getColorEstado = (): ColorResolvable => {
+        let hex = "";
+
+        switch (this.getEstado()) {
+            case "FINISHED": hex = "00D907"; break;
+            case "RELEASING": hex = "FFF700"; break;
+            case "NOT_YET_RELEASED": hex = "000000"; break;
+            case "CANCELLED": hex = "FF0000"; break;
+            case "HIATUS": hex = "FF7B00"; break;
+        }
+
+        return ("0x" + hex) as ColorResolvable;
     }
 
     public getEpisodios(): string {

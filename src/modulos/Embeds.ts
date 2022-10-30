@@ -48,7 +48,8 @@ class Embeds {
             .setURL(obra.getURL())
             .setDescription(traducir == true ? await obra.getDescripcionTraducida() : obra.getDescripcion())
             .setThumbnail(obra.getCoverImageURL())
-            .setFooter({ text: obra.getTitulos().native + " | " + obra.getTitulos().english });
+            .setFooter({ text: obra.getTitulos().native + " | " + obra.getTitulos().english })
+            .setColor(obra.getColorEstado());
 
         if (obra.getTipo() == "ANIME") {
             const infoTEXT_1 = `
@@ -60,7 +61,6 @@ class Embeds {
             `;
 
             EmbedInformacion
-                .setColor(0xff0000)
                 .addFields(
                     { name: "▽", value: infoTEXT_1, inline: true },
                     { name: "▽", value: infoTEXT_2, inline: true }
@@ -75,7 +75,6 @@ class Embeds {
             `;
 
             EmbedInformacion
-                .setColor(0xFFFF00)
                 .addFields(
                     { name: "▽", value: infoTEXT_1, inline: true },
                     { name: "▽", value: infoTEXT_2, inline: true }

@@ -13,6 +13,27 @@ exports.Obra = void 0;
 const translate = require("translate");
 class Obra {
     constructor(media) {
+        this.getColorEstado = () => {
+            let hex = "";
+            switch (this.getEstado()) {
+                case "FINISHED":
+                    hex = "00D907";
+                    break;
+                case "RELEASING":
+                    hex = "FFF700";
+                    break;
+                case "NOT_YET_RELEASED":
+                    hex = "000000";
+                    break;
+                case "CANCELLED":
+                    hex = "FF0000";
+                    break;
+                case "HIATUS":
+                    hex = "FF7B00";
+                    break;
+            }
+            return ("0x" + hex);
+        };
         this.media = media;
         translate.engine = "google";
     }

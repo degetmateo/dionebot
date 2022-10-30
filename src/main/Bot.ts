@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, ClientEvents, Message, EmbedBuilder, GuildMember, ChannelType, ColorResolvable, MessageActivityType } from "discord.js";
+import { Client, GatewayIntentBits, ClientEvents, Message, EmbedBuilder, GuildMember, ChannelType, ColorResolvable } from "discord.js";
 
 import { Obra } from "../modelos/Obra";
 import { Usuario } from "../modelos/Usuario";
@@ -15,7 +15,9 @@ import { Embeds } from "../modulos/Embeds";
 class BOT {
     private client: Client;
     private db: DB;
+
     private buscando_afinidad: boolean;
+    private buscando_media: boolean;
 
     constructor() {
         this.client = new Client({
@@ -23,7 +25,9 @@ class BOT {
         });
 
         this.db = new DB();
+
         this.buscando_afinidad = false;
+        this.buscando_media = false;
     }
 
     public async iniciar() {
@@ -75,70 +79,30 @@ class BOT {
                 }
             }
 
-            // if (comando === "!shoot" && message.member?.permissions.has("Administrator")) {
-            //     const ruleta = Math.floor(Math.random() * 6);
-
-            //     if (true) {                    
-            //         const cantMiembros = message.guild.members.cache.size;
-            //         const number = Math.floor(Math.random() * cantMiembros - 1);
-            //         // const miembro = message.guild.members
-            //         const miembro = message.guild.members.cache.random();
-
-            //         miembro?.kick();
-            //         message.channel.send(`**${miembro?.user.username}** fue expulsado.`);
-            //     } else {
-            //         message.channel.send("...");
-            //     }
-            // }
-
             if (comando == "!anime") {
-                const anime = await this.anime(args.join(" "));
-
-                if (!anime) {
-                    return message.react("❌");
-                } else {
-                    message.react("✅");
-                }
-
+                const anime = await this.anime(message, args);
+                if (!anime) return;
                 const embedInformacion = await Embeds.EmbedInformacionMedia(message, anime, false);
                 this.enviarEmbed(message, embedInformacion);
             }
 
             if (comando == "!animeb") {
-                const anime = await this.anime(args.join(" "));
-
-                if (!anime) {
-                    return message.react("❌");
-                } else {
-                    message.react("✅");
-                }
-
+                const anime = await this.anime(message, args);
+                if (!anime) return;
                 const embedInformacion = await Embeds.EmbedInformacionMedia(message, anime, true);
                 this.enviarEmbed(message, embedInformacion);
             }
         
             if (comando == "!manga") {
-                const manga = await this.manga(args.join(" "));
-                
-                if (!manga) {
-                    return message.react("❌");
-                } else {
-                    message.react("✅");
-                }
-
+                const manga = await this.manga(message, args);
+                if (!manga) return;
                 const embedInformacion = await Embeds.EmbedInformacionMedia(message, manga, false);
                 this.enviarEmbed(message, embedInformacion);
             }
         
             if (comando == "!mangab") {
-                const manga = await this.manga(args.join(" "));
-                
-                if (!manga) {
-                    return message.react("❌");
-                } else {
-                    message.react("✅");
-                }
-
+                const manga = await this.manga(message, args);
+                if (!manga) return;
                 const embedInformacion = await Embeds.EmbedInformacionMedia(message, manga, true);
                 this.enviarEmbed(message, embedInformacion);
             }
@@ -232,10 +196,6 @@ class BOT {
         message.reply(text);
     }
 
-    private enviar(message: Message, text: string) {
-        message.channel.send(text);
-    }
-
     private enviarEmbed(message: Message, embed: EmbedBuilder) {
         message.channel.send({ embeds: [embed] });
     }
@@ -274,12 +234,42 @@ class BOT {
         return message.react("✅");
     }
 
-    private async anime(args: string) {
-        return await this.buscarMedia("ANIME", args);
+    private anime = async (message: Message, args: Array<string>) => {
+        if (this.buscando_media) {
+            message.react("⛔");
+            return;
+        }
+        
+        const reaccionEspera = await message.react("🔄");
+        const resultado = await this.buscarMedia("ANIME", args.join(" "));
+
+        if (!resultado) {
+            message.react("❌");
+            return null;
+        }
+        
+        reaccionEspera.remove();
+        message.react("✅");
+        return resultado;
     }
 
-    private async manga(args: string) {
-        return await this.buscarMedia("MANGA", args);
+    private async manga(message: Message, args: Array<string>) {
+        if (this.buscando_media) {
+            message.react("⛔");
+            return;
+        }
+        
+        const reaccionEspera = await message.react("🔄");
+        const resultado = await this.buscarMedia("MANGA", args.join(" "));
+
+        if (!resultado) {
+            message.react("❌");
+            return null;
+        }
+        
+        reaccionEspera.remove();
+        message.react("✅");
+        return resultado;
     }
 
     private async buscarMedia(tipo: string, args: string) {
@@ -380,7 +370,7 @@ class BOT {
             return message.react("❌");
         }
 
-        const resultado: { error: boolean, message: string, afinidades: Array<any> } = await Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
+        const resultado = await Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
 
         if (resultado.error) {
             this.buscando_afinidad = false;
