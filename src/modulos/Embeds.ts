@@ -169,34 +169,30 @@ class Embeds {
                 planningTEXT = planningTEXT.substring(0, planningTEXT.length - 2);
             }
 
-            if (completedTEXT.trim() == "") {
-                completedTEXT = "Nadie"
+            if (completedTEXT.trim().length > 0) {
+                EmbedInformacion
+                    .addFields({ name: "▿ Completado por", value: completedTEXT, inline: false });
             }
 
-            if (droppedTEXT.trim() == "") {
-                droppedTEXT = "Nadie"
+            if (inProgressTEXT.trim().length > 0) {
+                EmbedInformacion
+                    .addFields({ name: "▿ Iniciado por", value: inProgressTEXT, inline: false });
             }
 
-            if (inProgressTEXT.trim() == "") {
-                inProgressTEXT = "Nadie"
+            if (pausedListTEXT.trim().length > 0) {
+                EmbedInformacion
+                    .addFields({ name: "▿ Pausado por", value: pausedListTEXT, inline: false });
             }
 
-            if (pausedListTEXT.trim() == "") {
-                pausedListTEXT = "Nadie"
+            if (planningTEXT.trim().length > 0) {
+                EmbedInformacion
+                    .addFields({ name: "▿ Planeado por", value: planningTEXT, inline: false });
             }
 
-            if (planningTEXT.trim() == "") {
-                planningTEXT = "Nadie"
+            if (droppedTEXT.trim().length > 0) {
+                EmbedInformacion
+                    .addFields({ name: "▿ Dropeado por", value: droppedTEXT, inline: false });
             }
-
-            EmbedInformacion
-                .addFields(
-                    { name: "▿ Completado por", value: completedTEXT, inline: false },
-                    { name: "▿ Dropeado por", value: droppedTEXT, inline: false },
-                    { name: "▿ Pausado por", value: pausedListTEXT, inline: false },
-                    { name: "▿ Iniciado por", value: inProgressTEXT, inline: false },
-                    { name: "▿ Planeado por", value: planningTEXT, inline: false }
-                )
         }
 
         return EmbedInformacion;

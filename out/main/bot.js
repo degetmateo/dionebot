@@ -63,6 +63,7 @@ class BOT {
             const reaccionEspera = yield message.react("🔄");
             const resultado = yield this.buscarMedia("ANIME", args.join(" "));
             if (!resultado) {
+                reaccionEspera.remove();
                 message.react("❌");
                 return null;
             }
@@ -311,6 +312,7 @@ class BOT {
             const reaccionEspera = yield message.react("🔄");
             const resultado = yield this.buscarMedia("MANGA", args.join(" "));
             if (!resultado) {
+                reaccionEspera.remove();
                 message.react("❌");
                 return null;
             }

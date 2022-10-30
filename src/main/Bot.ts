@@ -244,6 +244,7 @@ class BOT {
         const resultado = await this.buscarMedia("ANIME", args.join(" "));
 
         if (!resultado) {
+            reaccionEspera.remove();
             message.react("❌");
             return null;
         }
@@ -263,6 +264,7 @@ class BOT {
         const resultado = await this.buscarMedia("MANGA", args.join(" "));
 
         if (!resultado) {
+            reaccionEspera.remove();
             message.react("❌");
             return null;
         }
