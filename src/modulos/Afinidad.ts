@@ -1,4 +1,5 @@
-import { Usuario } from "../modelos/Usuario";
+import Aniuser from "../modelos/Aniuser";
+import { Usuario } from "../objetos/Usuario";
 import { Usuarios } from "./Usuarios";
 
 class Afinidad {
@@ -18,7 +19,7 @@ class Afinidad {
 
         if (!animesUsuario_1) {
             return {
-                error:true,
+                error: true,
                 message: "",
                 afinidades: []
             }
@@ -54,7 +55,7 @@ class Afinidad {
     
             i++;
         }
-    
+
         return {
             error: false,
             message: "",

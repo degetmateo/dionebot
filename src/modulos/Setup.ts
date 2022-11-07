@@ -1,6 +1,6 @@
-import { User } from "../modelos_db/User";
+import Aniuser from "../modelos/Aniuser";
 import { Message } from "discord.js";
-import { Usuario } from "../modelos/Usuario";
+import { Usuario } from "../objetos/Usuario";
 import { Usuarios } from "./Usuarios";
 
 class Setup {
@@ -9,12 +9,12 @@ class Setup {
             
         if (!usuario) return false;
     
-        let uRegistrados = await User.find({ serverId: message.guildId });
+        let uRegistrados = await Aniuser.find({ serverId: message.guildId });
         let uRegistrado = uRegistrados.find(u => u.discordId == message.author.id);
     
         if (uRegistrado != null && uRegistrado != undefined) return false;
     
-        const aniuser = new User();
+        const aniuser = new Aniuser();
         
         aniuser.anilistUsername = usuario.getNombre();
         aniuser.anilistId = usuario.getID();
@@ -30,7 +30,7 @@ class Setup {
     }
 
     public static async UnsetupUsuario(message: Message): Promise<boolean> {
-        const uRegistrados = await User.find({ serverId: message.guildId });
+        const uRegistrados = await Aniuser.find({ serverId: message.guildId });
         const uRegistrado = uRegistrados.find(u => u.discordId == message.author.id);
     
         try {

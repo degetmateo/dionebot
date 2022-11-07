@@ -1,10 +1,10 @@
 import { Client, GatewayIntentBits, ClientEvents, Message, EmbedBuilder, GuildMember, ChannelType, ColorResolvable } from "discord.js";
 
-import { Obra } from "../modelos/Obra";
-import { Usuario } from "../modelos/Usuario";
+import { Obra } from "../objetos/Obra";
+import { Usuario } from "../objetos/Usuario";
 import { DB } from "./Database";
-import { User } from "../modelos_db/User";
-import { Mensaje } from "../modelos/Mensaje";
+import Aniuser from "../modelos/Aniuser";
+import { Mensaje } from "../objetos/Mensaje";
 
 import { Media } from "../modulos/Media";
 import { Usuarios } from "../modulos/Usuarios";
@@ -12,12 +12,12 @@ import { Afinidad } from "../modulos/Afinidad";
 import { Setup } from "../modulos/Setup";
 import { Embeds } from "../modulos/Embeds";
 
-class BOT {
+export default class BOT {
     private client: Client;
     private db: DB;
 
-    private buscando_afinidad: boolean;
-    private buscando_media: boolean;
+    private buscando_afinidad: Array<string>;
+    private buscando_media: Array<string>;
 
     constructor() {
         this.client = new Client({
@@ -26,110 +26,45 @@ class BOT {
 
         this.db = new DB();
 
-        this.buscando_afinidad = false;
-        this.buscando_media = false;
+        this.buscando_afinidad = new Array<string>();
+        this.buscando_media = new Array<string>();
     }
 
     public async iniciar() {
         this.on("ready", () => console.log("BOT preparado!"));
 
-        this.on("guildMemberAdd", (member: GuildMember) => {
-            console.log("miembro nuevo");
-            if (member.user.id == "301769610678632448") {
-                console.log("dione existe");
-                const role = member.guild.roles.cache.find(r => r.id == "1028895305938243585");
-                if (!role) return
-                console.log("rol existe");
-                member.roles.add(role, "es dione");
-            }
-        })
-
         this.on("messageCreate", async (message: Message) => {
             if (!message) return;
             if (message.author.bot) return;
             if (!message.guild) return;
+            if (!message.guild.id) return;
 
             const mensaje = new Mensaje(message);
             const comando = mensaje.getComando();
             const args = mensaje.getArgumentos();
-        
-            if (comando === "Hola") {
-                message.reply(`${message.client.emojis.cache.find((e => e.name === "pala"))}`);
-            };
-        
-            if (comando === "!color") {
-                return this.setColor2(message, args[0]);
-            }
-
-            if (comando === "!ruleta") {
-                const number = Math.floor(Math.random() * 6);
-
-                if (number === 1) {        
-                    // const c = message.guild.invites.
-
-                    const channel = await message.channel.fetch();
-                    const invite = channel.type === ChannelType.GuildText ? await channel.createInvite() : null;
-
-                    invite ? await message.member?.user.send(invite.url) : null;
-
-                    message.member?.kick();
-                    message.channel.send(`${message.member?.user.username} fue expulsado...`)
-                } else {
-                    message.channel.send("...");
-                }
-            }
 
             if (comando == "!anime") {
-                const anime = await this.anime(message, args);
-                if (!anime) return;
-                const embedInformacion = await Embeds.EmbedInformacionMedia(message, anime, false);
-                this.enviarEmbed(message, embedInformacion);
+                return await this.obra(message, "ANIME", args, false);
             }
 
             if (comando == "!animeb") {
-                const anime = await this.anime(message, args);
-                if (!anime) return;
-                const embedInformacion = await Embeds.EmbedInformacionMedia(message, anime, true);
-                this.enviarEmbed(message, embedInformacion);
+                return await this.obra(message, "ANIME", args, true);
             }
         
             if (comando == "!manga") {
-                const manga = await this.manga(message, args);
-                if (!manga) return;
-                const embedInformacion = await Embeds.EmbedInformacionMedia(message, manga, false);
-                this.enviarEmbed(message, embedInformacion);
+                return await this.obra(message, "MANGA", args, false);
             }
         
             if (comando == "!mangab") {
-                const manga = await this.manga(message, args);
-                if (!manga) return;
-                const embedInformacion = await Embeds.EmbedInformacionMedia(message, manga, true);
-                this.enviarEmbed(message, embedInformacion);
+                return await this.obra(message, "MANGA", args, true);
+            }
+
+            if (comando === "!color") {
+                return await this.color(message, args[0]);
             }
 
             if (comando == "!user") {
-                let usuario: Usuario | null;
-
-                if (!args[0] || args[0].length <= 0) {
-                    usuario = await this.usuario(message.guild.id, message.author.id);
-                } else {
-                    const usuarioMencionado = message.mentions.members?.first();
-                    
-                    if (usuarioMencionado) {
-                        usuario = await this.usuario(message.guild.id, usuarioMencionado.id);
-                    } else {
-                        usuario = await this.usuario(message.guild.id, args[0]);
-                    }
-                }
-                
-                if (!usuario) {
-                    return message.react("❌");
-                } else {
-                    message.react("✅");
-                }
-        
-                const embed = Embeds.EmbedInformacionUsuario(usuario);
-                this.enviarEmbed(message, embed);
+                return await this.user(message, args[0]);
             }
         
             if (comando == "!setup") {
@@ -153,15 +88,37 @@ class BOT {
             }
         
             if (comando == "!afinidad") {
-                this.afinidad(message, args);
+                return await this.afinidad(message, args);
             }
 
             if (comando == "!help") {
-                this.enviarEmbed(message, Embeds.EmbedInformacionHelp());
+                return this.enviarEmbed(message, Embeds.EmbedInformacionHelp());
             }
-        
+
+            if (comando === "!ruleta") {
+                const number = Math.floor(Math.random() * 6);
+
+                if (number === 1) {        
+                    // const c = message.guild.invites.
+
+                    const channel = await message.channel.fetch();
+                    const invite = channel.type === ChannelType.GuildText ? await channel.createInvite() : null;
+
+                    invite ? await message.member?.user.send(invite.url) : null;
+
+                    message.member?.kick();
+                    message.channel.send(`${message.member?.user.username} fue expulsado...`)
+                } else {
+                    message.channel.send("...");
+                }
+            }
+
             const mContent = message.content.toLowerCase()
                 .split("é").join("e");
+
+            if (comando === "Hola") {
+                message.reply(`${message.client.emojis.cache.find((e => e.name === "pala"))}`);
+            };
 
             if (mContent.endsWith(" que") || mContent.endsWith(" que?")) {
                 return this.responder(message, "so");
@@ -200,13 +157,18 @@ class BOT {
         message.channel.send({ embeds: [embed] });
     }
 
-    private setColor2 = async (message: Message, colorCode: string) => {
+    private color = async (message: Message, colorCode: string) => {
         if (!colorCode || colorCode.trim() == "" || colorCode.trim().length <= 0) return message.react("❌");
 
         const colorRoleCode = "0x" + (colorCode.split("#").join(""));
         const color = colorRoleCode as ColorResolvable;
 
-        if (!color) return message.react("❌");
+        if (!color) {
+            message.react("❌");
+            return;
+        }
+
+        const waitingReaction = await message.react("🔄");
 
         const memberColorRole = message.member?.roles.cache.find(r => r.name === message.member?.user.username);
 
@@ -219,7 +181,11 @@ class BOT {
                     color: color
                 });
 
-                if (!newRole) return message.react("❌");
+                if (!newRole) {
+                    waitingReaction.remove();
+                    message.react("❌");
+                    return;
+                }
 
                 message.member?.roles.add(newRole);
             } else {
@@ -228,50 +194,86 @@ class BOT {
             }
         } else {
             const newMemberRole = await memberColorRole.setColor(color);
-            if (!newMemberRole) return message.react("❌");
+
+            if (!newMemberRole) {
+                waitingReaction.remove();
+                message.react("❌");
+                return;
+            }
         }
 
         return message.react("✅");
     }
 
-    private anime = async (message: Message, args: Array<string>) => {
-        if (this.buscando_media) {
-            message.react("⛔");
+    private user = async (message: Message, args: string) => {
+        let usuario: Usuario | null;
+
+        const serverID = message.guild?.id;
+
+        if (!serverID) {
+            message.react("❌");
             return;
         }
-        
-        const reaccionEspera = await message.react("🔄");
-        const resultado = await this.buscarMedia("ANIME", args.join(" "));
 
-        if (!resultado) {
-            reaccionEspera.remove();
-            message.react("❌");
-            return null;
+        const reaccionEspera = await message.react("🔄");
+
+        if (!args || args.length <= 0) {
+            usuario = await this.usuario(message.guild.id, message.author.id);
+        } else {
+            const usuarioMencionado = message.mentions.members?.first();
+            
+            if (usuarioMencionado) {
+                usuario = await this.usuario(message.guild.id, usuarioMencionado.id);
+            } else {
+                usuario = await this.usuario(message.guild.id, args);
+            }
         }
         
+        if (!usuario) {
+            reaccionEspera.remove();
+            return message.react("❌");
+        }
+
+        const embed = Embeds.EmbedInformacionUsuario(usuario);
+
         reaccionEspera.remove();
         message.react("✅");
-        return resultado;
+
+        this.enviarEmbed(message, embed);
     }
 
-    private async manga(message: Message, args: Array<string>) {
-        if (this.buscando_media) {
+    private obra = async (message: Message, tipo: string, args: Array<string>, traducir: boolean) => {
+        const serverID = message.guild?.id;
+
+        if (!serverID) {
+            message.react("❌");
+            return;
+        }
+
+        if (this.estaBuscandoMedia(serverID)) {
             message.react("⛔");
             return;
         }
+
+        this.setBuscandoMedia(serverID, true);
         
         const reaccionEspera = await message.react("🔄");
-        const resultado = await this.buscarMedia("MANGA", args.join(" "));
+        const media = await this.buscarMedia(tipo, args.join(" "));
 
-        if (!resultado) {
+        if (!media) {
             reaccionEspera.remove();
             message.react("❌");
             return null;
         }
-        
+
+        const embedInformacion = await Embeds.EmbedInformacionMedia(message, media, traducir);
+
         reaccionEspera.remove();
         message.react("✅");
-        return resultado;
+
+        this.enviarEmbed(message, embedInformacion);
+
+        this.setBuscandoMedia(serverID, false);
     }
 
     private async buscarMedia(tipo: string, args: string) {
@@ -301,18 +303,43 @@ class BOT {
         return await Setup.UnsetupUsuario(message);
     }
 
+    private estaBuscandoAfinidad = (serverID: string): boolean => {
+        return this.buscando_afinidad.includes(serverID);
+    }
+
+    private estaBuscandoMedia = (serverID: string): boolean => {
+        return this.buscando_media.includes(serverID);
+    }
+
+    private setBuscandoAfinidad = (serverID: string, buscando: boolean): void => {
+        buscando ? 
+            this.buscando_afinidad.push(serverID) : 
+            this.buscando_afinidad = this.eliminarElementoArreglo(this.buscando_afinidad, serverID);
+    }
+
+    private setBuscandoMedia = (serverID: string, buscando: boolean): void => {
+        buscando ?
+            this.buscando_media.push(serverID) :
+            this.buscando_media = this.eliminarElementoArreglo(this.buscando_media, serverID);
+    }
+
+    private eliminarElementoArreglo = (arreglo: Array<any>, elemento: any): Array<any> => {
+        return arreglo.filter(e => e != elemento);
+    }
+
     private afinidad = async (message: Message, args: Array<string>) => {
-        if (this.buscando_afinidad) {
+        const serverID = message.guild?.id;
+        if (!serverID) return;
+
+        if (this.estaBuscandoAfinidad(serverID)) {
             return message.react("⛔");
         }
 
-        this.buscando_afinidad = true;
-
+        this.setBuscandoAfinidad(serverID, true);
         const waitingReaction = await message.react("🔄");
-
-        const serverID = message.guild?.id;
+    
         if (!serverID) {
-            this.buscando_afinidad = false;
+            this.setBuscandoAfinidad(serverID, false);
             waitingReaction.remove();
             return message.react("❌");
         }
@@ -325,49 +352,53 @@ class BOT {
 
         else if (message.mentions.members?.first()) {
             const uMencionado = message.mentions.members?.first();
+
             if (!uMencionado) {
-                this.buscando_afinidad = false;
+                this.setBuscandoAfinidad(serverID, false);
                 waitingReaction.remove();
                 return message.react("❌");
             }
+
             userID = uMencionado.id;
         }
 
         else {
             const username = args[0];
-            const user = await User.findOne({ anilistUsername: username });
+            const user = await Aniuser.findOne({ anilistUsername: username });
+
             if (!user) {
-                this.buscando_afinidad = false;
+                this.setBuscandoAfinidad(serverID, false);
                 waitingReaction.remove();
                 return message.react("❌");
             }
+
             if (!user?.discordId) {
-                this.buscando_afinidad = false;
+                this.setBuscandoAfinidad(serverID, false);
                 waitingReaction.remove();
                 return message.react("❌");
             }
+
             userID = user.discordId;
         }
 
-        const uRegistrados = await User.find({ serverId: serverID });
+        const uRegistrados = await Aniuser.find({ serverId: serverID });
         const usuario = uRegistrados.find(u => u.discordId == userID);
 
         if (!usuario) {
-            this.buscando_afinidad = false;
+            this.setBuscandoAfinidad(serverID, false);
             waitingReaction.remove();
             return message.react("❌");
         }
         if (!usuario.anilistUsername) {
-            this.buscando_afinidad = false;
+            this.setBuscandoAfinidad(serverID, false);
             waitingReaction.remove();
             return message.react("❌");
         }
 
-        message.channel.sendTyping();
-
         const aniuser1 = await this.usuario(serverID, usuario.anilistUsername);
+
         if (!aniuser1) {
-            this.buscando_afinidad = false;
+            this.setBuscandoAfinidad(serverID, false);
             waitingReaction.remove();
             return message.react("❌");
         }
@@ -375,16 +406,14 @@ class BOT {
         const resultado = await Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
 
         if (resultado.error) {
-            this.buscando_afinidad = false;
+            this.setBuscandoAfinidad(serverID, false);
             waitingReaction.remove();
             return message.react("❌");
         }
 
         this.enviarEmbed(message, Embeds.EmbedAfinidad(aniuser1, resultado.afinidades));
-        this.buscando_afinidad = false;
+        this.setBuscandoAfinidad(serverID, false);
         waitingReaction.remove();
         message.react("✅");
     }
 }
-
-export { BOT };

@@ -1,8 +1,6 @@
 import mongoose from "mongoose";
 
-const Schema = mongoose.Schema;
-
-const Model = new Schema({
+const AniuserSchema = new mongoose.Schema({
     anilistUsername: { type: String },
     anilistId: { type: String },
     discordId: { type: String },
@@ -10,5 +8,4 @@ const Model = new Schema({
     buff: Buffer
 });
 
-const User = mongoose.model('AniUser', Model);
-export { User };
+export default mongoose.model('Aniuser', AniuserSchema);

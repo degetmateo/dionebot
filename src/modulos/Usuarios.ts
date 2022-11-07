@@ -1,6 +1,6 @@
 import { Fetch } from "./Fetch";
-import { User } from "../modelos_db/User";
-import { Obra } from "../modelos/Obra";
+import Aniuser from "../modelos/Aniuser";
+import { Obra } from "../objetos/Obra";
 
 class Usuarios {
     public static async BuscarUsuario(serverID: string, args: string): Promise<any> {
@@ -13,7 +13,7 @@ class Usuarios {
 
             return (response == null || response.User == null) ? null : response.User;
         } else {
-            const user = await User.findOne({ serverId: serverID, discordId: args });
+            const user = await Aniuser.findOne({ serverId: serverID, discordId: args });
     
             if (!user) return null;
     
@@ -28,7 +28,7 @@ class Usuarios {
     }
 
     public static async GetUsuariosMedia(serverID: any, media: Obra): Promise<any> {
-        const uRegistrados = await User.find({ serverId: serverID });
+        const uRegistrados = await Aniuser.find({ serverId: serverID });
         const uMedia = [];
     
         for (let i = 0; i < uRegistrados.length; i++) {
@@ -200,16 +200,6 @@ const QUERY_LISTAS = `
 const QUERY_LISTA_ANIMES = `
     query ($username: String) {
         animeList: MediaListCollection(userName: $username, type: ANIME) {
-            user {
-                name
-                avatar {
-                    large
-                }
-                options {
-                    profileColor
-                }
-                siteUrl
-            }
             lists {
                 entries {
                     mediaId,

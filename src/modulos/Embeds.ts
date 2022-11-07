@@ -1,7 +1,7 @@
-import { EmbedBuilder, ColorResolvable, Embed, Message } from "discord.js";
+import { EmbedBuilder, ColorResolvable, Message } from "discord.js";
 import * as toHex from "colornames";
-import { Usuario } from "../modelos/Usuario";
-import { Obra } from "../modelos/Obra";
+import { Usuario } from "../objetos/Usuario";
+import { Obra } from "../objetos/Obra";
 import { Usuarios } from "./Usuarios";
 
 class Embeds {

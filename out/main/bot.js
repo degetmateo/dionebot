@@ -8,14 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BOT = void 0;
 const discord_js_1 = require("discord.js");
-const Obra_1 = require("../modelos/Obra");
-const Usuario_1 = require("../modelos/Usuario");
+const Obra_1 = require("../objetos/Obra");
+const Usuario_1 = require("../objetos/Usuario");
 const Database_1 = require("./Database");
-const User_1 = require("../modelos_db/User");
-const Mensaje_1 = require("../modelos/Mensaje");
+const Aniuser_1 = __importDefault(require("../modelos/Aniuser"));
+const Mensaje_1 = require("../objetos/Mensaje");
 const Media_1 = require("../modulos/Media");
 const Usuarios_1 = require("../modulos/Usuarios");
 const Afinidad_1 = require("../modulos/Afinidad");
@@ -23,14 +25,17 @@ const Setup_1 = require("../modulos/Setup");
 const Embeds_1 = require("../modulos/Embeds");
 class BOT {
     constructor() {
-        this.setColor2 = (message, colorCode) => __awaiter(this, void 0, void 0, function* () {
+        this.color = (message, colorCode) => __awaiter(this, void 0, void 0, function* () {
             var _a, _b, _c, _d, _e, _f;
             if (!colorCode || colorCode.trim() == "" || colorCode.trim().length <= 0)
                 return message.react("❌");
             const colorRoleCode = "0x" + (colorCode.split("#").join(""));
             const color = colorRoleCode;
-            if (!color)
-                return message.react("❌");
+            if (!color) {
+                message.react("❌");
+                return;
+            }
+            const waitingReaction = yield message.react("🔄");
             const memberColorRole = (_a = message.member) === null || _a === void 0 ? void 0 : _a.roles.cache.find(r => { var _a; return r.name === ((_a = message.member) === null || _a === void 0 ? void 0 : _a.user.username); });
             if (!memberColorRole) {
                 const guildColorRole = (_b = message.guild) === null || _b === void 0 ? void 0 : _b.roles.cache.find(r => { var _a; return r.name === ((_a = message.member) === null || _a === void 0 ? void 0 : _a.user.username); });
@@ -39,8 +44,11 @@ class BOT {
                         name: (_d = message.member) === null || _d === void 0 ? void 0 : _d.user.username,
                         color: color
                     }));
-                    if (!newRole)
-                        return message.react("❌");
+                    if (!newRole) {
+                        waitingReaction.remove();
+                        message.react("❌");
+                        return;
+                    }
                     (_e = message.member) === null || _e === void 0 ? void 0 : _e.roles.add(newRole);
                 }
                 else {
@@ -50,37 +58,100 @@ class BOT {
             }
             else {
                 const newMemberRole = yield memberColorRole.setColor(color);
-                if (!newMemberRole)
-                    return message.react("❌");
+                if (!newMemberRole) {
+                    waitingReaction.remove();
+                    message.react("❌");
+                    return;
+                }
             }
             return message.react("✅");
         });
-        this.anime = (message, args) => __awaiter(this, void 0, void 0, function* () {
-            if (this.buscando_media) {
-                message.react("⛔");
+        this.user = (message, args) => __awaiter(this, void 0, void 0, function* () {
+            var _g, _h;
+            let usuario;
+            const serverID = (_g = message.guild) === null || _g === void 0 ? void 0 : _g.id;
+            if (!serverID) {
+                message.react("❌");
                 return;
             }
             const reaccionEspera = yield message.react("🔄");
-            const resultado = yield this.buscarMedia("ANIME", args.join(" "));
-            if (!resultado) {
+            if (!args || args.length <= 0) {
+                usuario = yield this.usuario(message.guild.id, message.author.id);
+            }
+            else {
+                const usuarioMencionado = (_h = message.mentions.members) === null || _h === void 0 ? void 0 : _h.first();
+                if (usuarioMencionado) {
+                    usuario = yield this.usuario(message.guild.id, usuarioMencionado.id);
+                }
+                else {
+                    usuario = yield this.usuario(message.guild.id, args);
+                }
+            }
+            if (!usuario) {
+                reaccionEspera.remove();
+                return message.react("❌");
+            }
+            const embed = Embeds_1.Embeds.EmbedInformacionUsuario(usuario);
+            reaccionEspera.remove();
+            message.react("✅");
+            this.enviarEmbed(message, embed);
+        });
+        this.obra = (message, tipo, args, traducir) => __awaiter(this, void 0, void 0, function* () {
+            var _j;
+            const serverID = (_j = message.guild) === null || _j === void 0 ? void 0 : _j.id;
+            if (!serverID) {
+                message.react("❌");
+                return;
+            }
+            if (this.estaBuscandoMedia(serverID)) {
+                message.react("⛔");
+                return;
+            }
+            this.setBuscandoMedia(serverID, true);
+            const reaccionEspera = yield message.react("🔄");
+            const media = yield this.buscarMedia(tipo, args.join(" "));
+            if (!media) {
                 reaccionEspera.remove();
                 message.react("❌");
                 return null;
             }
+            const embedInformacion = yield Embeds_1.Embeds.EmbedInformacionMedia(message, media, traducir);
             reaccionEspera.remove();
             message.react("✅");
-            return resultado;
+            this.enviarEmbed(message, embedInformacion);
+            this.setBuscandoMedia(serverID, false);
         });
+        this.estaBuscandoAfinidad = (serverID) => {
+            return this.buscando_afinidad.includes(serverID);
+        };
+        this.estaBuscandoMedia = (serverID) => {
+            return this.buscando_media.includes(serverID);
+        };
+        this.setBuscandoAfinidad = (serverID, buscando) => {
+            buscando ?
+                this.buscando_afinidad.push(serverID) :
+                this.buscando_afinidad = this.eliminarElementoArreglo(this.buscando_afinidad, serverID);
+        };
+        this.setBuscandoMedia = (serverID, buscando) => {
+            buscando ?
+                this.buscando_media.push(serverID) :
+                this.buscando_media = this.eliminarElementoArreglo(this.buscando_media, serverID);
+        };
+        this.eliminarElementoArreglo = (arreglo, elemento) => {
+            return arreglo.filter(e => e != elemento);
+        };
         this.afinidad = (message, args) => __awaiter(this, void 0, void 0, function* () {
-            var _g, _h, _j;
-            if (this.buscando_afinidad) {
+            var _k, _l, _m;
+            const serverID = (_k = message.guild) === null || _k === void 0 ? void 0 : _k.id;
+            if (!serverID)
+                return;
+            if (this.estaBuscandoAfinidad(serverID)) {
                 return message.react("⛔");
             }
-            this.buscando_afinidad = true;
+            this.setBuscandoAfinidad(serverID, true);
             const waitingReaction = yield message.react("🔄");
-            const serverID = (_g = message.guild) === null || _g === void 0 ? void 0 : _g.id;
             if (!serverID) {
-                this.buscando_afinidad = false;
+                this.setBuscandoAfinidad(serverID, false);
                 waitingReaction.remove();
                 return message.react("❌");
             }
@@ -88,10 +159,10 @@ class BOT {
             if (!args[0]) {
                 userID = message.author.id;
             }
-            else if ((_h = message.mentions.members) === null || _h === void 0 ? void 0 : _h.first()) {
-                const uMencionado = (_j = message.mentions.members) === null || _j === void 0 ? void 0 : _j.first();
+            else if ((_l = message.mentions.members) === null || _l === void 0 ? void 0 : _l.first()) {
+                const uMencionado = (_m = message.mentions.members) === null || _m === void 0 ? void 0 : _m.first();
                 if (!uMencionado) {
-                    this.buscando_afinidad = false;
+                    this.setBuscandoAfinidad(serverID, false);
                     waitingReaction.remove();
                     return message.react("❌");
                 }
@@ -99,46 +170,45 @@ class BOT {
             }
             else {
                 const username = args[0];
-                const user = yield User_1.User.findOne({ anilistUsername: username });
+                const user = yield Aniuser_1.default.findOne({ anilistUsername: username });
                 if (!user) {
-                    this.buscando_afinidad = false;
+                    this.setBuscandoAfinidad(serverID, false);
                     waitingReaction.remove();
                     return message.react("❌");
                 }
                 if (!(user === null || user === void 0 ? void 0 : user.discordId)) {
-                    this.buscando_afinidad = false;
+                    this.setBuscandoAfinidad(serverID, false);
                     waitingReaction.remove();
                     return message.react("❌");
                 }
                 userID = user.discordId;
             }
-            const uRegistrados = yield User_1.User.find({ serverId: serverID });
+            const uRegistrados = yield Aniuser_1.default.find({ serverId: serverID });
             const usuario = uRegistrados.find(u => u.discordId == userID);
             if (!usuario) {
-                this.buscando_afinidad = false;
+                this.setBuscandoAfinidad(serverID, false);
                 waitingReaction.remove();
                 return message.react("❌");
             }
             if (!usuario.anilistUsername) {
-                this.buscando_afinidad = false;
+                this.setBuscandoAfinidad(serverID, false);
                 waitingReaction.remove();
                 return message.react("❌");
             }
-            message.channel.sendTyping();
             const aniuser1 = yield this.usuario(serverID, usuario.anilistUsername);
             if (!aniuser1) {
-                this.buscando_afinidad = false;
+                this.setBuscandoAfinidad(serverID, false);
                 waitingReaction.remove();
                 return message.react("❌");
             }
             const resultado = yield Afinidad_1.Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
             if (resultado.error) {
-                this.buscando_afinidad = false;
+                this.setBuscandoAfinidad(serverID, false);
                 waitingReaction.remove();
                 return message.react("❌");
             }
             this.enviarEmbed(message, Embeds_1.Embeds.EmbedAfinidad(aniuser1, resultado.afinidades));
-            this.buscando_afinidad = false;
+            this.setBuscandoAfinidad(serverID, false);
             waitingReaction.remove();
             message.react("✅");
         });
@@ -146,105 +216,42 @@ class BOT {
             intents: [discord_js_1.GatewayIntentBits.Guilds, discord_js_1.GatewayIntentBits.GuildMessages, discord_js_1.GatewayIntentBits.MessageContent]
         });
         this.db = new Database_1.DB();
-        this.buscando_afinidad = false;
-        this.buscando_media = false;
+        this.buscando_afinidad = new Array();
+        this.buscando_media = new Array();
     }
     iniciar() {
         return __awaiter(this, void 0, void 0, function* () {
             this.on("ready", () => console.log("BOT preparado!"));
-            this.on("guildMemberAdd", (member) => {
-                console.log("miembro nuevo");
-                if (member.user.id == "301769610678632448") {
-                    console.log("dione existe");
-                    const role = member.guild.roles.cache.find(r => r.id == "1028895305938243585");
-                    if (!role)
-                        return;
-                    console.log("rol existe");
-                    member.roles.add(role, "es dione");
-                }
-            });
             this.on("messageCreate", (message) => __awaiter(this, void 0, void 0, function* () {
-                var _a, _b, _c, _d;
+                var _a, _b, _c;
                 if (!message)
                     return;
                 if (message.author.bot)
                     return;
                 if (!message.guild)
                     return;
+                if (!message.guild.id)
+                    return;
                 const mensaje = new Mensaje_1.Mensaje(message);
                 const comando = mensaje.getComando();
                 const args = mensaje.getArgumentos();
-                if (comando === "Hola") {
-                    message.reply(`${message.client.emojis.cache.find((e => e.name === "pala"))}`);
-                }
-                ;
-                if (comando === "!color") {
-                    return this.setColor2(message, args[0]);
-                }
-                if (comando === "!ruleta") {
-                    const number = Math.floor(Math.random() * 6);
-                    if (number === 1) {
-                        // const c = message.guild.invites.
-                        const channel = yield message.channel.fetch();
-                        const invite = channel.type === discord_js_1.ChannelType.GuildText ? yield channel.createInvite() : null;
-                        invite ? yield ((_a = message.member) === null || _a === void 0 ? void 0 : _a.user.send(invite.url)) : null;
-                        (_b = message.member) === null || _b === void 0 ? void 0 : _b.kick();
-                        message.channel.send(`${(_c = message.member) === null || _c === void 0 ? void 0 : _c.user.username} fue expulsado...`);
-                    }
-                    else {
-                        message.channel.send("...");
-                    }
-                }
                 if (comando == "!anime") {
-                    const anime = yield this.anime(message, args);
-                    if (!anime)
-                        return;
-                    const embedInformacion = yield Embeds_1.Embeds.EmbedInformacionMedia(message, anime, false);
-                    this.enviarEmbed(message, embedInformacion);
+                    return yield this.obra(message, "ANIME", args, false);
                 }
                 if (comando == "!animeb") {
-                    const anime = yield this.anime(message, args);
-                    if (!anime)
-                        return;
-                    const embedInformacion = yield Embeds_1.Embeds.EmbedInformacionMedia(message, anime, true);
-                    this.enviarEmbed(message, embedInformacion);
+                    return yield this.obra(message, "ANIME", args, true);
                 }
                 if (comando == "!manga") {
-                    const manga = yield this.manga(message, args);
-                    if (!manga)
-                        return;
-                    const embedInformacion = yield Embeds_1.Embeds.EmbedInformacionMedia(message, manga, false);
-                    this.enviarEmbed(message, embedInformacion);
+                    return yield this.obra(message, "MANGA", args, false);
                 }
                 if (comando == "!mangab") {
-                    const manga = yield this.manga(message, args);
-                    if (!manga)
-                        return;
-                    const embedInformacion = yield Embeds_1.Embeds.EmbedInformacionMedia(message, manga, true);
-                    this.enviarEmbed(message, embedInformacion);
+                    return yield this.obra(message, "MANGA", args, true);
+                }
+                if (comando === "!color") {
+                    return yield this.color(message, args[0]);
                 }
                 if (comando == "!user") {
-                    let usuario;
-                    if (!args[0] || args[0].length <= 0) {
-                        usuario = yield this.usuario(message.guild.id, message.author.id);
-                    }
-                    else {
-                        const usuarioMencionado = (_d = message.mentions.members) === null || _d === void 0 ? void 0 : _d.first();
-                        if (usuarioMencionado) {
-                            usuario = yield this.usuario(message.guild.id, usuarioMencionado.id);
-                        }
-                        else {
-                            usuario = yield this.usuario(message.guild.id, args[0]);
-                        }
-                    }
-                    if (!usuario) {
-                        return message.react("❌");
-                    }
-                    else {
-                        message.react("✅");
-                    }
-                    const embed = Embeds_1.Embeds.EmbedInformacionUsuario(usuario);
-                    this.enviarEmbed(message, embed);
+                    return yield this.user(message, args[0]);
                 }
                 if (comando == "!setup") {
                     const result = yield this.setup(args[0], message);
@@ -265,13 +272,31 @@ class BOT {
                     }
                 }
                 if (comando == "!afinidad") {
-                    this.afinidad(message, args);
+                    return yield this.afinidad(message, args);
                 }
                 if (comando == "!help") {
-                    this.enviarEmbed(message, Embeds_1.Embeds.EmbedInformacionHelp());
+                    return this.enviarEmbed(message, Embeds_1.Embeds.EmbedInformacionHelp());
+                }
+                if (comando === "!ruleta") {
+                    const number = Math.floor(Math.random() * 6);
+                    if (number === 1) {
+                        // const c = message.guild.invites.
+                        const channel = yield message.channel.fetch();
+                        const invite = channel.type === discord_js_1.ChannelType.GuildText ? yield channel.createInvite() : null;
+                        invite ? yield ((_a = message.member) === null || _a === void 0 ? void 0 : _a.user.send(invite.url)) : null;
+                        (_b = message.member) === null || _b === void 0 ? void 0 : _b.kick();
+                        message.channel.send(`${(_c = message.member) === null || _c === void 0 ? void 0 : _c.user.username} fue expulsado...`);
+                    }
+                    else {
+                        message.channel.send("...");
+                    }
                 }
                 const mContent = message.content.toLowerCase()
                     .split("é").join("e");
+                if (comando === "Hola") {
+                    message.reply(`${message.client.emojis.cache.find((e => e.name === "pala"))}`);
+                }
+                ;
                 if (mContent.endsWith(" que") || mContent.endsWith(" que?")) {
                     return this.responder(message, "so");
                 }
@@ -302,24 +327,6 @@ class BOT {
     }
     enviarEmbed(message, embed) {
         message.channel.send({ embeds: [embed] });
-    }
-    manga(message, args) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.buscando_media) {
-                message.react("⛔");
-                return;
-            }
-            const reaccionEspera = yield message.react("🔄");
-            const resultado = yield this.buscarMedia("MANGA", args.join(" "));
-            if (!resultado) {
-                reaccionEspera.remove();
-                message.react("❌");
-                return null;
-            }
-            reaccionEspera.remove();
-            message.react("✅");
-            return resultado;
-        });
     }
     buscarMedia(tipo, args) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -355,4 +362,4 @@ class BOT {
         });
     }
 }
-exports.BOT = BOT;
+exports.default = BOT;

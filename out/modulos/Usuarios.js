@@ -8,11 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Usuarios = void 0;
 const Fetch_1 = require("./Fetch");
-const User_1 = require("../modelos_db/User");
+const Aniuser_1 = __importDefault(require("../modelos/Aniuser"));
 class Usuarios {
     static BuscarUsuario(serverID, args) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -24,7 +27,7 @@ class Usuarios {
                 return (response == null || response.User == null) ? null : response.User;
             }
             else {
-                const user = yield User_1.User.findOne({ serverId: serverID, discordId: args });
+                const user = yield Aniuser_1.default.findOne({ serverId: serverID, discordId: args });
                 if (!user)
                     return null;
                 const variables = {
@@ -37,7 +40,7 @@ class Usuarios {
     }
     static GetUsuariosMedia(serverID, media) {
         return __awaiter(this, void 0, void 0, function* () {
-            const uRegistrados = yield User_1.User.find({ serverId: serverID });
+            const uRegistrados = yield Aniuser_1.default.find({ serverId: serverID });
             const uMedia = [];
             for (let i = 0; i < uRegistrados.length; i++) {
                 const uLista = yield this.GetStatsMedia(uRegistrados[i].anilistId, media.getID());
@@ -198,16 +201,6 @@ const QUERY_LISTAS = `
 const QUERY_LISTA_ANIMES = `
     query ($username: String) {
         animeList: MediaListCollection(userName: $username, type: ANIME) {
-            user {
-                name
-                avatar {
-                    large
-                }
-                options {
-                    profileColor
-                }
-                siteUrl
-            }
             lists {
                 entries {
                     mediaId,
