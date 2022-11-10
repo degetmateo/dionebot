@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, ClientEvents, Message, EmbedBuilder, GuildMember, ChannelType, ColorResolvable } from "discord.js";
+import { Client, GatewayIntentBits, ClientEvents, Message, EmbedBuilder, ChannelType, ColorResolvable } from "discord.js";
 
 import { Obra } from "../objetos/Obra";
 import { Usuario } from "../objetos/Usuario";
@@ -145,6 +145,10 @@ export default class BOT {
         this.client.login(process.env.TOKEN);
     }
 
+    public getServerCount() {
+        return this.client.guilds.cache.size;
+    }
+
     private on(event: keyof ClientEvents, func: any) {
         this.client.on(event, func);
     }
@@ -263,6 +267,7 @@ export default class BOT {
         if (!media) {
             reaccionEspera.remove();
             message.react("❌");
+            this.setBuscandoMedia(serverID, false);
             return null;
         }
 

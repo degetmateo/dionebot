@@ -113,6 +113,7 @@ class BOT {
             if (!media) {
                 reaccionEspera.remove();
                 message.react("❌");
+                this.setBuscandoMedia(serverID, false);
                 return null;
             }
             const embedInformacion = yield Embeds_1.Embeds.EmbedInformacionMedia(message, media, traducir);
@@ -318,6 +319,9 @@ class BOT {
             this.db.conectar(process.env.DB);
             this.client.login(process.env.TOKEN);
         });
+    }
+    getServerCount() {
+        return this.client.guilds.cache.size;
     }
     on(event, func) {
         this.client.on(event, func);
