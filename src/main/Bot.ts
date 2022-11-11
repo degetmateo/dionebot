@@ -68,23 +68,11 @@ export default class BOT {
             }
         
             if (comando == "!setup") {
-                const result = await this.setup(args[0], message);
-        
-                if (result) {
-                    message.react("✅");
-                } else {
-                    message.react("❌");
-                }
+                return await this.setup(message, args[0]);
             }
         
             if (comando == "!unsetup") {
-                const result = await this.unsetup(message);
-        
-                if (result) {
-                    message.react("✅");
-                } else {
-                    message.react("❌");
-                }
+                return await this.unsetup(message);
             }
         
             if (comando == "!afinidad") {
@@ -96,21 +84,7 @@ export default class BOT {
             }
 
             if (comando === "!ruleta") {
-                const number = Math.floor(Math.random() * 6);
-
-                if (number === 1) {        
-                    // const c = message.guild.invites.
-
-                    const channel = await message.channel.fetch();
-                    const invite = channel.type === ChannelType.GuildText ? await channel.createInvite() : null;
-
-                    invite ? await message.member?.user.send(invite.url) : null;
-
-                    message.member?.kick();
-                    message.channel.send(`${message.member?.user.username} fue expulsado...`)
-                } else {
-                    message.channel.send("...");
-                }
+                return await this.ruleta(message);
             }
 
             const mContent = message.content.toLowerCase()
@@ -145,11 +119,9 @@ export default class BOT {
         this.client.login(process.env.TOKEN);
     }
 
-    public getServerCount() {
-        return this.client.guilds.cache.size;
-    }
+    public getServerCount = (): number => this.client.guilds.cache.size;
 
-    private on(event: keyof ClientEvents, func: any) {
+    private on = (event: keyof ClientEvents, func: any): void => {
         this.client.on(event, func);
     }
 
@@ -300,12 +272,32 @@ export default class BOT {
         return user == null ? null : new Usuario(user);
     }
 
-    private async setup(username: string, message: Message): Promise<boolean> {
-        return await Setup.SetupUsuario(username, message);
+    private async setup(message: Message, username: string): Promise<void> {
+        const reaccionEspera = await message.react("🔄");
+        const resultado = await Setup.SetupUsuario(username, message);
+
+        if (!resultado) {
+            reaccionEspera.remove();
+            message.react("❌");
+            return;
+        }
+
+        reaccionEspera.remove();
+        message.react("✅");
     }
 
-    private async unsetup(message: Message): Promise<boolean> {
-        return await Setup.UnsetupUsuario(message);
+    private async unsetup(message: Message): Promise<void> {
+        const reaccionEspera = await message.react("🔄");
+        const resultado = await Setup.UnsetupUsuario(message);
+
+        if (!resultado) {
+            reaccionEspera.remove();
+            message.react("❌");
+            return;
+        }
+
+        reaccionEspera.remove();
+        message.react("✅");
     }
 
     private estaBuscandoAfinidad = (serverID: string): boolean => {
@@ -420,5 +412,39 @@ export default class BOT {
         this.setBuscandoAfinidad(serverID, false);
         waitingReaction.remove();
         message.react("✅");
+    }
+
+    private ruleta = async (message: Message): Promise<void> => {
+        const number = Math.floor(Math.random() * 6);
+
+        const ImagenCargando = "https://media.discordapp.net/attachments/712773186336456766/1040413408199180328/ruletaCargando.gif";
+        const ImagenDisparo = "https://media.discordapp.net/attachments/712773186336456766/1040418304797462568/ruletaDisparo.gif";
+        const ImagenFallo = "https://media.discordapp.net/attachments/712773186336456766/1040418327052423288/ruletaFallogif.gif";
+
+        const EmbedImagenCargando = new EmbedBuilder()
+            .setImage(ImagenCargando)
+            .setFooter({ text: "..." });
+
+        const EmbedImagenDisparo = new EmbedBuilder()
+            .setImage(ImagenDisparo)
+
+        const EmbedImagenFallo = new EmbedBuilder()
+            .setImage(ImagenFallo)
+            .setFooter({ text: "Uf..." });
+
+        let embedActual = await message.reply({ embeds: [EmbedImagenCargando] });
+
+        setTimeout(async () => {
+            if (number === 1) {        
+                const channel = await message.channel.fetch();
+                const invite = channel.type === ChannelType.GuildText ? await channel.createInvite() : null;
+
+                await embedActual.edit({ embeds: [EmbedImagenDisparo] });
+                invite ? await message.member?.user.send(invite.url) : null;
+                message.member?.kick();
+            } else {
+                embedActual.edit({ embeds: [EmbedImagenFallo] });
+            }
+        }, 1700);
     }
 }

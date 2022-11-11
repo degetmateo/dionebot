@@ -1,9 +1,9 @@
 import fetch from "node-fetch";
 
 class Fetch {
-    public static async request(query: string, variables: any): Promise<any> {
-        const url = 'https://graphql.anilist.co';
-    
+    private static url: string = "https://graphql.anilist.co";
+
+    public static async request<T> (query: string, variables: any): Promise<T> {
         const opciones = {
             method: 'POST',
             
@@ -11,16 +11,17 @@ class Fetch {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
             },
-
+            
             body: JSON.stringify({ query, variables })
         };
 
-        const data = await fetch(url, opciones);
-        const response = await data.json();
+        const res = await fetch(this.url, opciones);
 
-        if (!response || !response.data) return null;
+        if (!res.ok) {
+            throw new Error(res.statusText);
+        }
 
-        return response.data;
+        return await res.json() as Promise<T>;
     }
 }
 

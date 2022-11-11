@@ -9,7 +9,7 @@ class Media {
             perPage: 1
         };
     
-        const response = await Fetch.request(queryName, variables);
+        const response = await Fetch.request<any>(queryName, variables);
 
         return (response == null || response.Page == null || response.Page.media == null || response.Page.media[0] == null) ? 
             null : response.Page.media[0];
@@ -21,7 +21,7 @@ class Media {
             type: tipo.toUpperCase()
         };
     
-        const response = await Fetch.request(queryID, variables);
+        const response = await Fetch.request<any>(queryID, variables);
 
         return (response == null || response.Media == null) ? null : response.Media;
     }

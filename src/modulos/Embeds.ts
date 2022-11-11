@@ -1,4 +1,4 @@
-import { EmbedBuilder, ColorResolvable, Message } from "discord.js";
+import { EmbedBuilder, ColorResolvable, Message, Embed } from "discord.js";
 import * as toHex from "colornames";
 import { Usuario } from "../objetos/Usuario";
 import { Obra } from "../objetos/Obra";
@@ -38,6 +38,12 @@ class Embeds {
         return new EmbedBuilder()
             .setTitle("▾ Comandos")
             .setDescription(descripcion.trim());
+    }
+
+    public static EmbedImagen(url: string) {
+        return new EmbedBuilder()
+            .setImage(url)
+            .setFooter({ text: "..." })
     }
 
     public static async EmbedInformacionMedia(message: Message, obra: Obra, traducir: boolean): Promise<EmbedBuilder> {
