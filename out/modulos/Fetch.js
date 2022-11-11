@@ -17,7 +17,6 @@ const node_fetch_1 = __importDefault(require("node-fetch"));
 class Fetch {
     static request(query, variables) {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = 'https://graphql.anilist.co';
             const opciones = {
                 method: 'POST',
                 headers: {
@@ -26,12 +25,13 @@ class Fetch {
                 },
                 body: JSON.stringify({ query, variables })
             };
-            const data = yield (0, node_fetch_1.default)(url, opciones);
-            const response = yield data.json();
-            if (!response || !response.data)
-                return null;
-            return response.data;
+            const res = yield (0, node_fetch_1.default)(this.url, opciones);
+            if (!res.ok) {
+                throw new Error(res.statusText);
+            }
+            return yield res.json();
         });
     }
 }
 exports.Fetch = Fetch;
+Fetch.url = "https://graphql.anilist.co";

@@ -25,6 +25,10 @@ const Setup_1 = require("../modulos/Setup");
 const Embeds_1 = require("../modulos/Embeds");
 class BOT {
     constructor() {
+        this.getServerCount = () => this.client.guilds.cache.size;
+        this.on = (event, func) => {
+            this.client.on(event, func);
+        };
         this.color = (message, colorCode) => __awaiter(this, void 0, void 0, function* () {
             var _a, _b, _c, _d, _e, _f;
             if (!colorCode || colorCode.trim() == "" || colorCode.trim().length <= 0)
@@ -213,6 +217,34 @@ class BOT {
             waitingReaction.remove();
             message.react("✅");
         });
+        this.ruleta = (message) => __awaiter(this, void 0, void 0, function* () {
+            const number = Math.floor(Math.random() * 6);
+            const ImagenCargando = "https://media.discordapp.net/attachments/712773186336456766/1040413408199180328/ruletaCargando.gif";
+            const ImagenDisparo = "https://media.discordapp.net/attachments/712773186336456766/1040418304797462568/ruletaDisparo.gif";
+            const ImagenFallo = "https://media.discordapp.net/attachments/712773186336456766/1040418327052423288/ruletaFallogif.gif";
+            const EmbedImagenCargando = new discord_js_1.EmbedBuilder()
+                .setImage(ImagenCargando)
+                .setFooter({ text: "..." });
+            const EmbedImagenDisparo = new discord_js_1.EmbedBuilder()
+                .setImage(ImagenDisparo);
+            const EmbedImagenFallo = new discord_js_1.EmbedBuilder()
+                .setImage(ImagenFallo)
+                .setFooter({ text: "Uf..." });
+            let embedActual = yield message.reply({ embeds: [EmbedImagenCargando] });
+            setTimeout(() => __awaiter(this, void 0, void 0, function* () {
+                var _o, _p;
+                if (number === 1) {
+                    const channel = yield message.channel.fetch();
+                    const invite = channel.type === discord_js_1.ChannelType.GuildText ? yield channel.createInvite() : null;
+                    yield embedActual.edit({ embeds: [EmbedImagenDisparo] });
+                    invite ? yield ((_o = message.member) === null || _o === void 0 ? void 0 : _o.user.send(invite.url)) : null;
+                    (_p = message.member) === null || _p === void 0 ? void 0 : _p.kick();
+                }
+                else {
+                    embedActual.edit({ embeds: [EmbedImagenFallo] });
+                }
+            }), 1700);
+        });
         this.client = new discord_js_1.Client({
             intents: [discord_js_1.GatewayIntentBits.Guilds, discord_js_1.GatewayIntentBits.GuildMessages, discord_js_1.GatewayIntentBits.MessageContent]
         });
@@ -224,7 +256,6 @@ class BOT {
         return __awaiter(this, void 0, void 0, function* () {
             this.on("ready", () => console.log("BOT preparado!"));
             this.on("messageCreate", (message) => __awaiter(this, void 0, void 0, function* () {
-                var _a, _b, _c;
                 if (!message)
                     return;
                 if (message.author.bot)
@@ -255,22 +286,10 @@ class BOT {
                     return yield this.user(message, args[0]);
                 }
                 if (comando == "!setup") {
-                    const result = yield this.setup(args[0], message);
-                    if (result) {
-                        message.react("✅");
-                    }
-                    else {
-                        message.react("❌");
-                    }
+                    return yield this.setup(message, args[0]);
                 }
                 if (comando == "!unsetup") {
-                    const result = yield this.unsetup(message);
-                    if (result) {
-                        message.react("✅");
-                    }
-                    else {
-                        message.react("❌");
-                    }
+                    return yield this.unsetup(message);
                 }
                 if (comando == "!afinidad") {
                     return yield this.afinidad(message, args);
@@ -279,18 +298,7 @@ class BOT {
                     return this.enviarEmbed(message, Embeds_1.Embeds.EmbedInformacionHelp());
                 }
                 if (comando === "!ruleta") {
-                    const number = Math.floor(Math.random() * 6);
-                    if (number === 1) {
-                        // const c = message.guild.invites.
-                        const channel = yield message.channel.fetch();
-                        const invite = channel.type === discord_js_1.ChannelType.GuildText ? yield channel.createInvite() : null;
-                        invite ? yield ((_a = message.member) === null || _a === void 0 ? void 0 : _a.user.send(invite.url)) : null;
-                        (_b = message.member) === null || _b === void 0 ? void 0 : _b.kick();
-                        message.channel.send(`${(_c = message.member) === null || _c === void 0 ? void 0 : _c.user.username} fue expulsado...`);
-                    }
-                    else {
-                        message.channel.send("...");
-                    }
+                    return yield this.ruleta(message);
                 }
                 const mContent = message.content.toLowerCase()
                     .split("é").join("e");
@@ -319,12 +327,6 @@ class BOT {
             this.db.conectar(process.env.DB);
             this.client.login(process.env.TOKEN);
         });
-    }
-    getServerCount() {
-        return this.client.guilds.cache.size;
-    }
-    on(event, func) {
-        this.client.on(event, func);
     }
     responder(message, text) {
         message.reply(text);
@@ -355,14 +357,30 @@ class BOT {
             return user == null ? null : new Usuario_1.Usuario(user);
         });
     }
-    setup(username, message) {
+    setup(message, username) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield Setup_1.Setup.SetupUsuario(username, message);
+            const reaccionEspera = yield message.react("🔄");
+            const resultado = yield Setup_1.Setup.SetupUsuario(username, message);
+            if (!resultado) {
+                reaccionEspera.remove();
+                message.react("❌");
+                return;
+            }
+            reaccionEspera.remove();
+            message.react("✅");
         });
     }
     unsetup(message) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield Setup_1.Setup.UnsetupUsuario(message);
+            const reaccionEspera = yield message.react("🔄");
+            const resultado = yield Setup_1.Setup.UnsetupUsuario(message);
+            if (!resultado) {
+                reaccionEspera.remove();
+                message.react("❌");
+                return;
+            }
+            reaccionEspera.remove();
+            message.react("✅");
         });
     }
 }

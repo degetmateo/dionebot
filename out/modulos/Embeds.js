@@ -64,6 +64,11 @@ class Embeds {
             .setTitle("▾ Comandos")
             .setDescription(descripcion.trim());
     }
+    static EmbedImagen(url) {
+        return new discord_js_1.EmbedBuilder()
+            .setImage(url)
+            .setFooter({ text: "..." });
+    }
     static EmbedInformacionMedia(message, obra, traducir) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
