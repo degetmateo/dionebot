@@ -15,8 +15,9 @@ class Fetch {
             body: JSON.stringify({ query, variables })
         };
 
-        const res = await fetch(this.url, opciones);
-        return await res.json();
+        const res = await (await fetch(this.url, opciones)).json();
+        const data = res.data;
+        return data;
     }
 }
 
