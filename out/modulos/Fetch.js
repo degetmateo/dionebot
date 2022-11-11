@@ -25,9 +25,11 @@ class Fetch {
                 },
                 body: JSON.stringify({ query, variables })
             };
-            const res = yield (yield (0, node_fetch_1.default)(this.url, opciones)).json();
-            const data = res.data;
-            return data;
+            const data = yield (0, node_fetch_1.default)(this.url, opciones);
+            const res = yield data.json();
+            if (!res || !res.data)
+                return null;
+            return res.data;
         });
     }
 }
