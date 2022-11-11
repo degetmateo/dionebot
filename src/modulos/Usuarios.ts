@@ -9,7 +9,7 @@ class Usuarios {
                 name: args
             };
 
-            const response = await Fetch.request<any>(QUERY_USERNAME, variables);
+            const response = await Fetch.request(QUERY_USERNAME, variables);
 
             return (response == null || response.User == null) ? null : response.User;
         } else {
@@ -21,7 +21,7 @@ class Usuarios {
                 name: user.anilistUsername
             }
     
-            const response = await Fetch.request<any>(QUERY_USERNAME, variables);
+            const response = await Fetch.request(QUERY_USERNAME, variables);
             
             return (response == null || response.User == null) ? null : response.User;
         }
@@ -59,19 +59,19 @@ class Usuarios {
 
     public static async GetEntradas(username: string): Promise<any> {
         const variables = { username };
-        const response = await Fetch.request<any>(QUERY_LISTAS, variables);
+        const response = await Fetch.request(QUERY_LISTAS, variables);
         return (response == null) ? null : response;
     }
 
     public static GetEntradasAnime = async (username: string): Promise<any> => {
         const variables = { username };
-        const response = await Fetch.request<any>(QUERY_LISTA_ANIMES, variables);
+        const response = await Fetch.request(QUERY_LISTA_ANIMES, variables);
         return (response == null) ? null : response;
     }
 
     public static GetEntradasManga = async (username: string): Promise<any> => {
         const variables = { username };
-        const response = await Fetch.request<any>(QUERY_LISTA_MANGAS, variables);
+        const response = await Fetch.request(QUERY_LISTA_MANGAS, variables);
         return (response == null) ? null : response;
     }
 
@@ -81,7 +81,7 @@ class Usuarios {
     
         const variables = { userID, mediaID };
     
-        const response = await Fetch.request<any>(QUERY_MEDIA, variables);
+        const response = await Fetch.request(QUERY_MEDIA, variables);
     
         return (response == null || response.MediaList == null) ? null : response.MediaList;
     }
