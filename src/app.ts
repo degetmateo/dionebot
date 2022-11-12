@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 import express from "express";
-import BOT from "./main/Bot";
+import BOT from "./main/bot";
 
 const app = express();
 const bot = new BOT();
