@@ -1,27 +1,28 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 exports.Mensaje = void 0;
-class Mensaje {
-    constructor(data) {
+var Mensaje = /** @class */ (function () {
+    function Mensaje(data) {
         this.data = data;
     }
-    getPartes() {
+    Mensaje.prototype.getPartes = function () {
         return this.getContenido().split(" ");
-    }
-    getComando() {
+    };
+    Mensaje.prototype.getComando = function () {
         return this.getPartes()[0];
-    }
-    getArgumentos() {
+    };
+    Mensaje.prototype.getArgumentos = function () {
         return this.getPartes().slice(1);
-    }
-    getContenido() {
+    };
+    Mensaje.prototype.getContenido = function () {
         return this.data.content == null ? "" : this.data.content;
-    }
-    getServerID() {
+    };
+    Mensaje.prototype.getServerID = function () {
         return this.data.guildId;
-    }
-    getUserID() {
+    };
+    Mensaje.prototype.getUserID = function () {
         return this.data.author.id;
-    }
-}
+    };
+    return Mensaje;
+}());
 exports.Mensaje = Mensaje;
