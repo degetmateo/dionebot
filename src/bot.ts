@@ -1,5 +1,4 @@
 import { Client, Collection, GatewayIntentBits, Message, Events } from "discord.js";
-import { DB } from "./database";
 import { Mensaje } from "./objetos/Mensaje";
 
 import fs from "fs";
@@ -115,9 +114,11 @@ export default class BOT extends Client {
     }
 
     public setBuscandoAfinidad = (serverID: string, buscando: boolean): void => {
-        buscando ? 
-            this.buscando_afinidad.push(serverID) : 
+        if (buscando) {
+            this.buscando_afinidad.push(serverID);
+        } else {
             this.buscando_afinidad = this.eliminarElementoArreglo(this.buscando_afinidad, serverID);
+        }
     }
 
     public setBuscandoMedia = (serverID: string, buscando: boolean): void => {

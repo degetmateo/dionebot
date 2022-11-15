@@ -21,11 +21,12 @@ module.exports = {
         await interaction.deferReply();
         const serverID = ((_a = interaction.guild) === null || _a === void 0 ? void 0 : _a.id) != null ? interaction.guild.id : "";
         const usuario = interaction.options.getUser("usuario");
-        if (bot.estaBuscandoAfinidad(serverID)) {
-            return interaction.editReply({
-                content: "Ya se está calculando la afinidad de alguien más en este momento.",
-            });
-        }
+        // if (bot.estaBuscandoAfinidad(serverID)) {
+        //     return interaction.editReply({
+        //         content: "Ya se está calculando la afinidad de alguien más en este momento.",
+        //         options: { ephemeral: true }
+        //     })
+        // }
         bot.setBuscandoAfinidad(serverID, true);
         const userID = usuario == null ? interaction.user.id : usuario.id;
         const uRegistrados = await Aniuser_1.default.find({ serverId: serverID });

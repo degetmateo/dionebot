@@ -33,9 +33,12 @@ class BOT extends discord_js_1.Client {
             return this.buscando_media.includes(serverID);
         };
         this.setBuscandoAfinidad = (serverID, buscando) => {
-            buscando ?
-                this.buscando_afinidad.push(serverID) :
+            if (buscando) {
+                this.buscando_afinidad.push(serverID);
+            }
+            else {
                 this.buscando_afinidad = this.eliminarElementoArreglo(this.buscando_afinidad, serverID);
+            }
         };
         this.setBuscandoMedia = (serverID, buscando) => {
             buscando ?

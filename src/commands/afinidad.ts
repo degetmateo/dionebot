@@ -21,11 +21,12 @@ module.exports = {
         const serverID = interaction.guild?.id != null ? interaction.guild.id : "";
         const usuario = interaction.options.getUser("usuario");
 
-        if (bot.estaBuscandoAfinidad(serverID)) {
-            return interaction.editReply({
-                content: "Ya se está calculando la afinidad de alguien más en este momento.",
-            })
-        }
+        // if (bot.estaBuscandoAfinidad(serverID)) {
+        //     return interaction.editReply({
+        //         content: "Ya se está calculando la afinidad de alguien más en este momento.",
+        //         options: { ephemeral: true }
+        //     })
+        // }
 
         bot.setBuscandoAfinidad(serverID, true);
 
@@ -36,6 +37,7 @@ module.exports = {
 
         if (!uRegistrado) {
             bot.setBuscandoAfinidad(serverID, false);
+
             return interaction.editReply({
                 content: "El usuario no está registrado.",
             })
@@ -43,7 +45,9 @@ module.exports = {
 
         if (!uRegistrado.anilistUsername) {
             bot.setBuscandoAfinidad(serverID, false);
+
             console.error("[ERROR] Usuario registrado sin usuario de ANILIST.");
+
             return interaction.editReply({
                 content: "Ha ocurrido un error.",      
             })
@@ -53,6 +57,7 @@ module.exports = {
 
         if (!aniuser1) {
             bot.setBuscandoAfinidad(serverID, false);
+
             return interaction.editReply({
                 content: `No se ha encontrado al usuario **${uRegistrado.anilistUsername}** en ANILIST. Probablemente se haya cambiado el nombre.`,
             })
@@ -62,13 +67,16 @@ module.exports = {
 
         if (resultado.error) {
             bot.setBuscandoAfinidad(serverID, false);
+
             return interaction.editReply({
                 content: "Ha ocurrido un error al calcular la afinidad."
             })
         }
 
         const EmbedInformacionAfinidad = Embeds.EmbedAfinidad(aniuser1, resultado.afinidades);
+
         bot.setBuscandoAfinidad(serverID, false);
+
         return interaction.editReply({
             embeds: [EmbedInformacionAfinidad]
         })
