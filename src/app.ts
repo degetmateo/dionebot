@@ -16,6 +16,7 @@ app.get("/", (req: express.Request, res: express.Response) => {
 
 app.listen(app.get("port"), () => {
     console.log(`Servidor iniciado en el puerto: ${app.get("port")}`);
-    db.conectar(process.env.DB)
+    db.conectar(process.env.DB);
     bot.iniciar();
+    bot.login(process.env.TOKEN);
 });
