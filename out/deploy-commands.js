@@ -14,7 +14,7 @@ for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
     commands.push(command.data);
 }
-const token = process.env.TOKEN || "";
+const token = process.env.TOKEN_BABOSA || "";
 const rest = new discord_js_1.REST({ version: "10" }).setToken(token);
 (async () => {
     try {

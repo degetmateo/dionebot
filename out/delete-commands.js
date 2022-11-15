@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv").config();
 const { REST, Routes } = require('discord.js');
 const config_json_1 = require("./config.json");
-const token = process.env.TOKEN || "";
+const token = process.env.TOKEN_BABOSA || "";
 const rest = new REST({ version: '10' }).setToken(token);
 rest.put(Routes.applicationGuildCommands(config_json_1.clientId, "625096034317500449"), { body: [] })
     .then(() => console.log('Successfully deleted all guild commands.'))
