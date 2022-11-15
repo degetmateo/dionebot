@@ -16,69 +16,87 @@ module.exports = {
                 .setDescription("Usuario del que quieres calcular la afinidad.")),
 
     execute: async (interaction: ChatInputCommandInteraction, bot: BOT) => {
-        await interaction.deferReply();
+        // await interaction.deferReply();
 
-        const serverID = interaction.guild?.id != null ? interaction.guild.id : "";
-        const usuario = interaction.options.getUser("usuario");
+        return interaction.reply({
+            content: "Comando en mantenimiento.",
+            ephemeral: true
+        })
 
-        // if (bot.estaBuscandoAfinidad(serverID)) {
+        // const serverID = interaction.guild?.id != null ? interaction.guild.id : "";
+        // const usuario = interaction.options.getUser("usuario");
+
+        // // if (bot.estaBuscandoAfinidad(serverID)) {
+        // //     return interaction.editReply({
+        // //         content: "Ya se está calculando la afinidad de alguien más en este momento.",
+        // //         options: { ephemeral: true }
+        // //     })
+        // // }
+
+        // bot.setBuscandoAfinidad(serverID, true);
+
+        // const userID = usuario == null ? interaction.user.id : usuario.id;
+
+        // const uRegistrados = await Aniuser.find({ serverId: serverID });
+        // const uRegistrado = uRegistrados.find(u => u.discordId == userID);
+
+        // if (!uRegistrado) {
+        //     bot.setBuscandoAfinidad(serverID, false);
+
         //     return interaction.editReply({
-        //         content: "Ya se está calculando la afinidad de alguien más en este momento.",
+        //         content: "El usuario no está registrado.",
+        //     })
+        // }
+
+        // if (!uRegistrado.anilistUsername) {
+        //     bot.setBuscandoAfinidad(serverID, false);
+
+        //     console.error("[ERROR] Usuario registrado sin usuario de ANILIST.");
+
+        //     return interaction.editReply({
+        //         content: "Ha ocurrido un error.",      
+        //     })
+        // }
+
+        // console.log(uRegistrado.anilistUsername);
+
+        // const responseUser = await Usuarios.BuscarUsuario(serverID, uRegistrado.anilistUsername);
+
+        // if (!responseUser) {
+        //     bot.setBuscandoAfinidad(serverID, false);
+
+        //     return interaction.editReply({
+        //         content: "No se ha encontrado tu usuario en la base de datos de ANILIST.",
         //         options: { ephemeral: true }
         //     })
         // }
 
-        bot.setBuscandoAfinidad(serverID, true);
+        // const aniuser1 = new Usuario(responseUser);
 
-        const userID = usuario == null ? interaction.user.id : usuario.id;
+        // if (!aniuser1) {
+        //     bot.setBuscandoAfinidad(serverID, false);
 
-        const uRegistrados = await Aniuser.find({ serverId: serverID });
-        const uRegistrado = uRegistrados.find(u => u.discordId == userID);
+        //     return interaction.editReply({
+        //         content: `No se ha encontrado al usuario **${uRegistrado.anilistUsername}** en ANILIST. Probablemente se haya cambiado el nombre.`,
+        //     })
+        // }
 
-        if (!uRegistrado) {
-            bot.setBuscandoAfinidad(serverID, false);
+        // const resultado = await Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
 
-            return interaction.editReply({
-                content: "El usuario no está registrado.",
-            })
-        }
+        // if (resultado.error) {
+        //     bot.setBuscandoAfinidad(serverID, false);
 
-        if (!uRegistrado.anilistUsername) {
-            bot.setBuscandoAfinidad(serverID, false);
+        //     return interaction.editReply({
+        //         content: "Ha ocurrido un error al calcular la afinidad."
+        //     })
+        // }
 
-            console.error("[ERROR] Usuario registrado sin usuario de ANILIST.");
+        // const EmbedInformacionAfinidad = Embeds.EmbedAfinidad(aniuser1, resultado.afinidades);
 
-            return interaction.editReply({
-                content: "Ha ocurrido un error.",      
-            })
-        }
+        // bot.setBuscandoAfinidad(serverID, false);
 
-        const aniuser1 = new Usuario(await Usuarios.BuscarUsuario(serverID, uRegistrado.anilistUsername));
-
-        if (!aniuser1) {
-            bot.setBuscandoAfinidad(serverID, false);
-
-            return interaction.editReply({
-                content: `No se ha encontrado al usuario **${uRegistrado.anilistUsername}** en ANILIST. Probablemente se haya cambiado el nombre.`,
-            })
-        }
-
-        const resultado = await Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
-
-        if (resultado.error) {
-            bot.setBuscandoAfinidad(serverID, false);
-
-            return interaction.editReply({
-                content: "Ha ocurrido un error al calcular la afinidad."
-            })
-        }
-
-        const EmbedInformacionAfinidad = Embeds.EmbedAfinidad(aniuser1, resultado.afinidades);
-
-        bot.setBuscandoAfinidad(serverID, false);
-
-        return interaction.editReply({
-            embeds: [EmbedInformacionAfinidad]
-        })
+        // return interaction.editReply({
+        //     embeds: [EmbedInformacionAfinidad]
+        // })
     }
 }
