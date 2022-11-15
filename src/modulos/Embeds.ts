@@ -1,4 +1,4 @@
-import { EmbedBuilder, ColorResolvable, Message, Embed } from "discord.js";
+import { EmbedBuilder, ColorResolvable, Message, Embed, Interaction } from "discord.js";
 import * as toHex from "colornames";
 import { Usuario } from "../objetos/Usuario";
 import { Obra } from "../objetos/Obra";
@@ -32,21 +32,13 @@ class Embeds {
             )
     }
 
-    public static EmbedInformacionHelp(): EmbedBuilder {
-        const descripcion = "▹ `!setup [anilist username]` - Guardar tu usuario de anilist para mostrar tus notas.\n▹ `!unsetup` - Elimina tu usuario de anilist.\n▹ `!user | [anilist username] | [discord mention]` - Ver la información del perfil de anilist de un usuario.\n▹ `!afinidad | [anilist username] | [discord mention]` - Muestra tu afinidad o la otro usuario con el resto del servidor.\n▹ `!manga o !anime [nombre] | [id]` - Muestra la información de un anime o manga.\n▹ `!mangab o !animeb [nombre] | [id]` - Lo mismo pero con la descripción traducida.\n▹ `!color [HEX CODE]` - Te da un rol con el color del código hexadecimal que pongas.";
-                
-        return new EmbedBuilder()
-            .setTitle("▾ Comandos")
-            .setDescription(descripcion.trim());
-    }
-
     public static EmbedImagen(url: string) {
         return new EmbedBuilder()
             .setImage(url)
             .setFooter({ text: "..." })
     }
 
-    public static async EmbedInformacionMedia(message: Message, obra: Obra, traducir: boolean): Promise<EmbedBuilder> {
+    public static async EmbedInformacionMedia(interaction: Message | Interaction, obra: Obra, traducir: boolean): Promise<EmbedBuilder> {
         const titulos = obra.getTitulos();
 
         const EmbedInformacion = new EmbedBuilder()
@@ -124,7 +116,7 @@ class Embeds {
             );
 
 
-        const uMedia = await Usuarios.GetUsuariosMedia(message.guild?.id, obra);
+        const uMedia = await Usuarios.GetUsuariosMedia(interaction.guild?.id, obra);
 
         if (uMedia.length > 0) {
             let completedTEXT = "";
@@ -217,7 +209,7 @@ class Embeds {
         return new EmbedBuilder()
             .setTitle("Afinidad de " + usuario.getNombre())
             .setThumbnail(usuario.getAvatarURL())
-            .setDescription(textoAfinidad)
+            .setDescription(textoAfinidad.length >= 1 ? textoAfinidad : "No hay afinidades disponibles.")
             .setColor(color as ColorResolvable)
     }
 }

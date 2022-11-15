@@ -1,37 +1,36 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.Usuario = void 0;
-var Usuario = /** @class */ (function () {
-    function Usuario(user) {
+class Usuario {
+    constructor(user) {
         this.user = user;
     }
-    Usuario.prototype.getUserData = function () {
+    getUserData() {
         return this.user;
-    };
-    Usuario.prototype.getID = function () {
+    }
+    getID() {
         return this.user.id == null ? null : this.user.id.toString();
-    };
-    Usuario.prototype.getEstadisticas = function () {
+    }
+    getEstadisticas() {
         return this.user.statistics == null ? null : this.user.statistics;
-    };
-    Usuario.prototype.getColorName = function () {
+    }
+    getColorName() {
         return this.user.options.profileColor == null ? "black" : this.user.options.profileColor;
-    };
-    Usuario.prototype.getNombre = function () {
+    }
+    getNombre() {
         return this.user.name == null ? null : this.user.name;
-    };
-    Usuario.prototype.getBio = function () {
+    }
+    getBio() {
         return this.user.about == null ? null : this.user.about;
-    };
-    Usuario.prototype.getAvatarURL = function () {
+    }
+    getAvatarURL() {
         return this.user.avatar.large == null ? null : this.user.avatar.large;
-    };
-    Usuario.prototype.getBannerImage = function () {
+    }
+    getBannerImage() {
         return this.user.bannerImage == null ? null : this.user.bannerImage;
-    };
-    Usuario.prototype.getURL = function () {
+    }
+    getURL() {
         return this.user.siteUrl == null ? null : this.user.siteUrl;
-    };
-    return Usuario;
-}());
+    }
+}
 exports.Usuario = Usuario;

@@ -4,22 +4,24 @@ import { Usuario } from "../objetos/Usuario";
 import { Usuarios } from "./Usuarios";
 
 class Setup {
-    public static async SetupUsuario(username: string, message: Message): Promise<boolean> {
-        const usuario = new Usuario(await Usuarios.BuscarUsuario(message.guild == null ? "" : message.guild.id, username));
-            
+    public static async SetupUsuario(username: string, serverID: string, discordID: string): Promise<boolean> {
+        let uRegistrados = await Aniuser.find({ serverId: serverID });
+        let uRegistrado = uRegistrados.find(u => u.discordId == discordID);
+    
+        if (uRegistrado) return false;
+
+        let usuario = await Usuarios.BuscarUsuario(serverID, username);
+        
         if (!usuario) return false;
-    
-        let uRegistrados = await Aniuser.find({ serverId: message.guildId });
-        let uRegistrado = uRegistrados.find(u => u.discordId == message.author.id);
-    
-        if (uRegistrado != null && uRegistrado != undefined) return false;
+
+        usuario = new Usuario(usuario);
     
         const aniuser = new Aniuser();
         
         aniuser.anilistUsername = usuario.getNombre();
         aniuser.anilistId = usuario.getID();
-        aniuser.discordId = message.author.id;
-        aniuser.serverId = message.guild?.id;
+        aniuser.discordId = discordID;
+        aniuser.serverId = serverID;
     
         aniuser.save(err => {
             console.error(err);
@@ -29,9 +31,9 @@ class Setup {
         return true;
     }
 
-    public static async UnsetupUsuario(message: Message): Promise<boolean> {
-        const uRegistrados = await Aniuser.find({ serverId: message.guildId });
-        const uRegistrado = uRegistrados.find(u => u.discordId == message.author.id);
+    public static async UnsetupUsuario(serverID: string, userID: string): Promise<boolean> {
+        const uRegistrados = await Aniuser.find({ serverId: serverID });
+        const uRegistrado = uRegistrados.find(u => u.discordId == userID);
     
         try {
             await uRegistrado?.delete();

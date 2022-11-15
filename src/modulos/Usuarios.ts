@@ -14,7 +14,7 @@ class Usuarios {
             return (response == null || response.User == null) ? null : response.User;
         } else {
             const user = await Aniuser.findOne({ serverId: serverID, discordId: args });
-    
+
             if (!user) return null;
     
             const variables = {
@@ -22,7 +22,6 @@ class Usuarios {
             }
     
             const response = await Fetch.request(QUERY_USERNAME, variables);
-            
             return (response == null || response.User == null) ? null : response.User;
         }
     }

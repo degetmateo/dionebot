@@ -1,7 +1,18 @@
+import { Obra } from "../objetos/Obra";
 import { Fetch } from "./Fetch";
 
 class Media {
-    public static async BuscarMedia(tipo: string, args: string): Promise<any> {
+    public static BuscarMedia = async (tipo: string, args: string) => {
+        if (isNaN(+args) || isNaN(parseFloat(args))) {
+            const media = await Media.BuscarMediaNombre(tipo, args);
+            return media == null ? null : new Obra(media);
+        } else {
+            const media = await Media.BuscarMediaID(tipo, args);
+            return media == null ? null : new Obra(media);
+        }
+    }
+    
+    private static async BuscarMediaNombre(tipo: string, args: string): Promise<any> {
         const variables = {
             search: args,
             type: tipo.toUpperCase(),
@@ -15,7 +26,7 @@ class Media {
             null : response.Page.media[0];
     }
 
-    public static async BuscarMediaID(tipo: string, id: string): Promise<any> {
+    private static async BuscarMediaID(tipo: string, id: string): Promise<any> {
         const variables = {
             id: parseInt(id),
             type: tipo.toUpperCase()
