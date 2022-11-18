@@ -14,9 +14,8 @@ app.get("/", (req: express.Request, res: express.Response) => {
     res.send("que lees puta");
 });
 
-app.listen(app.get("port"), () => {
+app.listen(app.get("port"), async () => {
     console.log(`Servidor iniciado en el puerto: ${app.get("port")}`);
-    db.conectar(process.env.DB);
-    bot.iniciar();
-    bot.login(process.env.TOKEN);
+    await db.conectar(process.env.DB);
+    bot.iniciar(process.env.TOKEN);
 });

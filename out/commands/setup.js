@@ -12,6 +12,7 @@ module.exports = {
         .setRequired(true)),
     execute: async (interaction) => {
         var _a, _b;
+        const bot = interaction.client;
         await interaction.deferReply({ ephemeral: true });
         const username = interaction.options.getString("username");
         if (!username) {
@@ -27,6 +28,7 @@ module.exports = {
                 content: "Ha ocurrido un error.",
             });
         }
+        await bot.loadUsers();
         return interaction.editReply({
             content: "Listo!",
         });

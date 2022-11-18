@@ -1,9 +1,9 @@
-import Aniuser from "../modelos/Aniuser";
 import { Usuario } from "../objetos/Usuario";
 import { Usuarios } from "./Usuarios";
+import { sharedMedia, uRegistrado } from "../types";
 
 class Afinidad {
-    public static GetAfinidadUsuario = async (user_1: Usuario, uRegistrados: Array<any>) => {
+    public static GetAfinidadUsuario = async (user_1: Usuario, uRegistrados: Array<uRegistrado>) => {
         const listaUsuario_1 = await Usuarios.GetEntradas(user_1.getNombre());
 
         if (!listaUsuario_1) {
@@ -54,6 +54,8 @@ class Afinidad {
             afinidades.push({ username: uRegistrados[i].anilistUsername, afinidad: parseFloat(resultado.toFixed(2)) });
     
             i++;
+
+            await this.sleep(1000);
         }
 
         return {
@@ -63,24 +65,21 @@ class Afinidad {
         }
     }
 
+    private static sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
     private static FiltrarCompletados(listas: Array<{ entries: Array<any>, status: string }>): any {
         return listas.find(lista => lista.status == "COMPLETED");
     }
 
     private static GetSharedMedia(l1: Array<{ mediaId: number, score: number }>, l2: Array<{ mediaId: number, score: number }>) {
-        const sharedMedia: Array<{ id: number, scoreA: number, scoreB: number }> = [];
+        const sharedMedia: Array<sharedMedia> = [];
 
         for (let i = 0; i < l1.length; i++) {
             const mediaID_1 = l1[i].mediaId;
             const mediaScore_1 = l1[i].score;
-
-            if (mediaScore_1 == 0) {
-                continue;
-            }
-
             const media_2 = l2.find(e => e.mediaId == mediaID_1);
 
-            if (!media_2 || media_2.score == 0) {
+            if (!media_2) {
                 continue;
             }
 
@@ -99,7 +98,7 @@ class Afinidad {
      * @returns Porcentaje de la afinidad.
      */
 
-    private static CalcularAfinidad(sharedMedia: Array<{ id: number, scoreA: number, scoreB: number }>): number {
+    private static CalcularAfinidad(sharedMedia: Array<sharedMedia>): number {
         const scoresA: Array<number> = sharedMedia.map(media => media.scoreA);
         const scoresB: Array<number> = sharedMedia.map(media => media.scoreB);
 
@@ -115,7 +114,7 @@ class Afinidad {
         const numerador = this.SumarLista(this.zip(am, bm).map(tupla => tupla[0] * tupla[1]));
         const denominador = Math.sqrt(this.SumarLista(sa) * this.SumarLista(sb));
 
-        return (denominador == 0 ? 0 : numerador / denominador) * 100;
+        return (numerador <= 0 || denominador <= 0 ? 0 : numerador / denominador) * 100;
     }
 
     private static zip = (a: Array<number>, b: Array<number>) => a.map((k, i) => [k, b[i]]);

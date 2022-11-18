@@ -49,33 +49,36 @@ module.exports = {
                         .setDescription("Traducir la información obtenida."))),
 
     execute: async (interaction: ChatInputCommandInteraction, bot: BOT) => {
-        await interaction.deferReply();
-        
         const tipo = interaction.options.getString("tipo");
         const traducir = interaction.options.getBoolean("traducir") ? true : false;
         const subcommand = interaction.options.getSubcommand();
 
         if (!tipo) {
-            return interaction.editReply({
+            return interaction.reply({
                 content: "Ha ocurrido un error.",
+                ephemeral: true
             });
         }
 
         const serverID = interaction.guild?.id;
 
         if (!serverID) {
-            return interaction.editReply({
+            return interaction.reply({
                 content: "Ha ocurrido un error.",
+                ephemeral: true
             });
         }
 
-        if (bot.estaBuscandoMedia(serverID)) {
-            return interaction.editReply({
+        if (bot.isSearchingMedia(serverID)) {
+            return interaction.reply({
                 content: "Ya se está buscando otra obra en este momento.",
+                ephemeral: true
             });
         }
 
-        bot.setBuscandoMedia(serverID, true);
+        await interaction.deferReply();
+
+        bot.setSearchingMedia(serverID, true);
 
         let media;
 
@@ -104,7 +107,8 @@ module.exports = {
         }
 
         if (!media) {
-            bot.setBuscandoMedia(serverID, false);
+            bot.setSearchingMedia(serverID, false);
+            
             return interaction.editReply({
                 content: "No se han encontrado resultados.",
             });
@@ -112,6 +116,6 @@ module.exports = {
 
         const embedInformacion = await Embeds.EmbedInformacionMedia(interaction, media, traducir);
         interaction.editReply({ embeds: [embedInformacion] });
-        bot.setBuscandoMedia(serverID, false);
+        bot.setSearchingMedia(serverID, false);
     }
 }

@@ -39,27 +39,30 @@ module.exports = {
         .setDescription("Traducir la información obtenida."))),
     execute: async (interaction, bot) => {
         var _a, _b;
-        await interaction.deferReply();
         const tipo = interaction.options.getString("tipo");
         const traducir = interaction.options.getBoolean("traducir") ? true : false;
         const subcommand = interaction.options.getSubcommand();
         if (!tipo) {
-            return interaction.editReply({
+            return interaction.reply({
                 content: "Ha ocurrido un error.",
+                ephemeral: true
             });
         }
         const serverID = (_a = interaction.guild) === null || _a === void 0 ? void 0 : _a.id;
         if (!serverID) {
-            return interaction.editReply({
+            return interaction.reply({
                 content: "Ha ocurrido un error.",
+                ephemeral: true
             });
         }
-        if (bot.estaBuscandoMedia(serverID)) {
-            return interaction.editReply({
+        if (bot.isSearchingMedia(serverID)) {
+            return interaction.reply({
                 content: "Ya se está buscando otra obra en este momento.",
+                ephemeral: true
             });
         }
-        bot.setBuscandoMedia(serverID, true);
+        await interaction.deferReply();
+        bot.setSearchingMedia(serverID, true);
         let media;
         if (subcommand === "por-nombre") {
             const nombre = interaction.options.getString("nombre");
@@ -80,13 +83,13 @@ module.exports = {
             media = await Media_1.Media.BuscarMedia(tipo, id);
         }
         if (!media) {
-            bot.setBuscandoMedia(serverID, false);
+            bot.setSearchingMedia(serverID, false);
             return interaction.editReply({
                 content: "No se han encontrado resultados.",
             });
         }
         const embedInformacion = await Embeds_1.Embeds.EmbedInformacionMedia(interaction, media, traducir);
         interaction.editReply({ embeds: [embedInformacion] });
-        bot.setBuscandoMedia(serverID, false);
+        bot.setSearchingMedia(serverID, false);
     }
 };

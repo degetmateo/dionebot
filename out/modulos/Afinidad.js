@@ -12,11 +12,8 @@ class Afinidad {
         for (let i = 0; i < l1.length; i++) {
             const mediaID_1 = l1[i].mediaId;
             const mediaScore_1 = l1[i].score;
-            if (mediaScore_1 == 0) {
-                continue;
-            }
             const media_2 = l2.find(e => e.mediaId == mediaID_1);
-            if (!media_2 || media_2.score == 0) {
+            if (!media_2) {
                 continue;
             }
             sharedMedia.push({ id: mediaID_1, scoreA: mediaScore_1, scoreB: media_2.score });
@@ -42,7 +39,7 @@ class Afinidad {
         const sb = bm.map(x => Math.pow(x, 2));
         const numerador = this.SumarLista(this.zip(am, bm).map(tupla => tupla[0] * tupla[1]));
         const denominador = Math.sqrt(this.SumarLista(sa) * this.SumarLista(sb));
-        return (denominador == 0 ? 0 : numerador / denominador) * 100;
+        return (numerador <= 0 || denominador <= 0 ? 0 : numerador / denominador) * 100;
     }
     static OrdenarAfinidades(afinidades) {
         return afinidades.sort((a, b) => {
@@ -108,6 +105,7 @@ Afinidad.GetAfinidadUsuario = async (user_1, uRegistrados) => {
         const resultado = _a.CalcularAfinidad(sharedMedia);
         afinidades.push({ username: uRegistrados[i].anilistUsername, afinidad: parseFloat(resultado.toFixed(2)) });
         i++;
+        await _a.sleep(1000);
     }
     return {
         error: false,
@@ -115,4 +113,5 @@ Afinidad.GetAfinidadUsuario = async (user_1, uRegistrados) => {
         afinidades: _a.OrdenarAfinidades(afinidades)
     };
 };
+Afinidad.sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 Afinidad.zip = (a, b) => a.map((k, i) => [k, b[i]]);

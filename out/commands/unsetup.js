@@ -8,6 +8,7 @@ module.exports = {
         .setDescription("Te elimina de los usuarios registrados."),
     execute: async (interaction) => {
         var _a;
+        const bot = interaction.client;
         await interaction.deferReply({ ephemeral: true });
         const serverID = ((_a = interaction.guild) === null || _a === void 0 ? void 0 : _a.id) != null ? interaction.guild.id : "";
         const userID = interaction.user.id;
@@ -17,6 +18,7 @@ module.exports = {
                 content: "Ha ocurrido un error.",
             });
         }
+        await bot.loadUsers();
         return interaction.editReply({
             content: "Listo!",
         });

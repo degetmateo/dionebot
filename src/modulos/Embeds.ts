@@ -200,7 +200,7 @@ class Embeds {
         let textoAfinidad = "";
 
         for (let i = 0; i < afinidades.length && i < 10; i++) {
-            textoAfinidad += `▹ ${afinidades[i].username} - **${afinidades[i].afinidad}%**\n`;
+            textoAfinidad += `▸ ${afinidades[i].username} - **${afinidades[i].afinidad}%**\n`;
         }
 
         const hexColor = toHex.get(usuario == null ? "black" : usuario.getColorName()).value;

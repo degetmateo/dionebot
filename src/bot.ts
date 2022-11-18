@@ -1,13 +1,16 @@
 import { Client, Collection, GatewayIntentBits, Message, Events } from "discord.js";
-import { Mensaje } from "./objetos/Mensaje";
 
 import fs from "fs";
 import path from "path";
+import Aniuser from "./modelos/Aniuser";
+import { uRegistrado } from "./types";
 
 export default class BOT extends Client {
     private commands: Collection<string, any>;
-    private buscando_afinidad: Array<string>;
-    private buscando_media: Array<string>;
+    private buscando_afinidad: Set<string>;
+    private buscando_media: Set<string>;
+
+    public usuarios: Array<uRegistrado>;
 
     constructor() {
         super({
@@ -15,9 +18,9 @@ export default class BOT extends Client {
         });
         
         this.commands = new Collection();
-
-        this.buscando_afinidad = new Array<string>();
-        this.buscando_media = new Array<string>();
+        this.buscando_afinidad = new Set<string>();
+        this.buscando_media = new Set<string>();
+        this.usuarios = new Array<uRegistrado>();
     }
 
     private loadCommands = () => {
@@ -36,8 +39,10 @@ export default class BOT extends Client {
         }
     }
 
-    public async iniciar() {
+    public async iniciar(token: string | undefined) {
         this.on("ready", () => console.log("BOT preparado!"));
+
+        await this.loadUsers();
 
         this.loadCommands();
 
@@ -97,7 +102,6 @@ export default class BOT extends Client {
             const CONDICION_RESPUESTA_CONTEXTO: boolean =
                 mContent.endsWith(" contexto") || mContent == "contexto"; 
 
-
             if (mContent === "Hola") {
                 message.reply(`${message.client.emojis.cache.find((e => e.name === "pala"))}`);
             };
@@ -122,31 +126,49 @@ export default class BOT extends Client {
                 message.reply("Espera dijiste contexto? Te la tragas sin pretexto, así no estés dispuesto, pero tal vez alguna vez te lo has propuesto, y te seré honesto te haré el favor y te lo presto, tan fuerte que tal vez me den arresto, ya no aguantas ni el sexto, así que lo dejamos pospuesto, pero te falta afecto y te lo dejo otra vez puesto, te aplastó en la pared como insecto tan duro que sale polvo de asbesto, llamo al arquitecto Alberto y al modesto Ernesto, y terminas más abierto que portón de asentamiento, ya no tenes más almacenamiento así que necesitas asesoramiento y a tu madre llamamos para darle su afecto así hasta el agotamiento y al siguiente día repetimos y así terminó y te la meto sin pretexto, así no estés dispuesto, pero tal vez alguna vez te lo has propuesto, y te seré honesto te haré el favor y te lo presto, tan fuerte que tal vez me den arresto, ya no aguantas ni el sexto, así que lo dejamos pospuesto, pero te falta afecto y te lo dejo otra vez puesto, te aplastó en la pared como insecto tan duro que sale polvo de asbesto, llamo al arquitecto Alberto y al modesto Ernesto, y terminas más abierto que portón de asentamiento, ya no tenes más almacenamiento así que necesitas asesoramiento y a tu madre llamamos para darle su afecto así hasta el agotamiento y al siguiente día repetimos pero ya estás descompuesto así que para mí continuar sería incorrecto y me voy sin mostrar algún gesto, dispuesto a seguir apenas y ya estés compuesto voy y te doy el impuesto pero no sin antes avisarte que este es el contexto 👍.");
             }
         });
+
+        this.login(token);
     }
 
-    public estaBuscandoAfinidad = (serverID: string): boolean => {
-        return this.buscando_afinidad.includes(serverID);
-    }
+    public loadUsers = async (): Promise<void> => {
+        const aniusers =  await Aniuser.find();
+        
+        for (let i = 0; i < aniusers.length; i++) {
+            const serverID = aniusers[i].serverId;
+            const dsID = aniusers[i].discordId;
+            const anilistUsername = aniusers[i].anilistUsername;
+            const anilistID = aniusers[i].anilistId;
 
-    public estaBuscandoMedia = (serverID: string): boolean => {
-        return this.buscando_media.includes(serverID);
-    }
+            if (!serverID || !dsID || !anilistUsername || !anilistID) {
+                continue;
+            }
 
-    public setBuscandoAfinidad = (serverID: string, buscando: boolean): void => {
-        if (buscando) {
-            this.buscando_afinidad.push(serverID);
-        } else {
-            this.buscando_afinidad = this.eliminarElementoArreglo(this.buscando_afinidad, serverID);
+            this.usuarios.push({
+                serverId: serverID,
+                discordId: dsID,
+                anilistUsername: anilistUsername,
+                anilistId: anilistID
+            });
         }
     }
 
-    public setBuscandoMedia = (serverID: string, buscando: boolean): void => {
-        buscando ?
-            this.buscando_media.push(serverID) :
-            this.buscando_media = this.eliminarElementoArreglo(this.buscando_media, serverID);
+    public isCalculatingAffinity = (serverID: string): boolean => {
+        return this.buscando_afinidad.has(serverID);
     }
 
-    public eliminarElementoArreglo = (arreglo: Array<any>, elemento: any): Array<any> => {
-        return arreglo.filter(e => e != elemento);
+    public isSearchingMedia = (serverID: string): boolean => {
+        return this.buscando_media.has(serverID);
+    }
+
+    public setCalculatingAffinity = (serverID: string, buscando: boolean): void => {
+        buscando ?
+            this.buscando_afinidad.add(serverID) :
+            this.buscando_afinidad.delete(serverID);
+    }
+
+    public setSearchingMedia = (serverID: string, buscando: boolean): void => {
+        buscando ?
+            this.buscando_media.add(serverID) :
+            this.buscando_media.delete(serverID);
     }
 }

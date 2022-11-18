@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 class DB {
-    public conectar(url: any) {
-        mongoose.connect(url)
+    public async conectar(url: any) {
+        await mongoose.connect(url)
             .then(() => console.log("DB Iniciada."))
             .catch(err => console.error(err));
     }

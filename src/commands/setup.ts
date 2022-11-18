@@ -1,4 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import BOT from "../bot";
 import { Setup } from "../modulos/Setup";
 
 
@@ -13,6 +14,7 @@ module.exports = {
                 .setRequired(true)),
 
     execute: async (interaction: ChatInputCommandInteraction) => {
+        const bot = interaction.client as BOT;
         await interaction.deferReply({ ephemeral: true });
         
         const username = interaction.options.getString("username");
@@ -32,6 +34,8 @@ module.exports = {
                 content: "Ha ocurrido un error.",
             })
         }
+
+        await bot.loadUsers();
 
         return interaction.editReply({
             content: "Listo!",

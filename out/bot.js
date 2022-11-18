@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
+const Aniuser_1 = __importDefault(require("./modelos/Aniuser"));
 class BOT extends discord_js_1.Client {
     constructor() {
         super({
@@ -25,34 +26,48 @@ class BOT extends discord_js_1.Client {
                 }
             }
         };
-        this.estaBuscandoAfinidad = (serverID) => {
-            return this.buscando_afinidad.includes(serverID);
-        };
-        this.estaBuscandoMedia = (serverID) => {
-            return this.buscando_media.includes(serverID);
-        };
-        this.setBuscandoAfinidad = (serverID, buscando) => {
-            if (buscando) {
-                this.buscando_afinidad.push(serverID);
+        this.loadUsers = async () => {
+            const aniusers = await Aniuser_1.default.find();
+            for (let i = 0; i < aniusers.length; i++) {
+                const serverID = aniusers[i].serverId;
+                const dsID = aniusers[i].discordId;
+                const anilistUsername = aniusers[i].anilistUsername;
+                const anilistID = aniusers[i].anilistId;
+                if (!serverID || !dsID || !anilistUsername || !anilistID) {
+                    continue;
+                }
+                this.usuarios.push({
+                    serverId: serverID,
+                    discordId: dsID,
+                    anilistUsername: anilistUsername,
+                    anilistId: anilistID
+                });
             }
-            else {
-                this.buscando_afinidad = this.eliminarElementoArreglo(this.buscando_afinidad, serverID);
-            }
         };
-        this.setBuscandoMedia = (serverID, buscando) => {
+        this.isCalculatingAffinity = (serverID) => {
+            return this.buscando_afinidad.has(serverID);
+        };
+        this.isSearchingMedia = (serverID) => {
+            return this.buscando_media.has(serverID);
+        };
+        this.setCalculatingAffinity = (serverID, buscando) => {
             buscando ?
-                this.buscando_media.push(serverID) :
-                this.buscando_media = this.eliminarElementoArreglo(this.buscando_media, serverID);
+                this.buscando_afinidad.add(serverID) :
+                this.buscando_afinidad.delete(serverID);
         };
-        this.eliminarElementoArreglo = (arreglo, elemento) => {
-            return arreglo.filter(e => e != elemento);
+        this.setSearchingMedia = (serverID, buscando) => {
+            buscando ?
+                this.buscando_media.add(serverID) :
+                this.buscando_media.delete(serverID);
         };
         this.commands = new discord_js_1.Collection();
-        this.buscando_afinidad = new Array();
-        this.buscando_media = new Array();
+        this.buscando_afinidad = new Set();
+        this.buscando_media = new Set();
+        this.usuarios = new Array();
     }
-    async iniciar() {
+    async iniciar(token) {
         this.on("ready", () => console.log("BOT preparado!"));
+        await this.loadUsers();
         this.loadCommands();
         this.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
             if (!interaction.isChatInputCommand())
@@ -126,6 +141,7 @@ class BOT extends discord_js_1.Client {
                 message.reply("Espera dijiste contexto? Te la tragas sin pretexto, así no estés dispuesto, pero tal vez alguna vez te lo has propuesto, y te seré honesto te haré el favor y te lo presto, tan fuerte que tal vez me den arresto, ya no aguantas ni el sexto, así que lo dejamos pospuesto, pero te falta afecto y te lo dejo otra vez puesto, te aplastó en la pared como insecto tan duro que sale polvo de asbesto, llamo al arquitecto Alberto y al modesto Ernesto, y terminas más abierto que portón de asentamiento, ya no tenes más almacenamiento así que necesitas asesoramiento y a tu madre llamamos para darle su afecto así hasta el agotamiento y al siguiente día repetimos y así terminó y te la meto sin pretexto, así no estés dispuesto, pero tal vez alguna vez te lo has propuesto, y te seré honesto te haré el favor y te lo presto, tan fuerte que tal vez me den arresto, ya no aguantas ni el sexto, así que lo dejamos pospuesto, pero te falta afecto y te lo dejo otra vez puesto, te aplastó en la pared como insecto tan duro que sale polvo de asbesto, llamo al arquitecto Alberto y al modesto Ernesto, y terminas más abierto que portón de asentamiento, ya no tenes más almacenamiento así que necesitas asesoramiento y a tu madre llamamos para darle su afecto así hasta el agotamiento y al siguiente día repetimos pero ya estás descompuesto así que para mí continuar sería incorrecto y me voy sin mostrar algún gesto, dispuesto a seguir apenas y ya estés compuesto voy y te doy el impuesto pero no sin antes avisarte que este es el contexto 👍.");
             }
         });
+        this.login(token);
     }
 }
 exports.default = BOT;
