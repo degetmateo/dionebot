@@ -84,9 +84,8 @@ module.exports = {
             media = await Media_1.Media.BuscarMedia(tipo, id);
         }
         if (!media) {
-            bot.setSearchingMedia(serverID, false);
             return interaction.editReply({
-                content: "No se han encontrado resultados.",
+                content: "No se han encontrado resultados."
             });
         }
         const embedInformacion = await Embeds_1.Embeds.EmbedInformacionMedia(interaction, media, traducir);

@@ -25,20 +25,11 @@ class Setup {
         const uRegistrado = await Aniuser_1.default.findOne({ serverId: serverID, discordId: userID });
         try {
             await (uRegistrado === null || uRegistrado === void 0 ? void 0 : uRegistrado.delete());
-            if (!(uRegistrado === null || uRegistrado === void 0 ? void 0 : uRegistrado.serverId) || !uRegistrado.discordId || !uRegistrado.anilistId || !uRegistrado.anilistUsername) {
-                return null;
-            }
-            const usuario = {
-                serverId: uRegistrado.serverId,
-                discordId: uRegistrado.discordId,
-                anilistId: uRegistrado.anilistId,
-                anilistUsername: uRegistrado.anilistUsername
-            };
-            return usuario;
+            return true;
         }
         catch (err) {
             console.error(err);
-            return null;
+            return false;
         }
     }
 }

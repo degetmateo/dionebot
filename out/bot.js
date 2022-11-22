@@ -29,8 +29,8 @@ class BOT extends discord_js_1.Client {
         this.insertarUsuario = (usuario) => {
             this.usuarios.push(usuario);
         };
-        this.eliminarUsuario = (usuario) => {
-            this.usuarios = this.usuarios.filter(u => u.serverId != usuario.serverId && u.discordId != usuario.discordId);
+        this.eliminarUsuario = (serverId, userId) => {
+            this.usuarios = this.usuarios.filter(u => u.serverId != serverId && u.discordId != userId);
         };
         this.existeUsuario = (usuario) => {
             for (let i = 0; i < this.usuarios.length; i++) {
@@ -139,7 +139,7 @@ class BOT extends discord_js_1.Client {
             const CONDICION_RESPUESTA_DOCE = mContent.endsWith(" 12") || mContent == "12" || mContent.endsWith("doce");
             const CONDICION_RESPUESTA_CINCO = mContent.endsWith(" 5") || mContent == "5" || mContent.endsWith("cinco");
             const CONDICION_RESPUESTA_CONTEXTO = mContent.endsWith(" contexto") || mContent == "contexto";
-            if (mContent === "Hola") {
+            if (message.content === "Hola") {
                 message.reply(`${message.client.emojis.cache.find((e => e.name === "pala"))}`);
             }
             ;

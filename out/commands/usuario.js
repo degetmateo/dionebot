@@ -13,14 +13,15 @@ module.exports = {
         .setDescription("El usuario del que se solicita la información.")),
     execute: async (interaction) => {
         var _a;
-        await interaction.deferReply();
         const userInteraction = interaction.options.getUser("usuario");
         const serverID = (_a = interaction.guild) === null || _a === void 0 ? void 0 : _a.id;
         if (!serverID) {
-            return interaction.editReply({
+            return interaction.reply({
                 content: "Ha ocurrido un error.",
+                ephemeral: true
             });
         }
+        interaction.deferReply();
         let usuario;
         if (!userInteraction) {
             usuario = await Usuarios_1.Usuarios.BuscarUsuario(serverID, interaction.user.id);
@@ -30,7 +31,7 @@ module.exports = {
         }
         if (!usuario) {
             return interaction.editReply({
-                content: "No se ha encontrado a ese usuario. Probablemente no este registrado en nuestra base de datos.",
+                content: "No se ha encontrado al usuario.",
             });
         }
         usuario = new Usuario_1.Usuario(usuario);
