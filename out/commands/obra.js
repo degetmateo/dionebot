@@ -37,8 +37,9 @@ module.exports = {
         .addBooleanOption(option => option
         .setName("traducir")
         .setDescription("Traducir la información obtenida."))),
-    execute: async (interaction, bot) => {
+    execute: async (interaction) => {
         var _a, _b;
+        const bot = interaction.client;
         const tipo = interaction.options.getString("tipo");
         const traducir = interaction.options.getBoolean("traducir") ? true : false;
         const subcommand = interaction.options.getSubcommand();

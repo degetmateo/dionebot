@@ -9,10 +9,12 @@ module.exports = {
 
     execute: async (interaction: ChatInputCommandInteraction) => {
         const bot = interaction.client as BOT;
+        
         await interaction.deferReply({ ephemeral: true });
 
         const serverID = interaction.guild?.id != null ? interaction.guild.id : "";
         const userID = interaction.user.id;
+
         const resultado = await Setup.UnsetupUsuario(serverID, userID);
 
         if (!resultado) {
@@ -21,7 +23,7 @@ module.exports = {
             })
         }
 
-        await bot.loadUsers();
+        bot.eliminarUsuario(serverID, userID);
 
         return interaction.editReply({
             content: "Listo!",

@@ -25,8 +25,8 @@ module.exports = {
         bot.setCalculatingAffinity(serverID, true);
         const usuario = interaction.options.getUser("usuario");
         const userID = usuario == null ? interaction.user.id : usuario.id;
-        const uRegistrados = bot.usuarios.filter(u => u.serverId === serverID);
-        const uRegistrado = uRegistrados.find(u => u.discordId == userID);
+        const uRegistrados = bot.getUsuariosRegistrados(serverID);
+        const uRegistrado = uRegistrados.find(u => u.discordId === userID);
         if (!uRegistrado) {
             bot.setCalculatingAffinity(serverID, false);
             return interaction.reply({

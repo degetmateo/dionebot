@@ -16,6 +16,7 @@ module.exports = {
 
     execute: async (interaction: ChatInputCommandInteraction) => {
         const bot = interaction.client as BOT;
+        
         const serverID = interaction.guild?.id != null ? interaction.guild.id : "";
 
         if (bot.isCalculatingAffinity(serverID)) {
@@ -30,8 +31,8 @@ module.exports = {
         const usuario = interaction.options.getUser("usuario");
         const userID = usuario == null ? interaction.user.id : usuario.id;
 
-        const uRegistrados = bot.usuarios.filter(u => u.serverId === serverID);
-        const uRegistrado = uRegistrados.find(u => u.discordId == userID);
+        const uRegistrados = bot.getUsuariosRegistrados(serverID);
+        const uRegistrado = uRegistrados.find(u => u.discordId === userID);
 
         if (!uRegistrado) {
             bot.setCalculatingAffinity(serverID, false);

@@ -26,6 +26,26 @@ class BOT extends discord_js_1.Client {
                 }
             }
         };
+        this.insertarUsuario = (usuario) => {
+            this.usuarios.push(usuario);
+        };
+        this.eliminarUsuario = (usuario) => {
+            this.usuarios = this.usuarios.filter(u => u.serverId != usuario.serverId && u.discordId != usuario.discordId);
+        };
+        this.existeUsuario = (usuario) => {
+            for (let i = 0; i < this.usuarios.length; i++) {
+                const cond = this.usuarios[i].serverId === (usuario === null || usuario === void 0 ? void 0 : usuario.serverId) && this.usuarios[i].discordId === usuario.discordId;
+                if (cond)
+                    return true;
+            }
+            return false;
+        };
+        this.getUsuario = (usuario) => {
+            return this.usuarios.find(u => u.serverId === (usuario === null || usuario === void 0 ? void 0 : usuario.serverId) && u.discordId === usuario.discordId);
+        };
+        this.getUsuariosRegistrados = (serverID) => {
+            return this.usuarios.filter(u => u.serverId === serverID);
+        };
         this.loadUsers = async () => {
             const aniusers = await Aniuser_1.default.find();
             for (let i = 0; i < aniusers.length; i++) {
@@ -36,7 +56,7 @@ class BOT extends discord_js_1.Client {
                 if (!serverID || !dsID || !anilistUsername || !anilistID) {
                     continue;
                 }
-                this.usuarios.push({
+                this.insertarUsuario({
                     serverId: serverID,
                     discordId: dsID,
                     anilistUsername: anilistUsername,
@@ -86,7 +106,7 @@ class BOT extends discord_js_1.Client {
                 return;
             }
             try {
-                await command.execute(interaction, this);
+                await command.execute(interaction);
             }
             catch (err) {
                 console.error(err);

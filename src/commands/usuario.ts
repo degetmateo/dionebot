@@ -13,16 +13,17 @@ module.exports = {
                 .setDescription("El usuario del que se solicita la información.")),
 
     execute: async (interaction: ChatInputCommandInteraction) => {
-        await interaction.deferReply();
-        
         const userInteraction = interaction.options.getUser("usuario");
         const serverID = interaction.guild?.id;
 
         if (!serverID) {
-            return interaction.editReply({
+            return interaction.reply({
                 content: "Ha ocurrido un error.",
+                ephemeral: true
             })
         }
+
+        interaction.deferReply();
 
         let usuario: any;
 
@@ -34,7 +35,7 @@ module.exports = {
 
         if (!usuario) {
             return interaction.editReply({
-                content: "No se ha encontrado a ese usuario. Probablemente no este registrado en nuestra base de datos.",
+                content: "No se ha encontrado al usuario.",
             })
         }
 

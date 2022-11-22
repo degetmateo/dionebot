@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import BOT from "../bot";
 import { Embeds } from "../modulos/Embeds";
 import { Media } from "../modulos/Media";
@@ -48,7 +48,9 @@ module.exports = {
                         .setName("traducir")
                         .setDescription("Traducir la información obtenida."))),
 
-    execute: async (interaction: ChatInputCommandInteraction, bot: BOT) => {
+    execute: async (interaction: ChatInputCommandInteraction) => {
+        const bot = interaction.client as BOT;
+
         const tipo = interaction.options.getString("tipo");
         const traducir = interaction.options.getBoolean("traducir") ? true : false;
         const subcommand = interaction.options.getSubcommand();
@@ -106,12 +108,11 @@ module.exports = {
             media = await Media.BuscarMedia(tipo, id);
         }
 
+
         if (!media) {
-            bot.setSearchingMedia(serverID, false);
-            
             return interaction.editReply({
-                content: "No se han encontrado resultados.",
-            });
+                content: "No se han encontrado resultados."
+            })
         }
 
         const embedInformacion = await Embeds.EmbedInformacionMedia(interaction, media, traducir);

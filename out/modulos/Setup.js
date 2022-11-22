@@ -5,39 +5,40 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Setup = void 0;
 const Aniuser_1 = __importDefault(require("../modelos/Aniuser"));
-const Usuario_1 = require("../objetos/Usuario");
-const Usuarios_1 = require("./Usuarios");
 class Setup {
-    static async SetupUsuario(username, serverID, discordID) {
-        let uRegistrados = await Aniuser_1.default.find({ serverId: serverID });
-        let uRegistrado = uRegistrados.find(u => u.discordId == discordID);
-        if (uRegistrado)
-            return false;
-        let usuario = await Usuarios_1.Usuarios.BuscarUsuario(serverID, username);
-        if (!usuario)
-            return false;
-        usuario = new Usuario_1.Usuario(usuario);
+    static async SetupUsuario(usuario, serverID, discordID) {
         const aniuser = new Aniuser_1.default();
         aniuser.anilistUsername = usuario.getNombre();
         aniuser.anilistId = usuario.getID();
         aniuser.discordId = discordID;
         aniuser.serverId = serverID;
-        aniuser.save(err => {
-            console.error(err);
-            return false;
-        });
-        return true;
-    }
-    static async UnsetupUsuario(serverID, userID) {
-        const uRegistrados = await Aniuser_1.default.find({ serverId: serverID });
-        const uRegistrado = uRegistrados.find(u => u.discordId == userID);
         try {
-            await (uRegistrado === null || uRegistrado === void 0 ? void 0 : uRegistrado.delete());
+            await aniuser.save();
             return true;
         }
         catch (err) {
             console.error(err);
             return false;
+        }
+    }
+    static async UnsetupUsuario(serverID, userID) {
+        const uRegistrado = await Aniuser_1.default.findOne({ serverId: serverID, discordId: userID });
+        try {
+            await (uRegistrado === null || uRegistrado === void 0 ? void 0 : uRegistrado.delete());
+            if (!(uRegistrado === null || uRegistrado === void 0 ? void 0 : uRegistrado.serverId) || !uRegistrado.discordId || !uRegistrado.anilistId || !uRegistrado.anilistUsername) {
+                return null;
+            }
+            const usuario = {
+                serverId: uRegistrado.serverId,
+                discordId: uRegistrado.discordId,
+                anilistId: uRegistrado.anilistId,
+                anilistUsername: uRegistrado.anilistUsername
+            };
+            return usuario;
+        }
+        catch (err) {
+            console.error(err);
+            return null;
         }
     }
 }

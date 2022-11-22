@@ -70,7 +70,7 @@ Afinidad.GetAfinidadUsuario = async (user_1, uRegistrados) => {
     if (!listaUsuario_1) {
         return {
             error: true,
-            message: "No se han encontrados entradas de ese usuario.",
+            message: "No se han encontrados entradas para ese usuario.",
             afinidades: []
         };
     }
@@ -79,7 +79,7 @@ Afinidad.GetAfinidadUsuario = async (user_1, uRegistrados) => {
     if (!animesUsuario_1) {
         return {
             error: true,
-            message: "",
+            message: "No se han encontrado entradas para ese usuario.",
             afinidades: []
         };
     }

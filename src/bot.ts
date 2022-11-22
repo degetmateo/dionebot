@@ -7,10 +7,11 @@ import { uRegistrado } from "./types";
 
 export default class BOT extends Client {
     private commands: Collection<string, any>;
+
     private buscando_afinidad: Set<string>;
     private buscando_media: Set<string>;
 
-    public usuarios: Array<uRegistrado>;
+    private usuarios: Array<uRegistrado>;
 
     constructor() {
         super({
@@ -61,7 +62,7 @@ export default class BOT extends Client {
             }
 
             try {
-                await command.execute(interaction, this);
+                await command.execute(interaction);
             } catch (err) {
                 console.error(err);
                 await interaction.editReply({
@@ -102,7 +103,7 @@ export default class BOT extends Client {
             const CONDICION_RESPUESTA_CONTEXTO: boolean =
                 mContent.endsWith(" contexto") || mContent == "contexto"; 
 
-            if (mContent === "Hola") {
+            if (message.content === "Hola") {
                 message.reply(`${message.client.emojis.cache.find((e => e.name === "pala"))}`);
             };
 
@@ -130,6 +131,31 @@ export default class BOT extends Client {
         this.login(token);
     }
 
+    public insertarUsuario = (usuario: uRegistrado) => {
+        this.usuarios.push(usuario);
+    }
+
+    public eliminarUsuario = (serverId: string, userId: string): void => {
+        this.usuarios = this.usuarios.filter(u => u.serverId != serverId && u.discordId != userId);
+    }
+
+    public existeUsuario = (usuario: uRegistrado): boolean => {
+        for (let i = 0; i < this.usuarios.length; i++) {
+            const cond = this.usuarios[i].serverId === usuario?.serverId && this.usuarios[i].discordId === usuario.discordId;
+            if (cond) return true;
+        }
+
+        return false;
+    }
+
+    public getUsuario = (usuario: uRegistrado) => {
+        return this.usuarios.find(u => u.serverId === usuario?.serverId && u.discordId === usuario.discordId);
+    }
+
+    public getUsuariosRegistrados = (serverID: string) => {
+        return this.usuarios.filter(u => u.serverId === serverID);
+    }
+
     public loadUsers = async (): Promise<void> => {
         const aniusers =  await Aniuser.find();
         
@@ -143,7 +169,7 @@ export default class BOT extends Client {
                 continue;
             }
 
-            this.usuarios.push({
+            this.insertarUsuario({
                 serverId: serverID,
                 discordId: dsID,
                 anilistUsername: anilistUsername,
