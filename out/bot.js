@@ -88,6 +88,9 @@ class BOT extends discord_js_1.Client {
     async iniciar(token) {
         this.on("ready", () => console.log("BOT preparado!"));
         await this.loadUsers();
+        setInterval(async () => {
+            await this.loadUsers();
+        }, 300000);
         this.loadCommands();
         this.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
             if (!interaction.isChatInputCommand())

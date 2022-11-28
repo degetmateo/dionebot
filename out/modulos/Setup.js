@@ -7,11 +7,12 @@ exports.Setup = void 0;
 const Aniuser_1 = __importDefault(require("../modelos/Aniuser"));
 class Setup {
     static async SetupUsuario(usuario, serverID, discordID) {
-        const aniuser = new Aniuser_1.default();
-        aniuser.anilistUsername = usuario.getNombre();
-        aniuser.anilistId = usuario.getID();
-        aniuser.discordId = discordID;
-        aniuser.serverId = serverID;
+        const aniuser = new Aniuser_1.default({
+            serverId: serverID,
+            discordId: discordID,
+            anilistId: usuario.getID(),
+            anilistUsername: usuario.getNombre()
+        });
         try {
             await aniuser.save();
         }

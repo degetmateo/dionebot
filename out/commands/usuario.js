@@ -21,7 +21,7 @@ module.exports = {
                 ephemeral: true
             });
         }
-        interaction.deferReply();
+        await interaction.deferReply();
         let usuario;
         if (!userInteraction) {
             usuario = await Usuarios_1.Usuarios.BuscarUsuario(serverID, interaction.user.id);

@@ -37,6 +37,6 @@ module.exports = {
             else {
                 interaction.editReply({ embeds: [EmbedImagenFallo] });
             }
-        }, 1700);
+        }, 1800);
     }
 };

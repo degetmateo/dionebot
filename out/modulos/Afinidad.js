@@ -97,6 +97,8 @@ Afinidad.GetAfinidadUsuario = async (user_1, uRegistrados) => {
         }
         const datosUsuario = await Usuarios_1.Usuarios.GetEntradasAnime(uRegistrados[i].anilistUsername);
         if (!datosUsuario || !datosUsuario.animeList || !datosUsuario.animeList.lists || !datosUsuario.animeList.lists.entries) {
+            i++;
+            continue;
         }
         let animesUsuario_2 = _a.FiltrarCompletados(datosUsuario.animeList.lists);
         animesUsuario_2 = animesUsuario_2.entries;
