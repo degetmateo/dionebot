@@ -49,6 +49,12 @@ class Afinidad {
             }
 
             let animesUsuario_2 = this.FiltrarCompletados(datosUsuario.animeList.lists);
+            
+            if (!animesUsuario_2) {
+                i++;
+                continue;
+            }
+            
             animesUsuario_2 = animesUsuario_2.entries;
 
             if (!animesUsuario_2) {
