@@ -12,8 +12,11 @@ module.exports = {
         await interaction.deferReply({ ephemeral: true });
         const serverID = ((_a = interaction.guild) === null || _a === void 0 ? void 0 : _a.id) != null ? interaction.guild.id : "";
         const userID = interaction.user.id;
-        const resultado = await Setup_1.Setup.UnsetupUsuario(serverID, userID);
-        if (!resultado) {
+        try {
+            await Setup_1.Setup.UnsetupUsuario(serverID, userID);
+        }
+        catch (err) {
+            console.error(err);
             return interaction.editReply({
                 content: "Ha ocurrido un error.",
             });

@@ -45,6 +45,10 @@ export default class BOT extends Client {
 
         await this.loadUsers();
 
+        setInterval(async () => {
+            await this.loadUsers();
+        }, 300000)
+
         this.loadCommands();
 
         this.on(Events.InteractionCreate, async interaction => {
@@ -65,9 +69,10 @@ export default class BOT extends Client {
                 await command.execute(interaction);
             } catch (err) {
                 console.error(err);
-                await interaction.editReply({
-                    content: "Hubo un error al ejecutar el comando.", 
-                });
+
+                interaction.replied ? 
+                    await interaction.editReply({ content: "Hubo un error al ejecutar el comando." }) :
+                    await interaction.reply({ content:"Hubo un error el ejecutar el comando.", ephemeral: true });  
             }
         });
 

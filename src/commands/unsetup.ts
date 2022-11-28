@@ -15,9 +15,11 @@ module.exports = {
         const serverID = interaction.guild?.id != null ? interaction.guild.id : "";
         const userID = interaction.user.id;
 
-        const resultado = await Setup.UnsetupUsuario(serverID, userID);
+        try {
+            await Setup.UnsetupUsuario(serverID, userID);
+        } catch (err) {
+            console.error(err);
 
-        if (!resultado) {
             return interaction.editReply({
                 content: "Ha ocurrido un error.",
             })

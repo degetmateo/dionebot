@@ -14,22 +14,18 @@ class Setup {
         aniuser.serverId = serverID;
         try {
             await aniuser.save();
-            return true;
         }
         catch (err) {
-            console.error(err);
-            return false;
+            throw err;
         }
     }
     static async UnsetupUsuario(serverID, userID) {
         const uRegistrado = await Aniuser_1.default.findOne({ serverId: serverID, discordId: userID });
         try {
             await (uRegistrado === null || uRegistrado === void 0 ? void 0 : uRegistrado.delete());
-            return true;
         }
         catch (err) {
-            console.error(err);
-            return false;
+            throw err;
         }
     }
 }

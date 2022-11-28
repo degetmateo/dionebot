@@ -4,4 +4,6 @@ tsconfig.json
 nodemon.json
 config.json
 delete-commands.ts
+delete-commands.js
 deploy-commands.ts
+deploy-commands.js

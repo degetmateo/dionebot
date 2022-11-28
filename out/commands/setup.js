@@ -33,8 +33,11 @@ module.exports = {
             });
         }
         const usuario = new Usuario_1.Usuario(anilistUser);
-        const resultado = await Setup_1.Setup.SetupUsuario(usuario, serverID, userID);
-        if (!resultado) {
+        try {
+            await Setup_1.Setup.SetupUsuario(usuario, serverID, userID);
+        }
+        catch (err) {
+            console.error(err);
             return interaction.editReply({
                 content: "Ha ocurrido un error al intentar registrarte. Intentalo más tarde.",
             });

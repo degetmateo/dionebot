@@ -4,9 +4,11 @@ import { sharedMedia, uRegistrado } from "../types";
 
 class Afinidad {
     public static GetAfinidadUsuario = async (user_1: Usuario, uRegistrados: Array<uRegistrado>) => {
-        const listaUsuario_1 = await Usuarios.GetEntradas(user_1.getNombre());
+        const listaUsuario_1 = await Usuarios.GetEntradasAnime(user_1.getNombre());
 
-        if (!listaUsuario_1) {
+        if (!listaUsuario_1 || !listaUsuario_1.animeList || !listaUsuario_1.animeList.lists || !listaUsuario_1.animeList.lists.entries) {
+            console.error("ERROR - Modulos.Afinidad - No se han encontrado entradas para ese usuario.");
+            
             return {
                 error: true,
                 message: "No se han encontrados entradas para ese usuario.",
@@ -40,6 +42,12 @@ class Afinidad {
             }
 
             const datosUsuario = await Usuarios.GetEntradasAnime(uRegistrados[i].anilistUsername);
+
+            if (!datosUsuario || !datosUsuario.animeList || !datosUsuario.animeList.lists || !datosUsuario.animeList.lists.entries) {
+                i++;
+                continue;
+            }
+
             let animesUsuario_2 = this.FiltrarCompletados(datosUsuario.animeList.lists);
             animesUsuario_2 = animesUsuario_2.entries;
 

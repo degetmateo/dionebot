@@ -66,8 +66,9 @@ class Afinidad {
 exports.Afinidad = Afinidad;
 _a = Afinidad;
 Afinidad.GetAfinidadUsuario = async (user_1, uRegistrados) => {
-    const listaUsuario_1 = await Usuarios_1.Usuarios.GetEntradas(user_1.getNombre());
-    if (!listaUsuario_1) {
+    const listaUsuario_1 = await Usuarios_1.Usuarios.GetEntradasAnime(user_1.getNombre());
+    if (!listaUsuario_1 || !listaUsuario_1.animeList || !listaUsuario_1.animeList.lists || !listaUsuario_1.animeList.lists.entries) {
+        console.error("ERROR - Modulos.Afinidad - No se han encontrado entradas para ese usuario.");
         return {
             error: true,
             message: "No se han encontrados entradas para ese usuario.",
@@ -95,6 +96,8 @@ Afinidad.GetAfinidadUsuario = async (user_1, uRegistrados) => {
             continue;
         }
         const datosUsuario = await Usuarios_1.Usuarios.GetEntradasAnime(uRegistrados[i].anilistUsername);
+        if (!datosUsuario || !datosUsuario.animeList || !datosUsuario.animeList.lists || !datosUsuario.animeList.lists.entries) {
+        }
         let animesUsuario_2 = _a.FiltrarCompletados(datosUsuario.animeList.lists);
         animesUsuario_2 = animesUsuario_2.entries;
         if (!animesUsuario_2) {

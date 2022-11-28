@@ -42,9 +42,12 @@ module.exports = {
         }
 
         const usuario = new Usuario(anilistUser);
-        const resultado = await Setup.SetupUsuario(usuario, serverID, userID);
 
-        if (!resultado) {
+        try {
+            await Setup.SetupUsuario(usuario, serverID, userID);
+        } catch (err) {
+            console.error(err);
+            
             return interaction.editReply({
                 content: "Ha ocurrido un error al intentar registrarte. Intentalo más tarde.",
             })

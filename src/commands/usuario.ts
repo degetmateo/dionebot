@@ -23,7 +23,7 @@ module.exports = {
             })
         }
 
-        interaction.deferReply();
+        await interaction.deferReply();
 
         let usuario: any;
 
