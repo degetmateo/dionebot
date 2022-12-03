@@ -11,4 +11,6 @@ type sharedMedia = {
     scoreB: number
 }
 
-export { uRegistrado, sharedMedia };
+type MediaStatus = "FINISHED" | "RELEASING" | "NOT_YET_RELEASED" | "CANCELLED" | "HIATUS" | "UNKNOWN";
+
+export { uRegistrado, sharedMedia, MediaStatus };

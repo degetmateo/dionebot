@@ -43,17 +43,20 @@ module.exports = {
             });
         }
         const aniuser1 = new Usuario_1.Usuario(anilistUser);
-        const resultado = await Afinidad_1.Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
-        if (resultado.error) {
+        try {
+            const afinidades = await Afinidad_1.Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
+            const EmbedInformacionAfinidad = Embeds_1.Embeds.EmbedAfinidad(aniuser1, afinidades);
             bot.setCalculatingAffinity(serverID, false);
             return interaction.editReply({
-                content: "Ha ocurrido un error al intentar calcular la afinidad."
+                embeds: [EmbedInformacionAfinidad]
             });
         }
-        const EmbedInformacionAfinidad = Embeds_1.Embeds.EmbedAfinidad(aniuser1, resultado.afinidades);
-        bot.setCalculatingAffinity(serverID, false);
-        return interaction.editReply({
-            embeds: [EmbedInformacionAfinidad]
-        });
+        catch (err) {
+            const error = err;
+            bot.setCalculatingAffinity(serverID, false);
+            return interaction.editReply({
+                content: error.message
+            });
+        }
     }
 };

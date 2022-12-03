@@ -22,6 +22,9 @@ class Obra {
                 case "HIATUS":
                     hex = "FF7B00";
                     break;
+                case "UNKNOWN":
+                    hex = "000000";
+                    break;
             }
             return ("0x" + hex);
         };
@@ -53,7 +56,7 @@ class Obra {
         return this.media.popularity == null ? "?" : this.media.popularity.toString();
     }
     getEstado() {
-        return this.media.status == null ? "?" : this.media.status.toString();
+        return this.media.status == null ? "UNKNOWN" : this.media.status.toString();
     }
     getEpisodios() {
         return this.media.episodes == null ? "?" : this.media.episodes.toString();

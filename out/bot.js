@@ -112,10 +112,11 @@ class BOT extends discord_js_1.Client {
                 await command.execute(interaction);
             }
             catch (err) {
-                console.error(err);
+                const error = err;
+                console.error(error);
                 interaction.replied ?
-                    await interaction.editReply({ content: "Hubo un error al ejecutar el comando." }) :
-                    await interaction.reply({ content: "Hubo un error el ejecutar el comando.", ephemeral: true });
+                    await interaction.editReply({ content: "Ha ocurrido un error. Inténtalo más tarde." }) :
+                    await interaction.reply({ content: "Ha ocurrido un error. Inténtalo más tarde.", ephemeral: true });
             }
         });
         this.on("messageCreate", async (message) => {

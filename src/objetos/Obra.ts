@@ -1,4 +1,5 @@
 import { ColorResolvable } from "discord.js";
+import { MediaStatus } from "../types";
 
 const translate = require("translate");
 
@@ -42,8 +43,8 @@ class Obra {
         return this.media.popularity == null ? "?" : this.media.popularity.toString();
     }
 
-    public getEstado(): string {
-        return this.media.status == null ? "?" : this.media.status.toString();
+    public getEstado(): MediaStatus {
+        return this.media.status == null ? "UNKNOWN" : this.media.status.toString();
     }
 
     public getColorEstado = (): ColorResolvable => {
@@ -55,6 +56,7 @@ class Obra {
             case "NOT_YET_RELEASED": hex = "000000"; break;
             case "CANCELLED": hex = "FF0000"; break;
             case "HIATUS": hex = "FF7B00"; break;
+            case "UNKNOWN": hex = "000000"; break;
         }
 
         return ("0x" + hex) as ColorResolvable;

@@ -4,9 +4,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Afinidad = void 0;
 const Usuarios_1 = require("./Usuarios");
 class Afinidad {
-    static FiltrarCompletados(listas) {
-        return listas.find(lista => lista.status == "COMPLETED");
-    }
     static GetSharedMedia(l1, l2) {
         const sharedMedia = [];
         for (let i = 0; i < l1.length; i++) {
@@ -68,21 +65,15 @@ _a = Afinidad;
 Afinidad.GetAfinidadUsuario = async (user_1, uRegistrados) => {
     const listaUsuario_1 = await Usuarios_1.Usuarios.GetEntradasAnime(user_1.getNombre());
     if (!listaUsuario_1 || !listaUsuario_1.animeList || !listaUsuario_1.animeList.lists || !listaUsuario_1.animeList.lists.entries) {
-        console.error("ERROR - Modulos.Afinidad - No se han encontrado entradas para ese usuario.");
-        return {
-            error: true,
-            message: "No se han encontrados entradas para ese usuario.",
-            afinidades: []
-        };
+        throw new Error(`No se han encontrado entradas para el usuario ${user_1.getNombre()}`);
     }
-    let animesUsuario_1 = _a.FiltrarCompletados(listaUsuario_1.animeList.lists);
-    animesUsuario_1 = animesUsuario_1.entries;
-    if (!animesUsuario_1) {
-        return {
-            error: true,
-            message: "No se han encontrado entradas para ese usuario.",
-            afinidades: []
-        };
+    const listaCompletados_1 = listaUsuario_1.animeList.lists.find((f) => f.status === "COMPLETED");
+    if (!listaCompletados_1) {
+        throw new Error(`No se han encontrado entradas para el usuario ${user_1.getNombre()}`);
+    }
+    const animesCompletados_1 = listaCompletados_1.entries;
+    if (!animesCompletados_1) {
+        throw new Error(`No se han encontrado entradas para el usuario ${user_1.getNombre()}`);
     }
     const afinidades = [];
     let i = 0;
@@ -96,31 +87,30 @@ Afinidad.GetAfinidadUsuario = async (user_1, uRegistrados) => {
             continue;
         }
         const datosUsuario = await Usuarios_1.Usuarios.GetEntradasAnime(uRegistrados[i].anilistUsername);
-        if (!datosUsuario || !datosUsuario.animeList || !datosUsuario.animeList.lists || !datosUsuario.animeList.lists.entries) {
+        if (!datosUsuario || !datosUsuario.animeList || !datosUsuario.animeList.lists) {
             i++;
             continue;
         }
-        let animesUsuario_2 = _a.FiltrarCompletados(datosUsuario.animeList.lists);
-        if (!animesUsuario_2) {
+        const listaCompletados_2 = datosUsuario.animeList.lists.find((f) => f.status === "COMPLETED");
+        if (!listaCompletados_2) {
             i++;
             continue;
         }
-        animesUsuario_2 = animesUsuario_2.entries;
-        if (!animesUsuario_2) {
+        const animesCompletados_2 = listaCompletados_2.entries;
+        if (!animesCompletados_2) {
             i++;
             continue;
         }
-        const sharedMedia = _a.GetSharedMedia(animesUsuario_1, animesUsuario_2);
+        const sharedMedia = _a.GetSharedMedia(animesCompletados_1, animesCompletados_2);
         const resultado = _a.CalcularAfinidad(sharedMedia);
         afinidades.push({ username: uRegistrados[i].anilistUsername, afinidad: parseFloat(resultado.toFixed(2)) });
         i++;
         await _a.sleep(1000);
     }
-    return {
-        error: false,
-        message: "",
-        afinidades: _a.OrdenarAfinidades(afinidades)
-    };
+    if (afinidades.length <= 0) {
+        throw new Error("No hay afinidades disponibles en este servidor.");
+    }
+    return _a.OrdenarAfinidades(afinidades);
 };
 Afinidad.sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 Afinidad.zip = (a, b) => a.map((k, i) => [k, b[i]]);

@@ -56,22 +56,24 @@ module.exports = {
         }
 
         const aniuser1 = new Usuario(anilistUser);
-        const resultado = await Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
 
-        if (resultado.error) {
+        try {
+            const afinidades = await Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
+            const EmbedInformacionAfinidad = Embeds.EmbedAfinidad(aniuser1, afinidades);
+
             bot.setCalculatingAffinity(serverID, false);
 
             return interaction.editReply({
-                content: "Ha ocurrido un error al intentar calcular la afinidad."
+                embeds: [EmbedInformacionAfinidad]
+            })
+        } catch (err) {
+            const error = err as Error;
+
+            bot.setCalculatingAffinity(serverID, false);
+
+            return interaction.editReply({
+                content: error.message
             })
         }
-
-        const EmbedInformacionAfinidad = Embeds.EmbedAfinidad(aniuser1, resultado.afinidades);
-
-        bot.setCalculatingAffinity(serverID, false);
-
-        return interaction.editReply({
-            embeds: [EmbedInformacionAfinidad]
-        })
     }
 }
