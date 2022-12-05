@@ -53,6 +53,7 @@ module.exports = {
         }
         catch (err) {
             const error = err;
+            console.error(error);
             bot.setCalculatingAffinity(serverID, false);
             return interaction.editReply({
                 content: error.message
