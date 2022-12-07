@@ -46,9 +46,15 @@ module.exports = {
             }
         }
         else {
-            const newMemberRole = await memberColorRole.setColor(color);
-            if (!newMemberRole) {
-                throw new Error("Ha ocurrido un error al intentar modificar el color del rol.");
+            try {
+                const newMemberRole = await memberColorRole.setColor(color);
+                if (!newMemberRole) {
+                    throw new Error("Ha ocurrido un error al intentar modificar el color del rol.");
+                }
+            }
+            catch (err) {
+                console.error(err);
+                throw err;
             }
         }
         return interaction.editReply({

@@ -114,7 +114,6 @@ class BOT extends discord_js_1.Client {
             catch (err) {
                 const error = err;
                 console.error(error);
-                await interaction.deleteReply();
                 interaction.replied ?
                     await interaction.editReply({ content: error.message }) :
                     await interaction.reply({ content: error.message, ephemeral: true });
