@@ -20,12 +20,6 @@ module.exports = {
 
         const color = ("0x" + colorCode?.toUpperCase()) as ColorResolvable;
 
-        if (!color) {
-            return interaction.editReply({
-                content: "Ha ocurrido un error.",
-            })
-        }
-
         const memberRolesManager = interaction.member?.roles as GuildMemberRoleManager;
         const memberColorRole = memberRolesManager.cache.find(r => r.name === interaction.member?.user.username);
 
@@ -33,29 +27,35 @@ module.exports = {
             const guildColorRole = interaction.guild?.roles.cache.find(r => r.name === interaction.member?.user.username);
 
             if (!guildColorRole) {
-                const newRole = await interaction.guild?.roles.create({
-                    name: interaction.member?.user.username,
-                    color: color
-                });
-
-                if (!newRole) {
-                    return interaction.editReply({
-                        content: "Ha ocurrido un error.",
-                    })
+                try {
+                    const newRole = await interaction.guild?.roles.create({
+                        name: interaction.member?.user.username,
+                        color: color
+                    });
+                    
+                    if (!newRole) {
+                        throw new Error("Ha ocurrido un error al intentar crear el nuevo rol.");
+                    }
+    
+                    memberRolesManager.add(newRole);
+                } catch (err) {
+                    console.error(err);
+                    throw err;
                 }
-
-                memberRolesManager.add(newRole);
             } else {
-                guildColorRole.setColor(color);
-                memberRolesManager.add(guildColorRole);
+                try {
+                    guildColorRole.setColor(color);
+                    memberRolesManager.add(guildColorRole);   
+                } catch (err) {
+                    console.error(err);
+                    throw err;
+                }
             }
         } else {
             const newMemberRole = await memberColorRole.setColor(color);
 
             if (!newMemberRole) {
-                return interaction.editReply({
-                    content: "Ha ocurrido un error.",
-                })
+                throw new Error("Ha ocurrido un error al intentar modificar el color del rol.");
             }
         }
 

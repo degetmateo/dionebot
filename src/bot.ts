@@ -72,9 +72,11 @@ export default class BOT extends Client {
 
                 console.error(error);
 
+                interaction.deleteReply();
+
                 interaction.replied ? 
-                    await interaction.editReply({ content: "Ha ocurrido un error. Inténtalo más tarde." }) :
-                    await interaction.reply({ content: "Ha ocurrido un error. Inténtalo más tarde.", ephemeral: true });
+                    await interaction.editReply({ content: error.message }) :
+                    await interaction.reply({ content: error.message, ephemeral: true });
             }
         });
 
