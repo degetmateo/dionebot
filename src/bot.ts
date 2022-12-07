@@ -72,7 +72,7 @@ export default class BOT extends Client {
 
                 console.error(error);
 
-                interaction.deleteReply();
+                await interaction.deleteReply();
 
                 interaction.replied ? 
                     await interaction.editReply({ content: error.message }) :
