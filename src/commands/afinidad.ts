@@ -67,14 +67,12 @@ module.exports = {
                 embeds: [EmbedInformacionAfinidad]
             })
         } catch (err) {
-            const error = err as Error;
-
-            console.error(error);
+            console.error(err);
 
             bot.setCalculatingAffinity(serverID, false);
 
             return interaction.editReply({
-                content: error.message
+                content: "Ha ocurrido un error inesperado. Inténtalo de nuevo más tarde."
             })
         }
     }

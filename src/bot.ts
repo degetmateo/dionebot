@@ -73,8 +73,8 @@ export default class BOT extends Client {
                 console.error(error);
 
                 interaction.replied ? 
-                    await interaction.editReply({ content: error.message }) :
-                    await interaction.reply({ content: error.message, ephemeral: true });
+                    await interaction.editReply({ content: "Ha ocurrido un error inesperado. Inténtalo de nuevo más tarde." }) :
+                    await interaction.reply({ content: "Ha ocurrido un error inesperado. Inténtalo de nuevo más tarde.", ephemeral: true });
             }
         });
 

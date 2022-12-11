@@ -107,9 +107,6 @@ Afinidad.GetAfinidadUsuario = async (user_1, uRegistrados) => {
         i++;
         await _a.sleep(1000);
     }
-    if (afinidades.length <= 0) {
-        throw new Error("No hay afinidades disponibles en este servidor.");
-    }
     return _a.OrdenarAfinidades(afinidades);
 };
 Afinidad.sleep = (ms) => new Promise((r) => setTimeout(r, ms));

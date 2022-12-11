@@ -67,10 +67,6 @@ class Afinidad {
             await this.sleep(1000);
         }
 
-        if (afinidades.length <= 0) {
-            throw new Error("No hay afinidades disponibles en este servidor.");
-        }
-
         return this.OrdenarAfinidades(afinidades);
     }
 
