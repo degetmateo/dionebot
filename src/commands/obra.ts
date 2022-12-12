@@ -88,6 +88,8 @@ module.exports = {
             const nombre = interaction.options.getString("nombre");
 
             if (!nombre) {
+                bot.setSearchingMedia(serverID, false);
+                
                 return interaction.editReply({
                     content: "Ha ocurrido un error.",
                 });
@@ -100,6 +102,8 @@ module.exports = {
             const id = interaction.options.getInteger("id")?.toString();
             
             if (!id) {
+                bot.setSearchingMedia(serverID, false);
+
                 return interaction.editReply({
                     content: "Ha ocurrido un error.",
                 })
@@ -110,6 +114,8 @@ module.exports = {
 
 
         if (!media) {
+            bot.setSearchingMedia(serverID, false);
+
             return interaction.editReply({
                 content: "No se han encontrado resultados."
             })

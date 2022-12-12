@@ -68,6 +68,7 @@ module.exports = {
         if (subcommand === "por-nombre") {
             const nombre = interaction.options.getString("nombre");
             if (!nombre) {
+                bot.setSearchingMedia(serverID, false);
                 return interaction.editReply({
                     content: "Ha ocurrido un error.",
                 });
@@ -77,6 +78,7 @@ module.exports = {
         if (subcommand === "por-id") {
             const id = (_b = interaction.options.getInteger("id")) === null || _b === void 0 ? void 0 : _b.toString();
             if (!id) {
+                bot.setSearchingMedia(serverID, false);
                 return interaction.editReply({
                     content: "Ha ocurrido un error.",
                 });
@@ -84,6 +86,7 @@ module.exports = {
             media = await Media_1.Media.BuscarMedia(tipo, id);
         }
         if (!media) {
+            bot.setSearchingMedia(serverID, false);
             return interaction.editReply({
                 content: "No se han encontrado resultados."
             });
