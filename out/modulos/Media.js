@@ -37,6 +37,18 @@ Media.BuscarMedia = async (tipo, args) => {
         return media == null ? null : new Obra_1.Obra(media);
     }
 };
+Media.BuscarMediaPorTemporada = async (seasonYear, season) => {
+    const variables = {
+        seasonYear,
+        season,
+        page: 1,
+        perPage: 100
+    };
+    const response = await Fetch_1.Fetch.request(querySeason, variables);
+    return (response == null || response.Page == null || response.Page.media == null || response.Page.media[0] == null) ?
+        null :
+        response.Page.media;
+};
 const queryName = `
     query ($page: Int, $perPage: Int, $search: String, $type: MediaType) {
         Page (page: $page, perPage: $perPage) {
@@ -123,4 +135,28 @@ const queryID = `
             siteUrl
         }
     }
+`;
+const querySeason = `
+    query ($page: Int, $perPage: Int, $seasonYear: Int, $season: MediaSeason) {
+        Page (page: $page, perPage: $perPage) {
+            pageInfo {
+                total
+                currentPage
+                lastPage
+                hasNextPage
+                perPage
+            }
+            media (seasonYear: $seasonYear, season: $season, type: ANIME) {
+                id
+                idMal
+                title {
+                    english
+                    romaji
+                    native
+                }
+                season
+                seasonYear
+            }
+        }
+    }   
 `;

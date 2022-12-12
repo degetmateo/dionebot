@@ -1,3 +1,4 @@
+import { response } from "express";
 import { Obra } from "../objetos/Obra";
 import { Fetch } from "./Fetch";
 
@@ -35,6 +36,21 @@ class Media {
         const response = await Fetch.request(queryID, variables);
 
         return (response == null || response.Media == null) ? null : response.Media;
+    }
+
+    public static BuscarMediaPorTemporada = async (seasonYear: number, season: string) => {
+        const variables = {
+            seasonYear,
+            season,
+            page: 1,
+            perPage: 100
+        }
+
+        const response: any = await Fetch.request(querySeason, variables);
+
+        return (response == null || response.Page == null || response.Page.media == null || response.Page.media[0] == null) ?
+            null :
+            response.Page.media;
     }
 }
 
@@ -127,4 +143,29 @@ const queryID = `
             siteUrl
         }
     }
+`;
+
+const querySeason = `
+    query ($page: Int, $perPage: Int, $seasonYear: Int, $season: MediaSeason) {
+        Page (page: $page, perPage: $perPage) {
+            pageInfo {
+                total
+                currentPage
+                lastPage
+                hasNextPage
+                perPage
+            }
+            media (seasonYear: $seasonYear, season: $season, type: ANIME) {
+                id
+                idMal
+                title {
+                    english
+                    romaji
+                    native
+                }
+                season
+                seasonYear
+            }
+        }
+    }   
 `;
