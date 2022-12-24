@@ -98,7 +98,7 @@ class Obra {
         return this.media.title;
     }
     getDescripcion() {
-        return this.media.description == null ? "?" : this.media.description.trim()
+        const descripcion = this.media.description == null ? "?" : this.media.description.trim()
             .split("<br>").join("")
             .split("</br>").join("")
             .split("<i>").join("")
@@ -108,18 +108,10 @@ class Obra {
             .split("&ldquo;").join("*")
             .split("&rdquo;").join("*")
             .split("&rsquo;").join("'");
+        return descripcion.length <= 0 ? "?" : descripcion;
     }
     async getDescripcionTraducida() {
-        return await translate(this.media.description == null ? "?" : this.media.description.trim()
-            .split("<br>").join("")
-            .split("</br>").join("")
-            .split("<i>").join("")
-            .split("</i>").join("")
-            .split("<b>").join("")
-            .split("</b>").join("")
-            .split("&ldquo;").join("*")
-            .split("&rdquo;").join("*")
-            .split("&rsquo;").join("'"), "es");
+        return await translate(this.getDescripcion(), "es");
     }
     getCoverImageURL() {
         return this.media.coverImage.extraLarge == null ? "?" : this.media.coverImage.extraLarge.toString();
