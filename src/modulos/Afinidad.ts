@@ -48,7 +48,7 @@ class Afinidad {
             if (!listaCompletados_2) {
                 i++;
                 continue;
-            }
+            } 
             
             const animesCompletados_2 = listaCompletados_2.entries;
 
@@ -56,6 +56,8 @@ class Afinidad {
                 i++;
                 continue;
             }
+
+            console.log(datosUsuario)
 
             const sharedMedia = this.GetSharedMedia(animesCompletados_1, animesCompletados_2);
             const resultado = this.CalcularAfinidad(sharedMedia);
