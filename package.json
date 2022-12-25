@@ -9,6 +9,9 @@
     "deploy-commands": "ts-node src/deploy-commands.ts",
     "delete-commands": "ts-node src/delete-commands.ts"
   },
+  "engines": {
+    "node": "16"
+  },
   "type": "commonjs",
   "keywords": [],
   "author": "",
