@@ -1,6 +1,7 @@
 import { Usuario } from "../objetos/Usuario";
 import { Usuarios } from "./Usuarios";
 import { sharedMedia, uRegistrado } from "../types";
+import { urlencoded } from "express";
 
 class Afinidad {
     public static GetAfinidadUsuario = async (user_1: Usuario, uRegistrados: Array<uRegistrado>) => {
@@ -23,37 +24,31 @@ class Afinidad {
         }
 
         const afinidades: Array<{ username: string, afinidad: number }> = [];
-    
-        let i = 0;
-        while (i < uRegistrados.length) {
+
+        for (let i = 0; i < uRegistrados.length; i++) {
             if (uRegistrados[i].anilistUsername == user_1.getNombre()) {
-                i++;
                 continue;
             }
     
             if (!uRegistrados[i].anilistUsername) {
-                i++;
                 continue;
             }
 
             const datosUsuario = await Usuarios.GetEntradasAnime(uRegistrados[i].anilistUsername);
 
             if (!datosUsuario || !datosUsuario.animeList || !datosUsuario.animeList.lists) {
-                i++;
                 continue;
             }
 
             const listaCompletados_2 = datosUsuario.animeList.lists.find((f: any) => f.status === "COMPLETED");
             
             if (!listaCompletados_2) {
-                i++;
                 continue;
             } 
             
             const animesCompletados_2 = listaCompletados_2.entries;
 
             if (!animesCompletados_2) {
-                i++;
                 continue;
             }
 
@@ -64,8 +59,6 @@ class Afinidad {
 
             afinidades.push({ username: uRegistrados[i].anilistUsername, afinidad: parseFloat(resultado.toFixed(2)) });
     
-            i++;
-
             await this.sleep(1000);
         }
 

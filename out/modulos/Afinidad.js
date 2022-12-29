@@ -76,36 +76,29 @@ Afinidad.GetAfinidadUsuario = async (user_1, uRegistrados) => {
         throw new Error(`No se han encontrado entradas para el usuario ${user_1.getNombre()}`);
     }
     const afinidades = [];
-    let i = 0;
-    while (i < uRegistrados.length) {
+    for (let i = 0; i < uRegistrados.length; i++) {
         if (uRegistrados[i].anilistUsername == user_1.getNombre()) {
-            i++;
             continue;
         }
         if (!uRegistrados[i].anilistUsername) {
-            i++;
             continue;
         }
         const datosUsuario = await Usuarios_1.Usuarios.GetEntradasAnime(uRegistrados[i].anilistUsername);
         if (!datosUsuario || !datosUsuario.animeList || !datosUsuario.animeList.lists) {
-            i++;
             continue;
         }
         const listaCompletados_2 = datosUsuario.animeList.lists.find((f) => f.status === "COMPLETED");
         if (!listaCompletados_2) {
-            i++;
             continue;
         }
         const animesCompletados_2 = listaCompletados_2.entries;
         if (!animesCompletados_2) {
-            i++;
             continue;
         }
         console.log(datosUsuario);
         const sharedMedia = _a.GetSharedMedia(animesCompletados_1, animesCompletados_2);
         const resultado = _a.CalcularAfinidad(sharedMedia);
         afinidades.push({ username: uRegistrados[i].anilistUsername, afinidad: parseFloat(resultado.toFixed(2)) });
-        i++;
         await _a.sleep(1000);
     }
     return _a.OrdenarAfinidades(afinidades);

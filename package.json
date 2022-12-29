@@ -10,7 +10,7 @@
     "delete-commands": "ts-node src/delete-commands.ts"
   },
   "engines": {
-    "node": "16"
+    "node": ">=16 <17"
   },
   "type": "commonjs",
   "keywords": [],
