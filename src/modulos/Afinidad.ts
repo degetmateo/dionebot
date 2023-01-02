@@ -1,7 +1,6 @@
 import { Usuario } from "../objetos/Usuario";
 import { Usuarios } from "./Usuarios";
 import { sharedMedia, uRegistrado } from "../types";
-import { urlencoded } from "express";
 
 class Afinidad {
     public static GetAfinidadUsuario = async (user_1: Usuario, uRegistrados: Array<uRegistrado>) => {
@@ -58,8 +57,6 @@ class Afinidad {
             const resultado = this.CalcularAfinidad(sharedMedia);
 
             afinidades.push({ username: uRegistrados[i].anilistUsername, afinidad: parseFloat(resultado.toFixed(2)) });
-    
-            await this.sleep(1000);
         }
 
         return this.OrdenarAfinidades(afinidades);

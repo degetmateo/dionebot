@@ -99,7 +99,6 @@ Afinidad.GetAfinidadUsuario = async (user_1, uRegistrados) => {
         const sharedMedia = _a.GetSharedMedia(animesCompletados_1, animesCompletados_2);
         const resultado = _a.CalcularAfinidad(sharedMedia);
         afinidades.push({ username: uRegistrados[i].anilistUsername, afinidad: parseFloat(resultado.toFixed(2)) });
-        await _a.sleep(1000);
     }
     return _a.OrdenarAfinidades(afinidades);
 };
