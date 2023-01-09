@@ -19,14 +19,14 @@ module.exports = {
         
         const serverID = interaction.guild?.id != null ? interaction.guild.id : "";
 
-        if (bot.isCalculatingAffinity(serverID)) {
+        if (bot.isGettingAfinitty(serverID)) {
             return interaction.reply({
                 content: "Ya se está calculando la afinidad de alguien más en este momento.",
                 ephemeral: true
             })
         }
 
-        bot.setCalculatingAffinity(serverID, true);
+        bot.setGettingAffinity(serverID, true);
 
         const usuario = interaction.options.getUser("usuario");
         const userID = usuario == null ? interaction.user.id : usuario.id;
@@ -35,7 +35,7 @@ module.exports = {
         const uRegistrado = uRegistrados.find(u => u.discordId === userID);
 
         if (!uRegistrado) {
-            bot.setCalculatingAffinity(serverID, false);
+            bot.setGettingAffinity(serverID, false);
 
             return interaction.reply({
                 content: "El usuario no está registrado.",
@@ -48,7 +48,7 @@ module.exports = {
         const anilistUser = await Usuarios.BuscarUsuario(serverID, uRegistrado.anilistUsername);
 
         if (!anilistUser) {
-            bot.setCalculatingAffinity(serverID, false);
+            bot.setGettingAffinity(serverID, false);
 
             return interaction.editReply({
                 content: `No se ha encontrado al usuario **${uRegistrado.anilistUsername}** en la base de datos de ANILIST. Probablemente se haya cambiado el nombre.`
@@ -61,7 +61,7 @@ module.exports = {
             const afinidades = await Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
             const EmbedInformacionAfinidad = Embeds.EmbedAfinidad(aniuser1, afinidades);
 
-            bot.setCalculatingAffinity(serverID, false);
+            bot.setGettingAffinity(serverID, false);
 
             return interaction.editReply({
                 embeds: [EmbedInformacionAfinidad]
@@ -69,7 +69,7 @@ module.exports = {
         } catch (err) {
             console.error(err);
 
-            bot.setCalculatingAffinity(serverID, false);
+            bot.setGettingAffinity(serverID, false);
 
             return interaction.editReply({
                 content: "Ha ocurrido un error inesperado. Inténtalo de nuevo más tarde."

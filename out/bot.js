@@ -64,13 +64,13 @@ class BOT extends discord_js_1.Client {
                 });
             }
         };
-        this.isCalculatingAffinity = (serverID) => {
+        this.isGettingAfinitty = (serverID) => {
             return this.buscando_afinidad.has(serverID);
         };
         this.isSearchingMedia = (serverID) => {
             return this.buscando_media.has(serverID);
         };
-        this.setCalculatingAffinity = (serverID, buscando) => {
+        this.setGettingAffinity = (serverID, buscando) => {
             buscando ?
                 this.buscando_afinidad.add(serverID) :
                 this.buscando_afinidad.delete(serverID);

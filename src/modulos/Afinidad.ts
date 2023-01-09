@@ -25,11 +25,7 @@ class Afinidad {
         const afinidades: Array<{ username: string, afinidad: number }> = [];
 
         for (let i = 0; i < uRegistrados.length; i++) {
-            if (uRegistrados[i].anilistUsername == user_1.getNombre()) {
-                continue;
-            }
-    
-            if (!uRegistrados[i].anilistUsername) {
+            if (uRegistrados[i].anilistUsername == user_1.getNombre() || !uRegistrados[i].anilistUsername) {
                 continue;
             }
 
@@ -38,23 +34,16 @@ class Afinidad {
             if (!datosUsuario || !datosUsuario.animeList || !datosUsuario.animeList.lists) {
                 continue;
             }
-
+    
             const listaCompletados_2 = datosUsuario.animeList.lists.find((f: any) => f.status === "COMPLETED");
-            
-            if (!listaCompletados_2) {
-                continue;
-            } 
-            
-            const animesCompletados_2 = listaCompletados_2.entries;
 
-            if (!animesCompletados_2) {
+            if (!listaCompletados_2 || !listaCompletados_2.entries) {
                 continue;
             }
 
-            console.log(datosUsuario)
+            const animesCompletados_2 = listaCompletados_2.entries;
 
-            const sharedMedia = this.GetSharedMedia(animesCompletados_1, animesCompletados_2);
-            const resultado = this.CalcularAfinidad(sharedMedia);
+            const resultado = await this.HandleAffinity(animesCompletados_1, animesCompletados_2);
 
             afinidades.push({ username: uRegistrados[i].anilistUsername, afinidad: parseFloat(resultado.toFixed(2)) });
         }
@@ -62,7 +51,10 @@ class Afinidad {
         return this.OrdenarAfinidades(afinidades);
     }
 
-    private static sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    private static HandleAffinity = async (animes1: any, animes2: any) => {
+        const sharedMedia = this.GetSharedMedia(animes1, animes2);
+        return this.CalcularAfinidad(sharedMedia);
+    }
 
     private static GetSharedMedia(l1: Array<{ mediaId: number, score: number }>, l2: Array<{ mediaId: number, score: number }>) {
         const sharedMedia: Array<sharedMedia> = [];

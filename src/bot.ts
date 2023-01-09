@@ -191,7 +191,7 @@ export default class BOT extends Client {
         }
     }
 
-    public isCalculatingAffinity = (serverID: string): boolean => {
+    public isGettingAfinitty = (serverID: string): boolean => {
         return this.buscando_afinidad.has(serverID);
     }
 
@@ -199,7 +199,7 @@ export default class BOT extends Client {
         return this.buscando_media.has(serverID);
     }
 
-    public setCalculatingAffinity = (serverID: string, buscando: boolean): void => {
+    public setGettingAffinity = (serverID: string, buscando: boolean): void => {
         buscando ?
             this.buscando_afinidad.add(serverID) :
             this.buscando_afinidad.delete(serverID);
