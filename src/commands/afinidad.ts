@@ -16,64 +16,69 @@ module.exports = {
 
     execute: async (interaction: ChatInputCommandInteraction) => {
         const bot = interaction.client as BOT;
-        
-        const serverID = interaction.guild?.id != null ? interaction.guild.id : "";
 
-        if (bot.isGettingAfinitty(serverID)) {
-            return interaction.reply({
-                content: "Ya se está calculando la afinidad de alguien más en este momento.",
-                ephemeral: true
-            })
-        }
+        return interaction.reply({
+            content: "Este comando se encuentra en mantenimiento.",
+            ephemeral: true
+        });
 
-        bot.setGettingAffinity(serverID, true);
+        // const serverID = interaction.guild?.id != null ? interaction.guild.id : "";
 
-        const usuario = interaction.options.getUser("usuario");
-        const userID = usuario == null ? interaction.user.id : usuario.id;
+        // if (bot.isGettingAfinitty(serverID)) {
+        //     return interaction.reply({
+        //         content: "Ya se está calculando la afinidad de alguien más en este momento.",
+        //         ephemeral: true
+        //     })
+        // }
 
-        const uRegistrados = bot.getUsuariosRegistrados(serverID);
-        const uRegistrado = uRegistrados.find(u => u.discordId === userID);
+        // bot.setGettingAffinity(serverID, true);
 
-        if (!uRegistrado) {
-            bot.setGettingAffinity(serverID, false);
+        // const usuario = interaction.options.getUser("usuario");
+        // const userID = usuario == null ? interaction.user.id : usuario.id;
 
-            return interaction.reply({
-                content: "El usuario no está registrado.",
-                ephemeral: true
-            })
-        }
+        // const uRegistrados = bot.getUsuariosRegistrados(serverID);
+        // const uRegistrado = uRegistrados.find(u => u.discordId === userID);
 
-        await interaction.deferReply();
+        // if (!uRegistrado) {
+        //     bot.setGettingAffinity(serverID, false);
 
-        const anilistUser = await Usuarios.BuscarUsuario(serverID, uRegistrado.anilistUsername);
+        //     return interaction.reply({
+        //         content: "El usuario no está registrado.",
+        //         ephemeral: true
+        //     })
+        // }
 
-        if (!anilistUser) {
-            bot.setGettingAffinity(serverID, false);
+        // await interaction.deferReply();
 
-            return interaction.editReply({
-                content: `No se ha encontrado al usuario **${uRegistrado.anilistUsername}** en la base de datos de ANILIST. Probablemente se haya cambiado el nombre.`
-            })
-        }
+        // const anilistUser = await Usuarios.BuscarUsuario(serverID, uRegistrado.anilistUsername);
 
-        const aniuser1 = new Usuario(anilistUser);
+        // if (!anilistUser) {
+        //     bot.setGettingAffinity(serverID, false);
 
-        try {
-            const afinidades = await Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
-            const EmbedInformacionAfinidad = Embeds.EmbedAfinidad(aniuser1, afinidades);
+        //     return interaction.editReply({
+        //         content: `No se ha encontrado al usuario **${uRegistrado.anilistUsername}** en la base de datos de ANILIST. Probablemente se haya cambiado el nombre.`
+        //     })
+        // }
 
-            bot.setGettingAffinity(serverID, false);
+        // const aniuser1 = new Usuario(anilistUser);
 
-            return interaction.editReply({
-                embeds: [EmbedInformacionAfinidad]
-            })
-        } catch (err) {
-            console.error(err);
+        // try {
+        //     const afinidades = await Afinidad.GetAfinidadUsuario(aniuser1, uRegistrados);
+        //     const EmbedInformacionAfinidad = Embeds.EmbedAfinidad(aniuser1, afinidades);
 
-            bot.setGettingAffinity(serverID, false);
+        //     bot.setGettingAffinity(serverID, false);
 
-            return interaction.editReply({
-                content: "Ha ocurrido un error inesperado. Inténtalo de nuevo más tarde."
-            })
-        }
+        //     return interaction.editReply({
+        //         embeds: [EmbedInformacionAfinidad]
+        //     })
+        // } catch (err) {
+        //     console.error(err);
+
+        //     bot.setGettingAffinity(serverID, false);
+
+        //     return interaction.editReply({
+        //         content: "Ha ocurrido un error inesperado. Inténtalo de nuevo más tarde."
+        //     })
+        // }
     }
 }
