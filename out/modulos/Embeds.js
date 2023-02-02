@@ -115,7 +115,7 @@ class Embeds {
             let planningTEXT = "";
             for (let i = 0; i < uMedia.length; i++) {
                 if (uMedia[i].status == "COMPLETED") {
-                    completedTEXT += `${uMedia[i].name} **[${uMedia[i].score}]** - `;
+                    completedTEXT += `${uMedia[i].name} **[${uMedia[i].score}]** **[x${uMedia[i].repeat}]** - `;
                 }
                 if (uMedia[i].status == "DROPPED") {
                     droppedTEXT += `${uMedia[i].name} **(${uMedia[i].progress})** **[${uMedia[i].score}]** - `;

@@ -44,7 +44,8 @@ class Usuarios {
                 name: uMedia[i].username,
                 status: uMedia[i].status,
                 progress: uMedia[i].progress,
-                score: uMedia[i].score
+                score: uMedia[i].score,
+                repeat: uMedia[i].repeat
             };
             uMapeados.push(u);
         }
@@ -214,6 +215,7 @@ const QUERY_MEDIA = `
             status
             score(format: POINT_100)
             progress
+            repeat
         }
     }
 `;
