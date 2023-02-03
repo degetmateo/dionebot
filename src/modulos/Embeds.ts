@@ -127,7 +127,13 @@ class Embeds {
 
             for (let i = 0; i < uMedia.length; i++) {
                 if (uMedia[i].status == "COMPLETED") {
-                    completedTEXT += `${uMedia[i].name} **[${uMedia[i].score}]** **[x${uMedia[i].repeat}]** - `;
+                    let repeat: number = uMedia[i].repeat;
+
+                    if (repeat >= 1) {
+                        completedTEXT += `${uMedia[i].name} **[${uMedia[i].score}]** **[x${uMedia[i].repeat}]** - `;
+                    } else {
+                        completedTEXT += `${uMedia[i].name} **[${uMedia[i].score}]** - `;
+                    }
                 }
 
                 if (uMedia[i].status == "DROPPED") {
