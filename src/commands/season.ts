@@ -54,7 +54,7 @@ module.exports = {
             let description = "";
 
             for (let i = 0; i < animes.length; i++) {
-                if (description.length >= 4096) break;
+                if (description.length >= 4000) break;
 
                 const nombre = animes[i].title.english ? animes[i].title.english : animes[i].title.romaji;
                 
