@@ -6,6 +6,6 @@ class DB {
             .then(() => console.log("DB Iniciada."))
             .catch(err => console.error(err));
     }
-}
+} 
 
 export { DB };
