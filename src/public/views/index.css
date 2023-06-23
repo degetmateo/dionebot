@@ -1,0 +1,38 @@
+.contenedor-principal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+
+    background-color: #000;
+}
+
+.contenedor-formulario {
+    width: 300px;
+    height: 200px;
+    border-radius: 5px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.boton-enlace {
+    padding: 10px 30px;
+    border-radius: 5px;
+    background-color: #FFF;
+
+    transition: 0.2s ease all;
+
+    font-size: 20px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-decoration: none;
+    text-decoration: none;
+    color: #000;
+}
+
+.boton-enlace:hover {
+    background-color: #2a2a2a;
+    color: #b1b1b1;
+}

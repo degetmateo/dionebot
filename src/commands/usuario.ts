@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Embeds } from "../modulos/Embeds";
 import { Usuarios } from "../modulos/Usuarios";
-import { Usuario } from "../objetos/Usuario";
+import { UsuarioAnilist } from "../objetos/UsuarioAnilist";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -39,7 +39,7 @@ module.exports = {
             })
         }
 
-        usuario = new Usuario(usuario);
+        usuario = new UsuarioAnilist(usuario);
         const embed = Embeds.EmbedInformacionUsuario(usuario);
 
         return interaction.editReply({

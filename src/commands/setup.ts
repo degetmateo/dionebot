@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import BOT from "../bot";
 import { Setup } from "../modulos/Setup";
 import { Usuarios } from "../modulos/Usuarios";
-import { Usuario } from "../objetos/Usuario";
+import { UsuarioAnilist } from "../objetos/UsuarioAnilist";
 import { uRegistrado } from "../types";
 
 module.exports = {
@@ -41,7 +41,7 @@ module.exports = {
             })
         }
 
-        const usuario = new Usuario(anilistUser);
+        const usuario = new UsuarioAnilist(anilistUser);
 
         try {
             await Setup.SetupUsuario(usuario, serverID, userID);

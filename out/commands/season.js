@@ -42,8 +42,7 @@ module.exports = {
                 if (description.length >= 4000)
                     break;
                 const nombre = animes[i].title.english ? animes[i].title.english : animes[i].title.romaji;
-                const id = animes[i].id;
-                description += `▸ ${nombre} | ID: ${id}\n`;
+                description += `▸ ${nombre}\n`;
             }
             embed.setDescription(description);
             return interaction.editReply({ embeds: [embed] });

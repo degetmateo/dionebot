@@ -10,7 +10,14 @@ const Aniuser_1 = __importDefault(require("./modelos/Aniuser"));
 class BOT extends discord_js_1.Client {
     constructor() {
         super({
-            intents: [discord_js_1.GatewayIntentBits.Guilds, discord_js_1.GatewayIntentBits.GuildMessages, discord_js_1.GatewayIntentBits.MessageContent]
+            intents: [discord_js_1.GatewayIntentBits.Guilds, discord_js_1.GatewayIntentBits.GuildMessages, discord_js_1.GatewayIntentBits.MessageContent],
+            presence: {
+                status: "online",
+                activities: [{
+                        name: "/help",
+                        type: discord_js_1.ActivityType.Listening
+                    }]
+            }
         });
         this.loadCommands = () => {
             const commandsPath = path_1.default.join(__dirname + "/commands/");

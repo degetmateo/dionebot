@@ -1,5 +1,7 @@
 require("dotenv").config();
 
+import path from "path";
+
 import express from "express";
 import BOT from "./bot";
 import { DB } from "./database";
@@ -8,10 +10,11 @@ const app = express();
 const bot = new BOT();
 const db = new DB();
 
+app.use(express.static(__dirname + '/public'));
 app.set("port", process.env.PORT || 4000);
 
 app.get("/", (req: express.Request, res: express.Response) => {
-    res.send("que lees puta");
+    res.sendFile(path.join(__dirname + "/public/views/index.html"));
 });
 
 app.listen(app.get("port"), async () => {

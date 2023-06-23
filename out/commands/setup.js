@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const Setup_1 = require("../modulos/Setup");
 const Usuarios_1 = require("../modulos/Usuarios");
-const Usuario_1 = require("../objetos/Usuario");
+const UsuarioAnilist_1 = require("../objetos/UsuarioAnilist");
 module.exports = {
     data: new discord_js_1.SlashCommandBuilder()
         .setName("setup")
@@ -32,7 +32,7 @@ module.exports = {
                 content: "No se ha encontrado ese usuario en ANILIST."
             });
         }
-        const usuario = new Usuario_1.Usuario(anilistUser);
+        const usuario = new UsuarioAnilist_1.UsuarioAnilist(anilistUser);
         try {
             await Setup_1.Setup.SetupUsuario(usuario, serverID, userID);
         }

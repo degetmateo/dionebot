@@ -1,8 +1,8 @@
 import Aniuser from "../modelos/Aniuser";
-import { Usuario } from "../objetos/Usuario";
+import { UsuarioAnilist } from "../objetos/UsuarioAnilist";
 
 class Setup {
-    public static async SetupUsuario(usuario: Usuario, serverID: string, discordID: string): Promise<void> {    
+    public static async SetupUsuario(usuario: UsuarioAnilist, serverID: string, discordID: string): Promise<void> {    
         const aniuser = new Aniuser({
             serverId: serverID,
             discordId: discordID,

@@ -1,11 +1,11 @@
 import { EmbedBuilder, ColorResolvable, Message, Embed, Interaction } from "discord.js";
 import * as toHex from "colornames";
-import { Usuario } from "../objetos/Usuario";
+import { UsuarioAnilist } from "../objetos/UsuarioAnilist";
 import { Obra } from "../objetos/Obra";
 import { Usuarios } from "./Usuarios";
 
 class Embeds {
-    public static EmbedInformacionUsuario(usuario: Usuario): EmbedBuilder {
+    public static EmbedInformacionUsuario(usuario: UsuarioAnilist): EmbedBuilder {
         const hexColor = toHex.get(usuario.getColorName()).value;
         const color = "0x" + hexColor;
 
@@ -202,7 +202,7 @@ class Embeds {
         return EmbedInformacion;
     }
 
-    public static EmbedAfinidad(usuario: Usuario, afinidades: Array<{ username: string, afinidad: number }>): EmbedBuilder {
+    public static EmbedAfinidad(usuario: UsuarioAnilist, afinidades: Array<{ username: string, afinidad: number }>): EmbedBuilder {
         let textoAfinidad = "";
 
         for (let i = 0; i < afinidades.length && i < 10; i++) {

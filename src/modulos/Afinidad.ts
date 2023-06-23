@@ -1,9 +1,9 @@
-import { Usuario } from "../objetos/Usuario";
+import { UsuarioAnilist } from "../objetos/UsuarioAnilist";
 import { Usuarios } from "./Usuarios";
 import { sharedMedia, uRegistrado } from "../types";
 
 class Afinidad {
-    public static GetAfinidadUsuario = async (user_1: Usuario, uRegistrados: Array<uRegistrado>) => {
+    public static GetAfinidadUsuario = async (user_1: UsuarioAnilist, uRegistrados: Array<uRegistrado>) => {
         const listaUsuario_1 = await Usuarios.GetEntradasAnime(user_1.getNombre());
 
         if (!listaUsuario_1 || !listaUsuario_1.animeList || !listaUsuario_1.animeList.lists || !listaUsuario_1.animeList.lists.entries) {

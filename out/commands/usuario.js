@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const Embeds_1 = require("../modulos/Embeds");
 const Usuarios_1 = require("../modulos/Usuarios");
-const Usuario_1 = require("../objetos/Usuario");
+const UsuarioAnilist_1 = require("../objetos/UsuarioAnilist");
 module.exports = {
     data: new discord_js_1.SlashCommandBuilder()
         .setName("usuario")
@@ -34,7 +34,7 @@ module.exports = {
                 content: "No se ha encontrado al usuario.",
             });
         }
-        usuario = new Usuario_1.Usuario(usuario);
+        usuario = new UsuarioAnilist_1.UsuarioAnilist(usuario);
         const embed = Embeds_1.Embeds.EmbedInformacionUsuario(usuario);
         return interaction.editReply({
             embeds: [embed]

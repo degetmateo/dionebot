@@ -1,4 +1,4 @@
-class Usuario {
+class UsuarioAnilist {
     private user: any;
 
     constructor(user: any) {
@@ -42,4 +42,4 @@ class Usuario {
     }
 }
 
-export { Usuario };
+export { UsuarioAnilist };

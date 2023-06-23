@@ -1,4 +1,4 @@
-import { Client, Collection, GatewayIntentBits, Message, Events } from "discord.js";
+import { Client, Collection, GatewayIntentBits, Message, Events, ActivityType, Presence } from "discord.js";
 
 import fs from "fs";
 import path from "path";
@@ -15,7 +15,14 @@ export default class BOT extends Client {
 
     constructor() {
         super({
-            intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]
+            intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
+            presence: {
+                status: "online",
+                activities: [{ 
+                    name: "/help", 
+                    type: ActivityType.Listening
+                }]
+            }
         });
         
         this.commands = new Collection();
