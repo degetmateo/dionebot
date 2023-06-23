@@ -10,7 +10,7 @@ const app = express();
 const bot = new BOT();
 const db = new DB();
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(path.join(__dirname + '/public')));
 app.set("port", process.env.PORT || 4000);
 
 app.get("/", (req: express.Request, res: express.Response) => {
