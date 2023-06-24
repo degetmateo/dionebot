@@ -19,20 +19,18 @@
 }
 
 .boton-enlace {
-    padding: 10px 30px;
+    padding: 0.7em 1em;
     border-radius: 5px;
-    background-color: #FFF;
+    background-color: #0044ff;
 
     transition: 0.2s ease all;
 
-    font-size: 20px;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 1.5em;
+    font-family: 'Ubuntu', sans-serif;
     text-decoration: none;
-    text-decoration: none;
-    color: #000;
+    color: #FFF;
 }
 
 .boton-enlace:hover {
-    background-color: #2a2a2a;
-    color: #b1b1b1;
+    background-color: #0031b7;
 }

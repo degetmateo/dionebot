@@ -11,10 +11,11 @@ const database_1 = require("./database");
 const app = (0, express_1.default)();
 const bot = new bot_1.default();
 const db = new database_1.DB();
-app.use(express_1.default.static(path_1.default.join(__dirname + '/public')));
+app.use(express_1.default.json());
+app.use(express_1.default.static(path_1.default.join(__dirname + '/../public')));
 app.set("port", process.env.PORT || 4000);
 app.get("/", (req, res) => {
-    res.sendFile(path_1.default.join(__dirname + "/public/views/index.html"));
+    res.sendFile(path_1.default.join(__dirname + "/../public/views/index.html"));
 });
 app.listen(app.get("port"), async () => {
     console.log(`Servidor iniciado en el puerto: ${app.get("port")}`);

@@ -32,7 +32,7 @@ export default class BOT extends Client {
     }
 
     private loadCommands = () => {
-        const commandsPath = path.join(__dirname + "/commands/");
+        const commandsPath = path.join(__dirname + "/comandos/");
         const commandsFiles = fs.readdirSync(commandsPath);
 
         for (const file of commandsFiles) {

@@ -20,7 +20,7 @@ class BOT extends discord_js_1.Client {
             }
         });
         this.loadCommands = () => {
-            const commandsPath = path_1.default.join(__dirname + "/commands/");
+            const commandsPath = path_1.default.join(__dirname + "/comandos/");
             const commandsFiles = fs_1.default.readdirSync(commandsPath);
             for (const file of commandsFiles) {
                 const filePath = path_1.default.join(commandsPath, file);

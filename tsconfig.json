@@ -2,7 +2,7 @@
   "compilerOptions": {
     "moduleResolution": "node",
     /* Visit https://aka.ms/tsconfig to read more about this file */
-    "outDir": "out/",
+    "outDir": "build/",
     "target": "ES2017",
     /* Projects */
     // "incremental": true,                              /* Save .tsbuildinfo files to allow for incremental compilation of projects. */
