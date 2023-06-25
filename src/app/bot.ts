@@ -1,4 +1,4 @@
-import { Client, Collection, GatewayIntentBits, Message, Events, ActivityType, Presence, PresenceUpdateStatus, PresenceManager, RichPresenceAssets, ClientPresence, GuildManager } from "discord.js";
+import { Client, Collection, GatewayIntentBits, Message, Events, ActivityType } from "discord.js";
 
 import fs from "fs";
 import path from "path";
@@ -6,7 +6,7 @@ import Aniuser from "./modelos/Aniuser";
 import { uRegistrado } from "./types";
 
 export default class BOT extends Client {
-    private commands: Collection<string, any>;
+    private comandos: Collection<string, any>;
 
     private buscando_afinidad: Set<string>;
     private buscando_media: Set<string>;
@@ -25,7 +25,7 @@ export default class BOT extends Client {
             }
         });
 
-        this.commands = new Collection();
+        this.comandos = new Collection();
         this.buscando_afinidad = new Set<string>();
         this.buscando_media = new Set<string>();
         this.usuarios = new Array<uRegistrado>();
@@ -40,7 +40,7 @@ export default class BOT extends Client {
             const command = require(filePath);
 
             if ("data" in command && "execute" in command) {
-                this.commands.set(command.data.name, command);
+                this.comandos.set(command.data.name, command);
             } else {
                 console.log(`[WARNING] The command at ${filePath} is missing required "data" or "execute" property.`);
             }
@@ -67,7 +67,7 @@ export default class BOT extends Client {
             if (!interaction.guild) return;
             if (!interaction.guild.id) return;
 
-            const command = this.commands.get(interaction.commandName);
+            const command = this.comandos.get(interaction.commandName);
 
             if (!command) {
                 console.error(`No command matching ${interaction.commandName} was found.`);

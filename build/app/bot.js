@@ -26,7 +26,7 @@ class BOT extends discord_js_1.Client {
                 const filePath = path_1.default.join(commandsPath, file);
                 const command = require(filePath);
                 if ("data" in command && "execute" in command) {
-                    this.commands.set(command.data.name, command);
+                    this.comandos.set(command.data.name, command);
                 }
                 else {
                     console.log(`[WARNING] The command at ${filePath} is missing required "data" or "execute" property.`);
@@ -87,7 +87,7 @@ class BOT extends discord_js_1.Client {
                 this.buscando_media.add(serverID) :
                 this.buscando_media.delete(serverID);
         };
-        this.commands = new discord_js_1.Collection();
+        this.comandos = new discord_js_1.Collection();
         this.buscando_afinidad = new Set();
         this.buscando_media = new Set();
         this.usuarios = new Array();
@@ -112,7 +112,7 @@ class BOT extends discord_js_1.Client {
                 return;
             if (!interaction.guild.id)
                 return;
-            const command = this.commands.get(interaction.commandName);
+            const command = this.comandos.get(interaction.commandName);
             if (!command) {
                 console.error(`No command matching ${interaction.commandName} was found.`);
                 return;
