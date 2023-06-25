@@ -93,7 +93,9 @@ class BOT extends discord_js_1.Client {
         this.usuarios = new Array();
     }
     async iniciar(token) {
-        this.on("ready", () => console.log("BOT preparado!"));
+        this.on("ready", () => {
+            console.log("BOT preparado!");
+        });
         await this.loadUsers();
         setInterval(async () => {
             await this.loadUsers();
