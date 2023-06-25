@@ -1,4 +1,4 @@
-import { Client, Collection, GatewayIntentBits, Message, Events, ActivityType, Presence } from "discord.js";
+import { Client, Collection, GatewayIntentBits, Message, Events, ActivityType, Presence, PresenceUpdateStatus, PresenceManager, RichPresenceAssets, ClientPresence, GuildManager } from "discord.js";
 
 import fs from "fs";
 import path from "path";
@@ -18,13 +18,13 @@ export default class BOT extends Client {
             intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
             presence: {
                 status: "online",
-                activities: [{ 
-                    name: "/help", 
+                activities: [{
+                    name: "/help",
                     type: ActivityType.Listening
                 }]
             }
         });
-        
+
         this.commands = new Collection();
         this.buscando_afinidad = new Set<string>();
         this.buscando_media = new Set<string>();
@@ -48,7 +48,9 @@ export default class BOT extends Client {
     }
 
     public async iniciar(token: string | undefined) {
-        this.on("ready", () => console.log("BOT preparado!"));
+        this.on("ready", () => {
+            console.log("BOT preparado!")
+        });
 
         await this.loadUsers();
 
