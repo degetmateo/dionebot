@@ -1,44 +1,44 @@
 class UsuarioAnilist {
-    private user: any;
+    private data: any;
 
-    constructor(user: any) {
-        this.user = user;
+    constructor(data: any) {
+        this.data = data;
     }
 
-    public getUserData() {
-        return this.user;
+    public getData() {
+        return this.data;
     }
 
     public getID(): string {
-        return this.user.id == null ? null : this.user.id.toString();
+        return this.data.id == null ? null : this.data.id.toString();
     }
 
     public getEstadisticas(): any {
-        return this.user.statistics == null ? null : this.user.statistics;
+        return this.data.statistics == null ? null : this.data.statistics;
     }
 
     public getColorName(): string {
-        return this.user.options.profileColor == null ? "black" : this.user.options.profileColor;
+        return this.data.options.profileColor == null ? "black" : this.data.options.profileColor;
     }
 
     public getNombre(): string {
-        return this.user.name == null ? null : this.user.name;
+        return this.data.name == null ? null : this.data.name;
     }
 
     public getBio(): string {
-        return this.user.about == null ? null : this.user.about;
+        return this.data.about == null ? null : this.data.about;
     }
 
     public getAvatarURL(): string {
-        return this.user.avatar.large == null ? null : this.user.avatar.large;
+        return this.data.avatar.large == null ? null : this.data.avatar.large;
     }
 
     public getBannerImage(): string {
-        return this.user.bannerImage == null ? null : this.user.bannerImage;
+        return this.data.bannerImage == null ? null : this.data.bannerImage;
     }
 
     public getURL(): string {
-        return this.user.siteUrl == null ? null : this.user.siteUrl;
+        return this.data.siteUrl == null ? null : this.data.siteUrl;
     }
 }
 

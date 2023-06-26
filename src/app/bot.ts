@@ -49,7 +49,7 @@ export default class BOT extends Client {
 
     public async iniciar(token: string | undefined) {
         this.on("ready", () => {
-            console.log("BOT preparado!")
+            console.log("✅ | BOT iniciado.");
         });
 
         await this.loadUsers();

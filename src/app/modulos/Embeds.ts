@@ -5,33 +5,6 @@ import { Obra } from "../objetos/Obra";
 import { Usuarios } from "./Usuarios";
 
 class Embeds {
-    public static EmbedInformacionUsuario(usuario: UsuarioAnilist): EmbedBuilder {
-        const hexColor = toHex.get(usuario.getColorName()).value;
-        const color = "0x" + hexColor;
-
-        const stats = usuario.getEstadisticas();
-
-        return new EmbedBuilder()
-            .setTitle(usuario.getNombre())
-            .setURL(usuario.getURL())
-            .setColor(color as ColorResolvable)
-            .setThumbnail(usuario.getAvatarURL())
-            .setImage(usuario.getBannerImage())
-            .setDescription(usuario.getBio())
-            .addFields(
-                { 
-                    name: "Animes",
-                    value: `‣ Vistos: ${stats.anime.count}\n‣ Nota Promedio: ${stats.anime.meanScore}\n‣ Días Vistos: ${((stats.anime.minutesWatched / 60) / 24).toFixed()}\n‣ Episodios Totales: ${stats.anime.episodesWatched}`,
-                    inline: false
-                },
-                { 
-                    name: "Mangas",
-                    value: `‣ Leídos: ${stats.manga.count}\n‣ Nota Promedio: ${stats.manga.meanScore}\n‣ Capítulos Leídos: ${stats.manga.chaptersRead}\n‣ Volúmenes Leídos: ${stats.manga.volumesRead}`,
-                    inline: false
-                },
-            )
-    }
-
     public static EmbedImagen(url: string) {
         return new EmbedBuilder()
             .setImage(url)
