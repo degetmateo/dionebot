@@ -21,7 +21,7 @@ app.get("/invitar", (req, res) => {
     res.redirect(process.env.ENLACE_INVITACION || "");
 });
 app.listen(app.get("port"), async () => {
-    console.log(`Servidor iniciado en el puerto: ${app.get("port")}`);
+    console.log(`✅ | Servidor iniciado en el puerto: ${app.get("port")}`);
     await db.conectar(process.env.DB);
     bot.iniciar(process.env.TOKEN);
 });

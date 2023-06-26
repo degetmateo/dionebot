@@ -7,8 +7,9 @@ exports.DB = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 class DB {
     async conectar(url) {
+        mongoose_1.default.set('strictQuery', true);
         await mongoose_1.default.connect(url)
-            .then(() => console.log("DB Iniciada."))
+            .then(() => console.log("✅ | Base de datos iniciada."))
             .catch(err => console.error(err));
     }
 }

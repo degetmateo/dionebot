@@ -2,35 +2,35 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsuarioAnilist = void 0;
 class UsuarioAnilist {
-    constructor(user) {
-        this.user = user;
+    constructor(data) {
+        this.data = data;
     }
-    getUserData() {
-        return this.user;
+    getData() {
+        return this.data;
     }
     getID() {
-        return this.user.id == null ? null : this.user.id.toString();
+        return this.data.id == null ? null : this.data.id.toString();
     }
     getEstadisticas() {
-        return this.user.statistics == null ? null : this.user.statistics;
+        return this.data.statistics == null ? null : this.data.statistics;
     }
     getColorName() {
-        return this.user.options.profileColor == null ? "black" : this.user.options.profileColor;
+        return this.data.options.profileColor == null ? "black" : this.data.options.profileColor;
     }
     getNombre() {
-        return this.user.name == null ? null : this.user.name;
+        return this.data.name == null ? null : this.data.name;
     }
     getBio() {
-        return this.user.about == null ? null : this.user.about;
+        return this.data.about == null ? null : this.data.about;
     }
     getAvatarURL() {
-        return this.user.avatar.large == null ? null : this.user.avatar.large;
+        return this.data.avatar.large == null ? null : this.data.avatar.large;
     }
     getBannerImage() {
-        return this.user.bannerImage == null ? null : this.user.bannerImage;
+        return this.data.bannerImage == null ? null : this.data.bannerImage;
     }
     getURL() {
-        return this.user.siteUrl == null ? null : this.user.siteUrl;
+        return this.data.siteUrl == null ? null : this.data.siteUrl;
     }
 }
 exports.UsuarioAnilist = UsuarioAnilist;
