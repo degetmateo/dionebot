@@ -62,8 +62,13 @@ module.exports = {
             })
         }
 
-        const embedInformacion = await Embeds.EmbedInformacionMedia(interaccion, media, traducir);
-        interaccion.editReply({ embeds: [embedInformacion] });
-        bot.setSearchingMedia(idServidor, false);
+        try {
+            const embedInformacion = await Embeds.EmbedInformacionMedia(interaccion, media, traducir);
+            interaccion.editReply({ embeds: [embedInformacion] });
+            bot.setSearchingMedia(idServidor, false);       
+        } catch (error) {
+            bot.setSearchingMedia(idServidor, false);
+            console.error(error);   
+        }
     }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "bot",
+  "name": "dionebot",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,7 +11,7 @@
     "delete-commands": "ts-node src/delete-commands.ts"
   },
   "engines": {
-    "node": ">=16 <17"
+    "node": ">=19"
   },
   "type": "commonjs",
   "keywords": [],

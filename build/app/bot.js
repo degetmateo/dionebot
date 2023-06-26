@@ -121,17 +121,12 @@ class BOT extends discord_js_1.Client {
                 await command.execute(interaction);
             }
             catch (err) {
-                const error = err;
-                console.error(error);
-                if (!interaction)
-                    return;
+                console.error(err);
                 if (interaction.replied) {
-                    interaction.editReply({ content: "Ha ocurrido un error inesperado. Inténtalo de nuevo más tarde." })
-                        .catch(err => console.error(err));
-                }
-                else {
-                    interaction.reply({ content: "Ha ocurrido un error inesperado. Inténtalo de nuevo más tarde.", ephemeral: true })
-                        .catch(err => console.error(err));
+                    await interaction.editReply({
+                        content: "Ha ocurrido un error inesperado. Inténtalo de nuevo más tarde."
+                    });
+                    return;
                 }
             }
         });

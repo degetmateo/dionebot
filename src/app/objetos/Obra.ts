@@ -59,7 +59,7 @@ class Obra {
             case "UNKNOWN": hex = "000000"; break;
         }
 
-        return ("0x" + hex) as ColorResolvable;
+        return ("#" + hex) as ColorResolvable;
     }
 
     public getEpisodios(): string {

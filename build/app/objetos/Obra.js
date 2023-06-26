@@ -26,7 +26,7 @@ class Obra {
                     hex = "000000";
                     break;
             }
-            return ("0x" + hex);
+            return ("#" + hex);
         };
         this.media = media;
         translate.engine = "google";
