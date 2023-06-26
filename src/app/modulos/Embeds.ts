@@ -1,4 +1,4 @@
-import { EmbedBuilder, ColorResolvable, Message, Embed, Interaction } from "discord.js";
+import { EmbedBuilder, ColorResolvable, Message, Interaction } from "discord.js";
 import * as toHex from "colornames";
 import { UsuarioAnilist } from "../objetos/UsuarioAnilist";
 import { Obra } from "../objetos/Obra";
