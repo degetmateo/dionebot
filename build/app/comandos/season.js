@@ -53,5 +53,5 @@ module.exports = {
                 content: "Ha ocurrido un error. Inténtalo más tarde."
             });
         }
-    },
+    }
 };
