@@ -10,14 +10,7 @@ const Aniuser_1 = __importDefault(require("./modelos/Aniuser"));
 class BOT extends discord_js_1.Client {
     constructor() {
         super({
-            intents: [discord_js_1.GatewayIntentBits.Guilds, discord_js_1.GatewayIntentBits.GuildMessages, discord_js_1.GatewayIntentBits.MessageContent],
-            presence: {
-                status: "online",
-                activities: [{
-                        name: "/help",
-                        type: discord_js_1.ActivityType.Listening
-                    }]
-            }
+            intents: [discord_js_1.GatewayIntentBits.Guilds, discord_js_1.GatewayIntentBits.GuildMessages, discord_js_1.GatewayIntentBits.MessageContent]
         });
         this.loadCommands = () => {
             const commandsPath = path_1.default.join(__dirname + "/comandos/");
@@ -32,6 +25,35 @@ class BOT extends discord_js_1.Client {
                     console.log(`[WARNING] The command at ${filePath} is missing required "data" or "execute" property.`);
                 }
             }
+        };
+        this.establecerEstados = () => {
+            setInterval(() => {
+                var _a, _b;
+                const num = Math.floor(Math.random() * 2);
+                switch (num) {
+                    case 0:
+                        (_a = this.user) === null || _a === void 0 ? void 0 : _a.presence.set({
+                            status: "online",
+                            activities: [{
+                                    type: discord_js_1.ActivityType.Listening,
+                                    name: '/help'
+                                }]
+                        });
+                        break;
+                    case 1:
+                        (_b = this.user) === null || _b === void 0 ? void 0 : _b.presence.set({
+                            status: "online",
+                            activities: [{
+                                    type: discord_js_1.ActivityType.Watching,
+                                    name: this.getCantidadServidores() + " servidores!"
+                                }]
+                        });
+                        break;
+                }
+            }, 5000);
+        };
+        this.getCantidadServidores = () => {
+            return this.guilds.cache.size;
         };
         this.insertarUsuario = (usuario) => {
             this.usuarios.push(usuario);
@@ -95,6 +117,7 @@ class BOT extends discord_js_1.Client {
     async iniciar(token) {
         this.on("ready", () => {
             console.log("✅ | BOT iniciado.");
+            this.establecerEstados();
         });
         await this.loadUsers();
         setInterval(async () => {
