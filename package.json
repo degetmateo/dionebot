@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node build/app/index.js",
+    "start-dev": "ts-node src/app/index.ts",
     "dev": "ts-node-dev src/app/index.ts",
     "build": "tsc",
     "deploy-commands": "ts-node src/deploy-commands.ts",
