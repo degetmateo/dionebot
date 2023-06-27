@@ -20,6 +20,10 @@ module.exports = {
             throw new Error('No se ha podido obtener la ID del servidor.');
         }
 
+        if (!interaction) {
+            throw new Error('Interaccion desconocida.');
+        }
+
         await interaction.deferReply();
 
         let usuarioAnilist: UsuarioAnilist;
