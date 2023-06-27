@@ -37,14 +37,12 @@ module.exports = {
         }
 
         const hexColor = toHex.get(usuarioAnilist.getColorName()).value;
-        const color = "0x" + hexColor;
-
         const stats = usuarioAnilist.getEstadisticas();
-
+        
         const embed = new EmbedBuilder()
             .setTitle(usuarioAnilist.getNombre())
             .setURL(usuarioAnilist.getURL())
-            .setColor(color as ColorResolvable)
+            .setColor(hexColor as ColorResolvable)
             .setThumbnail(usuarioAnilist.getAvatarURL())
             .setImage(usuarioAnilist.getBannerImage())
             .setDescription(usuarioAnilist.getBio())
