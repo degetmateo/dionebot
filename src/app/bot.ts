@@ -1,4 +1,4 @@
-import { Client, Collection, GatewayIntentBits, Message, Events, ActivityType } from "discord.js";
+import { Client, Collection, GatewayIntentBits, Events, ActivityType } from "discord.js";
 
 import fs from "fs";
 import path from "path";
@@ -15,14 +15,7 @@ export default class BOT extends Client {
 
     constructor() {
         super({
-            intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
-            presence: {
-                status: "online",
-                activities: [{
-                    name: "/help",
-                    type: ActivityType.Listening
-                }]
-            }
+            intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]
         });
 
         this.comandos = new Collection();
@@ -50,6 +43,7 @@ export default class BOT extends Client {
     public async iniciar(token: string | undefined) {
         this.on("ready", () => {
             console.log("✅ | BOT iniciado.");
+            this.establecerEstados();
         });
 
         await this.loadUsers();
@@ -90,6 +84,35 @@ export default class BOT extends Client {
         });
 
         this.login(token);
+    }
+
+    private establecerEstados = () => {
+        setInterval(() => {
+            const num = Math.floor(Math.random() * 2);
+
+            switch (num) {
+                case 0: this.user?.presence.set({
+                            status: "online",
+                            activities: [{
+                                type: ActivityType.Listening,
+                                name: '/help'
+                            }]
+                        })
+                break;
+                case 1: this.user?.presence.set({
+                            status: "online",
+                            activities: [{
+                                type: ActivityType.Watching,
+                                name: this.getCantidadServidores() + " servidores!"
+                            }]
+                        })
+                break;
+            }
+        }, 5000);
+    }
+
+    public getCantidadServidores = (): number => {
+        return this.guilds.cache.size;
     }
 
     public insertarUsuario = (usuario: uRegistrado) => {

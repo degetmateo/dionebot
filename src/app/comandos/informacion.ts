@@ -1,7 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import BOT from "../bot";
 
-
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("informacion")
