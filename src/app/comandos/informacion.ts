@@ -11,7 +11,7 @@ module.exports = {
 
         const descripcion = `Mi nombre es Dione y soy un bot de Discord que está siendo desarrollado en TypeScript.
 
-        Mis funciones principales incluyen buscar y mostrar información acerca de animes y mangas en tu servidor utilizando la API de Anilist.
+        Mis funciones principales incluyen buscar y mostrar información acerca de animes, mangas y novelas visuales en tu servidor.
         
         Aunque aún no poseo demasiadas opciones, en el futuro se irán implementando muchas más.
         
