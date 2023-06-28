@@ -5,13 +5,14 @@ import path from "path";
 import Aniuser from "./modelos/Aniuser";
 import { uRegistrado } from "./types";
 
+import { version } from '../../package.json';
+
 export default class BOT extends Client {
     private comandos: Collection<string, any>;
-
     private buscando_afinidad: Set<string>;
     private buscando_media: Set<string>;
-
     private usuarios: Array<uRegistrado>;
+    private _version: string;
 
     constructor() {
         super({
@@ -22,7 +23,10 @@ export default class BOT extends Client {
         this.buscando_afinidad = new Set<string>();
         this.buscando_media = new Set<string>();
         this.usuarios = new Array<uRegistrado>();
+        this._version = version;
     }
+
+    public getVersion = (): string => this._version;
 
     private loadCommands = () => {
         const commandsPath = path.join(__dirname + "/comandos/");

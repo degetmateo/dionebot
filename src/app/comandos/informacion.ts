@@ -23,7 +23,7 @@ module.exports = {
             .setTitle("▾ Información")
             .setDescription(descripcion.trim())
             .setColor(0xff8c00)
-            .setFooter({ text: `Dione v1.0.0` });
+            .setFooter({ text: `Dione v${bot.getVersion()}` });
 
         const avatarURL = bot.user?.avatarURL();
 
