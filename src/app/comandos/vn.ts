@@ -63,7 +63,7 @@ module.exports = {
         // console.log(resultado);
 
         const id = resultado.id;
-        const vnURL = `https://vndb.org/v${id}`;
+        const vnURL = `https://vndb.org/${id}`;
 
         const estados = ['FINALIZADA', 'EN DESARROLLO', 'CANCELADA'];
 
