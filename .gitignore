@@ -1,7 +1,6 @@
 .gitignore
 .env
 node_modules
-tsconfig.json
 config.json
 delete-commands.ts
 deploy-commands.ts
