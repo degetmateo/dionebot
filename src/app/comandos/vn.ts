@@ -54,6 +54,12 @@ module.exports = {
 
         const resultado = respuesta.results[0]
 
+        if (!resultado) {
+            return interaccion.editReply({
+                content: 'No se han encontrado resultados.'
+            })
+        }
+
         // console.log(resultado);
 
         const id = resultado.id;
