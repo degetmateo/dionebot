@@ -1,8 +1,10 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder, ColorResolvable } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder, normalizeArray } from "discord.js";
 import fetch from "node-fetch";
 import BOT from "../bot";
+import ISO6391 from 'iso-639-1';
 
-const translate = require("translate");
+import { esNumero, traducir } from "../helpers";
+import NovelaVisual from "../media/NovelaVisual";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -45,7 +47,7 @@ module.exports = {
             
             body: JSON.stringify({ 
                 "filters": [tipoCriterio, "=", criterio],
-                "fields": "title, image.url, devstatus, description"
+                "fields": "title, image.url, devstatus, description, aliases, released, languages, platforms, length_minutes, rating, popularity"
             })
         };
 
@@ -60,48 +62,71 @@ module.exports = {
             })
         }
 
-        // console.log(resultado);
-
-        const id = resultado.id;
-        const vnURL = `https://vndb.org/${id}`;
-
-        const estados = ['FINALIZADA', 'EN DESARROLLO', 'CANCELADA'];
+        const vn = new NovelaVisual(resultado);
 
         const embed = new EmbedBuilder()
-            .setTitle(resultado.title)
-            .setURL(vnURL)
-            .setDescription(traducirSinopsis ?  await traducir(resultado.description) : resultado.description)
-            .setThumbnail(resultado.image.url)
-            .setColor(getColorEstado(estados[resultado.devstatus]));
+            .setTitle(vn.getTitulo())
+            .setURL(vn.getURL())
+            .setDescription(traducirSinopsis ?  await vn.getDescripcionTraducida() : vn.getDescripcion())
+            .setThumbnail(vn.getImagenURL())
+            .setColor(vn.getColorEstado());
     
-
         const informacionCampos1 = `
-            ‣ **Estado**: ${estados[resultado.devstatus]}
+            ‣ **Estado**: ${vn.getEstado()}\n‣ **Calificación**: ${vn.getCalificacion()}/100\n‣ **Popularidad**: ${vn.getPopularidad()}
         `;
 
-        embed.addFields({ name: "▽", value: informacionCampos1, inline: true })
+        const informacionCampos2 = `
+            ‣ **Fecha de Salida**: ${vn.getFecha().toLocaleDateString()}\n‣ **Duración**: ${vn.getDuracion() / 60}hrs
+        `;
+
+        embed.addFields(
+            { name: "▽", value: informacionCampos1, inline: true },
+            { name: "▽", value: informacionCampos2, inline: true }
+        )
+
+        let informacionCampoIdiomas = "";
+
+        const idiomas = vn.getIdiomas();
+
+        for (let i = 0; i < idiomas.length; i++) {
+            let nombreIdioma = ISO6391.getName(idiomas[i]);
+
+            if (nombreIdioma.trim() === '') {
+                nombreIdioma = idiomas[i];
+            } else {
+                nombreIdioma = await traducir(nombreIdioma);
+            }
+
+            informacionCampoIdiomas += "`" + nombreIdioma + "` ";
+        }
+
+        informacionCampoIdiomas = informacionCampoIdiomas.split(' ').join(' - ').trim();
+        informacionCampoIdiomas = informacionCampoIdiomas.substring(0, informacionCampoIdiomas.length - 2);
+
+        if (!informacionCampoIdiomas || informacionCampoIdiomas.length < 0) informacionCampoIdiomas = "`Desconocidos`";
+
+        embed
+            .addFields(
+                { name: "▿ Idiomas", value: informacionCampoIdiomas, inline: false }
+            )
+
+        let informacionCampoPlataformas = "";
+
+        const plataformas = vn.getPlataformas();
+
+        for (let i = 0; i < plataformas.length; i++) {
+            informacionCampoPlataformas += "`" + plataformas[i] + "` - "
+        }
+
+        informacionCampoPlataformas = informacionCampoPlataformas.substring(0, informacionCampoPlataformas.length - 3);
+
+        if (!informacionCampoPlataformas || informacionCampoPlataformas.length < 0) informacionCampoPlataformas = "`Desconocidos`"
+
+        embed
+            .addFields(
+                { name: "▿ Plataformas", value: informacionCampoPlataformas, inline: false }
+            );
     
         interaccion.editReply({ embeds: [embed] });
     }
-}
-
-const esNumero = (args: string) => {
-    return !(isNaN(+args) || isNaN(parseFloat(args)));
-}
-
-const traducir = async (args: string) => {
-    return await translate(args, "es");
-}
-
-const getColorEstado = (estado: string): ColorResolvable => {
-    let hex = "";
-
-    switch (estado) {
-        case "FINALIZADA": hex = "00D907"; break;
-        case "EN DESARROLLO": hex = "FFF700"; break;
-        case "CANCELADA": hex = "FF0000"; break;
-        default: hex = "000000"; break;
-    }
-
-    return ("#" + hex) as ColorResolvable;
 }
