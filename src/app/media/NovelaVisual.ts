@@ -1,5 +1,6 @@
 import { ColorResolvable } from "discord.js";
-import { traducir } from "../helpers";
+import { getStringSinHTML } from "../helpers";
+import ISO6391 from 'iso-639-1';
 
 export default class NovelaVisual {
     private _id: string;
@@ -20,18 +21,32 @@ export default class NovelaVisual {
     constructor (datos: DatosNovelaVisual) {
         this._id = datos.id;
         this._titulo = datos.title;
-        this._descripcion = datos.description;
+        this._descripcion = getStringSinHTML(datos.description);
         this._codigoEstado = datos.devstatus;
         this._estado = this.getEstado();
         this._URL = `https://vndb.org/${this._id}`;
         this._imagenURL = datos.image.url;
         this._aliases = datos.aliases;
         this._fecha = new Date(datos.released);
-        this._idiomas = datos.languages;
+        this._idiomas = this.getNombresIdiomas(datos.languages);
         this._plataformas = datos.platforms;
         this._duracion = datos.length_minutes;
         this._calificacion = datos.rating;
         this._popularidad = datos.popularity;
+    }
+
+    private getNombresIdiomas(idiomas: Array<string>): Array<string> {
+        const idiomasTraducidos = new Array<string>();
+
+        for (let i = 0; i < idiomas.length; i++) {
+            const nombreIdioma = ISO6391.getName(idiomas[i]);
+            
+            nombreIdioma.trim() === '' ?
+                idiomasTraducidos.push(idiomas[i]) :
+                idiomasTraducidos.push(nombreIdioma);
+        }
+
+        return idiomasTraducidos;
     }
 
     public getID(): string {
@@ -43,22 +58,7 @@ export default class NovelaVisual {
     }
 
     public getDescripcion(): string {
-        const descripcion: string = this._descripcion == null ? "?" : this._descripcion.trim()
-            .split("<br>").join("")
-            .split("</br>").join("")
-            .split("<i>").join("")
-            .split("</i>").join("")
-            .split("<b>").join("")
-            .split("</b>").join("")
-            .split("&ldquo;").join("*")
-            .split("&rdquo;").join("*")
-            .split("&rsquo;").join("'");
-
-        return descripcion.length <= 0 ? "?" : descripcion;
-    }
-
-    public async getDescripcionTraducida(): Promise<string> {
-        return await traducir(this.getDescripcion());
+        return this._descripcion;
     }
 
     public getEstado(): EstadoNovelaVisual {
