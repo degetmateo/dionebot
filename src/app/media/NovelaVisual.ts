@@ -1,6 +1,7 @@
 import { ColorResolvable } from "discord.js";
 import { getStringSinHTML } from "../helpers";
 import ISO6391 from 'iso-639-1';
+import { DatosNovelaVisual, EstadoNovelaVisual } from "../tipos/NovelaVisual";
 
 export default class NovelaVisual {
     private _id: string;
@@ -120,21 +121,3 @@ export default class NovelaVisual {
         return this._popularidad;
     }
 }
-
-type DatosNovelaVisual = {
-    id: string,
-    title: string,
-    description: string,
-    devstatus: number,
-    image: { url: string },
-    aliases: Array<string>,
-    released: Date,
-    languages: Array<string>,
-    platforms: Array<string>,
-    length_minutes: number,
-    rating: number,
-    popularity: number,
-    tags: Array<any>,
-}
-
-type EstadoNovelaVisual = 'FINALIZADA' | 'EN DESARROLLO' | 'CANCELADA' | 'DESCONOCIDO';

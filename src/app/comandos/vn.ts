@@ -1,10 +1,9 @@
-import { ChatInputCommandInteraction, Embed, SlashCommandBuilder } from "discord.js";
-import fetch from "node-fetch";
-import BOT from "../bot";
-
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { esNumero } from "../helpers";
 import NovelaVisual from "../media/NovelaVisual";
 import EmbedNovelaVisual from "../embeds/EmbedNovelaVisual";
+import { TipoCriterio } from "../tipos/PeticionNovelaVisual";
+import VisualNovelDatabaseAPI from "../apis/VisualNovelDatabaseAPI";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -21,40 +20,17 @@ module.exports = {
                 .setDescription('Indicar si la información obtenida debe traducirse al español.')),
 
     execute: async (interaccion: ChatInputCommandInteraction) => {
-        const bot = interaccion.client as BOT;
-
         await interaccion.deferReply();
 
         const criterio = interaccion.options.getString('nombre-o-id');
-
-        if (!criterio) throw new Error('No se ha encontrado el criterio de busqueda.');
+        if (!criterio) throw new Error('Ha ocurrido un error al obtener el criterio de busqueda.');
 
         const traducir = interaccion.options.getBoolean('traducir') || false;
         
-        let tipoCriterio: 'search' | 'id';
-
+        let tipoCriterio: TipoCriterio;
         esNumero(criterio) ? tipoCriterio = 'id' : tipoCriterio = 'search';
 
-        const apiURL = 'https://api.vndb.org/kana/vn';
-
-        const peticion = {
-            method: 'POST',
-            
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            
-            body: JSON.stringify({ 
-                "filters": [tipoCriterio, "=", criterio],
-                "fields": "title, image.url, devstatus, description, aliases, released, languages, platforms, length_minutes, rating, popularity"
-            })
-        };
-
-        const peticionVN = await fetch(apiURL, peticion);
-        const respuesta = await peticionVN.json();
-
-        const resultado = respuesta.results[0]
+        const resultado = await VisualNovelDatabaseAPI.FetchNovelaVisual(tipoCriterio, criterio);
 
         if (!resultado) {
             return interaccion.editReply({
@@ -63,9 +39,7 @@ module.exports = {
         }
 
         const vn = new NovelaVisual(resultado);
-        const embed = traducir ?
-            await EmbedNovelaVisual.CrearTraducido(vn) :
-            EmbedNovelaVisual.Crear(vn);
+        const embed = traducir ? await EmbedNovelaVisual.CrearTraducido(vn) : EmbedNovelaVisual.Crear(vn);
 
         interaccion.editReply({ embeds: [embed] });
     }
