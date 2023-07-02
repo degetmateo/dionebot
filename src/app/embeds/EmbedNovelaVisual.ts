@@ -35,6 +35,7 @@ export default class EmbedNovelaVisual extends EmbedBuilder {
             .setURL(vn.getURL())
             .setThumbnail(vn.getImagenURL())
             .setColor(vn.getColorEstado())
+            .setFooter({ text: vn.getAliases().join(' | ') });
 
         const informacionCampos1 = `
             ‣ **Estado**: ${vn.getEstado()}\n‣ **Calificación**: ${vn.getCalificacion()}/100\n‣ **Popularidad**: ${vn.getPopularidad()}
