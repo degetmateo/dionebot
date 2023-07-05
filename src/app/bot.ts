@@ -6,6 +6,10 @@ import Aniuser from "./modelos/Aniuser";
 import { uRegistrado } from "./types";
 
 import { version } from '../../package.json';
+import Embed from "./embeds/Embed";
+import ErrorGenerico from "./errores/ErrorGenerico";
+import ErrorSinResultados from "./errores/ErrorSinResultados";
+import ErrorArgumentoInvalido from "./errores/ErrorArgumentoInvalido";
 
 export default class BOT extends Client {
     private comandos: Collection<string, any>;
@@ -68,21 +72,24 @@ export default class BOT extends Client {
             const command = this.comandos.get(interaction.commandName);
 
             if (!command) {
-                console.error(`No command matching ${interaction.commandName} was found.`);
+                console.error(`🟨 | No se ha encontrado ningun comando con el nombre: ${interaction.commandName}`);
                 return;
             }
 
             try {
                 await command.execute(interaction);
-            } catch (err) {
-                console.error(err);
+            } catch (error) {
+                const esErrorCritico =
+                    !(error instanceof ErrorGenerico) &&
+                    !(error instanceof ErrorSinResultados) &&
+                    !(error instanceof ErrorArgumentoInvalido);
 
-                if (interaction.replied) {
-                    await interaction.editReply({
-                        content: "Ha ocurrido un error inesperado. Inténtalo de nuevo más tarde."
-                    })
-
-                    return;
+                if (!esErrorCritico) {
+                    interaction.editReply({ embeds: [Embed.CrearRojo(error.message)] });
+                } else {
+                    if (error instanceof Error) console.error('🟥 | ' + error.stack)
+                    else console.error('🟥 | ' + error);
+                    interaction.editReply({ embeds: [Embed.CrearRojo('Ha ocurrido un error. Inténtalo de nuevo más tarde.')] });
                 }
             }
         });

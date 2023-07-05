@@ -4,6 +4,8 @@ import NovelaVisual from "../media/NovelaVisual";
 import EmbedNovelaVisual from "../embeds/EmbedNovelaVisual";
 import { TipoCriterio } from "../tipos/PeticionNovelaVisual";
 import VisualNovelDatabaseAPI from "../apis/VisualNovelDatabaseAPI";
+import EmbedError from "../embeds/Embed";
+import SinResultadosError from "../errores/ErrorSinResultados";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -19,24 +21,17 @@ module.exports = {
                 .setName('traducir')
                 .setDescription('Indicar si la información obtenida debe traducirse al español.')),
 
-    execute: async (interaccion: ChatInputCommandInteraction) => {
+    execute: async (interaccion: ChatInputCommandInteraction): Promise<void> => {
         await interaccion.deferReply();
 
-        const criterio = interaccion.options.getString('nombre-o-id');
-        if (!criterio) throw new Error('Ha ocurrido un error al obtener el criterio de busqueda.');
-
-        const traducir = interaccion.options.getBoolean('traducir') || false;
+        const criterio: string = interaccion.options.getString('nombre-o-id') as string;
+        const traducir: boolean = interaccion.options.getBoolean('traducir') || false;
         
         let tipoCriterio: TipoCriterio;
         esNumero(criterio) ? tipoCriterio = 'id' : tipoCriterio = 'search';
 
         const resultado = await VisualNovelDatabaseAPI.FetchNovelaVisual(tipoCriterio, criterio);
-
-        if (!resultado) {
-            return interaccion.editReply({
-                content: 'No se han encontrado resultados.'
-            })
-        }
+        if (!resultado) throw new SinResultadosError('No se han encontrado resultados.');
 
         const vn = new NovelaVisual(resultado);
         const embed = traducir ? await EmbedNovelaVisual.CrearTraducido(vn) : EmbedNovelaVisual.Crear(vn);

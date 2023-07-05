@@ -3,55 +3,57 @@ import BOT from "../bot";
 import { Setup } from "../modulos/Setup";
 import { Usuarios } from "../modulos/Usuarios";
 import { UsuarioAnilist } from "../objetos/UsuarioAnilist";
+import EmbedError from "../embeds/Embed";
+import Plataforma from "../tipos/Plataforma";
+import Embed from "../embeds/Embed";
 import { uRegistrado } from "../types";
+import ArgumentoInvalidoError from "../errores/ErrorArgumentoInvalido";
+import SinResultadosError from "../errores/ErrorSinResultados";
+import ErrorGenerico from "../errores/ErrorGenerico";
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("setup")
-        .setDescription("Registra tu usuario de ANILIST en este servidor.")
+        .setDescription("Enlaza tu cuenta de una de estas plataformas.")
         .addStringOption(option => 
             option
-                .setName("username")
-                .setDescription("Tu nombre de usuario de ANILIST.")
+                .setName('plataforma')
+                .setDescription('Plataformas actualmente disponibles.')
+                .addChoices(
+                    { name: 'Anilist', value: 'Anilist' },
+                    { name: 'MyAnimeList', value: 'MyAnimeList' },
+                    { name: 'VisualNovelDatabase', value: 'VisualNovelDatabase' })
+                .setRequired(true))
+        .addStringOption(option =>
+            option
+                .setName('nombre-o-id')
+                .setDescription('Tu nombre o ID de usuario.')
                 .setRequired(true)),
 
-    execute: async (interaction: ChatInputCommandInteraction) => {
-        const bot = interaction.client as BOT;
-
+    execute: async (interaction: ChatInputCommandInteraction): Promise<void> => {
         await interaction.deferReply({ ephemeral: true });
+
+        const plataforma: Plataforma = interaction.options.getString('plataforma') as Plataforma;
+        const criterio: string = interaction.options.getString('nombre-o-id') as string;
+
+        if (plataforma === 'MyAnimeList' || plataforma === 'VisualNovelDatabase') throw new ArgumentoInvalidoError('La plataforma que has elegido no se encuentra disponible.');
         
-        const username = interaction.options.getString("username", true);
-        const serverID = interaction.guild?.id  != null ? interaction.guild?.id : "";
+        const bot = interaction.client as BOT;
+    
+        const serverID = interaction.guild?.id as string;
         const userID = interaction.user.id;
 
         const uRegistrados = bot.getUsuariosRegistrados(serverID);
         const uRegistrado = uRegistrados.find(u => u.discordId === userID);
     
-        if (uRegistrado) {
-            return interaction.editReply({
-                content: "Ya te encuentras registrado."
-            })
-        }
+        if (uRegistrado) throw new ErrorGenerico('Ya te encuentras registrado.');
 
-        const anilistUser = await Usuarios.BuscarUsuario(serverID, username);
-        
-        if (!anilistUser) {
-            return interaction.editReply({
-                content: "No se ha encontrado ese usuario en ANILIST."
-            })
-        }
+        const anilistUser = await Usuarios.BuscarUsuario(serverID, criterio);
+        if (!anilistUser) throw new SinResultadosError("No se ha encontrado a ese usuario en anilist.");
 
         const usuario = new UsuarioAnilist(anilistUser);
 
-        try {
-            await Setup.SetupUsuario(usuario, serverID, userID);
-        } catch (err) {
-            console.error(err);
-            
-            return interaction.editReply({
-                content: "Ha ocurrido un error al intentar registrarte. Intentalo más tarde.",
-            })
-        }
+        await Setup.SetupUsuario(usuario, serverID, userID);
 
         const newUsuarioRegistrado: uRegistrado = {
             discordId: userID,
@@ -62,8 +64,8 @@ module.exports = {
 
         bot.insertarUsuario(newUsuarioRegistrado);
 
-        return interaction.editReply({
-            content: "Listo! Ya estás registrado.",
+        interaction.editReply({
+            embeds: [Embed.CrearRojo("Listo! Te has registrado con éxito.")]
         })
     }
 }

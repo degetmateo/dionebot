@@ -13,4 +13,4 @@ type sharedMedia = {
 
 type MediaStatus = "FINISHED" | "RELEASING" | "NOT_YET_RELEASED" | "CANCELLED" | "HIATUS" | "UNKNOWN";
 
-export { uRegistrado, sharedMedia, MediaStatus };
+export { sharedMedia, MediaStatus, uRegistrado };

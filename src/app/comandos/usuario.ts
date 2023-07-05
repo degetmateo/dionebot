@@ -1,7 +1,8 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, ColorResolvable } from "discord.js";
-import toHex from 'colornames';
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Usuarios } from "../modulos/Usuarios";
 import { UsuarioAnilist } from "../objetos/UsuarioAnilist";
+import SinResultadosError from "../errores/ErrorSinResultados";
+import EmbedUsuario from "../embeds/EmbedUsuario";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -12,59 +13,24 @@ module.exports = {
                 .setName("usuario")
                 .setDescription("El usuario del que se solicita la información.")),
 
-    execute: async (interaction: ChatInputCommandInteraction) => {
-        const usuario = interaction.options.getUser("usuario");
-        const idServidor = interaction.guild?.id;
-
-        if (!idServidor) {
-            throw new Error('No se ha podido obtener la ID del servidor.');
-        }
-
-        if (!interaction) {
-            throw new Error('Interaccion desconocida.');
-        }
-
+    execute: async (interaction: ChatInputCommandInteraction): Promise<void> => {
         await interaction.deferReply();
+
+        const usuario = interaction.options.getUser("usuario");
+        const idServidor = interaction.guild?.id as string;
 
         let usuarioAnilist: UsuarioAnilist;
 
         if (!usuario) {
             usuarioAnilist = new UsuarioAnilist(await Usuarios.BuscarUsuario(idServidor, interaction.user.id));
+            if (!usuarioAnilist.getData()) throw new SinResultadosError('No se ha encontrado tu usuario.');
         } else {
             usuarioAnilist = new UsuarioAnilist(await Usuarios.BuscarUsuario(idServidor, usuario.id));
-        }
+            if (!usuarioAnilist.getData()) throw new SinResultadosError('No se ha encontrado al usuario.');
+        }        
 
-        if (!usuarioAnilist.getData()) {
-            return interaction.editReply({
-                content: "No se ha encontrado al usuario.",
-            })
-        }
-
-        const hexColor = toHex.get(usuarioAnilist.getColorName()).value;
-        const stats = usuarioAnilist.getEstadisticas();
-        
-        const embed = new EmbedBuilder()
-            .setTitle(usuarioAnilist.getNombre())
-            .setURL(usuarioAnilist.getURL())
-            .setColor(hexColor as ColorResolvable)
-            .setThumbnail(usuarioAnilist.getAvatarURL())
-            .setImage(usuarioAnilist.getBannerImage())
-            .setDescription(usuarioAnilist.getBio())
-            .addFields(
-                { 
-                    name: "Animes",
-                    value: `‣ Vistos: ${stats.anime.count}\n‣ Nota Promedio: ${stats.anime.meanScore}\n‣ Días Vistos: ${((stats.anime.minutesWatched / 60) / 24).toFixed()}\n‣ Episodios Totales: ${stats.anime.episodesWatched}`,
-                    inline: false
-                },
-                { 
-                    name: "Mangas",
-                    value: `‣ Leídos: ${stats.manga.count}\n‣ Nota Promedio: ${stats.manga.meanScore}\n‣ Capítulos Leídos: ${stats.manga.chaptersRead}\n‣ Volúmenes Leídos: ${stats.manga.volumesRead}`,
-                    inline: false
-                },
-            );
-
-        return interaction.editReply({
-            embeds: [embed]
+        interaction.editReply({
+            embeds: [EmbedUsuario.Crear(usuarioAnilist)]
         })
     }
 }

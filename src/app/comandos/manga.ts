@@ -2,6 +2,8 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import BOT from "../bot";
 import { Media } from "../modulos/Media";
 import { Embeds } from "../modulos/Embeds";
+import ErrorGenerico from "../errores/ErrorGenerico";
+import ErrorSinResultados from "../errores/ErrorSinResultados";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -18,48 +20,22 @@ module.exports = {
                 .setDescription('Si deseas traducir la sinopsis. (Traductor de Google)')),
     
     execute: async (interaccion: ChatInputCommandInteraction) => {
-        const bot = interaccion.client as BOT;
-
-        const traducir = interaccion.options.getBoolean("traducir") ? true : false;
-
-        const idServidor = interaccion.guild?.id;
-
-        if (!idServidor) {
-            return interaccion.reply({
-                content: "Ha ocurrido un error.",
-                ephemeral: true
-            });
-        }
-
-        if (bot.isSearchingMedia(idServidor)) {
-            return interaccion.reply({
-                content: "Ya se está buscando otra obra en este momento.",
-                ephemeral: true
-            });
-        }
-
         await interaccion.deferReply();
 
+        const bot: BOT = interaccion.client as BOT;
+        const criterio: string = interaccion.options.getString('nombre-o-id') as string;
+        const traducir: boolean = interaccion.options.getBoolean("traducir") || false;
+        const idServidor: string = interaccion.guild?.id as string;
+
+        if (bot.isSearchingMedia(idServidor)) throw new ErrorGenerico("Ya se está buscando otra cosa en este momento. Espere hasta que finalice la busqueda.");
+
         bot.setSearchingMedia(idServidor, true);
-
-        const criterio = interaccion.options.getString('nombre-o-id');
-
-        if (!criterio) {
-            bot.setSearchingMedia(idServidor, false);
-
-            return interaccion.editReply({
-                content: 'Ha ocurrido un error.',
-            })
-        }
 
         const media = await Media.BuscarMedia('MANGA', criterio);
 
         if (!media) {
             bot.setSearchingMedia(idServidor, false);
-
-            return interaccion.editReply({
-                content: "No se han encontrado resultados."
-            })
+            throw new ErrorSinResultados('No se han encontrado resultados.');
         }
 
         try {
@@ -68,7 +44,7 @@ module.exports = {
             bot.setSearchingMedia(idServidor, false);       
         } catch (error) {
             bot.setSearchingMedia(idServidor, false);
-            console.error(error);   
+            throw error;
         }
     }
 }

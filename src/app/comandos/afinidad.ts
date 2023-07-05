@@ -1,9 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import BOT from "../bot";
-import { Afinidad } from "../modulos/Afinidad";
-import { Usuarios } from "../modulos/Usuarios";
-import { UsuarioAnilist } from "../objetos/UsuarioAnilist";
-import { Embeds } from "../modulos/Embeds";
+import Embed from "../embeds/Embed";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,11 +11,9 @@ module.exports = {
                 .setDescription("Usuario del que quieres calcular la afinidad.")),
 
     execute: async (interaction: ChatInputCommandInteraction) => {
-        const bot = interaction.client as BOT;
-
-        return interaction.reply({
-            content: 'Comando actualmente en mantenimiento.',
-            ephemeral: true
+        interaction.reply({
+            ephemeral: true,
+            embeds: [Embed.CrearRojo('Este comando se encuentra temporalmente deshabilitado.')]
         })
 
         /*const serverID = interaction.guild?.id;

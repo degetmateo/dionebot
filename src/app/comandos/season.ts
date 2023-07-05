@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import BOT from "../bot";
 import { Media } from "../modulos/Media";
+import ErrorSinResultados from "../errores/ErrorSinResultados";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -21,55 +21,34 @@ module.exports = {
                             { name: "OTOÑO", value: "FALL" })
                 .setRequired(true)),
 
-    execute: async (interaction: ChatInputCommandInteraction) => {
-        const bot = interaction.client as BOT;
-
-        const seasonYear = interaction.options.getInteger("año");
-        const season = interaction.options.getString("temporada");
-
-        if (!seasonYear || !season) {
-            return interaction.reply({
-                content: "Ha ocurrido un error.",
-                ephemeral: true
-            })
-        }
-
+    execute: async (interaction: ChatInputCommandInteraction): Promise<void> => {
         await interaction.deferReply();
 
-        try {
-            const animes = await Media.BuscarMediaPorTemporada(seasonYear, season);
+        const seasonYear: number = interaction.options.getInteger("año") as number;
+        const season: string = interaction.options.getString("temporada") as string;
+
+        const animes = await Media.BuscarMediaPorTemporada(seasonYear, season);
+        
+        console.log(animes);
+        console.log(animes.length);
+
+        if (!animes || animes.length <= 0) throw new ErrorSinResultados('No hay animes disponibles para esa temporada.');
+
+        const embed = new EmbedBuilder()
+            .setTitle(`${season} ${seasonYear}`);
+
+        let description = "";
+
+        for (let i = 0; i < animes.length; i++) {
+            if (description.length >= 4000) break;
+
+            const nombre = animes[i].title.english ? animes[i].title.english : animes[i].title.romaji;
             
-            console.log(animes);
-            console.log(animes.length);
-
-            if (!animes || animes.length <= 0) {
-                return interaction.editReply({
-                    content: "No hay animes disponibles para esa temporada."
-                })
-            }
-
-            const embed = new EmbedBuilder()
-                .setTitle(`${season} ${seasonYear}`);
-
-            let description = "";
-
-            for (let i = 0; i < animes.length; i++) {
-                if (description.length >= 4000) break;
-
-                const nombre = animes[i].title.english ? animes[i].title.english : animes[i].title.romaji;
-                
-                description += `▸ ${nombre}\n`;
-            }
-
-            embed.setDescription(description);
-
-            return interaction.editReply({ embeds: [embed] });
-        } catch (err) {
-            console.error(err);
-
-            return interaction.editReply({
-                content: "Ha ocurrido un error. Inténtalo más tarde."
-            })
+            description += `▸ ${nombre}\n`;
         }
+
+        embed.setDescription(description);
+
+        interaction.editReply({ embeds: [embed] });
     }
 }
