@@ -65,7 +65,7 @@ module.exports = {
         bot.insertarUsuario(newUsuarioRegistrado);
 
         interaction.editReply({
-            embeds: [Embed.CrearRojo("Listo! Te has registrado con éxito.")]
+            embeds: [Embed.CrearVerde("Listo! Te has registrado con éxito.")]
         })
     }
 }
