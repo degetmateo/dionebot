@@ -1,4 +1,4 @@
-import Helpers from "../src/app/Helpers";
+import Helpers from "../src/app/helpers";
 
 describe('HELPERS', () => {
     describe('Helpers.esNumero', () => {

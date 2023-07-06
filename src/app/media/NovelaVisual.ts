@@ -1,5 +1,5 @@
 import { ColorResolvable } from "discord.js";
-import Helpers from "../Helpers";
+import Helpers from "../helpers";
 import ISO6391 from 'iso-639-1';
 import { DatosNovelaVisual, EstadoNovelaVisual } from "../tipos/NovelaVisual";
 

@@ -1,10 +1,9 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import Helpers from "../Helpers";
+import Helpers from "../helpers";
 import NovelaVisual from "../media/NovelaVisual";
 import EmbedNovelaVisual from "../embeds/EmbedNovelaVisual";
 import { TipoCriterio } from "../tipos/PeticionNovelaVisual";
 import VisualNovelDatabaseAPI from "../apis/VisualNovelDatabaseAPI";
-import EmbedError from "../embeds/Embed";
 import SinResultadosError from "../errores/ErrorSinResultados";
 
 module.exports = {
