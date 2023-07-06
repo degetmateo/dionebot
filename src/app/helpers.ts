@@ -1,31 +1,33 @@
 const translate = require('translate');
 
-const esNumero = (args: string) => {
-    return !(isNaN(+args) || isNaN(parseFloat(args)));
-}
+export default class Helpers {
+    private static readonly LENGUAJE_TRADUCCION: string = 'es';
+    private static readonly REGEX_CADENA_SIN_HTML: RegExp = /(<([^>]+)>|&\w+;)/gi;
 
-const traducir = async (args: string) => {
-    return await translate(args, "es");
-}
-
-const traducirElementosArreglo = async (elementos: Array<string>): Promise<Array<string>> => {
-    const elementosTraducidos = new Array<string>();
-
-    for (let i = 0; i < elementos.length; i++) {
-        try {
-            elementosTraducidos.push(await traducir(elementos[i]));   
-        } catch (error) {
-            elementosTraducidos.push(elementos[i]);
-            continue;
-        }
+    public static async traducir (texto: string): Promise<string> {
+        return await translate(texto, this.LENGUAJE_TRADUCCION);
     }
 
-    return elementosTraducidos;
-}
+    public static async traducirElementosArreglo (elementos: Array<string>): Promise<Array<string>> {
+        const elementosTraducidos = new Array<string>();
 
-const getStringSinHTML = (stringHTML: string): string => {
-    const regex = /(<([^>]+)>|&\w+;)/gi;
-    return stringHTML.replace(regex, '');
-}
+        for (let i = 0; i < elementos.length; i++) {
+            try {
+                elementosTraducidos.push(await this.traducir(elementos[i]));   
+            } catch (error) {
+                elementosTraducidos.push(elementos[i]);
+                continue;
+            }
+        }
+    
+        return elementosTraducidos;
+    }
 
-export { esNumero, traducir, getStringSinHTML, traducirElementosArreglo };
+    public static esNumero (args: string) {
+        return !(isNaN(+args) || isNaN(parseFloat(args)));
+    }
+
+    public static eliminarEtiquetasHTML (cadena: string) {
+        return cadena.replace(this.REGEX_CADENA_SIN_HTML, '');
+    }
+}

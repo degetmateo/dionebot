@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import { traducir, traducirElementosArreglo } from "../helpers";
+import Helpers from "../Helpers";
 
 import NovelaVisual from "../media/NovelaVisual";
 
@@ -20,10 +20,10 @@ export default class EmbedNovelaVisual extends EmbedBuilder {
 
     public static async CrearTraducido(vn: NovelaVisual): Promise<EmbedNovelaVisual> {
         const embed = this.CrearEmbedBasico(vn)
-            .setDescription(await traducir(vn.getDescripcion()));
+            .setDescription(await Helpers.traducir(vn.getDescripcion()));
 
 
-        this.setCampoIdiomas(embed, await traducirElementosArreglo(vn.getIdiomas()));
+        this.setCampoIdiomas(embed, await Helpers.traducirElementosArreglo(vn.getIdiomas()));
         this.setCampoPlataformas(embed, vn.getPlataformas());
 
         return embed;

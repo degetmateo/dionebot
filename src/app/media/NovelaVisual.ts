@@ -1,5 +1,5 @@
 import { ColorResolvable } from "discord.js";
-import { getStringSinHTML } from "../helpers";
+import Helpers from "../Helpers";
 import ISO6391 from 'iso-639-1';
 import { DatosNovelaVisual, EstadoNovelaVisual } from "../tipos/NovelaVisual";
 
@@ -22,7 +22,7 @@ export default class NovelaVisual {
     constructor (datos: DatosNovelaVisual) {
         this._id = datos.id;
         this._titulo = datos.title;
-        this._descripcion = getStringSinHTML(datos.description);
+        this._descripcion = Helpers.eliminarEtiquetasHTML(datos.description);
         this._codigoEstado = datos.devstatus;
         this._estado = this.getEstado();
         this._URL = `https://vndb.org/${this._id}`;

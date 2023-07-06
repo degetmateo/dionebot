@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { esNumero } from "../helpers";
+import Helpers from "../Helpers";
 import NovelaVisual from "../media/NovelaVisual";
 import EmbedNovelaVisual from "../embeds/EmbedNovelaVisual";
 import { TipoCriterio } from "../tipos/PeticionNovelaVisual";
@@ -28,7 +28,7 @@ module.exports = {
         const traducir: boolean = interaccion.options.getBoolean('traducir') || false;
         
         let tipoCriterio: TipoCriterio;
-        esNumero(criterio) ? tipoCriterio = 'id' : tipoCriterio = 'search';
+        Helpers.esNumero(criterio) ? tipoCriterio = 'id' : tipoCriterio = 'search';
 
         const resultado = await VisualNovelDatabaseAPI.FetchNovelaVisual(tipoCriterio, criterio);
         if (!resultado) throw new SinResultadosError('No se han encontrado resultados.');
