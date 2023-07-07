@@ -21,30 +21,34 @@ export default class EmbedUsuario extends EmbedBuilder {
                 { 
                     name: "Animes",
                     value: `
-                    Se vió **\`${estadisticas.anime.count}\`** animes.
-                    Su nota promedio es de **\`${estadisticas.anime.meanScore}\`**.
-                    Sus días de animes vistos son **\`${((estadisticas.anime.minutesWatched / 60) / 24).toFixed()}\`**.
-                    La cantidad de episodios que vió es de **\`${estadisticas.anime.episodesWatched}\`**.
-                    Su desviación estándar es de **\`${estadisticas.anime.standardDeviation}\`**.
-                    Sus géneros preferidos son:
-                    **\`${usuario.obtenerGenerosPreferidosAnime(5).map(g => g.genre).join('`** - **`')}\`**
-                    Sus animes favoritos son:
-                    **\`${usuario.obtenerAnimesFavoritos().map(anime => anime.title.romaji || anime.title.english || anime.title.native || 'Desconocidos').join('`** - **`')}\`**
+Se vió **\`${estadisticas.anime.count}\`** animes.
+Su nota promedio es de **\`${estadisticas.anime.meanScore}\`**.
+Sus días de animes vistos son **\`${((estadisticas.anime.minutesWatched / 60) / 24).toFixed()}\`**.
+La cantidad de episodios que vió es de **\`${estadisticas.anime.episodesWatched}\`**.
+Su desviación estándar es de **\`${estadisticas.anime.standardDeviation}\`**.
+
+Sus géneros preferidos son:
+**\`${usuario.obtenerGenerosPreferidosAnime(5).map(g => g.genre).join('`** - **`')}\`**
+
+Sus animes favoritos son:
+**\`${usuario.obtenerAnimesFavoritos().map(anime => anime.title.romaji || anime.title.english || anime.title.native || 'Desconocidos').join('`** - **`')}\`**
                     `,
                     inline: false
                 },
                 { 
                     name: "Mangas",
                     value: `
-                    Se leyó **\`${estadisticas.manga.count}\`** mangas.
-                    Su nota promedio es de **\`${estadisticas.manga.meanScore}\`**.
-                    Su cantidad de capítulos leídos es de **\`${estadisticas.manga.chaptersRead}\`**.
-                    Su cantidad de volúmenes leídos es de **\`${estadisticas.manga.volumesRead}\`**.
-                    Su desviación estándar es de **\`${estadisticas.manga.standardDeviation}\`**.
-                    Sus géneros preferidos son:
-                    **\`${usuario.obtenerGenerosPreferidosManga(5).map(g => g.genre).join('`** - **`')}\`**
-                    Sus mangas favoritos son:
-                    **\`${usuario.obtenerMangasFavoritos().map(manga => manga.title.romaji || manga.title.english || manga.title.native || 'Desconocidos').join('`** - **`')}\`**
+Se leyó **\`${estadisticas.manga.count}\`** mangas.
+Su nota promedio es de **\`${estadisticas.manga.meanScore}\`**.
+Su cantidad de capítulos leídos es de **\`${estadisticas.manga.chaptersRead}\`**.
+Su cantidad de volúmenes leídos es de **\`${estadisticas.manga.volumesRead}\`**.
+Su desviación estándar es de **\`${estadisticas.manga.standardDeviation}\`**.
+
+Sus géneros preferidos son:
+**\`${usuario.obtenerGenerosPreferidosManga(5).map(g => g.genre).join('`** - **`')}\`**
+
+Sus mangas favoritos son:
+**\`${usuario.obtenerMangasFavoritos().map(manga => manga.title.romaji || manga.title.english || manga.title.native || 'Desconocidos').join('`** - **`')}\`**
                     `,
                     inline: false
                 }
