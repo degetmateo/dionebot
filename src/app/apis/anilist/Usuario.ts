@@ -1,4 +1,5 @@
-import { UserStatsProfile } from 'anilist-node';
+import { UserStatsProfile, UserStats, AnimeUserGenres, MangaUserGenres, MediaRelation, PersonRelation } from 'anilist-node';
+import toHex from 'colornames';
 import Helpers from '../../helpers';
 import { ColorResolvable } from 'discord.js';
 
@@ -22,7 +23,7 @@ export default class Usuario {
     }
 
     public obtenerBio (): string {
-        return Helpers.eliminarEtiquetasHTML(this.usuario.about);
+        return Helpers.eliminarEtiquetasHTML(this.usuario.about || '');
     }
 
     public obtenerAvatarURL (): string {
@@ -34,6 +35,35 @@ export default class Usuario {
     }
 
     public obtenerColor (): ColorResolvable {
-        return this.usuario.options.profileColor as ColorResolvable;
+        return toHex(this.usuario.options.profileColor) as ColorResolvable;
+    }
+
+    public obtenerEstadisticas (): UserStats {
+        return this.usuario.statistics;
+    }
+
+    public obtenerGenerosPreferidosAnime (cantidad: number | null): Array<AnimeUserGenres> {
+        const generos = this.obtenerEstadisticas().anime.genres;
+        const generosOrdenados = generos.sort((a: AnimeUserGenres, b: AnimeUserGenres) => b.count - a.count);
+        return cantidad ? generosOrdenados.slice(0, cantidad) : generosOrdenados;
+    }
+
+    public obtenerGenerosPreferidosManga (cantidad: number | null): Array<MangaUserGenres> {
+        const generos = this.obtenerEstadisticas().manga.genres;
+        const generosOrdenados = generos.sort((a: MangaUserGenres, b: MangaUserGenres) => b.count - a.count);
+        return cantidad ? generosOrdenados.slice(0, cantidad) : generosOrdenados;
+    }
+
+    public obtenerAnimesFavoritos (): Array<MediaRelation> {
+        return this.usuario.favourites.anime;
+    }
+
+    public obtenerMangasFavoritos (): Array<MediaRelation> {
+        return this.usuario.favourites.manga;
+    }
+
+    public obtenerPersonajesFavoritos (): Array<PersonRelation> {
+        const favoritos: any = this.usuario.favourites; 
+        return favoritos.characters;
     }
 }

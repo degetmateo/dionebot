@@ -3,6 +3,10 @@ import { Usuarios } from "../modulos/Usuarios";
 import { UsuarioAnilist } from "../objetos/UsuarioAnilist";
 import SinResultadosError from "../errores/ErrorSinResultados";
 import EmbedUsuario from "../embeds/EmbedUsuario";
+import Aniuser from "../modelos/Aniuser";
+import ErrorSinResultados from "../errores/ErrorSinResultados";
+import Usuario from "../apis/anilist/Usuario";
+import AnilistAPI from "../apis/AnilistAPI";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -16,18 +20,13 @@ module.exports = {
     execute: async (interaction: ChatInputCommandInteraction): Promise<void> => {
         await interaction.deferReply();
 
-        const usuario = interaction.options.getUser("usuario");
+        const idUsuario = interaction.options.getUser("usuario")?.id || interaction.user.id;
         const idServidor = interaction.guild?.id as string;
 
-        let usuarioAnilist: UsuarioAnilist;
+        const usuarioRegistrado = await Aniuser.findOne({ serverId: idServidor, discordId: idUsuario });
+        if (!usuarioRegistrado) throw new ErrorSinResultados('El usuario especificado no esta registrado.');
 
-        if (!usuario) {
-            usuarioAnilist = new UsuarioAnilist(await Usuarios.BuscarUsuario(idServidor, interaction.user.id));
-            if (!usuarioAnilist.getData()) throw new SinResultadosError('No se ha encontrado tu usuario.');
-        } else {
-            usuarioAnilist = new UsuarioAnilist(await Usuarios.BuscarUsuario(idServidor, usuario.id));
-            if (!usuarioAnilist.getData()) throw new SinResultadosError('No se ha encontrado al usuario.');
-        }        
+        const usuarioAnilist: Usuario = await AnilistAPI.obtenerUsuario(parseInt(usuarioRegistrado.anilistId as string));  
 
         interaction.editReply({
             embeds: [EmbedUsuario.Crear(usuarioAnilist)]
