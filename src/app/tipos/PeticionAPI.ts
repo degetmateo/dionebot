@@ -1,5 +1,5 @@
 export type PeticionAPI = {
-    method: TipoPeticion,
+    method: TipoConsulta,
     
     headers: {
         'Content-Type': 'application/json',
@@ -9,4 +9,4 @@ export type PeticionAPI = {
     body: string
 }
 
-type TipoPeticion = 'GET' | 'POST';
+export type TipoConsulta = 'GET' | 'POST';

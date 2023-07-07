@@ -34,7 +34,6 @@ export default class EmbedNovelaVisual extends EmbedBuilder {
             .setTitle(vn.getTitulo())
             .setURL(vn.getURL())
             .setThumbnail(vn.getImagenURL())
-            .setColor(vn.getColorEstado())
             .setFooter({ text: vn.getAliases().join(' | ') });
 
         const informacionCampos1 = `
@@ -46,8 +45,8 @@ export default class EmbedNovelaVisual extends EmbedBuilder {
         `;
 
         embed.addFields(
-            { name: "▽", value: informacionCampos1, inline: true },
-            { name: "▽", value: informacionCampos2, inline: true }
+            { name: "▾", value: informacionCampos1, inline: true },
+            { name: "▾", value: informacionCampos2, inline: true }
         )
 
         return embed;

@@ -1,15 +1,15 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import BOT from "../bot";
 import { Setup } from "../modulos/Setup";
-import { Usuarios } from "../modulos/Usuarios";
 import { UsuarioAnilist } from "../objetos/UsuarioAnilist";
-import EmbedError from "../embeds/Embed";
 import Plataforma from "../tipos/Plataforma";
 import Embed from "../embeds/Embed";
 import { uRegistrado } from "../types";
 import ArgumentoInvalidoError from "../errores/ErrorArgumentoInvalido";
 import SinResultadosError from "../errores/ErrorSinResultados";
 import ErrorGenerico from "../errores/ErrorGenerico";
+import AnilistAPI from "../apis/AnilistAPI";
+import Usuario from "../apis/anilist/Usuario";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -48,18 +48,16 @@ module.exports = {
     
         if (uRegistrado) throw new ErrorGenerico('Ya te encuentras registrado.');
 
-        const anilistUser = await Usuarios.BuscarUsuario(serverID, criterio);
-        if (!anilistUser) throw new SinResultadosError("No se ha encontrado a ese usuario en anilist.");
-
-        const usuario = new UsuarioAnilist(anilistUser);
+        const usuario: Usuario = await AnilistAPI.obtenerUsuario(criterio);
+        if (!usuario) throw new SinResultadosError("No se ha encontrado a ese usuario en anilist.");
 
         await Setup.SetupUsuario(usuario, serverID, userID);
 
         const newUsuarioRegistrado: uRegistrado = {
             discordId: userID,
             serverId: serverID,
-            anilistUsername: usuario.getNombre(),
-            anilistId: usuario.getID()
+            anilistUsername: usuario.obtenerNombre(),
+            anilistId: usuario.obtenerID().toString()
         }
 
         bot.insertarUsuario(newUsuarioRegistrado);

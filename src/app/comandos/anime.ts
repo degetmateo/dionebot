@@ -1,9 +1,11 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import BOT from "../bot";
-import { Media } from "../modulos/Media";
-import { Embeds } from "../modulos/Embeds";
-import ErrorGenerico from "../errores/ErrorGenerico";
+import { AnimeEntry } from 'anilist-node';
 import ErrorSinResultados from "../errores/ErrorSinResultados";
+import AnilistAPI from "../apis/AnilistAPI";
+import Helpers from "../helpers";
+import Anime from "../media/Anime";
+import EmbedAnime from "../embeds/EmbedAnime";
+import ErrorArgumentoInvalido from "../errores/ErrorArgumentoInvalido";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -22,29 +24,26 @@ module.exports = {
     execute: async (interaccion: ChatInputCommandInteraction) => {
         await interaccion.deferReply();
 
-        const bot: BOT = interaccion.client as BOT;
         const criterio: string = interaccion.options.getString('nombre-o-id') as string;
         const traducir: boolean = interaccion.options.getBoolean("traducir") || false;
-        const idServidor: string = interaccion.guild?.id as string;
 
-        if (bot.isSearchingMedia(idServidor)) throw new ErrorGenerico("Ya se está buscando otra cosa en este momento. Espere hasta que finalice la busqueda.");
+        const esID = Helpers.esNumero(criterio);
+        let resultado: AnimeEntry;
 
-        bot.setSearchingMedia(idServidor, true);
-
-        const media = await Media.BuscarMedia('ANIME', criterio);
-
-        if (!media) {
-            bot.setSearchingMedia(idServidor, false);
-            throw new ErrorSinResultados('No se han encontrado resultados.');
+        if (esID) {
+            const animeID = parseInt(criterio);
+            if (animeID < 0 || animeID > 2_147_483_647) throw new ErrorArgumentoInvalido('La ID que has ingresado no es valida.');
+            resultado = await AnilistAPI.obtenerAnimeID(parseInt(criterio));
+            if (!resultado) throw new ErrorSinResultados('No se ha encontrado un anime con ese ID.');
+        } else {
+            const primerResultado = (await AnilistAPI.buscarAnime(criterio)).media[0];
+            if (!primerResultado) throw new ErrorSinResultados('No se han encontrado resultados.');
+            resultado = await AnilistAPI.obtenerAnimeID(primerResultado.id);
         }
 
-        try {
-            const embedInformacion = await Embeds.EmbedInformacionMedia(interaccion, media, traducir);
-            interaccion.editReply({ embeds: [embedInformacion] });
-            bot.setSearchingMedia(idServidor, false);       
-        } catch (error) {
-            bot.setSearchingMedia(idServidor, false);
-            throw error; 
-        }
+        const anime: Anime = new Anime(resultado);
+        const embed = traducir ? await EmbedAnime.CrearTraducido(anime) : EmbedAnime.Crear(anime);
+
+        interaccion.editReply({ embeds: [embed] });
     }
 }

@@ -1,9 +1,11 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import BOT from "../bot";
-import { Media } from "../modulos/Media";
-import { Embeds } from "../modulos/Embeds";
-import ErrorGenerico from "../errores/ErrorGenerico";
+import { MangaEntry } from 'anilist-node';
 import ErrorSinResultados from "../errores/ErrorSinResultados";
+import Helpers from "../helpers";
+import AnilistAPI from "../apis/AnilistAPI";
+import ErrorArgumentoInvalido from "../errores/ErrorArgumentoInvalido";
+import Manga from "../media/Manga";
+import EmbedManga from "../embeds/EmbedManga";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -22,29 +24,26 @@ module.exports = {
     execute: async (interaccion: ChatInputCommandInteraction) => {
         await interaccion.deferReply();
 
-        const bot: BOT = interaccion.client as BOT;
         const criterio: string = interaccion.options.getString('nombre-o-id') as string;
         const traducir: boolean = interaccion.options.getBoolean("traducir") || false;
-        const idServidor: string = interaccion.guild?.id as string;
 
-        if (bot.isSearchingMedia(idServidor)) throw new ErrorGenerico("Ya se está buscando otra cosa en este momento. Espere hasta que finalice la busqueda.");
+        const esID = Helpers.esNumero(criterio);
+        let resultado: MangaEntry;
 
-        bot.setSearchingMedia(idServidor, true);
-
-        const media = await Media.BuscarMedia('MANGA', criterio);
-
-        if (!media) {
-            bot.setSearchingMedia(idServidor, false);
-            throw new ErrorSinResultados('No se han encontrado resultados.');
+        if (esID) {
+            const mangaID = parseInt(criterio);
+            if (mangaID < 0 || mangaID > 2_147_483_647) throw new ErrorArgumentoInvalido('La ID que has ingresado no es valida.');
+            resultado = await AnilistAPI.obtenerMangaID(mangaID);
+            if (!resultado) throw new ErrorSinResultados('No se ha encontrado un anime con ese ID.');
+        } else {
+            const primerResultado = (await AnilistAPI.buscarManga(criterio)).media[0];
+            if (!primerResultado) throw new ErrorSinResultados('No se han encontrado resultados.');
+            resultado = await AnilistAPI.obtenerMangaID(primerResultado.id);
         }
 
-        try {
-            const embedInformacion = await Embeds.EmbedInformacionMedia(interaccion, media, traducir);
-            interaccion.editReply({ embeds: [embedInformacion] });
-            bot.setSearchingMedia(idServidor, false);       
-        } catch (error) {
-            bot.setSearchingMedia(idServidor, false);
-            throw error;
-        }
+        const manga: Manga = new Manga(resultado);
+        const embed = traducir ? await EmbedManga.CrearTraducido(manga) : EmbedManga.Crear(manga);
+
+        interaccion.editReply({ embeds: [embed] });
     }
 }

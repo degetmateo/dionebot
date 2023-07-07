@@ -4,7 +4,7 @@ import NovelaVisual from "../media/NovelaVisual";
 import EmbedNovelaVisual from "../embeds/EmbedNovelaVisual";
 import { TipoCriterio } from "../tipos/PeticionNovelaVisual";
 import VisualNovelDatabaseAPI from "../apis/VisualNovelDatabaseAPI";
-import SinResultadosError from "../errores/ErrorSinResultados";
+import ErrorSinResultados from "../errores/ErrorSinResultados";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -29,8 +29,8 @@ module.exports = {
         let tipoCriterio: TipoCriterio;
         Helpers.esNumero(criterio) ? tipoCriterio = 'id' : tipoCriterio = 'search';
 
-        const resultado = await VisualNovelDatabaseAPI.FetchNovelaVisual(tipoCriterio, criterio);
-        if (!resultado) throw new SinResultadosError('No se han encontrado resultados.');
+        const resultado = await VisualNovelDatabaseAPI.obtenerPrimerResultado(tipoCriterio, criterio);
+        if (!resultado) throw new ErrorSinResultados('No se han encontrado resultados.');
 
         const vn = new NovelaVisual(resultado);
         const embed = traducir ? await EmbedNovelaVisual.CrearTraducido(vn) : EmbedNovelaVisual.Crear(vn);

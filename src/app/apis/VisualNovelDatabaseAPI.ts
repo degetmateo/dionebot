@@ -1,36 +1,46 @@
 import { DatosNovelaVisual } from "../tipos/NovelaVisual";
-import { PeticionAPI } from "../tipos/PeticionAPI";
+import { PeticionAPI, TipoConsulta } from "../tipos/PeticionAPI";
 import { TipoCriterio } from "../tipos/PeticionNovelaVisual";
 
 export default class VisualNovelDatabaseAPI {
-    private static API_URL: string = 'https://api.vndb.org/kana/vn';
+    private static readonly API_URL: string = 'https://api.vndb.org/kana/vn';
+    private static readonly TIPO_CONSULTA: TipoConsulta = 'POST';
+    private static readonly CAMPOS_CONSULTAR: Array<string> = [
+        'title',
+        'image.url',
+        'devstatus',
+        'description',
+        'aliases',
+        'released',
+        'languages',
+        'platforms',
+        'length_minutes',
+        'rating',
+        'popularity'
+    ];
     
-    private static async FetchAPI(tipoCriterio: TipoCriterio, criterio: string): Promise<any> {
-        const peticion: PeticionAPI = {
-            method: 'POST',
-            
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            
-            body: JSON.stringify({ 
-                "filters": [tipoCriterio, "=", criterio],
-                "fields": "title, image.url, devstatus, description, aliases, released, languages, platforms, length_minutes, rating, popularity"
-            })
+    private static async consultarAPI (tipoCriterio: TipoCriterio, criterio: string): Promise<RespuestaPeticion> {
+        const informacionPeticion: PeticionAPI = {
+            method: this.TIPO_CONSULTA,
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', },
+            body: JSON.stringify({ "filters": [tipoCriterio, "=", criterio], "fields": this.CAMPOS_CONSULTAR.join(', ') })
         }
 
-        const peticionVN = await fetch(this.API_URL, peticion);
-        return await peticionVN.json();
+        const peticion = await fetch(this.API_URL, informacionPeticion);
+        return await peticion.json() as RespuestaPeticion;
     }
 
-    public static async FetchNovelaVisual(tipoCriterio: TipoCriterio, criterio: string): Promise<DatosNovelaVisual | null> {
-        const resultado: any = await this.FetchAPI(tipoCriterio, criterio);
+    public static async obtenerPrimerResultado (tipoCriterio: TipoCriterio, criterio: string): Promise<DatosNovelaVisual | null> {
+        const resultado: RespuestaPeticion = await this.consultarAPI(tipoCriterio, criterio);
         return resultado.results[0];
     }
 
-    public static async FetchNovelasVisuales(criterio: string): Promise<Array<DatosNovelaVisual>> {
-        const resultado: any = await this.FetchAPI('search', criterio);
+    public static async obtenerResultados (criterio: string): Promise<Array<DatosNovelaVisual>> {
+        const resultado: RespuestaPeticion = await this.consultarAPI('search', criterio);
         return resultado.results;
     }
+}
+
+type RespuestaPeticion = {
+    results: Array<DatosNovelaVisual>
 }

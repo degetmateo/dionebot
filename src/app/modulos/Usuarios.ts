@@ -1,6 +1,5 @@
 import { Fetch } from "./Fetch";
 import Aniuser from "../modelos/Aniuser";
-import { Obra } from "../objetos/Obra";
 
 class Usuarios {
     public static async BuscarUsuario(serverID: string, args: string): Promise<any> {
@@ -24,37 +23,6 @@ class Usuarios {
             const response = await Fetch.request(QUERY_USERNAME, variables);
             return (response == null || response.User == null) ? null : response.User;
         }
-    }
-
-    public static async GetUsuariosMedia(serverID: any, media: Obra): Promise<any> {
-        const uRegistrados = await Aniuser.find({ serverId: serverID });
-        const uMedia = [];
-    
-        for (let i = 0; i < uRegistrados.length; i++) {
-            const uLista = await this.GetStatsMedia(uRegistrados[i].anilistId, media.getID());
-    
-            if (uLista != null) {
-                uLista.username = uRegistrados[i].anilistUsername;
-                uLista.discordId = uRegistrados[i].discordId;
-                uMedia.push(uLista);
-            }
-        }
-    
-        const uMapeados = [];
-    
-        for (let i = 0; i < uMedia.length; i++) {
-            const u = {
-                name: uMedia[i].username,
-                status: uMedia[i].status,
-                progress: uMedia[i].progress,
-                score: uMedia[i].score,
-                repeat: uMedia[i].repeat
-            }
-    
-            uMapeados.push(u);
-        }
-    
-        return uMapeados;
     }
 
     public static async GetEntradas(username: string): Promise<any> {

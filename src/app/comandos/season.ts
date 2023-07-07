@@ -1,6 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import { Media } from "../modulos/Media";
-import ErrorSinResultados from "../errores/ErrorSinResultados";
+import AnilistAPI from "../apis/AnilistAPI";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -24,31 +23,24 @@ module.exports = {
     execute: async (interaction: ChatInputCommandInteraction): Promise<void> => {
         await interaction.deferReply();
 
-        const seasonYear: number = interaction.options.getInteger("año") as number;
-        const season: string = interaction.options.getString("temporada") as string;
+        const anio: number = interaction.options.getInteger("año") as number;
+        const temporada: string = interaction.options.getString("temporada") as string;
 
-        const animes = await Media.BuscarMediaPorTemporada(seasonYear, season);
-        
-        console.log(animes);
-        console.log(animes.length);
-
-        if (!animes || animes.length <= 0) throw new ErrorSinResultados('No hay animes disponibles para esa temporada.');
+        const resultado = await AnilistAPI.obtenerAnimesTemporada(anio, temporada);
+        const animes = resultado.media;
 
         const embed = new EmbedBuilder()
-            .setTitle(`${season} ${seasonYear}`);
+            .setTitle(`${temporada} ${anio}`);
 
         let description = "";
 
         for (let i = 0; i < animes.length; i++) {
             if (description.length >= 4000) break;
-
             const nombre = animes[i].title.english ? animes[i].title.english : animes[i].title.romaji;
-            
             description += `▸ ${nombre}\n`;
         }
 
         embed.setDescription(description);
-
         interaction.editReply({ embeds: [embed] });
     }
 }

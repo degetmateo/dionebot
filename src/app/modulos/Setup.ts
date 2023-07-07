@@ -1,14 +1,14 @@
+import Usuario from "../apis/anilist/Usuario";
 import ErrorSinResultados from "../errores/ErrorSinResultados";
 import Aniuser from "../modelos/Aniuser";
-import { UsuarioAnilist } from "../objetos/UsuarioAnilist";
 
 class Setup {
-    public static async SetupUsuario(usuario: UsuarioAnilist, serverID: string, discordID: string): Promise<void> {    
+    public static async SetupUsuario(usuario: Usuario, serverID: string, discordID: string): Promise<void> {    
         const aniuser = new Aniuser({
             serverId: serverID,
             discordId: discordID,
-            anilistId: usuario.getID(),
-            anilistUsername: usuario.getNombre()
+            anilistId: usuario.obtenerID(),
+            anilistUsername: usuario.obtenerNombre()
         });
     
         try {
