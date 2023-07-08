@@ -64,10 +64,6 @@ export default class BOT extends Client {
 
         this.on(Events.InteractionCreate, async interaction => {
             if (!interaction.isChatInputCommand()) return;
-            if (!interaction) return;
-            if (!interaction.user) return;
-            if (!interaction.guild) return;
-            if (!interaction.guild.id) return;
 
             const command = this.comandos.get(interaction.commandName);
 

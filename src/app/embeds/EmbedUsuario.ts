@@ -2,71 +2,144 @@ import { EmbedBuilder } from "discord.js";
 import Usuario from '../apis/anilist/Usuario';
 
 export default class EmbedUsuario extends EmbedBuilder {
-    private constructor() {
+    private usuario: Usuario;
+
+    public static readonly LIMITE_CARACTERES_DESCRIPCION: number = 2048;
+    public static readonly LIMITE_CARACTERES_CAMPO: number = 1024;
+
+    private constructor(usuario: Usuario) {
         super();
+        this.usuario = usuario;
     }
 
-    public static Crear(usuario: Usuario): EmbedUsuario {
-        const estadisticas = usuario.obtenerEstadisticas();
-        const bio = usuario.obtenerBio();
-        const avatarURL = usuario.obtenerAvatarURL();
-        const bannerURL = usuario.obtenerBannerURL();
-        const personajesFavoritos = usuario.obtenerPersonajesFavoritos();
+    public static CrearPrincipal (usuario: Usuario): EmbedUsuario {
+        const embed = new EmbedUsuario(usuario);
 
-        const embed = new EmbedBuilder()
-            .setTitle(usuario.obtenerNombre())
-            .setURL(usuario.obtenerURL())
-            .setColor(usuario.obtenerColor())
-            .addFields(
-                { 
-                    name: "Animes",
-                    value: `
+        embed.establecerTitulo();
+        embed.establecerDescripcion();
+        embed.establecerColor();
+        embed.establecerPortada();
+        embed.establecerBanner();
+        embed.establecerCampoInformacionBasicaAnime();
+        embed.establecerCampoGenerosFavoritosAnime();
+        embed.establecerCampoInformacionBasicaManga();
+        embed.establecerCampoGenerosFavoritosManga();
+        
+        return embed;
+    }
+
+    public static CrearInformacionAnime (usuario: Usuario): EmbedUsuario {
+        const embed = new EmbedUsuario(usuario);
+
+        embed.establecerPortada();
+        embed.establecerColor();
+        embed.establecerCampoAnimesFavoritos();
+
+        return embed;
+    }
+
+    public static CrearInformacionManga (usuario: Usuario): EmbedUsuario {
+        const embed = new EmbedUsuario(usuario);
+
+        embed.establecerPortada();
+        embed.establecerColor();
+        embed.establecerCampoMangasFavoritos();
+
+        return embed;
+    }
+
+    public static CrearInformacionFavoritosExtra (usuario: Usuario): EmbedUsuario {
+        const embed = new EmbedUsuario(usuario);
+
+        embed.establecerPortada();
+        embed.establecerColor();
+        embed.establecerCampoPersonajesFavoritos();
+
+        return embed;
+    }
+
+    private establecerTitulo (): void {
+        this.setTitle(this.usuario.obtenerNombre());
+        this.setURL(this.usuario.obtenerURL());
+    }
+
+    private establecerColor (): void {
+        this.setColor(this.usuario.obtenerColor());
+    }
+
+    private establecerDescripcion (): void {
+        const bio = this.usuario.obtenerBio();
+        (bio && bio.length < EmbedUsuario.LIMITE_CARACTERES_DESCRIPCION) ? this.setDescription(bio) : null;
+    }
+
+    private establecerPortada (): void {
+        const avatarURL = this.usuario.obtenerAvatarURL();
+        avatarURL ? this.setThumbnail(avatarURL) : null;
+    }
+
+    private establecerBanner (): void {
+        const bannerURL = this.usuario.obtenerBannerURL();
+        bannerURL ? this.setImage(bannerURL) : null;
+    }
+
+    private establecerCampoInformacionBasicaAnime (): void {
+        let informacion = '';
+        const estadisticas = this.usuario.obtenerEstadisticas();
+
+        informacion =
+        `
 Se vió **\`${estadisticas.anime.count}\`** animes.
 Su nota promedio es de **\`${estadisticas.anime.meanScore}\`**.
 Sus días de animes vistos son **\`${((estadisticas.anime.minutesWatched / 60) / 24).toFixed()}\`**.
 La cantidad de episodios que vió es de **\`${estadisticas.anime.episodesWatched}\`**.
-Su desviación estándar es de **\`${estadisticas.anime.standardDeviation}\`**.
+Su desviación estándar es de **\`${estadisticas.anime.standardDeviation}\`**.`;
 
-Sus géneros preferidos son:
-**\`${usuario.obtenerGenerosPreferidosAnime(5).map(g => g.genre).join('`** - **`')}\`**
+        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ? this.addFields({ name: 'Animes', value: informacion }) : null;
+    }
 
-Sus animes favoritos son:
-**\`${usuario.obtenerAnimesFavoritos().map(anime => anime.title.romaji || anime.title.english || anime.title.native || 'Desconocidos').join('`** - **`')}\`**
-                    `,
-                    inline: false
-                },
-                { 
-                    name: "Mangas",
-                    value: `
+    private establecerCampoGenerosFavoritosAnime (): void {
+        const informacion: string = `**\`${this.usuario.obtenerGenerosPreferidosAnime(5).map(g => g.genre).join('`** - **`')}\`**`;
+        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
+            this.addFields({ name: 'Generos Favoritos de Anime', value: informacion }) : null;
+    }
+
+    private establecerCampoGenerosFavoritosManga (): void {
+        const informacion: string = `**\`${this.usuario.obtenerGenerosPreferidosManga(5).map(g => g.genre).join('`** - **`')}\`**`;
+        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
+            this.addFields({ name: 'Generos Favoritos de Manga', value: informacion }) : null;   
+    }
+
+    private establecerCampoAnimesFavoritos (): void {
+        let informacion = `**\`${this.usuario.obtenerAnimesFavoritos().map(anime => anime.title.romaji || anime.title.english || anime.title.native || 'Desconocidos').join('`** - **`')}\`**`;
+
+        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ? this.addFields({ name: 'Animes Favoritos', value: informacion, inline: false }) : null;
+    }
+
+    private establecerCampoInformacionBasicaManga (): void {
+        let informacion = '';
+        const estadisticas = this.usuario.obtenerEstadisticas();
+
+        informacion =
+        `
 Se leyó **\`${estadisticas.manga.count}\`** mangas.
 Su nota promedio es de **\`${estadisticas.manga.meanScore}\`**.
 Su cantidad de capítulos leídos es de **\`${estadisticas.manga.chaptersRead}\`**.
 Su cantidad de volúmenes leídos es de **\`${estadisticas.manga.volumesRead}\`**.
-Su desviación estándar es de **\`${estadisticas.manga.standardDeviation}\`**.
+Su desviación estándar es de **\`${estadisticas.manga.standardDeviation}\`**.`
 
-Sus géneros preferidos son:
-**\`${usuario.obtenerGenerosPreferidosManga(5).map(g => g.genre).join('`** - **`')}\`**
+        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ? this.addFields({ name: 'Mangas', value: informacion }) : null;
+    }
 
-Sus mangas favoritos son:
-**\`${usuario.obtenerMangasFavoritos().map(manga => manga.title.romaji || manga.title.english || manga.title.native || 'Desconocidos').join('`** - **`')}\`**
-                    `,
-                    inline: false
-                }
-            );
+    private establecerCampoMangasFavoritos (): void {
+        let informacion = `**\`${this.usuario.obtenerMangasFavoritos().map(manga => manga.title.romaji || manga.title.english || manga.title.native || 'Desconocidos').join('`** - **`')}\`**`;
+        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ? this.addFields({ name: 'Mangas Favoritos', value: informacion, inline: false }) : null;
+    }
 
-        bio ? embed.setDescription(usuario.obtenerBio()) : null;
-        avatarURL ? embed.setThumbnail(usuario.obtenerAvatarURL()) : null;
-        bannerURL ? embed.setImage(usuario.obtenerBannerURL()) : null;
-        
-        (personajesFavoritos && personajesFavoritos.length > 0) ?
-            embed.addFields({
-                name: 'Personajes Favoritos',
-                value: `
-                **\`${usuario.obtenerPersonajesFavoritos().map(p => p.name || 'Desconocidos').join('`** - **`')}\`**
-                `,
-                inline: false
-            }) : null;
+    private establecerCampoPersonajesFavoritos (): void  {
+        const personajesFavoritos = this.usuario.obtenerPersonajesFavoritos();
+        let informacion = `**\`${this.usuario.obtenerPersonajesFavoritos().map(p => p.name || 'Desconocidos').join('`** - **`')}\`**`;
 
-        return embed;
+        (personajesFavoritos && personajesFavoritos.length > 0 && informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO) ?
+            this.addFields({ name: 'Personajes Favoritos', value: informacion, inline: false }) : null;
     }
 }
