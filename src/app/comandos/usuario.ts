@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType, Embed } from "discord.js";
 import EmbedUsuario from "../embeds/EmbedUsuario";
 import Aniuser from "../modelos/Aniuser";
 import ErrorSinResultados from "../errores/ErrorSinResultados";
@@ -42,12 +42,11 @@ module.exports = {
         const row = new ActionRowBuilder<ButtonBuilder>()
             .addComponents(botonPaginaPrevia, botonPaginaSiguiente);
 
-        const embeds: Array<EmbedUsuario> = [
-            EmbedUsuario.CrearPrincipal(usuarioAnilist),
-            EmbedUsuario.CrearInformacionAnime(usuarioAnilist),
-            EmbedUsuario.CrearInformacionManga(usuarioAnilist),
-            EmbedUsuario.CrearInformacionFavoritosExtra(usuarioAnilist),
-        ];
+        const embeds: Array<EmbedUsuario> = [EmbedUsuario.CrearPrincipal(usuarioAnilist)];
+
+        if (usuarioAnilist.obtenerAnimesFavoritos().length > 0) embeds.push(EmbedUsuario.CrearInformacionAnime(usuarioAnilist));
+        if (usuarioAnilist.obtenerMangasFavoritos().length > 0) embeds.push(EmbedUsuario.CrearInformacionManga(usuarioAnilist));
+        if (usuarioAnilist.obtenerPersonajesFavoritos().length > 0) embeds.push(EmbedUsuario.CrearInformacionFavoritosExtra(usuarioAnilist));
 
         let indiceEmbedActual = 0;
         let ultimoIndice = embeds.length - 1;

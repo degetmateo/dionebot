@@ -31,6 +31,7 @@ export default class EmbedUsuario extends EmbedBuilder {
     public static CrearInformacionAnime (usuario: Usuario): EmbedUsuario {
         const embed = new EmbedUsuario(usuario);
 
+        embed.establecerTitulo();
         embed.establecerPortada();
         embed.establecerColor();
         embed.establecerCampoAnimesFavoritos();
@@ -41,6 +42,7 @@ export default class EmbedUsuario extends EmbedBuilder {
     public static CrearInformacionManga (usuario: Usuario): EmbedUsuario {
         const embed = new EmbedUsuario(usuario);
 
+        embed.establecerTitulo();
         embed.establecerPortada();
         embed.establecerColor();
         embed.establecerCampoMangasFavoritos();
@@ -51,6 +53,7 @@ export default class EmbedUsuario extends EmbedBuilder {
     public static CrearInformacionFavoritosExtra (usuario: Usuario): EmbedUsuario {
         const embed = new EmbedUsuario(usuario);
 
+        embed.establecerTitulo();
         embed.establecerPortada();
         embed.establecerColor();
         embed.establecerCampoPersonajesFavoritos();
@@ -69,7 +72,10 @@ export default class EmbedUsuario extends EmbedBuilder {
 
     private establecerDescripcion (): void {
         const bio = this.usuario.obtenerBio();
-        (bio && bio.length < EmbedUsuario.LIMITE_CARACTERES_DESCRIPCION) ? this.setDescription(bio) : null;
+        if (!bio || bio.length < 1) return;
+        (bio.length < EmbedUsuario.LIMITE_CARACTERES_DESCRIPCION) ?
+            this.setDescription(bio) :
+            this.setDescription(bio.slice(0, EmbedUsuario.LIMITE_CARACTERES_DESCRIPCION - 4)  + '\n...');
     }
 
     private establecerPortada (): void {
@@ -100,19 +106,23 @@ Su desviación estándar es de **\`${estadisticas.anime.standardDeviation}\`**.`
     private establecerCampoGenerosFavoritosAnime (): void {
         const informacion: string = `**\`${this.usuario.obtenerGenerosPreferidosAnime(5).map(g => g.genre).join('`** - **`')}\`**`;
         informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
-            this.addFields({ name: 'Generos Favoritos de Anime', value: informacion }) : null;
+            this.addFields({ name: 'Generos Favoritos de Anime', value: informacion }) :
+            this.addFields({ name: 'Generos Favoritos de Anime', value: informacion.slice(0, EmbedUsuario.LIMITE_CARACTERES_CAMPO - 4) + '\n...' });
     }
 
     private establecerCampoGenerosFavoritosManga (): void {
         const informacion: string = `**\`${this.usuario.obtenerGenerosPreferidosManga(5).map(g => g.genre).join('`** - **`')}\`**`;
         informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
-            this.addFields({ name: 'Generos Favoritos de Manga', value: informacion }) : null;   
+            this.addFields({ name: 'Generos Favoritos de Manga', value: informacion }) : 
+            this.addFields({ name: 'Generos Favoritos de Manga', value: informacion.slice(0, EmbedUsuario.LIMITE_CARACTERES_CAMPO - 4) + '\n...' });   
     }
 
     private establecerCampoAnimesFavoritos (): void {
-        let informacion = `**\`${this.usuario.obtenerAnimesFavoritos().map(anime => anime.title.romaji || anime.title.english || anime.title.native || 'Desconocidos').join('`** - **`')}\`**`;
+        let informacion = `▸ ${this.usuario.obtenerAnimesFavoritos().map(anime => anime.title.romaji || anime.title.english || anime.title.native || 'Desconocidos').join('\n▸ ')}`;
 
-        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ? this.addFields({ name: 'Animes Favoritos', value: informacion, inline: false }) : null;
+        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
+            this.addFields({ name: 'Animes Favoritos', value: informacion }) : 
+            this.addFields({ name: 'Animes Favoritos', value: informacion.slice(0, EmbedUsuario.LIMITE_CARACTERES_CAMPO - 4) + '\n...' });
     }
 
     private establecerCampoInformacionBasicaManga (): void {
@@ -131,15 +141,18 @@ Su desviación estándar es de **\`${estadisticas.manga.standardDeviation}\`**.`
     }
 
     private establecerCampoMangasFavoritos (): void {
-        let informacion = `**\`${this.usuario.obtenerMangasFavoritos().map(manga => manga.title.romaji || manga.title.english || manga.title.native || 'Desconocidos').join('`** - **`')}\`**`;
-        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ? this.addFields({ name: 'Mangas Favoritos', value: informacion, inline: false }) : null;
+        let informacion = `▸ ${this.usuario.obtenerMangasFavoritos().map(manga => manga.title.romaji || manga.title.english || manga.title.native || 'Desconocidos').join('\n▸ ')}`;
+
+        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
+            this.addFields({ name: 'Mangas Favoritos', value: informacion }) : 
+            this.addFields({ name: 'Mangas Favoritos', value: informacion.slice(0, EmbedUsuario.LIMITE_CARACTERES_CAMPO - 4) + '\n...' });
     }
 
     private establecerCampoPersonajesFavoritos (): void  {
-        const personajesFavoritos = this.usuario.obtenerPersonajesFavoritos();
-        let informacion = `**\`${this.usuario.obtenerPersonajesFavoritos().map(p => p.name || 'Desconocidos').join('`** - **`')}\`**`;
+        let informacion = `▸ ${this.usuario.obtenerPersonajesFavoritos().map(p => p.name || 'Desconocidos').join('\n▸ ')}`;
 
-        (personajesFavoritos && personajesFavoritos.length > 0 && informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO) ?
-            this.addFields({ name: 'Personajes Favoritos', value: informacion, inline: false }) : null;
+        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
+            this.addFields({ name: 'Personajes Favoritos', value: informacion }) : 
+            this.addFields({ name: 'Personajes Favoritos', value: informacion.slice(0, EmbedUsuario.LIMITE_CARACTERES_CAMPO - 4) + '\n...' });
     }
 }
