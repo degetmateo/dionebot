@@ -65,9 +65,13 @@ export default class AnilistAPI {
     }
 
     public static obtenerListaAnimeUsuario = async (userID: string | number, mediaID: string | number ): Promise<any> => {
-        const variables = { userID, mediaID };
-        const response = await this.request(QUERY_MEDIA, variables);
-        return (response == null) ? null : response;
+        try {
+            const variables = { userID, mediaID };
+            const response = await this.request(QUERY_MEDIA, variables);
+            return (response == null) ? null : response;   
+        } catch (error) {
+            throw error;
+        }
     }
 
     public static async request(query: string, variables: any): Promise<any> {
@@ -83,6 +87,9 @@ export default class AnilistAPI {
         };
 
         const data = await fetch(this.API_URL, opciones);
+
+        if (!data) return null;
+
         const res = await data.json();
         
         if (!res || !res.data) return null;

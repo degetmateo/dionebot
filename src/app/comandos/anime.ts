@@ -100,7 +100,7 @@ module.exports = {
                     }
         
                     if (boton.customId === 'botonMostrarNotas') {
-                        await boton.deferReply();
+                        await boton.deferUpdate();
 
                         const animeActual = resultados[indiceEmbedActual];
 
@@ -121,46 +121,51 @@ module.exports = {
                                 repeat: number
                             }
 
-                            const estado = (await AnilistAPI.obtenerListaAnimeUsuario(usuario.anilistId, animeActual.id)).MediaList as MediaList;
+                            try {
+                                const estado = (await AnilistAPI.obtenerListaAnimeUsuario(usuario.anilistId, animeActual.id)).MediaList as MediaList;
 
-                            if (!estado) continue;
+                                if (!estado) continue;
 
-                            const miembro = await interaccion.client.users.fetch(usuario.discordId);
-                            const nombreMiembro = miembro.username;
+                                const miembro = await interaccion.client.users.fetch(usuario.discordId);
+                                const nombreMiembro = miembro.username;
 
-                            estado.status === 'COMPLETED' ? 
-                                usuariosNotasCompletadas.push({
-                                    nombre: nombreMiembro,
-                                    nota: estado.score
-                                }) : null;
-                            
-                            estado.status === 'CURRENT' ?
-                                usuariosNotasProgreso.push({
-                                    nombre: nombreMiembro,
-                                    nota: estado.score
-                                }) : null;
+                                estado.status === 'COMPLETED' ? 
+                                    usuariosNotasCompletadas.push({
+                                        nombre: nombreMiembro,
+                                        nota: estado.score
+                                    }) : null;
+                                
+                                estado.status === 'CURRENT' ?
+                                    usuariosNotasProgreso.push({
+                                        nombre: nombreMiembro,
+                                        nota: estado.score
+                                    }) : null;
 
-                            estado.status === 'DROPPED' ?
-                                usuariosNotasDropeadas.push({
-                                    nombre: nombreMiembro,
-                                    nota: estado.score
-                                }) : null;
+                                estado.status === 'DROPPED' ?
+                                    usuariosNotasDropeadas.push({
+                                        nombre: nombreMiembro,
+                                        nota: estado.score
+                                    }) : null;
 
-                            estado.status === 'PLANNING' ?
-                                usuariosNotasPlanificadas.push({
-                                    nombre: nombreMiembro,
-                                    nota: estado.score
-                                }) : null;
+                                estado.status === 'PLANNING' ?
+                                    usuariosNotasPlanificadas.push({
+                                        nombre: nombreMiembro,
+                                        nota: estado.score
+                                    }) : null;
+
+                                if (usuariosNotasCompletadas.length <= 0 && usuariosNotasProgreso.length <= 0 && usuariosNotasDropeadas.length <= 0 && usuariosNotasPlanificadas.length <=0) {
+                                    await boton.editReply({ embeds: [embeds[indiceEmbedActual], Embed.CrearRojo('No hay notas disponibles.')], components: [row] });
+                                    return;
+                                }
+
+                                const notas: Notas = new Notas(usuariosNotasCompletadas, usuariosNotasProgreso, usuariosNotasDropeadas, usuariosNotasPlanificadas);
+
+                                await boton.editReply({ embeds: [embeds[indiceEmbedActual], EmbedNotas.Crear(notas, animes[indiceEmbedActual].obtenerColor())], components: [row] });
+
+                            } catch (error) {
+                                throw error;
+                            }
                         }
-
-                        if (usuariosNotasCompletadas.length <= 0 && usuariosNotasProgreso.length <= 0 && usuariosNotasDropeadas.length <= 0 && usuariosNotasPlanificadas.length <=0) {
-                            await boton.editReply({ embeds: [embeds[indiceEmbedActual], Embed.CrearRojo('No hay notas disponibles.')], components: [row] });
-                            return;
-                        }
-
-                        const notas: Notas = new Notas(usuariosNotasCompletadas, usuariosNotasProgreso, usuariosNotasDropeadas, usuariosNotasPlanificadas);
-
-                        await boton.editReply({ embeds: [embeds[indiceEmbedActual], EmbedNotas.Crear(notas, animes[indiceEmbedActual].obtenerColor())], components: [row] });
                     }
 
                     if (boton.customId === 'botonPaginaSiguiente') {
