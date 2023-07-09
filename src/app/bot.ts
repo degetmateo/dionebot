@@ -16,6 +16,9 @@ export default class BOT extends Client {
     private buscando_afinidad: Set<string>;
     private buscando_media: Set<string>;
     private usuarios: Array<uRegistrado>;
+
+    public interacciones: Set<string>;
+
     private _version: string;
 
     constructor() {
@@ -27,6 +30,9 @@ export default class BOT extends Client {
         this.buscando_afinidad = new Set<string>();
         this.buscando_media = new Set<string>();
         this.usuarios = new Array<uRegistrado>();
+
+        this.interacciones = new Set<string>();
+
         this._version = version;
     }
 

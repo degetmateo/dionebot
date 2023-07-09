@@ -29,6 +29,7 @@ module.exports = {
     execute: async (interaccion: ChatInputCommandInteraction) => {
         await interaccion.deferReply();
 
+        let bot = interaccion.client as BOT;
         const serverID: string = interaccion.guild?.id as string;
         const criterio: string = interaccion.options.getString('nombre-o-id') as string;
         const traducir: boolean = interaccion.options.getBoolean("traducir") || false;
@@ -47,9 +48,10 @@ module.exports = {
             return;
         } else {
             const resultados = (await AnilistAPI.buscarAnime(criterio)).media;
-            if (resultados.length <= 0) throw new ErrorSinResultados('No se han encontrado resultados.');
-            const animes = Array<Anime>();
-            const embeds = Array<EmbedAnime>();
+            if (!resultados || resultados.length <= 0) throw new ErrorSinResultados('No se han encontrado resultados.');
+
+            const animes = new Array<Anime>();
+            const embeds = new Array<EmbedAnime>();
 
             for (const resultado of resultados) {
                 const anime = new Anime(await AnilistAPI.obtenerAnimeID(resultado.id));
@@ -91,27 +93,35 @@ module.exports = {
     
             try {
                 const collector = respuesta.createMessageComponentCollector({ time: 340_000 });
-    
+                
                 collector.on('collect', async (boton) => {
+                    bot = collector.client as BOT;
+
                     if (boton.customId === 'botonPaginaPrevia') {
                         indiceEmbedActual--;
                         if (indiceEmbedActual < 0) indiceEmbedActual = ultimoIndice;
+                        bot.interacciones.delete(interaccion.id);
                         await boton.update({ embeds: [embeds[indiceEmbedActual]], components: [row] });
                     }
         
                     if (boton.customId === 'botonMostrarNotas') {
                         await boton.deferUpdate();
 
+                        const estaBuscandoNotas = bot.interacciones.has(interaccion.id);
+                        if (estaBuscandoNotas) return;
+
+                        bot.interacciones.add(interaccion.id);
+
                         const animeActual = resultados[indiceEmbedActual];
 
-                        const usuariosNotasCompletadas = Array<any>();
-                        const usuariosNotasProgreso = Array<any>();
-                        const usuariosNotasDropeadas = Array<any>();
-                        const usuariosNotasPlanificadas = Array<any>();
-
-                        const bot = interaccion.client as BOT;
+                        const usuariosNotasCompletadas = new Array<any>();
+                        const usuariosNotasProgreso = new Array<any>();
+                        const usuariosNotasDropeadas = new Array<any>();
+                        const usuariosNotasPlanificadas = new Array<any>();
 
                         for (const usuario of bot.getUsuariosRegistrados(serverID)) {
+                            if (!bot.interacciones.has(interaccion.id)) return;
+
                             type MediaList = {
                                 id: number,
                                 mediaId: number,
@@ -123,11 +133,9 @@ module.exports = {
 
                             try {
                                 const animeUsuario = await AnilistAPI.obtenerListaAnimeUsuario(usuario.anilistId, animeActual.id)
-
                                 if (!animeUsuario) continue;
 
                                 const estado = animeUsuario.MediaList as MediaList;
-
                                 if (!estado) continue;
 
                                 const miembro = await interaccion.client.users.fetch(usuario.discordId);
@@ -157,24 +165,23 @@ module.exports = {
                                         nota: estado.score
                                     }) : null;
 
-                                if (usuariosNotasCompletadas.length <= 0 && usuariosNotasProgreso.length <= 0 && usuariosNotasDropeadas.length <= 0 && usuariosNotasPlanificadas.length <=0) {
-                                    await boton.editReply({ embeds: [embeds[indiceEmbedActual], Embed.CrearRojo('No hay notas disponibles.')], components: [row] });
-                                    return;
-                                }
-
-                                const notas: Notas = new Notas(usuariosNotasCompletadas, usuariosNotasProgreso, usuariosNotasDropeadas, usuariosNotasPlanificadas);
-
-                                await boton.editReply({ embeds: [embeds[indiceEmbedActual], EmbedNotas.Crear(notas, animes[indiceEmbedActual].obtenerColor())], components: [row] });
-
                             } catch (error) {
-                                throw error;
+                                console.log(error);
+                                continue;
                             }
+
+                            const notas: Notas = new Notas(usuariosNotasCompletadas, usuariosNotasProgreso, usuariosNotasDropeadas, usuariosNotasPlanificadas);
+    
+                            await boton.editReply({ embeds: [embeds[indiceEmbedActual], EmbedNotas.Crear(notas, animes[indiceEmbedActual].obtenerColor())], components: [row] });
                         }
+
+                        bot.interacciones.delete(interaccion.id);
                     }
 
                     if (boton.customId === 'botonPaginaSiguiente') {
                         indiceEmbedActual++;
                         if (indiceEmbedActual > ultimoIndice) indiceEmbedActual = 0;
+                        bot.interacciones.delete(interaccion.id);
                         await boton.update({ embeds: [embeds[indiceEmbedActual]], components: [row] });
                     }
                 })
