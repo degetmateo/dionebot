@@ -72,8 +72,7 @@ export default class Anime extends Media {
     }
 
     public obtenerDescripcion (): string {
-        const descripcion: string = Helpers.eliminarEtiquetasHTML(this.anime.description);
-        return descripcion.length <= 0 ? "?" : descripcion;
+        return (!this.anime.description || this.anime.description.length <= 0) ? "?" : Helpers.eliminarEtiquetasHTML(this.anime.description);
     }
 
     public obtenerCoverImageURL (): string {
