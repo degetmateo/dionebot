@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ComponentType, ButtonStyle } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ComponentType, ButtonStyle, normalizeArray, User, Guild, GuildMember, UserResolvable, UserMention } from "discord.js";
 import { AnimeEntry } from 'anilist-node';
 import ErrorSinResultados from "../errores/ErrorSinResultados";
 import AnilistAPI from "../apis/AnilistAPI";
@@ -10,6 +10,7 @@ import Aniuser from "../modelos/Aniuser";
 import EmbedNotas from "../embeds/EmbedNotas";
 import Notas from "../embeds/tads/Notas";
 import Embed from "../embeds/Embed";
+import BOT from "../bot";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -89,7 +90,7 @@ module.exports = {
             })
     
             try {
-                const collector = respuesta.createMessageComponentCollector({ time: 120_000 });
+                const collector = respuesta.createMessageComponentCollector({ time: 340_000 });
     
                 collector.on('collect', async (boton) => {
                     if (boton.customId === 'botonPaginaPrevia') {
@@ -99,51 +100,56 @@ module.exports = {
                     }
         
                     if (boton.customId === 'botonMostrarNotas') {
-                        await boton.deferUpdate();
+                        await boton.deferReply();
 
                         const animeActual = resultados[indiceEmbedActual];
-                        const usuariosRegistrados = await Aniuser.find({ serverId: serverID });
 
                         const usuariosNotasCompletadas = Array<any>();
                         const usuariosNotasProgreso = Array<any>();
                         const usuariosNotasDropeadas = Array<any>();
                         const usuariosNotasPlanificadas = Array<any>();
 
-                        for (const usuario of usuariosRegistrados) {
-                            const listasAnimesUsuario = await AnilistAPI.API.lists.anime(parseInt(usuario.anilistId as string));
+                        const bot = interaccion.client as BOT;
 
-                            const animesCompletadosUsuario = listasAnimesUsuario.find(L => L.name.toLowerCase() === 'completed');
-                            const animesProgresoUsuario = listasAnimesUsuario.find(L => L.name.toLowerCase() === 'progress');
-                            const animesDropeadosUsuario = listasAnimesUsuario.find(L => L.name.toLowerCase() === 'dropped');
-                            const animesPlanificadosUsuario = listasAnimesUsuario.find(L => L.name.toLowerCase() === 'planned');
+                        for (const usuario of bot.getUsuariosRegistrados(serverID)) {
+                            type MediaList = {
+                                id: number,
+                                mediaId: number,
+                                status: 'COMPLETED' | 'CURRENT' | 'DROPPED' | 'PLANNING' | 'PAUSED',
+                                score: number,
+                                progress: number,
+                                repeat: number
+                            }
 
-                            const animeCompletado = animesCompletadosUsuario?.entries.find(a => a.media.id === animeActual.id);
-                            const animeEnProgreso = animesProgresoUsuario?.entries.find(a => a.media.id === animeActual.id);
-                            const animeDropeado = animesDropeadosUsuario?.entries.find(a => a.media.id === animeActual.id);
-                            const animePlanificado = animesPlanificadosUsuario?.entries.find(a => a.media.id === animeActual.id);
+                            const estado = (await AnilistAPI.obtenerListaAnimeUsuario(usuario.anilistId, animeActual.id)).MediaList as MediaList;
 
-                            animeCompletado ? 
+                            if (!estado) continue;
+
+                            const miembro = await interaccion.client.users.fetch(usuario.discordId);
+                            const nombreMiembro = miembro.username;
+
+                            estado.status === 'COMPLETED' ? 
                                 usuariosNotasCompletadas.push({
-                                    nombre: interaccion.guild?.members.cache.find(m => m.id === usuario.discordId)?.user.username,
-                                    nota: animeCompletado.score
+                                    nombre: nombreMiembro,
+                                    nota: estado.score
                                 }) : null;
                             
-                            animeEnProgreso ?
+                            estado.status === 'CURRENT' ?
                                 usuariosNotasProgreso.push({
-                                    nombre: interaccion.guild?.members.cache.find(m => m.id === usuario.discordId)?.user.username,
-                                    nota: animeEnProgreso.score
+                                    nombre: nombreMiembro,
+                                    nota: estado.score
                                 }) : null;
 
-                            animeDropeado ?
+                            estado.status === 'DROPPED' ?
                                 usuariosNotasDropeadas.push({
-                                    nombre: interaccion.guild?.members.cache.find(m => m.id === usuario.discordId)?.user.username,
-                                    nota: animeDropeado.score
+                                    nombre: nombreMiembro,
+                                    nota: estado.score
                                 }) : null;
 
-                            animePlanificado ?
+                            estado.status === 'PLANNING' ?
                                 usuariosNotasPlanificadas.push({
-                                    nombre: interaccion.guild?.members.cache.find(m => m.id === usuario.discordId)?.user.username,
-                                    nota: animePlanificado.score
+                                    nombre: nombreMiembro,
+                                    nota: estado.score
                                 }) : null;
                         }
 
@@ -165,6 +171,7 @@ module.exports = {
                 })
             } catch (error) {
                 await interaccion.editReply({ components: [] });
+                throw error;
             }
 
             return;

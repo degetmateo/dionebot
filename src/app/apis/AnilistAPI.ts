@@ -3,6 +3,7 @@ import ErrorSinResultados from '../errores/ErrorSinResultados';
 import Usuario from './anilist/Usuario';
 
 export default class AnilistAPI {
+    private static readonly API_URL: string = "https://graphql.anilist.co";
     public static readonly API: Anilist = new Anilist();
     private static readonly RESULTADOS_PAGINA: number = 10;
 
@@ -62,4 +63,57 @@ export default class AnilistAPI {
             throw error;
         }
     }
+
+    public static obtenerListaAnimeUsuario = async (userID: string | number, mediaID: string | number ): Promise<any> => {
+        const variables = { userID, mediaID };
+        const response = await this.request(QUERY_MEDIA, variables);
+        return (response == null) ? null : response;
+    }
+
+    public static async request(query: string, variables: any): Promise<any> {
+        const opciones = {
+            method: 'POST',
+            
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            
+            body: JSON.stringify({ query, variables })
+        };
+
+        const data = await fetch(this.API_URL, opciones);
+        const res = await data.json();
+        
+        if (!res || !res.data) return null;
+
+        return res.data;
+    }
 }
+
+const QUERY_MEDIA = `
+    query ($userID: Int, $mediaID: Int) {
+        MediaList(userId: $userID, mediaId: $mediaID) {
+            id
+            mediaId
+            status
+            score(format: POINT_100)
+            progress
+            repeat
+        }
+    }
+`;
+
+const BUSQUEDA_LISTA_ANIMES = `
+    query ($id: String) {
+        animeList: MediaListCollection(userId: $id, type: ANIME) {
+            lists {
+                entries {
+                    mediaId,
+                    score(format: POINT_100)
+                }
+                status
+            }
+        }
+    }
+`;
