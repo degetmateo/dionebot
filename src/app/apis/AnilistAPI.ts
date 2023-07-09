@@ -3,14 +3,15 @@ import ErrorSinResultados from '../errores/ErrorSinResultados';
 import Usuario from './anilist/Usuario';
 
 export default class AnilistAPI {
-    private static readonly API: Anilist = new Anilist();
+    public static readonly API: Anilist = new Anilist();
+    private static readonly RESULTADOS_PAGINA: number = 10;
 
     public static async buscarAnime (criterio: string): Promise<MediaSearchEntry> {
-        return await this.API.searchEntry.anime(criterio);
+        return await this.API.searchEntry.anime(criterio, undefined, 1, AnilistAPI.RESULTADOS_PAGINA);
     }
 
     public static async buscarManga (criterio: string): Promise<MediaSearchEntry> {
-        return await this.API.searchEntry.manga(criterio);
+        return await this.API.searchEntry.manga(criterio, undefined, 1, AnilistAPI.RESULTADOS_PAGINA);
     }
 
     public static async obtenerAnimeID (id: number): Promise<AnimeEntry> {
@@ -62,4 +63,3 @@ export default class AnilistAPI {
         }
     }
 }
-
