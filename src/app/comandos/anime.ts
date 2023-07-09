@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ComponentType, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ComponentType, ButtonStyle } from "discord.js";
 import { AnimeEntry } from 'anilist-node';
 import ErrorSinResultados from "../errores/ErrorSinResultados";
 import AnilistAPI from "../apis/AnilistAPI";
@@ -9,6 +9,7 @@ import ErrorArgumentoInvalido from "../errores/ErrorArgumentoInvalido";
 import Aniuser from "../modelos/Aniuser";
 import EmbedNotas from "../embeds/EmbedNotas";
 import Notas from "../embeds/tads/Notas";
+import Embed from "../embeds/Embed";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -90,7 +91,7 @@ module.exports = {
             try {
                 const collector = respuesta.createMessageComponentCollector({ time: 120_000 });
     
-                collector.on('collect', async boton => {
+                collector.on('collect', async (boton) => {
                     if (boton.customId === 'botonPaginaPrevia') {
                         indiceEmbedActual--;
                         if (indiceEmbedActual < 0) indiceEmbedActual = ultimoIndice;
@@ -98,7 +99,7 @@ module.exports = {
                     }
         
                     if (boton.customId === 'botonMostrarNotas') {
-                        await boton.deferReply();
+                        await boton.deferUpdate();
 
                         const animeActual = resultados[indiceEmbedActual];
                         const usuariosRegistrados = await Aniuser.find({ serverId: serverID });
@@ -120,7 +121,6 @@ module.exports = {
                             const animeEnProgreso = animesProgresoUsuario?.entries.find(a => a.media.id === animeActual.id);
                             const animeDropeado = animesDropeadosUsuario?.entries.find(a => a.media.id === animeActual.id);
                             const animePlanificado = animesPlanificadosUsuario?.entries.find(a => a.media.id === animeActual.id);
-
 
                             animeCompletado ? 
                                 usuariosNotasCompletadas.push({
@@ -147,9 +147,14 @@ module.exports = {
                                 }) : null;
                         }
 
+                        if (usuariosNotasCompletadas.length <= 0 && usuariosNotasProgreso.length <= 0 && usuariosNotasDropeadas.length <= 0 && usuariosNotasPlanificadas.length <=0) {
+                            await boton.editReply({ embeds: [embeds[indiceEmbedActual], Embed.CrearRojo('No hay notas disponibles.')], components: [row] });
+                            return;
+                        }
+
                         const notas: Notas = new Notas(usuariosNotasCompletadas, usuariosNotasProgreso, usuariosNotasDropeadas, usuariosNotasPlanificadas);
 
-                        await boton.update({ embeds: [embeds[indiceEmbedActual], EmbedNotas.Crear(notas, animes[indiceEmbedActual].obtenerColor())], components: [row] });
+                        await boton.editReply({ embeds: [embeds[indiceEmbedActual], EmbedNotas.Crear(notas, animes[indiceEmbedActual].obtenerColor())], components: [row] });
                     }
 
                     if (boton.customId === 'botonPaginaSiguiente') {
