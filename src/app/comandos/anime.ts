@@ -98,6 +98,8 @@ module.exports = {
                     }
         
                     if (boton.customId === 'botonMostrarNotas') {
+                        await boton.deferReply();
+
                         const animeActual = resultados[indiceEmbedActual];
                         const usuariosRegistrados = await Aniuser.find({ serverId: serverID });
 
@@ -108,7 +110,7 @@ module.exports = {
 
                         for (const usuario of usuariosRegistrados) {
                             const listasAnimesUsuario = await AnilistAPI.API.lists.anime(parseInt(usuario.anilistId as string));
-                            
+
                             const animesCompletadosUsuario = listasAnimesUsuario.find(L => L.name.toLowerCase() === 'completed');
                             const animesProgresoUsuario = listasAnimesUsuario.find(L => L.name.toLowerCase() === 'progress');
                             const animesDropeadosUsuario = listasAnimesUsuario.find(L => L.name.toLowerCase() === 'dropped');
