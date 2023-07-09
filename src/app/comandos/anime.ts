@@ -122,7 +122,11 @@ module.exports = {
                             }
 
                             try {
-                                const estado = (await AnilistAPI.obtenerListaAnimeUsuario(usuario.anilistId, animeActual.id)).MediaList as MediaList;
+                                const animeUsuario = await AnilistAPI.obtenerListaAnimeUsuario(usuario.anilistId, animeActual.id)
+
+                                if (!animeUsuario) continue;
+
+                                const estado = animeUsuario.MediaList as MediaList;
 
                                 if (!estado) continue;
 
