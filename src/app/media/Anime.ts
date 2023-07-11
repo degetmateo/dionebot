@@ -78,12 +78,4 @@ export default class Anime extends Media {
     public obtenerCoverImageURL (): string {
         return this.anime.coverImage.large;
     }
-
-    public obtenerBannerImageURL (): string {
-        return this.anime.bannerImage;
-    }
-
-    public obtenerColor (): ColorResolvable {
-        return this.anime.coverImage.color as ColorResolvable;
-    }
 }

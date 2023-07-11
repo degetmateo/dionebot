@@ -28,6 +28,11 @@ export default class Helpers {
     }
 
     public static eliminarEtiquetasHTML (cadena: string) {
-        return cadena.replace(this.REGEX_CADENA_SIN_HTML, '');
+        try {
+            if (cadena.length <= 0) return '';
+            return cadena.replace(this.REGEX_CADENA_SIN_HTML, '');
+        } catch (error) {
+            throw error;
+        }
     }
 }

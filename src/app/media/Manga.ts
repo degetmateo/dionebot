@@ -68,19 +68,11 @@ export default class Manga extends Media {
     }
 
     public obtenerDescripcion (): string {
-        const descripcion: string = Helpers.eliminarEtiquetasHTML(this.manga.description);
-        return descripcion.length <= 0 ? "?" : descripcion;
+        if (!this.manga.description) return '?';
+        return this.manga.description.length <= 0 ? "?" : Helpers.eliminarEtiquetasHTML(this.manga.description);
     }
 
     public obtenerCoverImageURL (): string {
         return this.manga.coverImage.large || this.manga.coverImage.medium || this.manga.coverImage.small;
-    }
-
-    public obtenerBannerImageURL (): string {
-        return this.manga.bannerImage;
-    }
-
-    public obtenerColor (): ColorResolvable {
-        return this.manga.coverImage.color as ColorResolvable;
     }
 }

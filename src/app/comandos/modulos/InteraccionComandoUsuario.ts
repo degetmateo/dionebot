@@ -1,20 +1,18 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType, Embed } from "discord.js";
-import EmbedUsuario from "../embeds/EmbedUsuario";
-import Aniuser from "../modelos/Aniuser";
-import ErrorSinResultados from "../errores/ErrorSinResultados";
-import Usuario from "../apis/anilist/Usuario";
-import AnilistAPI from "../apis/AnilistAPI";
+import { ChatInputCommandInteraction, CacheType, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } from "discord.js";
+import InteraccionComando from "./InteraccionComando";
+import AnilistAPI from "../../apis/AnilistAPI";
+import Usuario from "../../apis/anilist/Usuario";
+import EmbedUsuario from "../../embeds/EmbedUsuario";
+import ErrorSinResultados from "../../errores/ErrorSinResultados";
+import Aniuser from "../../modelos/Aniuser";
 
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName("usuario")
-        .setDescription("Muestra la información del perfil de Anilist de un usuario.")
-        .addUserOption(option => 
-            option
-                .setName("usuario")
-                .setDescription("El usuario del que se solicita la información.")),
+export default class InteraccionComandoUsuario extends InteraccionComando {
+    public static async execute (interaction: ChatInputCommandInteraction<CacheType>) {
+        const modulo = new InteraccionComandoUsuario(interaction);
+        await modulo.execute(interaction);    
+    }
 
-    execute: async (interaction: ChatInputCommandInteraction): Promise<void> => {
+    protected async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
         await interaction.deferReply();
 
         const idUsuario = interaction.options.getUser("usuario")?.id || interaction.user.id;

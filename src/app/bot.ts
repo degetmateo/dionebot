@@ -10,6 +10,7 @@ import Embed from "./embeds/Embed";
 import ErrorGenerico from "./errores/ErrorGenerico";
 import ErrorSinResultados from "./errores/ErrorSinResultados";
 import ErrorArgumentoInvalido from "./errores/ErrorArgumentoInvalido";
+import Comando from "./interfaces/InterfazComando";
 
 export default class BOT extends Client {
     private comandos: Collection<string, any>;
@@ -43,14 +44,18 @@ export default class BOT extends Client {
         const commandsFiles = fs.readdirSync(commandsPath);
 
         for (const file of commandsFiles) {
+            if (!file.endsWith('.ts') && !file.endsWith('.js')) continue;
+
             const filePath = path.join(commandsPath, file);
             const command = require(filePath);
 
-            if ("data" in command && "execute" in command) {
-                this.comandos.set(command.data.name, command);
-            } else {
-                console.log(`[WARNING] The command at ${filePath} is missing required "data" or "execute" property.`);
-            }
+            if (!command.default) continue;
+
+            const comando = new command.default() as Comando;
+
+            if (!comando.execute || !comando.datos) continue;
+
+            this.comandos.set(comando.datos.name, comando);
         }
     }
 
@@ -87,11 +92,11 @@ export default class BOT extends Client {
                     !(error instanceof ErrorArgumentoInvalido);
 
                 if (!esErrorCritico) {
-                    interaction.editReply({ embeds: [Embed.CrearRojo(error.message)] });
+                    interaction.editReply({ embeds: [Embed.CrearRojo(error.message)] })
                 } else {
                     if (error instanceof Error) console.error('🟥 | ' + error.stack)
                     else console.error('🟥 | ' + error);
-                    interaction.editReply({ embeds: [Embed.CrearRojo('Ha ocurrido un error. Inténtalo de nuevo más tarde.')] });
+                    interaction.editReply({ embeds: [Embed.CrearRojo('Ha ocurrido un error. Inténtalo de nuevo más tarde.')] })
                 }
             }
         });

@@ -1,9 +1,16 @@
-import Anilist, { AnimeEntry, MangaEntry, MediaSearchEntry, MediaFilterTypes, MediaSeason, UserStatsProfile } from 'anilist-node';
+import fetch from 'node-fetch';
+
+import Anilist, { AnimeEntry, MangaEntry, MediaSearchEntry, MediaFilterTypes, MediaSeason } from 'anilist-node';
+import { MediaList } from './anilist/types/MediaList';
 import ErrorSinResultados from '../errores/ErrorSinResultados';
 import Usuario from './anilist/Usuario';
+import { PeticionAPI } from '../tipos/PeticionAPI';
+import API from './API';
+import { uRegistrado } from '../types';
 
-export default class AnilistAPI {
+export default class AnilistAPI extends API {
     private static readonly API_URL: string = "https://graphql.anilist.co";
+
     public static readonly API: Anilist = new Anilist();
     private static readonly RESULTADOS_PAGINA: number = 10;
 
@@ -64,63 +71,85 @@ export default class AnilistAPI {
         }
     }
 
-    public static obtenerListaAnimeUsuario = async (userID: string | number, mediaID: string | number ): Promise<any> => {
-        try {
-            const variables = { userID, mediaID };
-            const response = await this.request(QUERY_MEDIA, variables);
-            return (response == null) ? null : response;   
-        } catch (error) {
-            throw error;
+    public static readonly PETICION_USUARIO_TIENE_MEDIA: string = `
+        query ($userID: Int, $mediaID: Int) {
+            MediaList(userId: $userID, mediaId: $mediaID) {
+                id
+                mediaId
+                status
+                score(format: POINT_100)
+                progress
+                repeat
+            }
         }
+    `;
+
+    public static async obtenerMediaListUsuario (userID: number, mediaID: number): Promise<MediaList> {
+        const response = await this.peticion(this.PETICION_USUARIO_TIENE_MEDIA, { userID, mediaID });
+        return response.MediaList as MediaList;   
     }
 
-    public static async request(query: string, variables: any): Promise<any> {
-        const opciones = {
+    public static async obtenerEstadoMediaUsuarios (usuarios: Array<uRegistrado>, mediaID: number):  Promise<Array<MediaList>> {
+        const PETICION_ESTADO_MEDIA_USUARIOS: string = `
+                query { ${usuarios.map((u, i) => `
+                        q${i}: Page (perPage: 1) {
+                            mediaList(userId: ${u.anilistId}, mediaId: ${mediaID}) {
+                                user {
+                                    name
+                                }
+                                id
+                                mediaId
+                                status
+                                score(format: POINT_100)
+                                progress
+                                repeat
+                            }
+                        }
+                `).join('\n')} }`;
+
+        const respuesta: any = await this.peticion(PETICION_ESTADO_MEDIA_USUARIOS, {});
+        const resultados: Array<MediaList> = new Array<MediaList>();
+        
+        for (const i in respuesta) {
+            const mediaList = respuesta[i].mediaList[0];
+            mediaList ? resultados.push(mediaList) : null;
+        }
+
+        return resultados;
+    }
+
+    private static async peticion (query: string, variables: any | undefined): Promise<any | null> {
+        if (!variables) variables = {};
+
+        const opciones: PeticionAPI = {
             method: 'POST',
-            
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', },
             body: JSON.stringify({ query, variables })
-        };
+        }
 
         const data = await fetch(this.API_URL, opciones);
 
-        if (!data) return null;
+        if (!data) throw new ErrorSinResultados('No se han encontrado resultados.');
 
         const res = await data.json();
         
-        if (!res || !res.data) return null;
+        if (res.errors) {
+            const e = res.errors[0];
+
+            if (e instanceof Error) {
+                const message = e.message.toLowerCase();
+
+                if (message.includes('not found')) {
+                    throw new ErrorSinResultados('QUERY: No se han encontrado resultados.');
+                }
+            }
+
+            throw e;
+        }
+
+        if (!res || !res.data) throw new ErrorSinResultados('No se han encontrado resultados.');
 
         return res.data;
     }
+
 }
-
-const QUERY_MEDIA = `
-    query ($userID: Int, $mediaID: Int) {
-        MediaList(userId: $userID, mediaId: $mediaID) {
-            id
-            mediaId
-            status
-            score(format: POINT_100)
-            progress
-            repeat
-        }
-    }
-`;
-
-const BUSQUEDA_LISTA_ANIMES = `
-    query ($id: String) {
-        animeList: MediaListCollection(userId: $id, type: ANIME) {
-            lists {
-                entries {
-                    mediaId,
-                    score(format: POINT_100)
-                }
-                status
-            }
-        }
-    }
-`;
