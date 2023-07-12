@@ -72,6 +72,9 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
 
         const usuario = new UsuarioAnilist(busquedaUsuario);
         const afinidades = await this.obtenerAfinidadesUsuario(usuario, usuariosRegistrados);
+
+        if (!afinidades || afinidades.length <= 0) throw new ErrorSinResultados('No hay afinidades disponibles.');
+
         this.embeds = InteraccionComandoAfinidad.obtenerEmbeds(usuario, afinidades);
 
         this.indiceInteraccion = 0;
