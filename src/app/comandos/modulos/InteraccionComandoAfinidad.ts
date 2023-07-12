@@ -116,13 +116,9 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
     private async actualizarInteraccion (boton: ButtonInteraction) {
         try {
             await boton.editReply({ embeds: [this.embeds[this.indiceInteraccion]], components: [this.row] }); 
-        } catch (error) {
-            if (error instanceof Error) {
-                if (error.message.toLowerCase().includes('too many requests')) {
-                    await boton.editReply({ embeds: [this.embeds[this.indiceInteraccion]], components: [] });
-                    return;
-                }
-            }
+        } catch (error) {            
+            console.error(error);
+            await boton.editReply({ embeds: [this.embeds[this.indiceInteraccion]], components: [] });
         }
     }
 

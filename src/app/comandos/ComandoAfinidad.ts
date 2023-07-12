@@ -1,7 +1,8 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
 import InterfazComando from "../interfaces/InterfazComando";
-import Embed from "../embeds/Embed";
 import InteraccionComandoAfinidad from "./modulos/InteraccionComandoAfinidad";
+import BOT from "../bot";
+import ErrorDemasiadasPeticiones from "../errores/ErrorDemasiadasPeticiones";
 
 export default class ComandoAfinidad implements InterfazComando {
     public readonly datos = new SlashCommandBuilder()
@@ -13,6 +14,18 @@ export default class ComandoAfinidad implements InterfazComando {
                 .setDescription("Usuario del que quieres calcular la afinidad."));
 
     public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        await InteraccionComandoAfinidad.execute(interaction);
+        const bot = interaction.client as BOT;
+        const serverID = interaction.guild?.id as string;
+
+        if (bot.comandosUtilizados.has(serverID)) throw new ErrorDemasiadasPeticiones('Se estan realizando muchas peticiones. Espera un momento.');
+        bot.comandosUtilizados.add(serverID);
+
+        try {
+            await InteraccionComandoAfinidad.execute(interaction);
+            bot.comandosUtilizados.delete(serverID);
+        } catch (error) {
+            bot.comandosUtilizados.delete(serverID);
+            throw error;
+        }
     }
 }

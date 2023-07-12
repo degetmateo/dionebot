@@ -462,6 +462,7 @@ export default class AnilistAPI extends API {
             const message = e.message.toLowerCase();
 
             if (message.includes('max query complexity')) {
+                console.error(e);
                 throw new ErrorDemasiadasPeticiones('Se han realizado demasiadas peticiones al servidor. Intentalo de nuevo mas tarde.');
             }
 

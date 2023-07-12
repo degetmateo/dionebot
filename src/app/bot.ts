@@ -16,8 +16,10 @@ import ErrorDemasiadasPeticiones from "./errores/ErrorDemasiadasPeticiones";
 export default class BOT extends Client {
     private comandos: Collection<string, any>;
     private usuarios: Array<uRegistrado>;
-    public interacciones: Set<string>;
     private version: string;
+
+    public interacciones: Set<string>;
+    public comandosUtilizados: Set<string>;
 
     constructor() {
         super({
@@ -26,8 +28,9 @@ export default class BOT extends Client {
 
         this.comandos = new Collection();
         this.usuarios = new Array<uRegistrado>();
-        this.interacciones = new Set<string>();
         this.version = version;
+        this.interacciones = new Set<string>();
+        this.comandosUtilizados = new Set<string>();
     }
 
     public getVersion = (): string => this.version;

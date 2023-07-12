@@ -1,8 +1,12 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType, SlashCommandStringOption, SlashCommandBooleanOption } from "discord.js";
 import Comando from "../interfaces/InterfazComando";
 import InteraccionComandoAnime from "./modulos/InteraccionComandoAnime";
+import BOT from "../bot";
+import ErrorDemasiadasPeticiones from "../errores/ErrorDemasiadasPeticiones";
 
 export default class ComandoAnime implements Comando {
+    public readonly nombre: string = 'anime';
+
     public readonly datos = new SlashCommandBuilder()
         .setName('anime')
         .setDescription('Busca un anime en la base de datos de anilist.')
@@ -17,6 +21,18 @@ export default class ComandoAnime implements Comando {
                 .setDescription('Si deseas traducir la sinopsis.'));
 
     public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        await InteraccionComandoAnime.execute(interaction);    
+        const bot = interaction.client as BOT;
+        const serverID = interaction.guild?.id as string;
+
+        if (bot.comandosUtilizados.has(serverID)) throw new ErrorDemasiadasPeticiones('Se estan realizando muchas peticiones. Espera un momento.');
+        bot.comandosUtilizados.add(serverID);
+
+        try {
+            await InteraccionComandoAnime.execute(interaction);
+            bot.comandosUtilizados.delete(serverID);
+        } catch (error) {
+            bot.comandosUtilizados.delete(serverID);
+            throw error;
+        }
     }
 }
