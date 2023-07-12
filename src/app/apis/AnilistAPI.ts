@@ -30,68 +30,74 @@ export default class AnilistAPI extends API {
     }
 
     private static ConsultaBuscarMediaPorNombre (criterio: string, tipo: MediaTipo): string {
-        return `query  {
-            Page (perPage: ${this.RESULTADOS_PAGINA}) {
-                media (search: "${criterio}", type: ${tipo}) {
+        return `
+            query  {
+                Page (perPage: ${this.RESULTADOS_PAGINA}) {
+                    media (search: "${criterio}", type: ${tipo}) {
+                        ...media
+                    }
+                }    
+            }
+            
+            fragment media on Media {
+                id
+                idMal
+                title {
+                    romaji
+                    english
+                    native
+                    userPreferred
+                }
+                type
+                format
+                status
+                description
+                startDate {
+                    year
+                    month
+                    day
+                }
+                endDate {
+                    year
+                    month
+                    day
+                }
+                season
+                episodes
+                duration
+                chapters
+                volumes
+                source
+                trailer {
                     id
-                    idMal
-                    title {
-                        romaji
-                        english
-                        native
-                        userPreferred
-                    }
-                    type
-                    format
-                    status
-                    description
-                    startDate {
-                        year
-                        month
-                        day
-                    }
-                    endDate {
-                        year
-                        month
-                        day
-                    }
-                    season
-                    episodes
-                    duration
-                    chapters
-                    volumes
-                    source
-                    trailer {
-                        id
-                        site
-                        thumbnail
-                    }
-                    updatedAt
-                    coverImage {
-                        extraLarge
-                        large
-                        medium
-                        color
-                    }
-                    bannerImage
-                    genres
-                    synonyms
-                    averageScore
-                    meanScore
-                    popularity
-                    favourites
-                    studios {
-                        edges {
-                            node {
-                                id
-                                name
-                            }
+                    site
+                    thumbnail
+                }
+                updatedAt
+                coverImage {
+                    extraLarge
+                    large
+                    medium
+                    color
+                }
+                bannerImage
+                genres
+                synonyms
+                averageScore
+                meanScore
+                popularity
+                favourites
+                studios {
+                    edges {
+                        node {
+                            id
+                            name
                         }
                     }
-                    siteUrl
                 }
-            }    
-        }`;
+                siteUrl
+            }
+        `;
     }
 
     public static async obtenerAnimeID (id: number): Promise<Media> {
@@ -185,64 +191,69 @@ export default class AnilistAPI extends API {
             query  {
                 Page (perPage: ${RESULTADOS_POR_PAGINA}) {
                     media (seasonYear: ${anio}, season: ${temporada}, type:ANIME) {
-                        id idMal
-                        title {
-                            romaji
-                            english
-                            native
-                            userPreferred
-                        }
-                        type
-                        format
-                        status
-                        description
-                        startDate {
-                            year
-                            month
-                            day
-                        }
-                        endDate {
-                            year
-                            month
-                            day
-                        }
-                        season
-                        episodes
-                        duration
-                        chapters
-                        volumes
-                        source
-                        trailer {
-                            id
-                            site
-                            thumbnail
-                        }
-                        updatedAt
-                        coverImage {
-                            extraLarge
-                            large
-                            medium
-                            color
-                        }
-                        bannerImage
-                        genres
-                        synonyms
-                        averageScore
-                        meanScore
-                        popularity
-                        favourites
-                        studios {
-                            edges {
-                                node {
-                                    id
-                                    name
-                                }
-                            }
-                        }
-                        siteUrl
+                        ...media
                     }
                 }
-            } 
+            }
+
+            fragment media on Media {
+                id
+                idMal
+                title {
+                    romaji
+                    english
+                    native
+                    userPreferred
+                }
+                type
+                format
+                status
+                description
+                startDate {
+                    year
+                    month
+                    day
+                }
+                endDate {
+                    year
+                    month
+                    day
+                }
+                season
+                episodes
+                duration
+                chapters
+                volumes
+                source
+                trailer {
+                    id
+                    site
+                    thumbnail
+                }
+                updatedAt
+                coverImage {
+                    extraLarge
+                    large
+                    medium
+                    color
+                }
+                bannerImage
+                genres
+                synonyms
+                averageScore
+                meanScore
+                popularity
+                favourites
+                studios {
+                    edges {
+                        node {
+                            id
+                            name
+                        }
+                    }
+                }
+                siteUrl
+            }
         `
     }
 
@@ -367,21 +378,28 @@ export default class AnilistAPI extends API {
 
     private static ConsultaEstadoMediaUsuarios (usuarios: Array<uRegistrado>, mediaID: number): string {
         return `
-            query { ${usuarios.map((u, i) => `
+            query {
+                ${usuarios.map((u, i) => `
                     q${i}: Page (perPage: 1) {
                         mediaList(userId: ${u.anilistId}, mediaId: ${mediaID}) {
-                            user {
-                                name
-                            }
-                            id
-                            mediaId
-                            status
-                            score(format: POINT_100)
-                            progress
-                            repeat
+                            ...mediaList
                         }
                     }
-            `).join('\n')} }`;
+                `).join('\n')}
+            }
+            
+            fragment mediaList on MediaList {
+                user {
+                    name
+                }
+                id
+                mediaId
+                status
+                score(format: POINT_100)
+                progress
+                repeat
+            }
+        `;
     } 
 
     public static async obtenerListasCompletasUsuarios (usuarioPrincipal: UsuarioAnilist, usuarios: Array<uRegistrado>): Promise<{ user: MediaColeccion, users: Array<MediaColeccion> }> {
@@ -403,34 +421,28 @@ export default class AnilistAPI extends API {
         return `
             query  {
                 user: MediaListCollection (userId: ${userID}, type: ANIME, status: COMPLETED) {
-                    user {
-                        id
-                        name
-                    }
-                    lists {
-                        status,
-                        entries {
-                            mediaId
-                            score(format: POINT_100)
-                        }
-                    }
+                    ...mediaListCollection
                 }
-            
+                
                 ${usuarios.map((u, i) => `
                     u${i}: MediaListCollection (userId: ${u.anilistId}, type: ANIME, status: COMPLETED) {
-                        user {
-                            id
-                            name
-                        }
-                        lists {
-                            status,
-                            entries {
-                                mediaId
-                                score(format: POINT_100)
-                            }
-                        }
+                        ...mediaListCollection
                     }
                 `).join('\n')}
+            }
+
+            fragment mediaListCollection on MediaListCollection {
+                user {
+                    id
+                    name
+                }
+                lists {
+                    status,
+                    entries {
+                        mediaId
+                        score(format: POINT_100)
+                    }
+                }
             }
         `;
     }
