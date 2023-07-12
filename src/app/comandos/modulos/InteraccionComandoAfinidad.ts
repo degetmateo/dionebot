@@ -140,16 +140,14 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
             const embed = EmbedAfinidad.Crear(parteActualChequeada);
 
             const avatar = usuario.obtenerAvatarURL();
-            const banner = usuario.obtenerBannerURL();
 
             avatar ? 
                 embed.setThumbnail(avatar) : null;
-            
-            banner ?
-                embed.setImage(banner) : embed.setImage('https://media.discordapp.net/attachments/712773186336456766/1128569805406994452/image.png?width=1440&height=337');
 
             embed.setColor(usuario.obtenerColor());
             embed.setTitle('Afinidad de ' + usuario.obtenerNombre());
+
+            embed.setFooter({ text: `Pagina ${i + 1} de ${(numEmbeds - 1).toFixed(0)}` });
 
             embeds.push(embed);
         }
