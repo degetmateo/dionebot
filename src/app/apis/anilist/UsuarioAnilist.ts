@@ -1,12 +1,12 @@
-import { UserStatsProfile, UserStats, AnimeUserGenres, MangaUserGenres, MediaRelation, PersonRelation } from 'anilist-node';
 import toHex from 'colornames';
 import Helpers from '../../helpers';
 import { ColorResolvable } from 'discord.js';
+import { Usuario, UsuarioCharFavLista, UsuarioEstadisticas, UsuarioGenerosFavoritosLista, UsuarioMediaFavLista } from './types/Usuario';
 
-export default class Usuario {
-    private usuario: UserStatsProfile;
+export default class UsuarioAnilist {
+    private usuario: Usuario;
     
-    constructor (usuario: UserStatsProfile) {
+    constructor (usuario: Usuario) {
         this.usuario = usuario;
     }
 
@@ -38,32 +38,31 @@ export default class Usuario {
         return toHex(this.usuario.options.profileColor) as ColorResolvable;
     }
 
-    public obtenerEstadisticas (): UserStats {
+    public obtenerEstadisticas (): UsuarioEstadisticas {
         return this.usuario.statistics;
     }
 
-    public obtenerGenerosPreferidosAnime (cantidad: number | null): Array<AnimeUserGenres> {
+    public obtenerGenerosPreferidosAnime (cantidad: number | null): UsuarioGenerosFavoritosLista {
         const generos = this.obtenerEstadisticas().anime.genres;
-        const generosOrdenados = generos.sort((a: AnimeUserGenres, b: AnimeUserGenres) => b.count - a.count);
+        const generosOrdenados = generos.sort((a, b) => b.count - a.count);
         return cantidad ? generosOrdenados.slice(0, cantidad) : generosOrdenados;
     }
 
-    public obtenerGenerosPreferidosManga (cantidad: number | null): Array<MangaUserGenres> {
+    public obtenerGenerosPreferidosManga (cantidad: number | null): UsuarioGenerosFavoritosLista {
         const generos = this.obtenerEstadisticas().manga.genres;
-        const generosOrdenados = generos.sort((a: MangaUserGenres, b: MangaUserGenres) => b.count - a.count);
+        const generosOrdenados = generos.sort((a, b) => b.count - a.count);
         return cantidad ? generosOrdenados.slice(0, cantidad) : generosOrdenados;
     }
 
-    public obtenerAnimesFavoritos (): Array<MediaRelation> {
-        return this.usuario.favourites.anime;
+    public obtenerAnimesFavoritos (): UsuarioMediaFavLista {
+        return this.usuario.favourites.anime.edges;
     }
 
-    public obtenerMangasFavoritos (): Array<MediaRelation> {
-        return this.usuario.favourites.manga;
+    public obtenerMangasFavoritos (): UsuarioMediaFavLista {
+        return this.usuario.favourites.manga.edges;
     }
 
-    public obtenerPersonajesFavoritos (): Array<PersonRelation> {
-        const favoritos: any = this.usuario.favourites; 
-        return favoritos.characters;
+    public obtenerPersonajesFavoritos (): UsuarioCharFavLista {
+        return this.usuario.favourites.characters.edges; 
     }
 }

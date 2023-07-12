@@ -1,5 +1,5 @@
-import { ColorResolvable, EmbedBuilder } from "discord.js";
-import Notas from "../tads/Notas";
+import { EmbedBuilder } from "discord.js";
+import Notas from "../media/Notas";
 import EmbedUsuario from "./EmbedUsuario";
 import Media from "../media/Media";
 

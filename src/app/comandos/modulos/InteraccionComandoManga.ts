@@ -9,10 +9,11 @@ import EmbedNotas from "../../embeds/EmbedNotas";
 import AnilistAPI from "../../apis/AnilistAPI";
 import ErrorSinResultados from "../../errores/ErrorSinResultados";
 import ErrorArgumentoInvalido from "../../errores/ErrorArgumentoInvalido";
-import { MangaEntry } from "anilist-node";
-import Notas from "../../tads/Notas";
+import Notas from "../../media/Notas";
+import { Media } from "../../apis/anilist/types/Media";
 
 export default class InteraccionComandoManga extends InteraccionComando {
+    protected interaction: ChatInputCommandInteraction<CacheType>;
     private bot: BOT;
     private idServidor: string;
     private criterioBusqueda: string;
@@ -32,7 +33,9 @@ export default class InteraccionComandoManga extends InteraccionComando {
         .addComponents(this.botonPaginaPrevia, this.botonPaginaSiguiente);
 
     private constructor (interaction: ChatInputCommandInteraction<CacheType>) {
-        super(interaction);
+        super();
+
+        this.interaction = interaction;
 
         this.bot = this.interaction.client as BOT;
         this.idServidor = this.interaction.guild?.id as string;
@@ -61,27 +64,27 @@ export default class InteraccionComandoManga extends InteraccionComando {
     }
 
     private async buscarMangaPorID () {
-        const animeID = parseInt(this.criterioBusqueda);
+        const mangaID = parseInt(this.criterioBusqueda);
         
-        if (animeID < 0 || animeID > InteraccionComandoManga.NUMERO_MAXIMO_32_BITS)
+        if (mangaID < 0 || mangaID > InteraccionComandoManga.NUMERO_MAXIMO_32_BITS)
             throw new ErrorArgumentoInvalido('La ID que has ingresado no es valida.');
         
-        const resultado: MangaEntry = await AnilistAPI.obtenerMangaID(animeID);
+        const resultado: Media = await AnilistAPI.obtenerMangaID(mangaID);
         
-        const anime: Manga = new Manga(resultado);
-        const embedAnime = this.traducirInformacion ? await EmbedManga.CrearTraducido(anime) : EmbedManga.Crear(anime);
+        const manga: Manga = new Manga(resultado);
+        const embedManga = this.traducirInformacion ? await EmbedManga.CrearTraducido(manga) : EmbedManga.Crear(manga);
         const notas = await this.obtenerNotasUsuarios(parseInt(this.criterioBusqueda));
-        const embedNotas = EmbedNotas.Crear(notas, anime);
+        const embedNotas = EmbedNotas.Crear(notas, manga);
         
         try {
-            await this.interaction.editReply({ embeds: [embedAnime, embedNotas] }); 
+            await this.interaction.editReply({ embeds: [embedManga, embedNotas] }); 
         } catch (error) {
-            await this.interaction.editReply({ embeds: [embedAnime] });
+            await this.interaction.editReply({ embeds: [embedManga] });
         }
     }
 
     private async buscarMangaPorNombre () {
-        const resultados = (await AnilistAPI.buscarManga(this.criterioBusqueda)).media;
+        const resultados = await AnilistAPI.buscarManga(this.criterioBusqueda);
 
         if (!resultados || resultados.length <= 0) throw new ErrorSinResultados('No se han encontrado resultados.');
 
@@ -89,22 +92,22 @@ export default class InteraccionComandoManga extends InteraccionComando {
         this.embeds = new Array<EmbedManga>();
 
         for (const resultado of resultados) {
-            const anime = new Manga(await AnilistAPI.obtenerMangaID(resultado.id));
-            this.mangas.push(anime);
-            this.embeds.push(this.traducirInformacion ? await EmbedManga.CrearTraducido(anime) : EmbedManga.Crear(anime));
+            const manga = new Manga(await AnilistAPI.obtenerMangaID(resultado.id));
+            this.mangas.push(manga);
+            this.embeds.push(this.traducirInformacion ? await EmbedManga.CrearTraducido(manga) : EmbedManga.Crear(manga));
         }
 
         this.indiceInteraccion = 0;
         this.ultimoIndiceInteraccion = this.embeds.length - 1;
 
-        const anime = this.mangas[this.indiceInteraccion];
-        const notas = await this.obtenerNotasUsuarios(anime.obtenerID());
+        const manga = this.mangas[this.indiceInteraccion];
+        const notas = await this.obtenerNotasUsuarios(manga.obtenerID());
 
-        const embedAnime = this.embeds[this.indiceInteraccion];
-        const embedNotas = EmbedNotas.Crear(notas, anime);
+        const embedmanga = this.embeds[this.indiceInteraccion];
+        const embedNotas = EmbedNotas.Crear(notas, manga);
 
         const respuesta = await this.interaction.editReply({
-            embeds: [embedAnime, embedNotas],
+            embeds: [embedmanga, embedNotas],
             components: [this.row]
         })
 
@@ -139,8 +142,8 @@ export default class InteraccionComandoManga extends InteraccionComando {
         if (estaBuscandoNotas) return;
 
         try {
-            const anime = this.mangas[this.indiceInteraccion];
-            const embedNotas = EmbedNotas.Crear(await this.obtenerNotasUsuarios(anime.obtenerID()), anime);
+            const manga = this.mangas[this.indiceInteraccion];
+            const embedNotas = EmbedNotas.Crear(await this.obtenerNotasUsuarios(manga.obtenerID()), manga);
             await boton.editReply({ embeds: [this.embeds[this.indiceInteraccion], embedNotas], components: [this.row] }); 
         } catch (error) {
             if (error instanceof Error) {
@@ -156,9 +159,9 @@ export default class InteraccionComandoManga extends InteraccionComando {
         this.bot.interacciones.delete(this.interaction.id);
     }
 
-    private async obtenerNotasUsuarios (animeID: number): Promise<Notas> {
+    private async obtenerNotasUsuarios (mangaID: number): Promise<Notas> {
         const usuarios = this.bot.getUsuariosRegistrados(this.idServidor);
-        const notasUsuarios = await AnilistAPI.obtenerEstadoMediaUsuarios(usuarios, animeID);
+        const notasUsuarios = await AnilistAPI.obtenerEstadoMediaUsuarios(usuarios, mangaID);
 
         const completadas = notasUsuarios.filter(ml => ml.status === 'COMPLETED');
         const progreso = notasUsuarios.filter(ml => ml.status === 'CURRENT');

@@ -5,9 +5,16 @@ import EmbedNovelaVisual from "../../embeds/EmbedNovelaVisual";
 import ErrorSinResultados from "../../errores/ErrorSinResultados";
 import Helpers from "../../helpers";
 import NovelaVisual from "../../media/NovelaVisual";
-import { TipoCriterio } from "../../tipos/PeticionNovelaVisual";
+import { TipoCriterio } from "../../apis/vndb/PeticionNovelaVisual";
 
 export default class InteraccionComandoVN extends InteraccionComando {
+    protected interaction: ChatInputCommandInteraction<CacheType>;
+    
+    private constructor (interaction: ChatInputCommandInteraction<CacheType>) {
+        super();
+        this.interaction = interaction;
+    }
+
     public static async execute (interaction: ChatInputCommandInteraction<CacheType>) {
         const modulo = new InteraccionComandoVN(interaction);
         await modulo.execute(interaction);    

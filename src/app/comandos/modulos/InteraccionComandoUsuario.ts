@@ -1,12 +1,20 @@
 import { ChatInputCommandInteraction, CacheType, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } from "discord.js";
 import InteraccionComando from "./InteraccionComando";
 import AnilistAPI from "../../apis/AnilistAPI";
-import Usuario from "../../apis/anilist/Usuario";
+import Usuario from "../../apis/anilist/UsuarioAnilist";
 import EmbedUsuario from "../../embeds/EmbedUsuario";
 import ErrorSinResultados from "../../errores/ErrorSinResultados";
 import Aniuser from "../../modelos/Aniuser";
+import Boton from "../componentes/Boton";
 
 export default class InteraccionComandoUsuario extends InteraccionComando {
+    protected interaction: ChatInputCommandInteraction<CacheType>;
+    
+    private constructor (interaction: ChatInputCommandInteraction<CacheType>) {
+        super();
+        this.interaction = interaction;
+    }
+
     public static async execute (interaction: ChatInputCommandInteraction<CacheType>) {
         const modulo = new InteraccionComandoUsuario(interaction);
         await modulo.execute(interaction);    
@@ -21,24 +29,13 @@ export default class InteraccionComandoUsuario extends InteraccionComando {
         const usuarioRegistrado = await Aniuser.findOne({ serverId: idServidor, discordId: idUsuario });
         if (!usuarioRegistrado) throw new ErrorSinResultados('El usuario especificado no esta registrado.');
 
-        const usuarioAnilist: Usuario = await AnilistAPI.obtenerUsuario(parseInt(usuarioRegistrado.anilistId as string));  
+        const usuarioAnilist: Usuario = new Usuario(await AnilistAPI.obtenerUsuario(parseInt(usuarioRegistrado.anilistId as string)));  
 
-        const botonPaginaPrevia = new ButtonBuilder({ 
-            type: ComponentType.Button,
-            style: ButtonStyle.Primary,
-            customId: 'botonPaginaPrevia',
-            label: '←',
-        })
-
-        const botonPaginaSiguiente = new ButtonBuilder({ 
-            type: ComponentType.Button,
-            style: ButtonStyle.Primary,
-            customId: 'botonPaginaSiguiente',
-            label: '→',
-        })
+        const botonPrevio = Boton.CrearPrevio();
+        const botonSiguiente = Boton.CrearSiguiente();
 
         const row = new ActionRowBuilder<ButtonBuilder>()
-            .addComponents(botonPaginaPrevia, botonPaginaSiguiente);
+            .addComponents(botonPrevio, botonSiguiente);
 
         const embeds: Array<EmbedUsuario> = [EmbedUsuario.CrearPrincipal(usuarioAnilist)];
 
@@ -58,17 +55,17 @@ export default class InteraccionComandoUsuario extends InteraccionComando {
             const collector = respuesta.createMessageComponentCollector({ time: 120_000 });
 
             collector.on('collect', async boton => {
-                if (boton.customId === 'botonPaginaPrevia') {
+                if (boton.customId === Boton.BotonPrevioID) {
                     indiceEmbedActual--;
                     if (indiceEmbedActual < 0) indiceEmbedActual = ultimoIndice;
-                    await boton.update({ embeds: [embeds[indiceEmbedActual]], components: [row] });
                 }
     
-                if (boton.customId === 'botonPaginaSiguiente') {
+                if (boton.customId === Boton.BotonSiguienteID) {
                     indiceEmbedActual++;
                     if (indiceEmbedActual > ultimoIndice) indiceEmbedActual = 0;
-                    await boton.update({ embeds: [embeds[indiceEmbedActual]], components: [row] });
                 }
+
+                await boton.update({ embeds: [embeds[indiceEmbedActual]], components: [row] });
             })
         } catch (error) {
             await interaction.editReply({ components: [] });

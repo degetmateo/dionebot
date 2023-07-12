@@ -4,10 +4,10 @@ export type MediaList = {
     },
     id: number,
     mediaId: number,
-    status: EstadoMedia,
+    status: MediaListEstado,
     score: number,
     progress: number,
     repeat: number
 }
 
-export type EstadoMedia = 'COMPLETED' | 'CURRENT' | 'DROPPED' | 'PLANNING' | 'PAUSED';
+export type MediaListEstado = 'COMPLETED' | 'CURRENT' | 'DROPPED' | 'PLANNING' | 'PAUSED';

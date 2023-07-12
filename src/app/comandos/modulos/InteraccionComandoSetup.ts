@@ -1,17 +1,23 @@
 import { ChatInputCommandInteraction, CacheType } from "discord.js";
 import InteraccionComando from "./InteraccionComando";
 import AnilistAPI from "../../apis/AnilistAPI";
-import Usuario from "../../apis/anilist/Usuario";
+import Usuario from "../../apis/anilist/UsuarioAnilist";
 import BOT from "../../bot";
 import ErrorGenerico from "../../errores/ErrorGenerico";
 import ErrorArgumentoInvalido from "../../errores/ErrorArgumentoInvalido";
-import { Setup } from "../../modulos/Setup";
-import Plataforma from "../../tipos/Plataforma";
-import ErrorSinResultados from "../../errores/ErrorSinResultados";
+import Plataforma from "../types/Plataforma";
 import Embed from "../../embeds/Embed";
 import { uRegistrado } from "../../types";
+import Aniuser from "../../modelos/Aniuser";
 
 export default class InteraccionComandoSetup extends InteraccionComando {
+    protected interaction: ChatInputCommandInteraction<CacheType>;
+    
+    private constructor (interaction: ChatInputCommandInteraction<CacheType>) {
+        super();
+        this.interaction = interaction;
+    }
+
     public static async execute (interaction: ChatInputCommandInteraction<CacheType>) {
         const modulo = new InteraccionComandoSetup(interaction);
         await modulo.execute(interaction);    
@@ -35,10 +41,9 @@ export default class InteraccionComandoSetup extends InteraccionComando {
     
         if (uRegistrado) throw new ErrorGenerico('Ya te encuentras registrado.');
 
-        const usuario: Usuario = await AnilistAPI.obtenerUsuario(criterio);
-        if (!usuario) throw new ErrorSinResultados("No se ha encontrado a ese usuario en anilist.");
+        const usuario: Usuario = new Usuario(await AnilistAPI.obtenerUsuario(criterio));
 
-        await Setup.SetupUsuario(usuario, serverID, userID);
+        await InteraccionComandoSetup.SetupUsuario(usuario, serverID, userID);
 
         const newUsuarioRegistrado: uRegistrado = {
             discordId: userID,
@@ -52,5 +57,20 @@ export default class InteraccionComandoSetup extends InteraccionComando {
         interaction.editReply({
             embeds: [Embed.CrearVerde("Listo! Te has registrado con éxito.")]
         })
+    }
+
+    private static async SetupUsuario (usuario: Usuario, serverID: string, discordID: string): Promise<void> {    
+        const aniuser = new Aniuser({
+            serverId: serverID,
+            discordId: discordID,
+            anilistId: usuario.obtenerID(),
+            anilistUsername: usuario.obtenerNombre()
+        });
+    
+        try {
+            await aniuser.save();
+        } catch (err) {
+            throw err;
+        }
     }
 }

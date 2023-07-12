@@ -1,11 +1,11 @@
 {
   "name": "dionebot",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "node build/app/index.js",
+    "start": "ts-node src/app/index.ts",
     "start-dev": "ts-node src/app/index.ts",
     "dev": "ts-node-dev src/app/index.ts",
     "build": "tsc",
@@ -13,14 +13,13 @@
     "delete-commands": "ts-node src/delete-commands.ts"
   },
   "engines": {
-    "node": ">=19"
+    "node": "^20"
   },
   "type": "commonjs",
   "keywords": [],
   "author": "@malardo_bro",
   "license": "ISC",
   "dependencies": {
-    "anilist-node": "^1.14.0",
     "colornames": "^1.1.1",
     "discord.js": "^14.11.0",
     "dotenv": "^16.0.2",

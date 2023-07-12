@@ -95,7 +95,7 @@ export default class BOT extends Client {
                     interaction.editReply({ embeds: [Embed.CrearRojo(error.message)] })
                 } else {
                     if (error instanceof Error) console.error('🟥 | ' + error.stack)
-                    else console.error('🟥 | ' + error);
+                    else console.error(error);
                     interaction.editReply({ embeds: [Embed.CrearRojo('Ha ocurrido un error. Inténtalo de nuevo más tarde.')] })
                 }
             }

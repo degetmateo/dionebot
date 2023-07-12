@@ -5,14 +5,16 @@ import ErrorArgumentoInvalido from "../../errores/ErrorArgumentoInvalido";
 import AnilistAPI from "../../apis/AnilistAPI";
 import Anime from "../../media/Anime";
 import EmbedAnime from "../../embeds/EmbedAnime";
-import { AnimeEntry } from "anilist-node";
-import Notas from "../../tads/Notas";
+import Notas from "../../media/Notas";
 import EmbedNotas from "../../embeds/EmbedNotas";
 import Boton from "../componentes/Boton";
 import ErrorSinResultados from "../../errores/ErrorSinResultados";
 import InteraccionComando from "./InteraccionComando";
+import { Media, MediaTitulo } from "../../apis/anilist/types/Media";
 
 export default class InteraccionComandoAnime extends InteraccionComando {
+    protected interaction: ChatInputCommandInteraction<CacheType>;
+
     private bot: BOT;
     private idServidor: string;
     private criterioBusqueda: string;
@@ -32,7 +34,9 @@ export default class InteraccionComandoAnime extends InteraccionComando {
         .addComponents(this.botonPaginaPrevia, this.botonPaginaSiguiente);
 
     private constructor (interaction: ChatInputCommandInteraction<CacheType>) {
-        super(interaction);
+        super();
+
+        this.interaction = interaction;
 
         this.bot = this.interaction.client as BOT;
         this.idServidor = this.interaction.guild?.id as string;
@@ -66,24 +70,23 @@ export default class InteraccionComandoAnime extends InteraccionComando {
         if (animeID < 0 || animeID > InteraccionComandoAnime.NUMERO_MAXIMO_32_BITS)
             throw new ErrorArgumentoInvalido('La ID que has ingresado no es valida.');
         
-        const resultado: AnimeEntry = await AnilistAPI.obtenerAnimeID(animeID);
+        const resultado: Media = await AnilistAPI.obtenerAnimeID(animeID);
         
         const anime: Anime = new Anime(resultado);
         const embedAnime = this.traducirInformacion ? await EmbedAnime.CrearTraducido(anime) : EmbedAnime.Crear(anime);
         const notas = await this.obtenerNotasUsuarios(parseInt(this.criterioBusqueda));
         const embedNotas = EmbedNotas.Crear(notas, anime);
-        
+
         try {
             await this.interaction.editReply({ embeds: [embedAnime, embedNotas] }); 
         } catch (error) {
             await this.interaction.editReply({ embeds: [embedAnime] });
+            console.error(error);
         }
     }
 
     private async buscarAnimePorNombre () {
-        const resultados = (await AnilistAPI.buscarAnime(this.criterioBusqueda)).media;
-
-        if (!resultados || resultados.length <= 0) throw new ErrorSinResultados('No se han encontrado resultados.');
+        const resultados = await InteraccionComandoAnime.obtenerResultados(this.criterioBusqueda);
 
         this.animes = new Array<Anime>();
         this.embeds = new Array<EmbedAnime>();
@@ -93,6 +96,8 @@ export default class InteraccionComandoAnime extends InteraccionComando {
             this.animes.push(anime);
             this.embeds.push(this.traducirInformacion ? await EmbedAnime.CrearTraducido(anime) : EmbedAnime.Crear(anime));
         }
+
+
 
         this.indiceInteraccion = 0;
         this.ultimoIndiceInteraccion = this.embeds.length - 1;
@@ -134,6 +139,12 @@ export default class InteraccionComandoAnime extends InteraccionComando {
         }
     }
 
+    private static async obtenerResultados (criterio: string): Promise<ResultadosMedia> {
+        const resultados = (await AnilistAPI.buscarAnime(criterio));
+        if (!resultados || resultados.length <= 0) throw new ErrorSinResultados('No se han encontrado resultados.');
+        return resultados;
+    }
+
     private async actualizarInteraccion (boton: ButtonInteraction) {
         const estaBuscandoNotas = this.bot.interacciones.has(this.interaction.id);
         if (estaBuscandoNotas) return;
@@ -169,3 +180,5 @@ export default class InteraccionComandoAnime extends InteraccionComando {
         return new Notas(completadas, progreso, dropeadas, planificadas, pausadas);
     }
 }
+
+type ResultadosMedia = Array<{ id: number, title: MediaTitulo }>;

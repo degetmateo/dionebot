@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import Usuario from '../apis/anilist/Usuario';
+import Usuario from '../apis/anilist/UsuarioAnilist';
 
 export default class EmbedUsuario extends EmbedBuilder {
     private usuario: Usuario;
@@ -118,7 +118,7 @@ Su desviación estándar es de **\`${estadisticas.anime.standardDeviation}\`**.`
     }
 
     private establecerCampoAnimesFavoritos (): void {
-        let informacion = `▸ ${this.usuario.obtenerAnimesFavoritos().map(anime => anime.title.romaji || anime.title.english || anime.title.native || 'Desconocidos').join('\n▸ ')}`;
+        let informacion = `▸ ${this.usuario.obtenerAnimesFavoritos().map(anime => anime.node.title.romaji || anime.node.title.english || anime.node.title.native || 'Desconocidos').join('\n▸ ')}`;
 
         informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
             this.addFields({ name: 'Animes Favoritos', value: informacion }) : 
@@ -141,7 +141,7 @@ Su desviación estándar es de **\`${estadisticas.manga.standardDeviation}\`**.`
     }
 
     private establecerCampoMangasFavoritos (): void {
-        let informacion = `▸ ${this.usuario.obtenerMangasFavoritos().map(manga => manga.title.romaji || manga.title.english || manga.title.native || 'Desconocidos').join('\n▸ ')}`;
+        let informacion = `▸ ${this.usuario.obtenerMangasFavoritos().map(manga => manga.node.title.romaji || manga.node.title.english || manga.node.title.native || 'Desconocidos').join('\n▸ ')}`;
 
         informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
             this.addFields({ name: 'Mangas Favoritos', value: informacion }) : 
@@ -149,7 +149,7 @@ Su desviación estándar es de **\`${estadisticas.manga.standardDeviation}\`**.`
     }
 
     private establecerCampoPersonajesFavoritos (): void  {
-        let informacion = `▸ ${this.usuario.obtenerPersonajesFavoritos().map(p => p.name || 'Desconocidos').join('\n▸ ')}`;
+        let informacion = `▸ ${this.usuario.obtenerPersonajesFavoritos().map(p => p.node.name || 'Desconocidos').join('\n▸ ')}`;
 
         informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
             this.addFields({ name: 'Personajes Favoritos', value: informacion }) : 
