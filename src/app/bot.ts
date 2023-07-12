@@ -11,16 +11,13 @@ import ErrorGenerico from "./errores/ErrorGenerico";
 import ErrorSinResultados from "./errores/ErrorSinResultados";
 import ErrorArgumentoInvalido from "./errores/ErrorArgumentoInvalido";
 import Comando from "./interfaces/InterfazComando";
+import ErrorDemasiadasPeticiones from "./errores/ErrorDemasiadasPeticiones";
 
 export default class BOT extends Client {
     private comandos: Collection<string, any>;
-    private buscando_afinidad: Set<string>;
-    private buscando_media: Set<string>;
     private usuarios: Array<uRegistrado>;
-
     public interacciones: Set<string>;
-
-    private _version: string;
+    private version: string;
 
     constructor() {
         super({
@@ -28,16 +25,12 @@ export default class BOT extends Client {
         });
 
         this.comandos = new Collection();
-        this.buscando_afinidad = new Set<string>();
-        this.buscando_media = new Set<string>();
         this.usuarios = new Array<uRegistrado>();
-
         this.interacciones = new Set<string>();
-
-        this._version = version;
+        this.version = version;
     }
 
-    public getVersion = (): string => this._version;
+    public getVersion = (): string => this.version;
 
     private loadCommands = () => {
         const commandsPath = path.join(__dirname + "/comandos/");
@@ -89,7 +82,8 @@ export default class BOT extends Client {
                 const esErrorCritico =
                     !(error instanceof ErrorGenerico) &&
                     !(error instanceof ErrorSinResultados) &&
-                    !(error instanceof ErrorArgumentoInvalido);
+                    !(error instanceof ErrorArgumentoInvalido) &&
+                    !(error instanceof ErrorDemasiadasPeticiones);
 
                 if (!esErrorCritico) {
                     interaction.editReply({ embeds: [Embed.CrearRojo(error.message)] })
@@ -178,25 +172,5 @@ export default class BOT extends Client {
                 anilistId: anilistID
             });
         }
-    }
-
-    public isGettingAfinitty = (serverID: string): boolean => {
-        return this.buscando_afinidad.has(serverID);
-    }
-
-    public isSearchingMedia = (serverID: string): boolean => {
-        return this.buscando_media.has(serverID);
-    }
-
-    public setGettingAffinity = (serverID: string, buscando: boolean): void => {
-        buscando ?
-            this.buscando_afinidad.add(serverID) :
-            this.buscando_afinidad.delete(serverID);
-    }
-
-    public setSearchingMedia = (serverID: string, buscando: boolean): void => {
-        buscando ?
-            this.buscando_media.add(serverID) :
-            this.buscando_media.delete(serverID);
     }
 }
