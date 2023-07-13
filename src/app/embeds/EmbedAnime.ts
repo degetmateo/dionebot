@@ -44,7 +44,7 @@ export default class EmbedAnime extends EmbedBuilder {
                         { name: "▾", value: informacionCampos2, inline: true });
 
         embed.addFields({ name: "▾ Géneros", value: '`' + anime.obtenerGeneros().join('` - `') + '`', inline: false });
-        embed.addFields({ name: "▾ Estudios", value: '`' + anime.obtenerEstudios().edges.map(e => e.node.name).join('` - `') + '`', inline: false });
+        embed.addFields({ name: "▾ Estudios", value: '`' + anime.obtenerEstudios().map(e => e.node.name).join('` - `') + '`', inline: false });
         return embed;
     }
 }

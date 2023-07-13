@@ -22,7 +22,7 @@ export default abstract class Media {
     }
 
     public obtenerTitulo (): string {
-        return this.media.title.romaji || this.media.title.english || this.media.title.native;
+        return this.media.title.userPreferred || this.media.title.romaji || this.media.title.english || this.media.title.native;
     }
 
     public obtenerColor (): ColorResolvable {
@@ -70,8 +70,8 @@ export default abstract class Media {
         return this.media.status;
     }
 
-    public obtenerEstudios (): AnilistTypes.MediaEstudios {
-        return this.media.studios;
+    public obtenerEstudios (): AnilistTypes.MediaListaEstudios {
+        return this.media.studios.edges;
     }
 
     public obtenerAnioEmision (): AnilistTypes.MediaFecha {

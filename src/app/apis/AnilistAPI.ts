@@ -8,6 +8,7 @@ import { Media, MediaColeccion, MediaTemporada, MediaTipo, ResultadosMedia } fro
 import { Usuario } from './anilist/types/Usuario';
 import UsuarioAnilist from './anilist/UsuarioAnilist';
 import ErrorDemasiadasPeticiones from '../errores/ErrorDemasiadasPeticiones';
+import Helpers from '../helpers';
 
 export default class AnilistAPI extends API {
     private static readonly API_URL: string = "https://graphql.anilist.co";
@@ -15,7 +16,7 @@ export default class AnilistAPI extends API {
 
     public static async buscarAnime (criterio: string): Promise<ResultadosMedia> {
         const query = this.ConsultaBuscarMediaPorNombre(criterio, 'ANIME');
-        const respuesta = await this.peticion(query);
+        const respuesta = await this.peticion(query, null);
         const resultados = respuesta.Page.media as ResultadosMedia;
         if (resultados.length <= 0) throw new ErrorSinResultados('No se han encontrado resultados.');
         return resultados;
@@ -23,7 +24,7 @@ export default class AnilistAPI extends API {
 
     public static async buscarManga (criterio: string): Promise<ResultadosMedia> {
         const query = this.ConsultaBuscarMediaPorNombre(criterio, 'MANGA');
-        const respuesta = await this.peticion(query);
+        const respuesta = await this.peticion(query, null);
         const resultados = respuesta.Page.media as ResultadosMedia;
         if (resultados.length <= 0) throw new ErrorSinResultados('No se han encontrado resultados.');
         return resultados;
@@ -102,13 +103,13 @@ export default class AnilistAPI extends API {
 
     public static async obtenerAnimeID (id: number): Promise<Media> {
         const query = this.ConsultaBuscarMediaPorID(id, 'ANIME');
-        const respuesta = await this.peticion(query);
+        const respuesta = await this.peticion(query, null);
         return respuesta.Media as Media;
     }
 
     public static async obtenerMangaID (id: number): Promise<Media> {
         const query = this.ConsultaBuscarMediaPorID(id, 'MANGA');
-        const respuesta = await this.peticion(query);
+        const respuesta = await this.peticion(query, null);
         return respuesta.Media as Media;
     }
 
@@ -178,7 +179,7 @@ export default class AnilistAPI extends API {
 
     public static async obtenerAnimesTemporada (anio: number, temporada: MediaTemporada): Promise<ResultadosMedia> {
         const query: string = this.ConsultaBuscarMediaPorTemporada(anio, temporada);
-        const respuesta = await this.peticion(query);
+        const respuesta = await this.peticion(query, null);
         const resultados = respuesta.Page.media as ResultadosMedia;
         if (resultados.length <= 0) throw new ErrorSinResultados('No se han encontrado resultados.');
         return resultados;
@@ -259,7 +260,7 @@ export default class AnilistAPI extends API {
 
     public static async obtenerUsuario (criterio: number | string): Promise<Usuario> {
         const query = this.ConsultaBuscarUsuario(criterio);
-        const respuesta = await this.peticion(query);
+        const respuesta = await this.peticion(query, null);
         return respuesta.User as Usuario;
     }
 
@@ -364,8 +365,8 @@ export default class AnilistAPI extends API {
     }
 
     public static async obtenerEstadoMediaUsuarios (usuarios: Array<uRegistrado>, mediaID: number):  Promise<Array<MediaList>> {
-        const query: string = this.ConsultaEstadoMediaUsuarios(usuarios, mediaID);
-        const respuesta = await this.peticion(query);
+        const query: string = this.ConsultaEstadoMediaUsuarios(usuarios);
+        const respuesta = await this.peticion(query, { mediaID });
         const resultados: Array<MediaList> = new Array<MediaList>();
         
         for (const i in respuesta) {
@@ -376,12 +377,12 @@ export default class AnilistAPI extends API {
         return resultados;
     }
 
-    private static ConsultaEstadoMediaUsuarios (usuarios: Array<uRegistrado>, mediaID: number): string {
+    private static ConsultaEstadoMediaUsuarios (usuarios: Array<uRegistrado>): string {
         return `
-            query {
+            query ($mediaID: Int) {
                 ${usuarios.map((u, i) => `
                     q${i}: Page (perPage: 1) {
-                        mediaList(userId: ${u.anilistId}, mediaId: ${mediaID}) {
+                        mediaList(userId: ${u.anilistId}, mediaId: $mediaID) {
                             ...mediaList
                         }
                     }
@@ -402,28 +403,74 @@ export default class AnilistAPI extends API {
         `;
     } 
 
-    public static async obtenerListasCompletasUsuarios (usuarioPrincipal: UsuarioAnilist, usuarios: Array<uRegistrado>): Promise<{ user: MediaColeccion, users: Array<MediaColeccion> }> {
-        const query = this.ConsultaListasCompletasUsuarios(usuarioPrincipal.obtenerID(), usuarios);
-        const respuesta = await this.peticion(query);
-
-        const mediaColeccion = new Array<MediaColeccion>();
-
-        for (let i = 0; i < usuarios.length; i++) {
-            const u = respuesta[`u${i}`];
-            if (!u) continue;
-            mediaColeccion.push(u);
-        }
-
-        return { user: respuesta.user as MediaColeccion, users: mediaColeccion };
+    public static async obtenerListasCompletasUsuarios (usuario: UsuarioAnilist, usuarios: Array<uRegistrado>): Promise<{ user: MediaColeccion, users: Array<MediaColeccion> }> {
+        const mediaUsuario: MediaColeccion = await this.obtenerListaCompletadosUsuario(usuario.obtenerID());
+        const mediaUsuarios: Array<MediaColeccion> = await this.obtenerListaCompletadosUsuarios(usuarios);
+        return { user: mediaUsuario, users: mediaUsuarios };
     }
 
-    private static ConsultaListasCompletasUsuarios (userID: number, usuarios: Array<uRegistrado>): string {
+    private static async obtenerListaCompletadosUsuario (id: number): Promise<MediaColeccion> {
+        const query = this.ConsultaListaCompletaUsuario(id);
+        const respuesta = await this.peticion(query, null);
+        if (!respuesta.coleccion) throw new ErrorSinResultados('Ha ocurrido un error al buscar al usuario principal.');
+        return respuesta.coleccion as MediaColeccion;
+    }
+
+    private static ConsultaListaCompletaUsuario (id: number): string {
         return `
-            query  {
-                user: MediaListCollection (userId: ${userID}, type: ANIME, status: COMPLETED) {
-                    ...mediaListCollection
+            query {
+                coleccion: MediaListCollection (userId: ${id}, type: ANIME, status: COMPLETED) {
+                    user {
+                        id
+                        name
+                    }
+                    lists {
+                        status,
+                        entries {
+                            mediaId
+                            score(format: POINT_100)
+                        }
+                    }
                 }
-                
+            }
+        `;
+    }
+
+    private static async obtenerListaCompletadosUsuarios (usuarios: Array<uRegistrado>): Promise<Array<MediaColeccion>> {
+        const querys = this.ConsultasListasCompletasUsuarios(usuarios);
+
+        let mediaColeccionUsuarios = new Array<MediaColeccion>();
+
+        for (const query of querys) {
+            const respuesta = await this.peticion(query, null);
+            const coleccionParcial = new Array<MediaColeccion>();
+
+            for (let i = 0; i < usuarios.length; i++) {
+                const u = respuesta[`u${i}`];
+                if (!u) continue;
+                coleccionParcial.push(u);
+            }
+
+            mediaColeccionUsuarios = mediaColeccionUsuarios.concat(coleccionParcial);
+        }
+
+        return mediaColeccionUsuarios;
+    }
+
+    private static ConsultasListasCompletasUsuarios (usuarios: Array<uRegistrado>): Array<string> {
+        const consultas: Array<string> = new Array<string>();
+        const tandas = Helpers.dividirArreglo(usuarios, 5);
+
+        for (const i of tandas) {
+            consultas.push(this.ConsultaListasCompletasUsuarios(i));
+        }
+
+        return consultas;
+    }
+
+    private static ConsultaListasCompletasUsuarios (usuarios: Array<uRegistrado>): string {
+        return `
+            query {                
                 ${usuarios.map((u, i) => `
                     u${i}: MediaListCollection (userId: ${u.anilistId}, type: ANIME, status: COMPLETED) {
                         ...mediaListCollection
@@ -447,13 +494,12 @@ export default class AnilistAPI extends API {
         `;
     }
 
-    private static async peticion (query: string): Promise<any | null> {
+    private static async peticion (query: string, variables: any): Promise<any | null> {
         const opciones: PeticionAPI = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', },
-            body: JSON.stringify({ query })
+            body: JSON.stringify({ query, variables })
         }
-
         
         const data = await fetch(this.API_URL, opciones);
         if (!data) throw new ErrorSinResultados('No se han encontrado resultados.');

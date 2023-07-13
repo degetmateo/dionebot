@@ -118,7 +118,7 @@ Su desviación estándar es de **\`${estadisticas.anime.standardDeviation}\`**.`
     }
 
     private establecerCampoAnimesFavoritos (): void {
-        let informacion = `▸ ${this.usuario.obtenerAnimesFavoritos().map(anime => anime.node.title.romaji || anime.node.title.english || anime.node.title.native || 'Desconocidos').join('\n▸ ')}`;
+        let informacion = `▸ ${this.usuario.obtenerAnimesFavoritos().map(anime => anime.node.title.userPreferred || anime.node.title.romaji || anime.node.title.english || anime.node.title.native || 'Desconocidos').join('\n▸ ')}`;
 
         informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
             this.addFields({ name: 'Animes Favoritos', value: informacion }) : 
@@ -141,7 +141,7 @@ Su desviación estándar es de **\`${estadisticas.manga.standardDeviation}\`**.`
     }
 
     private establecerCampoMangasFavoritos (): void {
-        let informacion = `▸ ${this.usuario.obtenerMangasFavoritos().map(manga => manga.node.title.romaji || manga.node.title.english || manga.node.title.native || 'Desconocidos').join('\n▸ ')}`;
+        let informacion = `▸ ${this.usuario.obtenerMangasFavoritos().map(manga => manga.node.title.userPreferred || manga.node.title.english || manga.node.title.native || 'Desconocidos').join('\n▸ ')}`;
 
         informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
             this.addFields({ name: 'Mangas Favoritos', value: informacion }) : 
@@ -149,7 +149,7 @@ Su desviación estándar es de **\`${estadisticas.manga.standardDeviation}\`**.`
     }
 
     private establecerCampoPersonajesFavoritos (): void  {
-        let informacion = `▸ ${this.usuario.obtenerPersonajesFavoritos().map(p => p.node.name || 'Desconocidos').join('\n▸ ')}`;
+        let informacion = `▸ ${this.usuario.obtenerPersonajesFavoritos().map(p => p.node.name.userPreferred || 'Desconocidos').join('\n▸ ')}`;
 
         informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
             this.addFields({ name: 'Personajes Favoritos', value: informacion }) : 

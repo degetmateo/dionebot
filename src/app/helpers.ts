@@ -35,4 +35,15 @@ export default class Helpers {
             throw error;
         }
     }
+
+    public static dividirArreglo (arr: any[], num: number): any[][] {
+        const subArreglos: any[][] = [];
+      
+        for (let i = 0; i < arr.length; i += num) {
+          const subArreglo = arr.slice(i, i + num);
+          subArreglos.push(subArreglo);
+        }
+      
+        return subArreglos;
+    }
 }
