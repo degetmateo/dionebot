@@ -88,12 +88,22 @@ export default class BOT extends Client {
                     !(error instanceof ErrorArgumentoInvalido) &&
                     !(error instanceof ErrorDemasiadasPeticiones);
 
-                if (!esErrorCritico) {
-                    interaction.editReply({ embeds: [Embed.CrearRojo(error.message)] })
+                if (!interaction.deferred && !interaction.replied) {
+                    if (!esErrorCritico) {
+                        interaction.reply({ embeds: [Embed.CrearRojo(error.message)] })
+                    } else {
+                        if (error instanceof Error) console.error('🟥 | ' + error.stack)
+                        else console.error(error);
+                        interaction.reply({ embeds: [Embed.CrearRojo('Ha ocurrido un error. Inténtalo de nuevo más tarde.')] })
+                    }
                 } else {
-                    if (error instanceof Error) console.error('🟥 | ' + error.stack)
-                    else console.error(error);
-                    interaction.editReply({ embeds: [Embed.CrearRojo('Ha ocurrido un error. Inténtalo de nuevo más tarde.')] })
+                    if (!esErrorCritico) {
+                        interaction.editReply({ embeds: [Embed.CrearRojo(error.message)] })
+                    } else {
+                        if (error instanceof Error) console.error('🟥 | ' + error.stack)
+                        else console.error(error);
+                        interaction.editReply({ embeds: [Embed.CrearRojo('Ha ocurrido un error. Inténtalo de nuevo más tarde.')] })
+                    }
                 }
             }
         });
