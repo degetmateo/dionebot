@@ -4,9 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "start": "ts-node src/app/index.ts",
-    "start-dev": "ts-node src/app/index.ts",
+    "start": "node src/app/index.js",
     "dev": "ts-node-dev src/app/index.ts",
     "build": "tsc",
     "deploy-commands": "ts-node src/deploy-commands.ts",
