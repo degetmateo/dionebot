@@ -36,10 +36,10 @@ export default class EmbedManga extends EmbedBuilder {
             ‣ **Formato**: ${manga.obtenerFormato()}\n‣ **Estado**: ${manga.obtenerEstado()}\n‣ **Calificación**: ${manga.obtenerCalificacionPromedio()}/100\n‣ **Popularidad**: ${manga.obtenerPopularidad()}
         `;
 
-        const fecha = manga.obtenerAnioEmision();
+        const fecha = manga.obtenerFechaEmision();
 
         const informacionCampos2 = `
-            ‣ **Favoritos**: ${manga.obtenerCantidadFavoritos()}\n‣ **Año de Emisión**: ${fecha.day}/${fecha.month}/${fecha.year}\n‣ **Capítulos**: ${manga.obtenerCapitulos()}\n‣ **Volúmenes**: ${manga.obtenerVolumenes()}
+            ‣ **Favoritos**: ${manga.obtenerCantidadFavoritos()}\n‣ **Emisión**: ${fecha.day}/${fecha.month}/${fecha.year}\n‣ **Capítulos**: ${manga.obtenerCapitulos()}\n‣ **Volúmenes**: ${manga.obtenerVolumenes()}
         `;
 
         embed
