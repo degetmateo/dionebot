@@ -63,6 +63,15 @@ export default class BOT extends Client {
 
         await this.loadUsers();
 
+        this.on('guildMemberRemove', async (member) => {
+            try {
+                await Aniuser.findOneAndRemove({ serverId: member.guild.id, discordId: member.id })
+                await this.loadUsers();
+            } catch (error) {
+                console.error(error);
+            }
+        })
+
         setInterval(async () => {
             await this.loadUsers();
         }, 300000)

@@ -1,10 +1,8 @@
-import API from "./API";
-
 import { DatosNovelaVisual } from "./vndb/NovelaVisual";
 import { PeticionAPI, TipoConsulta } from "./types/PeticionAPI";
 import { TipoCriterio } from "./vndb/PeticionNovelaVisual";
 
-export default class VisualNovelDatabaseAPI extends API {
+export default class VisualNovelDatabaseAPI {
     private static readonly API_URL: string = 'https://api.vndb.org/kana/vn';
     private static readonly TIPO_CONSULTA: TipoConsulta = 'POST';
     private static readonly CAMPOS_CONSULTAR: Array<string> = [

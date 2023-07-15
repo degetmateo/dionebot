@@ -4,7 +4,7 @@ import InteraccionComandoUsuario from "./modulos/InteraccionComandoUsuario";
 import BOT from "../bot";
 import ErrorDemasiadasPeticiones from "../errores/ErrorDemasiadasPeticiones";
 
-export default class ComandoManga implements Comando {
+export default class ComandoUsuario implements Comando {
     public readonly datos = new SlashCommandBuilder()
         .setName("usuario")
         .setDescription("Muestra la información del perfil de Anilist de un usuario.")

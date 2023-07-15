@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, CacheType } from "discord.js";
 import InteraccionComando from "./InteraccionComando";
 import AnilistAPI from "../../apis/AnilistAPI";
-import Usuario from "../../apis/anilist/UsuarioAnilist";
+import Usuario from "../../apis/anilist/modelos/UsuarioAnilist";
 import BOT from "../../bot";
 import ErrorGenerico from "../../errores/ErrorGenerico";
 import ErrorArgumentoInvalido from "../../errores/ErrorArgumentoInvalido";
@@ -41,7 +41,7 @@ export default class InteraccionComandoSetup extends InteraccionComando {
     
         if (uRegistrado) throw new ErrorGenerico('Ya te encuentras registrado.');
 
-        const usuario: Usuario = new Usuario(await AnilistAPI.obtenerUsuario(criterio));
+        const usuario: Usuario = new Usuario(await AnilistAPI.buscarUsuario(criterio));
 
         await InteraccionComandoSetup.SetupUsuario(usuario, serverID, userID);
 

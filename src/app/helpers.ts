@@ -36,12 +36,12 @@ export default class Helpers {
         }
     }
 
-    public static dividirArreglo (arr: any[], num: number): any[][] {
-        const subArreglos: any[][] = [];
+    public static dividirArreglo <Tipo> (arr: Tipo[], num: number): Tipo[][] {
+        const subArreglos: Tipo[][] = [];
       
         for (let i = 0; i < arr.length; i += num) {
-          const subArreglo = arr.slice(i, i + num);
-          subArreglos.push(subArreglo);
+            const subArreglo = arr.slice(i, i + num);
+            subArreglos.push(subArreglo);
         }
       
         return subArreglos;

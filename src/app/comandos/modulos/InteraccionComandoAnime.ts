@@ -10,7 +10,7 @@ import EmbedNotas from "../../embeds/EmbedNotas";
 import Boton from "../componentes/Boton";
 import ErrorSinResultados from "../../errores/ErrorSinResultados";
 import InteraccionComando from "./InteraccionComando";
-import { Media, MediaTitulo } from "../../apis/anilist/types/Media";
+import { Media, MediaTitulo, ResultadosMedia } from "../../apis/anilist/types/Media";
 
 export default class InteraccionComandoAnime extends InteraccionComando {
     protected interaction: ChatInputCommandInteraction<CacheType>;
@@ -67,13 +67,15 @@ export default class InteraccionComandoAnime extends InteraccionComando {
     private async buscarAnimePorID () {
         const animeID = parseInt(this.criterioBusqueda);
         
-        if (animeID < 0 || animeID > InteraccionComandoAnime.NUMERO_MAXIMO_32_BITS)
+        if (animeID < 0 || animeID > InteraccionComando.NUMERO_MAXIMO_32_BITS) {
             throw new ErrorArgumentoInvalido('La ID que has ingresado no es valida.');
+        }
         
-        const resultado: Media = await AnilistAPI.obtenerAnimeID(animeID);
+        const resultado: Media = await AnilistAPI.buscarAnimePorID(animeID);
         
         const anime: Anime = new Anime(resultado);
         const embedAnime = this.traducirInformacion ? await EmbedAnime.CrearTraducido(anime) : EmbedAnime.Crear(anime);
+
         const notas = await this.obtenerNotasUsuarios(parseInt(this.criterioBusqueda));
         const embedNotas = EmbedNotas.Crear(notas, anime);
 
@@ -86,18 +88,8 @@ export default class InteraccionComandoAnime extends InteraccionComando {
     }
 
     private async buscarAnimePorNombre () {
-        const resultados = await InteraccionComandoAnime.obtenerResultados(this.criterioBusqueda);
-
-        this.animes = new Array<Anime>();
-        this.embeds = new Array<EmbedAnime>();
-
-        for (const resultado of resultados) {
-            const anime = new Anime(await AnilistAPI.obtenerAnimeID(resultado.id));
-            this.animes.push(anime);
-            this.embeds.push(this.traducirInformacion ? await EmbedAnime.CrearTraducido(anime) : EmbedAnime.Crear(anime));
-        }
-
-
+        this.animes = await this.obtenerResultados(this.criterioBusqueda);
+        this.embeds = await this.obtenerEmbeds(this.animes);
 
         this.indiceInteraccion = 0;
         this.ultimoIndiceInteraccion = this.embeds.length - 1;
@@ -139,10 +131,19 @@ export default class InteraccionComandoAnime extends InteraccionComando {
         }
     }
 
-    private static async obtenerResultados (criterio: string): Promise<ResultadosMedia> {
-        const resultados = (await AnilistAPI.buscarAnime(criterio));
-        if (!resultados || resultados.length <= 0) throw new ErrorSinResultados('No se han encontrado resultados.');
-        return resultados;
+    private async obtenerResultados (criterio: string) {
+        const resultados = await AnilistAPI.buscarAnimePorNombre(criterio);
+        return resultados.map(r => new Anime(r));
+    }
+
+    private async obtenerEmbeds (animes: Array<Anime>) {
+        const embeds = new Array<EmbedAnime>();
+
+        for (const anime of animes) {
+            embeds.push(this.traducirInformacion ? await EmbedAnime.CrearTraducido(anime) : EmbedAnime.Crear(anime));
+        }
+
+        return embeds;
     }
 
     private async actualizarInteraccion (boton: ButtonInteraction) {
@@ -169,7 +170,7 @@ export default class InteraccionComandoAnime extends InteraccionComando {
 
     private async obtenerNotasUsuarios (animeID: number): Promise<Notas> {
         const usuarios = this.bot.getUsuariosRegistrados(this.idServidor);
-        const notasUsuarios = await AnilistAPI.obtenerEstadoMediaUsuarios(usuarios, animeID);
+        const notasUsuarios = await AnilistAPI.buscarEstadoMediaUsuarios(usuarios, animeID);
 
         const completadas = notasUsuarios.filter(ml => ml.status === 'COMPLETED');
         const progreso = notasUsuarios.filter(ml => ml.status === 'CURRENT');
@@ -180,5 +181,3 @@ export default class InteraccionComandoAnime extends InteraccionComando {
         return new Notas(completadas, progreso, dropeadas, planificadas, pausadas);
     }
 }
-
-type ResultadosMedia = Array<{ id: number, title: MediaTitulo }>;

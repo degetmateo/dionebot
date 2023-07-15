@@ -2,7 +2,7 @@ import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "dis
 import Comando from "../interfaces/InterfazComando";
 import InteraccionComandoUnsetup from "./modulos/InteraccionComandoUnsetup";
 
-export default class ComandoSetup implements Comando {
+export default class ComandoUnsetup implements Comando {
     public readonly datos = new SlashCommandBuilder()
         .setName("unsetup")
         .setDescription("Te elimina de los usuarios registrados.");

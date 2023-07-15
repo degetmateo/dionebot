@@ -1,15 +1,14 @@
-import { ChatInputCommandInteraction, CacheType, User, Embed, ActionRowBuilder, ButtonBuilder, ButtonInteraction } from "discord.js";
+import { ChatInputCommandInteraction, CacheType, User, Embed, ActionRowBuilder, ButtonBuilder, ButtonInteraction, EmbedBuilder } from "discord.js";
 import InteraccionComando from "./InteraccionComando";
 import BOT from "../../bot";
 import ErrorArgumentoInvalido from "../../errores/ErrorArgumentoInvalido";
 import AnilistAPI from "../../apis/AnilistAPI";
 import { Usuario } from "../../apis/anilist/types/Usuario";
 import ErrorSinResultados from "../../errores/ErrorSinResultados";
-import UsuarioAnilist from "../../apis/anilist/UsuarioAnilist";
+import UsuarioAnilist from "../../apis/anilist/modelos/UsuarioAnilist";
 import { uRegistrado } from "../../types";
-import { MediaColeccion } from "../../apis/anilist/types/Media";
-import EmbedAfinidad from "../../embeds/EmbedAfinidad";
 import Boton from "../componentes/Boton";
+import { Afinidad, MediaCompartida } from "../types/Afinidad";
 
 export default class InteraccionComandoAfinidad extends InteraccionComando {
     protected interaction: ChatInputCommandInteraction<CacheType>;
@@ -18,7 +17,7 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
     private serverID: string;
     private usuario: User | null;
 
-    private embeds: Array<EmbedAfinidad>;
+    private embeds: Array<EmbedBuilder>;
 
     private indiceInteraccion: number;
     private ultimoIndiceInteraccion: number;
@@ -38,7 +37,7 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
         this.serverID = interaction.guild?.id as string;
         this.usuario = this.interaction.options.getUser("usuario");
 
-        this.embeds = new Array<EmbedAfinidad>();
+        this.embeds = new Array<EmbedBuilder>();
 
         this.indiceInteraccion = 0;
         this.ultimoIndiceInteraccion = 0;
@@ -61,7 +60,7 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
         let busquedaUsuario: Usuario;
 
         try {
-            busquedaUsuario = await AnilistAPI.obtenerUsuario(usuarioRegistrado.anilistUsername);   
+            busquedaUsuario = await AnilistAPI.buscarUsuario(usuarioRegistrado.anilistUsername);   
         } catch (error) {
             if (error instanceof ErrorSinResultados) {
                 throw new ErrorSinResultados(`No se ha encontrado al usuario **${usuarioRegistrado.anilistUsername}** en anilist. Puede que se haya cambiado el nombre.`);
@@ -122,14 +121,13 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
         }
     }
 
-    private static obtenerEmbeds (usuario: UsuarioAnilist, afinidades: Array<{ name: string, afinidad: number }>): Array<EmbedAfinidad> {
-        const embeds = Array<EmbedAfinidad>();
-
+    private static obtenerEmbeds (usuario: UsuarioAnilist, afinidades: Array<Afinidad>): Array<EmbedBuilder> {
+        const embeds = Array<EmbedBuilder>();
         const numEmbeds = (afinidades.length / 10) + 1;
 
         for (let i = 0; i < numEmbeds; i++) {
             let parteActual = afinidades.slice(i * 10, (i * 10) + 10);
-            let parteActualChequeada = new Array<{ name: string, afinidad: number }>();
+            let parteActualChequeada = new Array<{ nombre: string, afinidad: number }>();
 
             for (const p of parteActual) {
                 if (p) parteActualChequeada.push(p);
@@ -137,7 +135,10 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
 
             if (parteActualChequeada.length <= 0) continue;
 
-            const embed = EmbedAfinidad.Crear(parteActualChequeada);
+            const embed = new EmbedBuilder();
+            const informacion: string = parteActualChequeada.map((a, e) => `**\`(${e + 1 + (i * 10)})\`** **[${a.afinidad}%]** ▸ ${a.nombre}`).join('\n');
+            
+            embed.setDescription(informacion);
 
             const avatar = usuario.obtenerAvatarURL();
 
@@ -156,7 +157,7 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
     }
     
     private async obtenerAfinidadesUsuario (usuario: UsuarioAnilist, usuarios: Array<uRegistrado>) {
-        const datos = await AnilistAPI.obtenerListasCompletasUsuarios(usuario, usuarios);
+        const datos = await AnilistAPI.buscarListasCompletadosUsuarios(usuario, usuarios);
 
         const mediaColeccionUsuario = datos.user;
         const mediaColeccionUsuarios = datos.users;
@@ -167,7 +168,7 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
 
         const mediaCompletadaUsuario = listaMediaUsuario.entries;
         
-        const afinidades: Array<{ name: string, afinidad: number }> = [];
+        const afinidades: Array<Afinidad> = [];
 
         for (const u of usuarios) {
             if (u.anilistUsername == usuario.obtenerNombre() || !u.anilistUsername || !u.anilistId) {
@@ -180,7 +181,15 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
 
             const resultado = await InteraccionComandoAfinidad.HandleAffinity(mediaCompletadaUsuario, mediaCompletadaUsuario2);
 
-            afinidades.push({ name: u.anilistUsername, afinidad: parseFloat(resultado.toFixed(2)) });
+            const usuarioDiscord = await this.bot.users.fetch(u.discordId);
+
+            if (!usuarioDiscord) continue;
+
+            const nombre = usuarioDiscord.username;
+            
+            if (nombre.includes('Deleted User')) continue;
+            
+            afinidades.push({ nombre: nombre, afinidad: parseFloat(resultado.toFixed(2)) });
         }
 
         return InteraccionComandoAfinidad.OrdenarAfinidades(afinidades);
@@ -233,7 +242,7 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
 
     private static zip = (a: Array<number>, b: Array<number>) => a.map((k, i) => [k, b[i]]);
 
-    private static OrdenarAfinidades(afinidades: Array<{ name: string, afinidad: number }>): Array<{ name: string, afinidad: number }> {
+    private static OrdenarAfinidades(afinidades: Array<Afinidad>): Array<Afinidad> {
         return afinidades.sort((a, b) => {
             if (a.afinidad < b.afinidad) {
                 return 1;
@@ -260,10 +269,4 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
     private static CalcularPromedioLista(lista: Array<number>): number {
         return this.SumarLista(lista) / lista.length;
     }
-}
-
-type MediaCompartida = {
-    id: number,
-    scoreA: number,
-    scoreB: number
 }

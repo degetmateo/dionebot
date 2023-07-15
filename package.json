@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/app/index.js",
-    "dev": "ts-node-dev src/app/index.ts",
+    "start-dev": "ts-node-dev src/app/index.ts",
+    "dev": "ts-node src/app/index.ts",
     "build": "tsc",
     "deploy-commands": "ts-node src/deploy-commands.ts",
     "delete-commands": "ts-node src/delete-commands.ts"

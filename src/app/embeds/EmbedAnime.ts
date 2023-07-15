@@ -36,8 +36,11 @@ export default class EmbedAnime extends EmbedBuilder {
             ‣ **Formato**: ${anime.obtenerFormato()}\n‣ **Estado**: ${anime.obtenerEstado()}\n‣ **Calificación**: ${anime.obtenerCalificacionPromedio()}/100\n‣ **Popularidad**: ${anime.obtenerPopularidad()}
         `;
 
+        const fechaEmision = anime.obtenerFechaEmision();
+        const fechaString = `${fechaEmision.day}/${fechaEmision.month}/${fechaEmision.year}`;
+
         const informacionCampos2 = `
-            ‣ **Favoritos**: ${anime.obtenerCantidadFavoritos()}\n‣ **Temporada**: ${anime.obtenerTemporada()}\n‣ **Año de Emisión**: ${anime.obtenerAnioEmision()}\n‣ **Episodios**: ${anime.obtenerEpisodios()}
+            ‣ **Favoritos**: ${anime.obtenerCantidadFavoritos()}\n‣ **Temporada**: ${anime.obtenerTemporada()}\n‣ **Emisión**: ${fechaString}\n‣ **Episodios**: ${anime.obtenerEpisodios()}
         `;
 
         embed.addFields({ name: "▾", value: informacionCampos1, inline: true },

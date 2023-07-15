@@ -4,7 +4,7 @@ import InteraccionComandoSeason from "./modulos/InteraccionComandoSeason";
 import BOT from "../bot";
 import ErrorDemasiadasPeticiones from "../errores/ErrorDemasiadasPeticiones";
 
-export default class ComandoManga implements Comando {
+export default class ComandoSeason implements Comando {
     public readonly datos = new SlashCommandBuilder()
         .setName("season")
         .setDescription("Devuelve los animes que salieron en el año y en la temporada pasados como parámetro.")

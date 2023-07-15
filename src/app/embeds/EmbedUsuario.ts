@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import Usuario from '../apis/anilist/UsuarioAnilist';
+import Usuario from '../apis/anilist/modelos/UsuarioAnilist';
 
 export default class EmbedUsuario extends EmbedBuilder {
     private usuario: Usuario;
@@ -28,36 +28,43 @@ export default class EmbedUsuario extends EmbedBuilder {
         return embed;
     }
 
-    public static CrearInformacionAnime (usuario: Usuario): EmbedUsuario {
+    public static CrearMediaFavorita (usuario: Usuario): EmbedUsuario | null {
         const embed = new EmbedUsuario(usuario);
 
-        embed.establecerTitulo();
-        embed.establecerPortada();
         embed.establecerColor();
-        embed.establecerCampoAnimesFavoritos();
 
-        return embed;
-    }
+        const animes = usuario.obtenerAnimesFavoritos();
+        const mangas = usuario.obtenerMangasFavoritos();
+        const characters = usuario.obtenerPersonajesFavoritos();
 
-    public static CrearInformacionManga (usuario: Usuario): EmbedUsuario {
-        const embed = new EmbedUsuario(usuario);
+        if (animes.length === 0 && mangas.length === 0 && characters.length === 0) return null;
 
-        embed.establecerTitulo();
-        embed.establecerPortada();
-        embed.establecerColor();
-        embed.establecerCampoMangasFavoritos();
+        if (animes.length > 0) {
+            let informacionAnime = `▸ ${usuario.obtenerAnimesFavoritos().map(anime => anime.node.title.userPreferred || anime.node.title.romaji || anime.node.title.english || anime.node.title.native || 'Desconocidos').join('\n▸ ')}`;
 
-        return embed;
-    }
+            informacionAnime.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
+                embed.addFields({ name: 'Animes Favoritos', value: informacionAnime, inline: true }) : 
+                embed.addFields({ name: 'Animes Favoritos', value: informacionAnime.slice(0, EmbedUsuario.LIMITE_CARACTERES_CAMPO - 4) + '\n...', inline: true });
+        }
 
-    public static CrearInformacionFavoritosExtra (usuario: Usuario): EmbedUsuario {
-        const embed = new EmbedUsuario(usuario);
+        if (mangas.length > 0) {
+            let informacionMangas = `▸ ${usuario.obtenerMangasFavoritos().map(manga => manga.node.title.userPreferred || manga.node.title.romaji || manga.node.title.english || manga.node.title.native).join('\n▸ ')}`;
 
-        embed.establecerTitulo();
-        embed.establecerPortada();
-        embed.establecerColor();
-        embed.establecerCampoPersonajesFavoritos();
+            informacionMangas.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
+                embed.addFields({ name: 'Mangas Favoritos', value: informacionMangas, inline: true }) : 
+                embed.addFields({ name: 'Mangas Favoritos', value: informacionMangas.slice(0, EmbedUsuario.LIMITE_CARACTERES_CAMPO - 4) + '\n...', inline: true });
+        }
 
+        if (characters.length > 0) {
+            let informacionPersonajes = `▸ ${usuario.obtenerPersonajesFavoritos().map(p => p.node.name.userPreferred || 'Desconocidos').join('\n▸ ')}`;
+
+            informacionPersonajes.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
+                embed.addFields({ name: 'Personajes Favoritos', value: informacionPersonajes }) : 
+                embed.addFields({ name: 'Personajes Favoritos', value: informacionPersonajes.slice(0, EmbedUsuario.LIMITE_CARACTERES_CAMPO - 4) + '\n...' });
+        }
+
+        // xd
+        embed.setImage('https://media.discordapp.net/attachments/712773186336456766/1129603625681956935/image.png?width=1395&height=701')
         return embed;
     }
 
@@ -117,14 +124,6 @@ Su desviación estándar es de **\`${estadisticas.anime.standardDeviation}\`**.`
             this.addFields({ name: 'Generos Favoritos de Manga', value: informacion.slice(0, EmbedUsuario.LIMITE_CARACTERES_CAMPO - 4) + '\n...' });   
     }
 
-    private establecerCampoAnimesFavoritos (): void {
-        let informacion = `▸ ${this.usuario.obtenerAnimesFavoritos().map(anime => anime.node.title.userPreferred || anime.node.title.romaji || anime.node.title.english || anime.node.title.native || 'Desconocidos').join('\n▸ ')}`;
-
-        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
-            this.addFields({ name: 'Animes Favoritos', value: informacion }) : 
-            this.addFields({ name: 'Animes Favoritos', value: informacion.slice(0, EmbedUsuario.LIMITE_CARACTERES_CAMPO - 4) + '\n...' });
-    }
-
     private establecerCampoInformacionBasicaManga (): void {
         let informacion = '';
         const estadisticas = this.usuario.obtenerEstadisticas();
@@ -138,21 +137,5 @@ Su cantidad de volúmenes leídos es de **\`${estadisticas.manga.volumesRead}\`*
 Su desviación estándar es de **\`${estadisticas.manga.standardDeviation}\`**.`
 
         informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ? this.addFields({ name: 'Mangas', value: informacion }) : null;
-    }
-
-    private establecerCampoMangasFavoritos (): void {
-        let informacion = `▸ ${this.usuario.obtenerMangasFavoritos().map(manga => manga.node.title.userPreferred || manga.node.title.english || manga.node.title.native || 'Desconocidos').join('\n▸ ')}`;
-
-        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
-            this.addFields({ name: 'Mangas Favoritos', value: informacion }) : 
-            this.addFields({ name: 'Mangas Favoritos', value: informacion.slice(0, EmbedUsuario.LIMITE_CARACTERES_CAMPO - 4) + '\n...' });
-    }
-
-    private establecerCampoPersonajesFavoritos (): void  {
-        let informacion = `▸ ${this.usuario.obtenerPersonajesFavoritos().map(p => p.node.name.userPreferred || 'Desconocidos').join('\n▸ ')}`;
-
-        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
-            this.addFields({ name: 'Personajes Favoritos', value: informacion }) : 
-            this.addFields({ name: 'Personajes Favoritos', value: informacion.slice(0, EmbedUsuario.LIMITE_CARACTERES_CAMPO - 4) + '\n...' });
     }
 }

@@ -66,13 +66,15 @@ export default class InteraccionComandoManga extends InteraccionComando {
     private async buscarMangaPorID () {
         const mangaID = parseInt(this.criterioBusqueda);
         
-        if (mangaID < 0 || mangaID > InteraccionComandoManga.NUMERO_MAXIMO_32_BITS)
+        if (mangaID < 0 || mangaID > InteraccionComando.NUMERO_MAXIMO_32_BITS) {
             throw new ErrorArgumentoInvalido('La ID que has ingresado no es valida.');
+        }
         
-        const resultado: Media = await AnilistAPI.obtenerMangaID(mangaID);
+        const resultado: Media = await AnilistAPI.buscarMangaPorID(mangaID);
         
         const manga: Manga = new Manga(resultado);
         const embedManga = this.traducirInformacion ? await EmbedManga.CrearTraducido(manga) : EmbedManga.Crear(manga);
+
         const notas = await this.obtenerNotasUsuarios(parseInt(this.criterioBusqueda));
         const embedNotas = EmbedNotas.Crear(notas, manga);
         
@@ -80,11 +82,12 @@ export default class InteraccionComandoManga extends InteraccionComando {
             await this.interaction.editReply({ embeds: [embedManga, embedNotas] }); 
         } catch (error) {
             await this.interaction.editReply({ embeds: [embedManga] });
+            console.error(error);
         }
     }
 
     private async buscarMangaPorNombre () {
-        const resultados = await AnilistAPI.buscarManga(this.criterioBusqueda);
+        const resultados = await AnilistAPI.buscarMangaPorNombre(this.criterioBusqueda);
 
         if (!resultados || resultados.length <= 0) throw new ErrorSinResultados('No se han encontrado resultados.');
 
@@ -92,7 +95,7 @@ export default class InteraccionComandoManga extends InteraccionComando {
         this.embeds = new Array<EmbedManga>();
 
         for (const resultado of resultados) {
-            const manga = new Manga(await AnilistAPI.obtenerMangaID(resultado.id));
+            const manga = new Manga(resultado);
             this.mangas.push(manga);
             this.embeds.push(this.traducirInformacion ? await EmbedManga.CrearTraducido(manga) : EmbedManga.Crear(manga));
         }
@@ -161,7 +164,7 @@ export default class InteraccionComandoManga extends InteraccionComando {
 
     private async obtenerNotasUsuarios (mangaID: number): Promise<Notas> {
         const usuarios = this.bot.getUsuariosRegistrados(this.idServidor);
-        const notasUsuarios = await AnilistAPI.obtenerEstadoMediaUsuarios(usuarios, mangaID);
+        const notasUsuarios = await AnilistAPI.buscarEstadoMediaUsuarios(usuarios, mangaID);
 
         const completadas = notasUsuarios.filter(ml => ml.status === 'COMPLETED');
         const progreso = notasUsuarios.filter(ml => ml.status === 'CURRENT');

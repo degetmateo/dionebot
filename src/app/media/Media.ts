@@ -74,7 +74,7 @@ export default abstract class Media {
         return this.media.studios.edges;
     }
 
-    public obtenerAnioEmision (): AnilistTypes.MediaFecha {
+    public obtenerFechaEmision (): AnilistTypes.MediaFecha {
         return this.media.startDate;
     }
 

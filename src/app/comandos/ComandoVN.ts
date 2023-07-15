@@ -2,7 +2,7 @@ import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "dis
 import Comando from "../interfaces/InterfazComando";
 import InteraccionComandoVN from "./modulos/InteraccionComandoVN";
 
-export default class ComandoManga implements Comando {
+export default class ComandoVN implements Comando {
     public readonly datos = new SlashCommandBuilder()
         .setName('vn')
         .setDescription('Obtén información acerca de una novela visual.')

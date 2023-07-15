@@ -22,7 +22,7 @@ export default class InteraccionComandoSeason extends InteraccionComando {
         const anio: number = interaction.options.getInteger("año") as number;
         const temporada = interaction.options.getString("temporada") as MediaTemporada;
 
-        const resultados = await AnilistAPI.obtenerAnimesTemporada(anio, temporada);
+        const resultados = await AnilistAPI.buscarAnimesTemporada(anio, temporada);
 
         const embed = new EmbedBuilder()
             .setTitle(`${temporada} ${anio}`);

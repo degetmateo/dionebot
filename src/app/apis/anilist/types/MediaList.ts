@@ -1,5 +1,6 @@
 export type MediaList = {
     user: {
+        id: number,
         name: string
     },
     id: number,
