@@ -46,4 +46,13 @@ export default class Helpers {
       
         return subArreglos;
     }
+
+    public static eliminarRepetidos <Tipo> (arr: Tipo[]): Tipo[] {
+        return [...new Set(arr)];
+    }
+
+    public static eliminarObjetosRepetidos <Tipo> (arr: Tipo[]): Tipo[] {
+        const set = new Set(arr.map(e => JSON.stringify(e)));
+        return Array.from(set).map(e => JSON.parse(e));
+    }
 }

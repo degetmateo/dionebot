@@ -8,9 +8,8 @@ import EmbedAnime from "../../embeds/EmbedAnime";
 import Notas from "../../media/Notas";
 import EmbedNotas from "../../embeds/EmbedNotas";
 import Boton from "../componentes/Boton";
-import ErrorSinResultados from "../../errores/ErrorSinResultados";
 import InteraccionComando from "./InteraccionComando";
-import { Media, MediaTitulo, ResultadosMedia } from "../../apis/anilist/types/Media";
+import { Media } from "../../apis/anilist/types/Media";
 
 export default class InteraccionComandoAnime extends InteraccionComando {
     protected interaction: ChatInputCommandInteraction<CacheType>;
@@ -77,6 +76,9 @@ export default class InteraccionComandoAnime extends InteraccionComando {
         const embedAnime = this.traducirInformacion ? await EmbedAnime.CrearTraducido(anime) : EmbedAnime.Crear(anime);
 
         const notas = await this.obtenerNotasUsuarios(parseInt(this.criterioBusqueda));
+
+
+
         const embedNotas = EmbedNotas.Crear(notas, anime);
 
         try {
@@ -169,8 +171,11 @@ export default class InteraccionComandoAnime extends InteraccionComando {
     }
 
     private async obtenerNotasUsuarios (animeID: number): Promise<Notas> {
-        const usuarios = this.bot.getUsuariosRegistrados(this.idServidor);
-        const notasUsuarios = await AnilistAPI.buscarEstadoMediaUsuarios(usuarios, animeID);
+        let usuarios = this.bot.getUsuariosRegistrados(this.idServidor);
+        usuarios = Helpers.eliminarObjetosRepetidos(usuarios);
+
+        let notasUsuarios = await AnilistAPI.buscarEstadoMediaUsuarios(usuarios, animeID);
+        notasUsuarios = Helpers.eliminarObjetosRepetidos(notasUsuarios);
 
         const completadas = notasUsuarios.filter(ml => ml.status === 'COMPLETED');
         const progreso = notasUsuarios.filter(ml => ml.status === 'CURRENT');

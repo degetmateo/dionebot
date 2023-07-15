@@ -163,8 +163,11 @@ export default class InteraccionComandoManga extends InteraccionComando {
     }
 
     private async obtenerNotasUsuarios (mangaID: number): Promise<Notas> {
-        const usuarios = this.bot.getUsuariosRegistrados(this.idServidor);
-        const notasUsuarios = await AnilistAPI.buscarEstadoMediaUsuarios(usuarios, mangaID);
+        let usuarios = this.bot.getUsuariosRegistrados(this.idServidor);
+        usuarios = Helpers.eliminarObjetosRepetidos(usuarios);
+        
+        let notasUsuarios = await AnilistAPI.buscarEstadoMediaUsuarios(usuarios, mangaID);
+        notasUsuarios = Helpers.eliminarObjetosRepetidos(notasUsuarios);
 
         const completadas = notasUsuarios.filter(ml => ml.status === 'COMPLETED');
         const progreso = notasUsuarios.filter(ml => ml.status === 'CURRENT');

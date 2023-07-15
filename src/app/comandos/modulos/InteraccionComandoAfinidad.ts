@@ -9,6 +9,7 @@ import UsuarioAnilist from "../../apis/anilist/modelos/UsuarioAnilist";
 import { uRegistrado } from "../../types";
 import Boton from "../componentes/Boton";
 import { Afinidad, MediaCompartida } from "../types/Afinidad";
+import Helpers from "../../helpers";
 
 export default class InteraccionComandoAfinidad extends InteraccionComando {
     protected interaction: ChatInputCommandInteraction<CacheType>;
@@ -52,7 +53,10 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
         await this.interaction.deferReply();
 
         const usuarioID = (!this.usuario) ? this.interaction.user.id : this.usuario.id;
-        const usuariosRegistrados = this.bot.getUsuariosRegistrados(this.serverID);
+        
+        let usuariosRegistrados = this.bot.getUsuariosRegistrados(this.serverID);
+        usuariosRegistrados = Helpers.eliminarObjetosRepetidos(usuariosRegistrados);
+        
         const usuarioRegistrado = usuariosRegistrados.find(u => u.discordId === usuarioID);
 
         if (!usuarioRegistrado) throw new ErrorArgumentoInvalido('Tu o el usuario especificado no estan registrados.');
@@ -70,7 +74,8 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
         }
 
         const usuario = new UsuarioAnilist(busquedaUsuario);
-        const afinidades = await this.obtenerAfinidadesUsuario(usuario, usuariosRegistrados);
+        let afinidades = await this.obtenerAfinidadesUsuario(usuario, usuariosRegistrados);
+        afinidades = Helpers.eliminarObjetosRepetidos(afinidades);
 
         if (!afinidades || afinidades.length <= 0) throw new ErrorSinResultados('No hay afinidades disponibles.');
 
@@ -160,7 +165,7 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
         const datos = await AnilistAPI.buscarListasCompletadosUsuarios(usuario, usuarios);
 
         const mediaColeccionUsuario = datos.user;
-        const mediaColeccionUsuarios = datos.users;
+        const mediaColeccionUsuarios = Helpers.eliminarObjetosRepetidos(datos.users);
 
         const listaMediaUsuario = mediaColeccionUsuario.lists[0];
 
@@ -192,12 +197,12 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
             afinidades.push({ nombre: nombre, afinidad: parseFloat(resultado.toFixed(2)) });
         }
 
-        return InteraccionComandoAfinidad.OrdenarAfinidades(afinidades);
+        return InteraccionComandoAfinidad.OrdenarAfinidades(Helpers.eliminarObjetosRepetidos(afinidades));
     }
 
     private static async HandleAffinity (animes1: Array<{ mediaId: number, score: number }>, animes2: Array<{ mediaId: number, score: number }>) {
         const mediaCompartida = InteraccionComandoAfinidad.ObtenerMediaCompartida(animes1, animes2);
-        return this.CalcularAfinidad(mediaCompartida);
+        return this.CalcularAfinidad(Helpers.eliminarObjetosRepetidos(mediaCompartida));
     }
 
     private static ObtenerMediaCompartida(l1: Array<{ mediaId: number, score: number }>, l2: Array<{ mediaId: number, score: number }>) {
