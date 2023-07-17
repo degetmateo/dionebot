@@ -1,4 +1,4 @@
-import Helpers from "../../../../Helpers";
+import Helpers from "../../../Helpers";
 import { uRegistrado } from "../../../types";
 import AnilistAPI from "../../AnilistAPI";
 import { MediaList } from "../types/MediaList";

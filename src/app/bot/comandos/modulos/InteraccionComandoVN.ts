@@ -3,7 +3,7 @@ import InteraccionComando from "./InteraccionComando";
 import VisualNovelDatabaseAPI from "../../apis/VisualNovelDatabaseAPI";
 import NovelaVisual from "../../media/NovelaVisual";
 import { TipoCriterio } from "../../apis/vndb/PeticionNovelaVisual";
-import Helpers from "../../../Helpers";
+import Helpers from "../../Helpers";
 import ErrorSinResultados from "../../../errores/ErrorSinResultados";
 import EmbedNovelaVisual from "../../embeds/EmbedNovelaVisual";
 

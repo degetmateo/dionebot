@@ -7,7 +7,7 @@ import InteraccionComando from "./InteraccionComando";
 import { Media } from "../../apis/anilist/types/Media";
 import Bot from "../../Bot";
 import EmbedAnime from "../../embeds/EmbedAnime";
-import Helpers from "../../../Helpers";
+import Helpers from "../../Helpers";
 import ErrorArgumentoInvalido from "../../../errores/ErrorArgumentoInvalido";
 import EmbedNotas from "../../embeds/EmbedNotas";
 import { MediaList } from "../../apis/anilist/types/MediaList";

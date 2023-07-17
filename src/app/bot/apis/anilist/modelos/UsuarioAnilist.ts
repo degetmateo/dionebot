@@ -1,7 +1,7 @@
 import toHex from 'colornames';
 import { ColorResolvable } from 'discord.js';
 import { Usuario, UsuarioCharFavLista, UsuarioEstadisticas, UsuarioGenerosFavoritosLista, UsuarioMediaFavLista } from '../types/Usuario';
-import Helpers from '../../../../Helpers';
+import Helpers from '../../../Helpers';
 
 export default class UsuarioAnilist {
     private usuario: Usuario;

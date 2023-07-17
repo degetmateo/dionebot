@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import Helpers from "../../Helpers";
+import Helpers from "../Helpers";
 import NovelaVisual from "../media/NovelaVisual";
 
 export default class EmbedNovelaVisual extends EmbedBuilder {

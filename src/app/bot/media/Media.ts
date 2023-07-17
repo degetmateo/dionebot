@@ -1,6 +1,6 @@
 import { ColorResolvable } from 'discord.js';
 import * as AnilistTypes from '../apis/anilist/types/Media';
-import Helpers from '../../Helpers';
+import Helpers from '../Helpers';
 
 export default abstract class Media {
     protected media: AnilistTypes.Media;

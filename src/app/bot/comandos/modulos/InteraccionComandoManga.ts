@@ -6,7 +6,7 @@ import AnilistAPI from "../../apis/AnilistAPI";
 import Notas from "../../media/Notas";
 import { Media } from "../../apis/anilist/types/Media";
 import Bot from "../../Bot";
-import Helpers from "../../../Helpers";
+import Helpers from "../../Helpers";
 import ErrorArgumentoInvalido from "../../../errores/ErrorArgumentoInvalido";
 import ErrorSinResultados from "../../../errores/ErrorSinResultados";
 import EmbedManga from "../../embeds/EmbedManga";

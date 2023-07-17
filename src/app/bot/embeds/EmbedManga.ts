@@ -1,6 +1,6 @@
 import { EmbedBuilder } from "discord.js";
 import Manga from "../media/Manga";
-import Helpers from "../../Helpers";
+import Helpers from "../Helpers";
 
 export default class EmbedManga extends EmbedBuilder {
     private constructor() {
