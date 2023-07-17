@@ -7,9 +7,9 @@ import { uRegistrado } from "../../types";
 import Boton from "../componentes/Boton";
 import { Afinidad, MediaCompartida } from "../types/Afinidad";
 import Bot from "../../Bot";
-import Helpers from "../../../Helpers";
 import ErrorArgumentoInvalido from "../../../errores/ErrorArgumentoInvalido";
 import ErrorSinResultados from "../../../errores/ErrorSinResultados";
+import Helpers from "../../../Helpers";
 
 export default class InteraccionComandoAfinidad extends InteraccionComando {
     protected interaction: ChatInputCommandInteraction<CacheType>;
