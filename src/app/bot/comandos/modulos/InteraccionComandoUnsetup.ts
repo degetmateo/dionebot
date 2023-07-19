@@ -30,8 +30,13 @@ export default class InteraccionComandoUnsetup extends InteraccionComando {
 
         bot.eliminarUsuario(serverID, userID);
 
+        const embed = Embed.Crear()
+            .establecerColor(Embed.COLOR_VERDE)
+            .establecerDescripcion('Listo! Se ha eliminado tu cuenta.')
+            .obtenerDatos();
+
         interaction.editReply({
-            embeds: [Embed.CrearVerde('Listo! Se ha eliminado tu cuenta.')]
+            embeds: [embed]
         })
     }
 

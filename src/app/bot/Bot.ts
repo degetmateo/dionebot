@@ -1,4 +1,4 @@
-import { Client, Collection, GatewayIntentBits, Events, ActivityType } from "discord.js";
+import { Client, Collection, GatewayIntentBits, Events, ActivityType, EmbedBuilder } from "discord.js";
 
 import fs from "fs";
 import path from "path";
@@ -33,60 +33,20 @@ export default class Bot extends Client {
 
     public getVersion = (): string => this.version;
 
-    private loadCommands = () => {
-        const commandsPath = path.join(__dirname + "/comandos/");
-        const commandsFiles = fs.readdirSync(commandsPath);
-
-        for (const file of commandsFiles) {
-            if (!file.endsWith('.ts') && !file.endsWith('.js')) continue;
-
-            const filePath = path.join(commandsPath, file);
-            const command = require(filePath);
-
-            if (!command.default) continue;
-
-            const comando = new command.default() as Comando;
-
-            if (!comando.execute || !comando.datos) continue;
-
-            this.comandos.set(comando.datos.name, comando);
-        }
-    }
-
     public async iniciar(token: string | undefined) {
         this.on("ready", () => {
             console.log("✅ | BOT iniciado.");
             this.establecerEstados();
         });
 
-        await this.loadUsers();
-
-        this.on('guildMemberRemove', async (member) => {
-            try {
-                await Aniuser.findOneAndRemove({ serverId: member.guild.id, discordId: member.id })
-                await this.loadUsers();
-            } catch (error) {
-                console.error(error);
-            }
-        })
-
-        setInterval(async () => {
-            await this.loadUsers();
-        }, 300000)
-
-        this.loadCommands();
+        this.cargarComandos();
 
         this.on(Events.InteractionCreate, async interaction => {
             if (!interaction.isChatInputCommand()) return;
 
-            const command = this.comandos.get(interaction.commandName);
-
-            if (!command) {
-                console.error(`🟨 | No se ha encontrado ningun comando con el nombre: ${interaction.commandName}`);
-                return;
-            }
-
             try {
+                const command = this.comandos.get(interaction.commandName);
+                if (!command) throw new Error(`No se ha encontrado ningun comando con el nombre: ${interaction.commandName}`);
                 await command.execute(interaction);
             } catch (error) {
                 const esErrorCritico =
@@ -95,27 +55,49 @@ export default class Bot extends Client {
                     !(error instanceof ErrorArgumentoInvalido) &&
                     !(error instanceof ErrorDemasiadasPeticiones);
 
-                if (!interaction.deferred && !interaction.replied) {
-                    if (!esErrorCritico) {
-                        interaction.reply({ embeds: [Embed.CrearRojo(error.message)] })
-                    } else {
-                        if (error instanceof Error) console.error('🟥 | ' + error.stack)
-                        else console.error(error);
-                        interaction.reply({ embeds: [Embed.CrearRojo('Ha ocurrido un error. Inténtalo de nuevo más tarde.')] })
-                    }
-                } else {
-                    if (!esErrorCritico) {
-                        interaction.editReply({ embeds: [Embed.CrearRojo(error.message)] })
-                    } else {
-                        if (error instanceof Error) console.error('🟥 | ' + error.stack)
-                        else console.error(error);
-                        interaction.editReply({ embeds: [Embed.CrearRojo('Ha ocurrido un error. Inténtalo de nuevo más tarde.')] })
-                    }
-                }
+                const embed = Embed.Crear()
+                    .establecerColor(Embed.COLOR_ROJO);
+
+                (!esErrorCritico) ?
+                    embed.establecerDescripcion(error.message) :
+                    embed.establecerDescripcion('Ha ocurrido un error. Inténtalo de nuevo más tarde.') && console.error('🟥 | ' + error.stack);
+
+                (!interaction.deferred && !interaction.replied) ?
+                    interaction.reply({ embeds: [embed.obtenerDatos()] }) :
+                    interaction.editReply({ embeds: [embed.obtenerDatos()] });
             }
         });
 
+        await this.cargarUsuarios();
+
+        this.on('guildMemberRemove', async (member) => {
+            try {
+                await Aniuser.findOneAndRemove({ serverId: member.guild.id, discordId: member.id })
+                await this.cargarUsuarios();
+            } catch (error) {
+                console.error(error);
+            }
+        })
+
         this.login(token);
+    }
+
+    private cargarComandos = () => {
+        const directorioComandos = path.join(__dirname + "/comandos/");
+        const archivos = fs.readdirSync(directorioComandos);
+
+        for (const archivo of archivos) {
+            if (!archivo.endsWith('.ts') && !archivo.endsWith('.js')) continue;
+
+            const direccionArchivo = path.join(directorioComandos, archivo);
+            const datosComando = require(direccionArchivo);
+            if (!datosComando.default) continue;
+            
+            const comando = new datosComando.default() as Comando;
+            if (!comando.execute || !comando.datos) continue;
+
+            this.comandos.set(comando.datos.name, comando);
+        }
     }
 
     private establecerEstados = () => {
@@ -172,7 +154,7 @@ export default class Bot extends Client {
         return this.usuarios.filter(u => u.serverId === serverID);
     }
 
-    public loadUsers = async (): Promise<void> => {
+    public cargarUsuarios = async (): Promise<void> => {
         const aniusers =  await Aniuser.find();
         
         for (let i = 0; i < aniusers.length; i++) {

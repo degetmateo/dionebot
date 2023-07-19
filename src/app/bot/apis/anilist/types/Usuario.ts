@@ -7,8 +7,6 @@ export type Usuario = {
     avatar: UsuarioAvatar,
     bannerImage: string,
     options: UsuarioOpciones,
-    mediaListOptions: UsuarioOpcionesMedia,
-    favourites: UsuarioFavoritos,
     statistics: UsuarioEstadisticas,
     siteUrl: string,
     createdAt: number,
@@ -20,7 +18,6 @@ export type UsuarioAvatar = {
 }
 
 export type UsuarioOpciones = {
-    titleLanguage: TituloIdioma,
     profileColor: string,
 }
 
@@ -28,7 +25,6 @@ export type TituloIdioma = 'ROMAJI' | 'ENGLISH' | 'NATIVE' | 'ROMAJI_STYLISED' |
 
 export type UsuarioOpcionesMedia = {
     scoreFormat: FormatoNota,
-
 }
 
 export type FormatoNota = 'POINT_100' | 'POINT_10_DECIMAL' | 'POINT_10' | 'POINT_5' | 'POINT_3';
@@ -77,4 +73,5 @@ export type UsuarioEstadisticasManga = {
     genres: UsuarioGenerosFavoritosLista,
 }
 
-export type UsuarioGenerosFavoritosLista = Array<{ genre: string, count: number }>
+export type UsuarioGenerosFavoritosLista = Array<Genero>;
+export type Genero = { genre: string, count: number };

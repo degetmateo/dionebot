@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, CacheType } from "discord.js";
 import InteraccionComando from "./InteraccionComando";
-import AnilistAPI from "../../apis/AnilistAPI";
+import AnilistAPI from "../../apis/anilist/AnilistAPI";
 import Usuario from "../../apis/anilist/modelos/UsuarioAnilist";
 import Plataforma from "../types/Plataforma";
 import { uRegistrado } from "../../types";
@@ -54,8 +54,13 @@ export default class InteraccionComandoSetup extends InteraccionComando {
 
         bot.insertarUsuario(newUsuarioRegistrado);
 
+        const embed = Embed.Crear()
+            .establecerColor(Embed.COLOR_VERDE)
+            .establecerDescripcion('Listo! Te has registrado con éxito.')
+            .obtenerDatos();
+
         await this.interaction.editReply({
-            embeds: [Embed.CrearVerde("Listo! Te has registrado con éxito.")]
+            embeds: [embed]
         })
     }
 

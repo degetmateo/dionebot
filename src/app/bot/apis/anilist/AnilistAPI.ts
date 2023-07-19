@@ -1,17 +1,17 @@
 import fetch from 'node-fetch';
-import { MediaList } from './anilist/types/MediaList';
-import { PeticionAPI } from './types/PeticionAPI';
-import { uRegistrado } from '../types';
-import {Media, MediaColeccion, MediaTemporada, ResultadosMedia } from './anilist/types/Media';
-import { Usuario } from './anilist/types/Usuario';
-import UsuarioAnilist from './anilist/modelos/UsuarioAnilist';
-import BuscadorMedia from './anilist/modulos/BuscadorMedia';
-import BuscadorAnimesTemporada from './anilist/modulos/BuscadorMediaTemporada';
-import BuscadorUsuario from './anilist/modulos/BuscadorUsuario';
-import BuscadorEstadoMediaUsuarios from './anilist/modulos/BuscadorEstadoMediaUsuarios';
-import BuscadorListasCompletasUsuarios from './anilist/modulos/BuscadorListasCompletasUsuarios';
-import ErrorDemasiadasPeticiones from '../../errores/ErrorDemasiadasPeticiones';
-import ErrorSinResultados from '../../errores/ErrorSinResultados';
+import { MediaList } from './types/MediaList';
+import { PeticionAPI } from '../types/PeticionAPI';
+import { uRegistrado } from '../../types';
+import {Media, MediaColeccion, MediaTemporada, ResultadosMedia } from './types/Media';
+import { Usuario } from './types/Usuario';
+import UsuarioAnilist from './modelos/UsuarioAnilist';
+import BuscadorMedia from './modulos/BuscadorMedia';
+import BuscadorAnimesTemporada from './modulos/BuscadorMediaTemporada';
+import BuscadorUsuario from './modulos/BuscadorUsuario';
+import BuscadorEstadoMediaUsuarios from './modulos/BuscadorEstadoMediaUsuarios';
+import BuscadorListasCompletasUsuarios from './modulos/BuscadorListasCompletasUsuarios';
+import ErrorDemasiadasPeticiones from '../../../errores/ErrorDemasiadasPeticiones';
+import ErrorSinResultados from '../../../errores/ErrorSinResultados';
 
 export default class AnilistAPI {
     private static readonly API_URL: string = "https://graphql.anilist.co";

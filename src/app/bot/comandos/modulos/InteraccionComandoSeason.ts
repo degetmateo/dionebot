@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, CacheType, EmbedBuilder } from "discord.js";
 import InteraccionComando from "./InteraccionComando";
-import AnilistAPI from "../../apis/AnilistAPI";
+import AnilistAPI from "../../apis/anilist/AnilistAPI";
 import { MediaTemporada } from "../../apis/anilist/types/Media";
 
 export default class InteraccionComandoSeason extends InteraccionComando {

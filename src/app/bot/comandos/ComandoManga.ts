@@ -5,6 +5,8 @@ import Bot from "../Bot";
 import ErrorDemasiadasPeticiones from "../../errores/ErrorDemasiadasPeticiones";
 
 export default class ComandoManga implements Comando {
+    public readonly cooldown: number = 10;
+    
     public readonly datos = new SlashCommandBuilder()
         .setName('manga')
         .setDescription('Busca un manga en la base de datos de anilist.')

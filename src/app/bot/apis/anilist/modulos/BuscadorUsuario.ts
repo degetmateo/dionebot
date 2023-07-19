@@ -1,4 +1,4 @@
-import AnilistAPI from "../../AnilistAPI";
+import AnilistAPI from "../AnilistAPI";
 import { Usuario } from "../types/Usuario";
 
 export default class BuscadorUsuario {
@@ -23,65 +23,12 @@ export default class BuscadorUsuario {
                     }
                     bannerImage
                     options {
-                      titleLanguage
                       profileColor
-                    }	
-                    mediaListOptions {
-                      scoreFormat
-                      rowOrder
-                      useLegacyLists
-                      sharedTheme
-                      sharedThemeEnabled
-                    }
-                    
-                    favourites {
-                      anime {
-                        edges {
-                          node {
-                            id
-                            title {
-                              romaji
-                              english
-                              native
-                              userPreferred
-                            }
-                          }
-                        }
-                      }
-                      manga {
-                        edges {
-                          node {
-                            id
-                            title {
-                              romaji
-                              english
-                              native
-                              userPreferred
-                            }
-                          }
-                        }
-                      }
-                      characters {
-                        edges {
-                          node {
-                            id
-                            name {
-                              first
-                              middle
-                              last
-                              full
-                              native
-                              userPreferred
-                            }
-                          }
-                        }
-                      }
                     }
                     statistics {
                       anime {
                         count
                         meanScore
-                        standardDeviation
                         minutesWatched
                         episodesWatched
                         genres {
@@ -92,7 +39,6 @@ export default class BuscadorUsuario {
                       manga {
                         count
                         meanScore
-                        standardDeviation
                         chaptersRead
                         volumesRead
                         genres {

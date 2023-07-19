@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, CacheType } from "discord.js";
 import InteraccionComando from "./InteraccionComando";
-import AnilistAPI from "../../apis/AnilistAPI";
+import AnilistAPI from "../../apis/anilist/AnilistAPI";
 import Usuario from "../../apis/anilist/modelos/UsuarioAnilist";
 import Aniuser from "../../../database/modelos/Aniuser";
 import ErrorSinResultados from "../../../errores/ErrorSinResultados";
@@ -32,10 +32,10 @@ export default class InteraccionComandoUsuario extends InteraccionComando {
 
         const usuario: Usuario = new Usuario(await AnilistAPI.buscarUsuario(parseInt(usuarioRegistrado.anilistId as string)));  
         
-        this.embeds.push(EmbedUsuario.CrearPrincipal(usuario));
+        this.embeds.push(await EmbedUsuario.CrearPrincipal(usuario));
 
-        const embedFavs = EmbedUsuario.CrearMediaFavorita(usuario);
-        embedFavs ? this.embeds.push(embedFavs) : null;
+        // const embedFavs = EmbedUsuario.CrearMediaFavorita(usuario);
+        // embedFavs ? this.embeds.push(embedFavs) : null;
 
         await this.interaction.editReply({
             embeds: this.embeds

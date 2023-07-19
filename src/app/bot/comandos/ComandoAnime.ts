@@ -6,6 +6,7 @@ import ErrorDemasiadasPeticiones from "../../errores/ErrorDemasiadasPeticiones";
 
 export default class ComandoAnime implements Comando {
     public readonly nombre: string = 'anime';
+    public readonly cooldown: number = 10;
 
     public readonly datos = new SlashCommandBuilder()
         .setName('anime')

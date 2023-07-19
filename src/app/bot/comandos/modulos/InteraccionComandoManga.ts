@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, CacheType, ActionRowBuilder, ButtonBuilder
 import InteraccionComando from "./InteraccionComando";
 import Manga from "../../media/Manga";
 import Boton from "../componentes/Boton";
-import AnilistAPI from "../../apis/AnilistAPI";
+import AnilistAPI from "../../apis/anilist/AnilistAPI";
 import Notas from "../../media/Notas";
 import { Media } from "../../apis/anilist/types/Media";
 import Bot from "../../Bot";

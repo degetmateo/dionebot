@@ -1,6 +1,6 @@
 import { CacheType, ChatInputCommandInteraction } from "discord.js";
 
-export default interface InterfazInteraccionComando {
+export default interface InteraccionComando {
     interaction: ChatInputCommandInteraction<CacheType>;
     execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void>;
 }

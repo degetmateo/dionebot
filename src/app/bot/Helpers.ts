@@ -3,6 +3,7 @@ const translate = require('translate');
 export default class Helpers {
     private static readonly LENGUAJE_TRADUCCION: string = 'es';
     private static readonly REGEX_CADENA_SIN_HTML: RegExp = /(<([^>]+)>|&\w+;)/gi;
+    private static readonly REGEX_OBTENER_ENLACES: RegExp = /https?:\/\/[^\s/$.?#].[^\s]*/gi;
 
     public static async traducir (texto: string): Promise<string> {
         return await translate(texto, this.LENGUAJE_TRADUCCION);
@@ -50,5 +51,18 @@ export default class Helpers {
     public static eliminarElementosRepetidos <Tipo> (arr: Tipo[]): Tipo[] {
         const set = new Set(arr.map(e => JSON.stringify(e)));
         return Array.from(set).map(e => JSON.parse(e));
+    }
+
+    public static obtenerEnlaces (texto: string): Array<string> {
+        const enlaces = texto.match(this.REGEX_OBTENER_ENLACES);
+        return enlaces ? enlaces : [];
+    }
+
+    public static capitalizarTexto (texto: string): string {
+        return texto.split(' ').map(p => this.capitalizarPalabra(p)).join(' ');
+    }
+
+    public static capitalizarPalabra (palabra: string): string {
+        return palabra.charAt(0).toUpperCase() + palabra.slice(1);
     }
 }

@@ -26,8 +26,8 @@ export default class Servidor {
         this.escuchar();
     }
 
-    public static Iniciar (puerto: number): Servidor {
-        return new Servidor(puerto);
+    public static Iniciar (puerto: number): void {
+        new Servidor(puerto);
     }
 
     private cargarRutas ():void {

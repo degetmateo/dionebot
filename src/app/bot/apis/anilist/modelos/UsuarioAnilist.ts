@@ -1,6 +1,6 @@
 import toHex from 'colornames';
 import { ColorResolvable } from 'discord.js';
-import { Usuario, UsuarioCharFavLista, UsuarioEstadisticas, UsuarioGenerosFavoritosLista, UsuarioMediaFavLista } from '../types/Usuario';
+import { Genero, Usuario, UsuarioEstadisticas, UsuarioGenerosFavoritosLista } from '../types/Usuario';
 import Helpers from '../../../Helpers';
 
 export default class UsuarioAnilist {
@@ -42,27 +42,32 @@ export default class UsuarioAnilist {
         return this.usuario.statistics;
     }
 
-    public obtenerGenerosPreferidosAnime (cantidad: number | null): UsuarioGenerosFavoritosLista {
-        const generos = this.obtenerEstadisticas().anime.genres;
-        const generosOrdenados = generos.sort((a, b) => b.count - a.count);
-        return cantidad ? generosOrdenados.slice(0, cantidad) : generosOrdenados;
+    public obtenerGenerosOrdenadosPorCantidad (): UsuarioGenerosFavoritosLista {
+        return this.obtenerGeneros().sort((a, b) => b.count - a.count);
     }
 
-    public obtenerGenerosPreferidosManga (cantidad: number | null): UsuarioGenerosFavoritosLista {
-        const generos = this.obtenerEstadisticas().manga.genres;
-        const generosOrdenados = generos.sort((a, b) => b.count - a.count);
-        return cantidad ? generosOrdenados.slice(0, cantidad) : generosOrdenados;
+    private obtenerGeneros (): UsuarioGenerosFavoritosLista {
+        const generosAnime = this.obtenerEstadisticas().anime.genres;
+        const generosManga = this.obtenerEstadisticas().manga.genres;
+
+        const generos = generosAnime.map(ga => {
+            let gm = generosManga.find(gm => gm.genre.toLowerCase() === ga.genre.toLowerCase());
+            
+            if (!gm) {
+                gm = {
+                    genre: ga.genre,
+                    count: 0,
+                }
+            }
+
+            const cantidad = ga.count + gm.count;
+            return { genre: ga.genre, count: cantidad };
+        })
+
+        return generos;
     }
 
-    public obtenerAnimesFavoritos (): UsuarioMediaFavLista {
-        return this.usuario.favourites.anime.edges;
-    }
-
-    public obtenerMangasFavoritos (): UsuarioMediaFavLista {
-        return this.usuario.favourites.manga.edges;
-    }
-
-    public obtenerPersonajesFavoritos (): UsuarioCharFavLista {
-        return this.usuario.favourites.characters.edges; 
+    public obtenerFechaCreacion (): Date {
+        return new Date(this.usuario.createdAt * 1000);
     }
 }

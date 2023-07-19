@@ -1,5 +1,5 @@
 import ErrorSinResultados from "../../../../errores/ErrorSinResultados";
-import AnilistAPI from "../../AnilistAPI";
+import AnilistAPI from "../AnilistAPI";
 import { MediaTemporada, ResultadosMedia } from "../types/Media";
 
 export default class BuscadorAnimesTemporada {

@@ -1,6 +1,6 @@
 import Helpers from "../../../Helpers";
 import { uRegistrado } from "../../../types";
-import AnilistAPI from "../../AnilistAPI";
+import AnilistAPI from "../AnilistAPI";
 import { MediaList } from "../types/MediaList";
 
 export default class BuscadorEstadoMediaUsuarios {

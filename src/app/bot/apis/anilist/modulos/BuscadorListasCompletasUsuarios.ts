@@ -1,7 +1,7 @@
 import ErrorSinResultados from "../../../../errores/ErrorSinResultados";
 import Helpers from "../../../Helpers";
 import { uRegistrado } from "../../../types";
-import AnilistAPI from "../../AnilistAPI";
+import AnilistAPI from "../AnilistAPI";
 import { MediaColeccion } from "../types/Media";
 
 export default class BuscadorListasCompletasUsuarios {

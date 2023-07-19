@@ -15,7 +15,7 @@
     "node": "^18"
   },
   "type": "commonjs",
-  "keywords": [],
+  "keywords": ["discord", "bot", "typescript", "anime", "manga"],
   "author": "@malardo_bro",
   "license": "ISC",
   "dependencies": {

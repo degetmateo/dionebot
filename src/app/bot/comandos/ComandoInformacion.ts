@@ -3,6 +3,8 @@ import Comando from "../interfaces/InterfazComando";
 import Bot from "../Bot";
 
 export default class ComandoInformacion implements Comando {
+    public readonly cooldown: number = 5;
+
     public readonly datos: SlashCommandBuilder = new SlashCommandBuilder()
         .setName("informacion")
         .setDescription("Obtén información acerca de mi!");
