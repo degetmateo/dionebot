@@ -34,6 +34,7 @@ export default class BuscadorUsuario {
                         genres {
                           genre
                           count
+                          meanScore
                         }
                       }
                       manga {
@@ -44,6 +45,7 @@ export default class BuscadorUsuario {
                         genres {
                           genre
                           count
+                          meanScore
                         }
                       }
                     }

@@ -65,4 +65,8 @@ export default class Helpers {
     public static capitalizarPalabra (palabra: string): string {
         return palabra.charAt(0).toUpperCase() + palabra.slice(1);
     }
+
+    public static calcularPromedioPonderado (cantidad: number, promedio: number, total: number): number {
+        return ((cantidad / (cantidad + total)) * promedio) + ((total / (cantidad + total)) * 41);
+    }
 }

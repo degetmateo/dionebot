@@ -30,7 +30,8 @@ export default class EmbedUsuario extends EmbedBuilder {
 
     private async establecerDescripcion (): Promise<void> {
         const estadisticas = this.usuario.obtenerEstadisticas();
-        const generos = this.usuario.obtenerGenerosOrdenadosPorCantidad();
+        const generosCantidad = this.usuario.obtenerGenerosOrdenadosPorCantidad();
+        const generosCalificacion = this.usuario.obtenerGenerosOrdenadosPorCalificacion();
 
         const descripcion = `
 **[${this.usuario.obtenerNombre()}](${this.usuario.obtenerURL()})**
@@ -49,8 +50,10 @@ export default class EmbedUsuario extends EmbedBuilder {
 ↪ Calificación Promedio: **${estadisticas.manga.meanScore}**
 
 **Tendencias**
-↪ Género más consumido: **${Helpers.capitalizarTexto(await Helpers.traducir(generos[0].genre))}**
-↪ Género menos consumido: **${Helpers.capitalizarTexto(await Helpers.traducir(generos[generos.length - 1].genre))}**
+↪ Género más consumido: **${Helpers.capitalizarTexto(generosCantidad[0].genre)}**
+↪ Género menos consumido: **${Helpers.capitalizarTexto(generosCantidad[generosCantidad.length - 1].genre)}**
+↪ Género mejor calificado: **${Helpers.capitalizarTexto(generosCalificacion[0].genre)}** 
+↪ Género peor calificado: **${Helpers.capitalizarTexto(generosCalificacion[generosCalificacion.length - 1].genre)}**
         `;
 
         this.setDescription(descripcion);

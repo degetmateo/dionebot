@@ -74,4 +74,4 @@ export type UsuarioEstadisticasManga = {
 }
 
 export type UsuarioGenerosFavoritosLista = Array<Genero>;
-export type Genero = { genre: string, count: number };
+export type Genero = { genre: string, count: number, meanScore: number };

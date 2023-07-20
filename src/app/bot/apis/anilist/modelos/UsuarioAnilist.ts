@@ -46,6 +46,10 @@ export default class UsuarioAnilist {
         return this.obtenerGeneros().sort((a, b) => b.count - a.count);
     }
 
+    public obtenerGenerosOrdenadosPorCalificacion (): UsuarioGenerosFavoritosLista {
+        return this.obtenerGeneros().sort((a, b) => b.meanScore - a.meanScore);
+    }
+
     private obtenerGeneros (): UsuarioGenerosFavoritosLista {
         const generosAnime = this.obtenerEstadisticas().anime.genres;
         const generosManga = this.obtenerEstadisticas().manga.genres;
@@ -57,14 +61,36 @@ export default class UsuarioAnilist {
                 gm = {
                     genre: ga.genre,
                     count: 0,
+                    meanScore: 0,
                 }
             }
 
             const cantidad = ga.count + gm.count;
-            return { genre: ga.genre, count: cantidad };
+            const promedio = (ga.meanScore + gm.meanScore) / 2;
+            const generoMasConsumido = this.obtenerGeneroMasConsumido();
+            const promedioPonderado = Helpers.calcularPromedioPonderado(cantidad, promedio, generoMasConsumido.count);
+
+            return { genre: ga.genre, count: cantidad, meanScore: promedioPonderado };
         })
 
         return generos;
+    }
+
+    private obtenerGeneroMasConsumido (): Genero {
+        const generosAnime = this.obtenerEstadisticas().anime.genres;
+        const generosManga = this.obtenerEstadisticas().manga.genres;
+
+        let genero: Genero;
+
+        for (const ga of generosAnime) {
+            if (!genero) genero = ga;
+            const gm = generosManga.find(g => g.genre === ga.genre);
+            if (!gm) continue;
+            const cantidad = ga.count + gm.count;
+            (cantidad > genero.count) ? genero = ga : null;
+        }
+
+        return genero;
     }
 
     public obtenerFechaCreacion (): Date {
