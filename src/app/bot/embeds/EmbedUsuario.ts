@@ -33,6 +33,13 @@ export default class EmbedUsuario extends EmbedBuilder {
         const generosCantidad = this.usuario.obtenerGenerosOrdenadosPorCantidad();
         const generosCalificacion = this.usuario.obtenerGenerosOrdenadosPorCalificacion();
 
+        const generoMasConsumido = generosCantidad[0]
+        const generoMenosConsumido = generosCantidad[generosCantidad.length - 1]
+        const generoMejorCalificado = generosCalificacion[0]
+        const generoPeorCalificado = generosCalificacion[generosCalificacion.length - 1]
+
+        const mediaPonderadaURL = 'https://es.wikipedia.org/wiki/Media_ponderada';
+
         const descripcion = `
 **[${this.usuario.obtenerNombre()}](${this.usuario.obtenerURL()})**
 ↪ Se unio el **${this.usuario.obtenerFechaCreacion().toLocaleDateString()}**
@@ -50,10 +57,10 @@ export default class EmbedUsuario extends EmbedBuilder {
 ↪ Calificación Promedio: **${estadisticas.manga.meanScore}**
 
 **Tendencias**
-↪ Género más consumido: **${Helpers.capitalizarTexto(generosCantidad[0].genre)}**
-↪ Género menos consumido: **${Helpers.capitalizarTexto(generosCantidad[generosCantidad.length - 1].genre)}**
-↪ Género mejor calificado: **${Helpers.capitalizarTexto(generosCalificacion[0].genre)}** 
-↪ Género peor calificado: **${Helpers.capitalizarTexto(generosCalificacion[generosCalificacion.length - 1].genre)}**
+↪ Más consumido: **${Helpers.capitalizarTexto(generoMasConsumido.genre)} [${generoMasConsumido.count}]**
+↪ Menos consumido: **${Helpers.capitalizarTexto(generoMenosConsumido.genre)} [${generoMenosConsumido.count}]**
+↪ [Mejor](${mediaPonderadaURL}) calificado: **${Helpers.capitalizarTexto(generoMejorCalificado.genre)} [${generoMejorCalificado.meanScore.toFixed(2)}]** 
+↪ [Peor](${mediaPonderadaURL}) calificado: **${Helpers.capitalizarTexto(generoPeorCalificado.genre)} [${generoPeorCalificado.meanScore.toFixed(2)}]**
         `;
 
         this.setDescription(descripcion);

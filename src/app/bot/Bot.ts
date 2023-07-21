@@ -40,7 +40,7 @@ export default class Bot extends Client {
         });
 
         this.cargarComandos();
-
+ 
         this.on(Events.InteractionCreate, async interaction => {
             if (!interaction.isChatInputCommand()) return;
 
