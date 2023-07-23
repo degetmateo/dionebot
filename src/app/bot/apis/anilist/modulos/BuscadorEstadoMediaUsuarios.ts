@@ -9,8 +9,16 @@ export default class BuscadorEstadoMediaUsuarios {
         const resultados: Array<MediaList> = new Array<MediaList>();
 
         for (const peticion of peticiones) {
-            const respuesta = await AnilistAPI.peticion(peticion, { mediaID });
-
+            let respuesta: { [x: string]: { mediaList: any[]; }; };
+            
+            try {
+                respuesta = await AnilistAPI.peticion(peticion, { mediaID });
+            } catch (error) {
+                const message = error.message.toLowerCase();
+                if (message.includes('private user')) continue;
+                throw error;   
+            }
+                
             for (const i in respuesta) {
                 const mediaList = respuesta[i].mediaList[0];
                 mediaList ? resultados.push(mediaList) : null;

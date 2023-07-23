@@ -14,6 +14,8 @@ import Comando from "./interfaces/InterfazComando";
 import ErrorDemasiadasPeticiones from "../errores/ErrorDemasiadasPeticiones";
 
 export default class Bot extends Client {
+    private static readonly HORAS_EN_MILISEGUNDOS: number = 3600000;
+
     private comandos: Collection<string, Comando>;
     private usuarios: Array<uRegistrado>;
     private version: string;
@@ -69,6 +71,10 @@ export default class Bot extends Client {
         });
 
         await this.cargarUsuarios();
+
+        setInterval(async () => {
+            await this.cargarUsuarios();
+        }, Bot.HORAS_EN_MILISEGUNDOS);
 
         this.on('guildMemberRemove', async (member) => {
             try {
