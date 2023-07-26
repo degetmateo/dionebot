@@ -1,8 +1,8 @@
 import { ChatInputCommandInteraction, CacheType } from "discord.js";
 import InteraccionComando from "./InteraccionComando";
 import VisualNovelDatabaseAPI from "../../apis/vndb/VisualNovelDatabaseAPI";
-import NovelaVisual from "../../media/NovelaVisual";
-import { TipoCriterio } from "../../apis/vndb/PeticionNovelaVisual";
+import NovelaVisual from "../../apis/vndb/modelos/NovelaVisual";
+import { TipoCriterio } from "../../apis/vndb/tipos/PeticionNovelaVisual";
 import Helpers from "../../Helpers";
 import ErrorSinResultados from "../../../errores/ErrorSinResultados";
 import EmbedNovelaVisual from "../../embeds/EmbedNovelaVisual";

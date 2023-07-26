@@ -1,11 +1,11 @@
 import { ColorResolvable } from 'discord.js';
-import * as AnilistTypes from '../apis/anilist/types/Media';
-import Helpers from '../Helpers';
+import * as TiposMedia from '../../tipos/TiposMedia';
+import Helpers from '../../../../Helpers';
 
 export default abstract class Media {
-    protected media: AnilistTypes.Media;
+    protected media: TiposMedia.Media;
 
-    constructor (media: AnilistTypes.Media) {
+    constructor (media: TiposMedia.Media) {
         this.media = media;
     }
 
@@ -42,7 +42,7 @@ export default abstract class Media {
         return this.media.siteUrl;
     }
 
-    public obtenerTitulos (): AnilistTypes.MediaTitulo {
+    public obtenerTitulos (): TiposMedia.MediaTitulo {
         return this.media.title;
     }
 
@@ -66,15 +66,15 @@ export default abstract class Media {
         return this.media.popularity;
     }
 
-    public obtenerEstado (): AnilistTypes.MediaEstado {
+    public obtenerEstado (): TiposMedia.MediaEstado {
         return this.media.status;
     }
 
-    public obtenerEstudios (): AnilistTypes.MediaListaEstudios {
+    public obtenerEstudios (): TiposMedia.MediaListaEstudios {
         return this.media.studios.edges;
     }
 
-    public obtenerFechaEmision (): AnilistTypes.MediaFecha {
+    public obtenerFechaEmision (): TiposMedia.MediaFecha {
         return this.media.startDate;
     }
 

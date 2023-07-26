@@ -1,9 +1,8 @@
 import fetch from 'node-fetch';
-import { MediaList } from './types/MediaList';
-import { PeticionAPI } from '../types/PeticionAPI';
-import { uRegistrado } from '../../types';
-import {Media, MediaColeccion, MediaTemporada, ResultadosMedia } from './types/Media';
-import { Usuario } from './types/Usuario';
+import { MediaList } from './tipos/MediaList';
+import { PeticionAPI } from '../tipos/PeticionAPI';
+import { uRegistrado } from '../../tipos';
+import * as Tipos from './TiposAnilist';
 import UsuarioAnilist from './modelos/UsuarioAnilist';
 import BuscadorMedia from './modulos/BuscadorMedia';
 import BuscadorAnimesTemporada from './modulos/BuscadorMediaTemporada';
@@ -20,28 +19,27 @@ export default class AnilistAPI {
 
     private static readonly URL_AUTORIZACION: string = 'https://anilist.co/api/v2/oauth/token';
 
-
-    public static async buscarAnimePorID (id: number): Promise<Media> {
+    public static async buscarAnimePorID (id: number): Promise<Tipos.Media> {
         return await BuscadorMedia.BuscarMediaPorID(id, 'ANIME');
     }
 
-    public static async buscarMangaPorID (id: number): Promise<Media> {
+    public static async buscarMangaPorID (id: number): Promise<Tipos.Media> {
         return await BuscadorMedia.BuscarMediaPorID(id, 'MANGA');
     }
 
-    public static async buscarAnimePorNombre (criterio: string): Promise<ResultadosMedia> {
+    public static async buscarAnimePorNombre (criterio: string): Promise<Tipos.ResultadosMedia> {
         return await BuscadorMedia.BuscarMediaPorNombre(criterio, 'ANIME');
     }
 
-    public static async buscarMangaPorNombre (criterio: string): Promise<ResultadosMedia> {
+    public static async buscarMangaPorNombre (criterio: string): Promise<Tipos.ResultadosMedia> {
         return await BuscadorMedia.BuscarMediaPorNombre(criterio, 'MANGA');
     }
 
-    public static async buscarAnimesTemporada (anio: number, temporada: MediaTemporada): Promise<ResultadosMedia> {
+    public static async buscarAnimesTemporada (anio: number, temporada: Tipos.MediaTemporada): Promise<Tipos.ResultadosMedia> {
         return await BuscadorAnimesTemporada.buscarAnimesTemporada(anio, temporada);
     }
 
-    public static async buscarUsuario (criterio: number | string): Promise<Usuario> {
+    public static async buscarUsuario (criterio: number | string): Promise<Tipos.Usuario> {
         return await BuscadorUsuario.BuscarUsuario(criterio);
     }
 
@@ -50,8 +48,8 @@ export default class AnilistAPI {
     }
 
     public static async buscarListasCompletadosUsuarios (usuario: UsuarioAnilist, usuarios: Array<uRegistrado>) {
-        const mediaUsuario: MediaColeccion = await BuscadorListasCompletasUsuarios.BuscarListaCompletadosUsuario(usuario.obtenerID());
-        const mediaUsuarios: Array<MediaColeccion> = await BuscadorListasCompletasUsuarios.BuscarListasCompletadosUsuarios(usuarios);
+        const mediaUsuario: Tipos.MediaColeccion = await BuscadorListasCompletasUsuarios.BuscarListaCompletadosUsuario(usuario.obtenerID());
+        const mediaUsuarios: Array<Tipos.MediaColeccion> = await BuscadorListasCompletasUsuarios.BuscarListasCompletadosUsuarios(usuarios);
         return { user: mediaUsuario, users: mediaUsuarios };
     }
 

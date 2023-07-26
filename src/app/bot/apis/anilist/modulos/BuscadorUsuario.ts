@@ -1,5 +1,5 @@
 import AnilistAPI from "../AnilistAPI";
-import { Usuario } from "../types/Usuario";
+import { Usuario } from "../tipos/Usuario";
 
 export default class BuscadorUsuario {
     public static async BuscarUsuario (criterio: number | string): Promise<Usuario> {

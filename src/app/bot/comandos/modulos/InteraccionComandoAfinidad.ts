@@ -1,9 +1,9 @@
 import { ChatInputCommandInteraction, CacheType, User, Embed, ActionRowBuilder, ButtonBuilder, ButtonInteraction, EmbedBuilder } from "discord.js";
 import InteraccionComando from "./InteraccionComando";
 import AnilistAPI from "../../apis/anilist/AnilistAPI";
-import { Usuario } from "../../apis/anilist/types/Usuario";
+import { Usuario } from "../../apis/anilist/tipos/Usuario";
 import UsuarioAnilist from "../../apis/anilist/modelos/UsuarioAnilist";
-import { uRegistrado } from "../../types";
+import { uRegistrado } from "../../tipos";
 import Boton from "../componentes/Boton";
 import { Afinidad, MediaCompartida } from "../types/Afinidad";
 import Bot from "../../Bot";

@@ -1,4 +1,4 @@
-import { MediaTitulo } from "./Media";
+import { MediaTitulo } from "./TiposMedia";
 
 export type Usuario = {
     id: number,

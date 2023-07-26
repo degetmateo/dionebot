@@ -1,8 +1,8 @@
 import Media from './Media';
-import * as ANILIST from '../apis/anilist/types/Media'
+import * as TiposMedia from '../../tipos/TiposMedia';
 
 export default class Manga extends Media {
-    constructor (media: ANILIST.Media) {
+    constructor (media: TiposMedia.Media) {
         super(media);
     }
 

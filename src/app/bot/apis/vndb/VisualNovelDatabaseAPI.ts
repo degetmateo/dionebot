@@ -1,6 +1,7 @@
-import { DatosNovelaVisual } from "./NovelaVisual";
-import { PeticionAPI, TipoConsulta } from "../types/PeticionAPI";
-import { TipoCriterio } from "./PeticionNovelaVisual";
+import { DatosNovelaVisual } from "./tipos/NovelaVisual";
+import { PeticionAPI, TipoConsulta } from "../tipos/PeticionAPI";
+import { TipoCriterio } from "./tipos/PeticionNovelaVisual";
+import ErrorSinResultados from "../../../errores/ErrorSinResultados";
 
 export default class VisualNovelDatabaseAPI {
     private static readonly API_URL: string = 'https://api.vndb.org/kana/vn';
@@ -26,18 +27,26 @@ export default class VisualNovelDatabaseAPI {
             body: JSON.stringify({ "filters": [tipoCriterio, "=", criterio], "fields": this.CAMPOS_CONSULTAR.join(', ') })
         }
 
-        const peticion = await fetch(this.API_URL, informacionPeticion);
-        return await peticion.json() as RespuestaPeticion;
+        try {
+            const peticion = await fetch(this.API_URL, informacionPeticion);
+            return await peticion.json() as RespuestaPeticion;
+        } catch (error) {
+            throw error;
+        }
     }
 
     public static async obtenerPrimerResultado (tipoCriterio: TipoCriterio, criterio: string): Promise<DatosNovelaVisual | null> {
-        const resultado: RespuestaPeticion = await this.consultarAPI(tipoCriterio, criterio);
-        return resultado.results[0];
+        const respuesta: RespuestaPeticion = await this.consultarAPI(tipoCriterio, criterio);
+        const resultado = respuesta.results[0];
+        if (!resultado) throw new ErrorSinResultados('No se han encontrado resultados.');
+        return resultado;
     }
 
     public static async obtenerResultados (criterio: string): Promise<Array<DatosNovelaVisual>> {
-        const resultado: RespuestaPeticion = await this.consultarAPI('search', criterio);
-        return resultado.results;
+        const respuesta: RespuestaPeticion = await this.consultarAPI('search', criterio);
+        const resultados = respuesta.results;
+        if (resultados.length <= 0) throw new ErrorSinResultados('No se han encontrado resultados.');
+        return resultados;
     }
 }
 

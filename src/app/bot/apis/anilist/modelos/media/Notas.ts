@@ -1,4 +1,4 @@
-import { MediaList } from "../apis/anilist/types/MediaList";
+import { MediaList } from "../../tipos/MediaList";
 
 export default class Notas {
     private completado: ListaNotas;

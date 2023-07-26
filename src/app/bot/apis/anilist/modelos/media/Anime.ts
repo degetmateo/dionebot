@@ -1,8 +1,8 @@
-import * as ANILIST from '../apis/anilist/types/Media'
 import Media from './Media';
+import * as TiposMedia from '../../tipos/TiposMedia'
 
 export default class Anime extends Media {
-    constructor (media: ANILIST.Media) {
+    constructor (media: TiposMedia.Media) {
         super(media);
     }
 
@@ -10,7 +10,7 @@ export default class Anime extends Media {
         return this.media.episodes;
     }
 
-    public obtenerTemporada (): ANILIST.MediaTemporada {
+    public obtenerTemporada (): TiposMedia.MediaTemporada {
         return this.media.season;
     }
 

@@ -1,6 +1,6 @@
 import ErrorSinResultados from "../../../../errores/ErrorSinResultados";
 import AnilistAPI from "../AnilistAPI";
-import { MediaTemporada, ResultadosMedia } from "../types/Media";
+import { MediaTemporada, ResultadosMedia } from "../tipos/TiposMedia";
 
 export default class BuscadorAnimesTemporada {
     public static readonly CANTIDAD_RESULTADOS: number = 50;

@@ -1,16 +1,16 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, CacheType, ChatInputCommandInteraction, Embed, UserSelectMenuBuilder } from "discord.js";
 import AnilistAPI from "../../apis/anilist/AnilistAPI";
-import Anime from "../../media/Anime";
-import Notas from "../../media/Notas";
+import Anime from "../../apis/anilist/modelos/media/Anime";
+import Notas from "../../apis/anilist/modelos/media/Notas";
 import Boton from "../componentes/Boton";
 import InteraccionComando from "./InteraccionComando";
-import { Media } from "../../apis/anilist/types/Media";
+import * as Tipos from '../../apis/anilist/TiposAnilist';
 import Bot from "../../Bot";
 import EmbedAnime from "../../embeds/EmbedAnime";
 import Helpers from "../../Helpers";
 import ErrorArgumentoInvalido from "../../../errores/ErrorArgumentoInvalido";
 import EmbedNotas from "../../embeds/EmbedNotas";
-import { MediaList } from "../../apis/anilist/types/MediaList";
+import { MediaList } from "../../apis/anilist/tipos/MediaList";
 
 export default class InteraccionComandoAnime extends InteraccionComando {
     protected interaction: ChatInputCommandInteraction<CacheType>;
@@ -71,7 +71,7 @@ export default class InteraccionComandoAnime extends InteraccionComando {
             throw new ErrorArgumentoInvalido('La ID que has ingresado no es valida.');
         }
         
-        const resultado: Media = await AnilistAPI.buscarAnimePorID(animeID);
+        const resultado: Tipos.Media = await AnilistAPI.buscarAnimePorID(animeID);
         
         const anime: Anime = new Anime(resultado);
         const embedAnime = this.traducirInformacion ? await EmbedAnime.CrearTraducido(anime) : EmbedAnime.Crear(anime);

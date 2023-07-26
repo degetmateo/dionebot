@@ -1,6 +1,6 @@
 import { EmbedBuilder } from "discord.js";
 import Helpers from "../Helpers";
-import NovelaVisual from "../media/NovelaVisual";
+import NovelaVisual from "../apis/vndb/modelos/NovelaVisual";
 
 export default class EmbedNovelaVisual extends EmbedBuilder {
     private constructor() {

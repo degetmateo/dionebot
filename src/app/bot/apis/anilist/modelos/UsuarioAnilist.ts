@@ -1,6 +1,6 @@
 import toHex from 'colornames';
 import { ColorResolvable } from 'discord.js';
-import { Genero, Usuario, UsuarioEstadisticas, UsuarioGenerosFavoritosLista } from '../types/Usuario';
+import { Genero, Usuario, UsuarioEstadisticas, UsuarioGenerosFavoritosLista } from '../tipos/Usuario';
 import Helpers from '../../../Helpers';
 
 export default class UsuarioAnilist {

@@ -1,7 +1,7 @@
 import Helpers from "../../../Helpers";
-import { uRegistrado } from "../../../types";
+import { uRegistrado } from "../../../tipos";
 import AnilistAPI from "../AnilistAPI";
-import { MediaList } from "../types/MediaList";
+import { MediaList } from "../tipos/MediaList";
 
 export default class BuscadorEstadoMediaUsuarios {
     public static async BuscarEstadoMediaUsuarios (usuarios: Array<uRegistrado>, mediaID: number):  Promise<Array<MediaList>> {

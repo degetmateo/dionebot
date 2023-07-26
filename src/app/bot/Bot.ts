@@ -3,7 +3,7 @@ import { Client, Collection, GatewayIntentBits, Events, ActivityType, EmbedBuild
 import fs from "fs";
 import path from "path";
 import Aniuser from "../database/modelos/Aniuser";
-import { uRegistrado } from "./types";
+import { uRegistrado } from "./tipos";
 
 import { version } from '../../../package.json';
 import Embed from "./embeds/Embed";
@@ -64,9 +64,13 @@ export default class Bot extends Client {
                     embed.establecerDescripcion(error.message) :
                     embed.establecerDescripcion('Ha ocurrido un error. Inténtalo de nuevo más tarde.') && console.error('🟥 | ' + error.stack);
 
-                (!interaction.deferred && !interaction.replied) ?
-                    interaction.reply({ embeds: [embed.obtenerDatos()] }) :
-                    interaction.editReply({ embeds: [embed.obtenerDatos()] });
+                try {
+                    (!interaction.deferred && !interaction.replied) ?
+                        interaction.reply({ embeds: [embed.obtenerDatos()] }) :
+                        interaction.editReply({ embeds: [embed.obtenerDatos()] });
+                } catch (error) {
+                    console.error(error);
+                }
             }
         });
 

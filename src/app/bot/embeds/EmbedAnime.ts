@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import Anime from "../media/Anime";
+import Anime from "../apis/anilist/modelos/media/Anime";
 import Helpers from "../Helpers";
 
 export default class EmbedAnime extends EmbedBuilder {

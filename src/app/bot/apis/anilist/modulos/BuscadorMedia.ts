@@ -1,7 +1,7 @@
 
 import ErrorSinResultados from "../../../../errores/ErrorSinResultados";
 import AnilistAPI from "../AnilistAPI";
-import { Media, MediaTipo, ResultadosMedia } from "../types/Media";
+import { Media, MediaTipo, ResultadosMedia } from "../tipos/TiposMedia";
 
 export default class BuscadorMedia {
     public static async BuscarMediaPorID (id: number, tipo: MediaTipo): Promise<Media> {

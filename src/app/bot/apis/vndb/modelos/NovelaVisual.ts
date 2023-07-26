@@ -1,7 +1,7 @@
 import { ColorResolvable } from "discord.js";
-import Helpers from "../Helpers";
+import Helpers from "../../../Helpers";
 import ISO6391 from 'iso-639-1';
-import { DatosNovelaVisual, EstadoNovelaVisual } from "../apis/vndb/NovelaVisual";
+import { DatosNovelaVisual, EstadoNovelaVisual } from "../tipos/NovelaVisual";
 
 export default class NovelaVisual {
     private _id: string;
@@ -59,7 +59,13 @@ export default class NovelaVisual {
     }
 
     public getDescripcion(): string {
-        return this._descripcion;
+        return this.esDescripcionNula() ?
+            'Descripcion Desconocida' : this._descripcion;
+    }
+
+    private esDescripcionNula (): boolean {
+        const d = this._descripcion;
+        return (d.length <= 1 || d === null);
     }
 
     public getEstado(): EstadoNovelaVisual {

@@ -1,6 +1,6 @@
 import { EmbedBuilder } from "discord.js";
-import Notas from "../media/Notas";
-import Media from "../media/Media";
+import Notas from "../apis/anilist/modelos/media/Notas";
+import Media from "../apis/anilist/modelos/media/Media";
 import EmbedUsuario from "./EmbedUsuario";
 
 export default class EmbedNotas extends EmbedBuilder {

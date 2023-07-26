@@ -1,8 +1,8 @@
 import ErrorSinResultados from "../../../../errores/ErrorSinResultados";
 import Helpers from "../../../Helpers";
-import { uRegistrado } from "../../../types";
+import { uRegistrado } from "../../../tipos";
 import AnilistAPI from "../AnilistAPI";
-import { MediaColeccion } from "../types/Media";
+import { MediaColeccion } from "../tipos/TiposMedia";
 
 export default class BuscadorListasCompletasUsuarios {
     public static async BuscarListaCompletadosUsuario (id: number): Promise<MediaColeccion> {

@@ -1,17 +1,17 @@
 import { ChatInputCommandInteraction, CacheType, ActionRowBuilder, ButtonBuilder, ButtonInteraction } from "discord.js";
 import InteraccionComando from "./InteraccionComando";
-import Manga from "../../media/Manga";
+import Manga from "../../apis/anilist/modelos/media/Manga";
 import Boton from "../componentes/Boton";
 import AnilistAPI from "../../apis/anilist/AnilistAPI";
-import Notas from "../../media/Notas";
-import { Media } from "../../apis/anilist/types/Media";
+import Notas from "../../apis/anilist/modelos/media/Notas";
+import { Media } from "../../apis/anilist/tipos/TiposMedia";
 import Bot from "../../Bot";
 import Helpers from "../../Helpers";
 import ErrorArgumentoInvalido from "../../../errores/ErrorArgumentoInvalido";
 import ErrorSinResultados from "../../../errores/ErrorSinResultados";
 import EmbedManga from "../../embeds/EmbedManga";
 import EmbedNotas from "../../embeds/EmbedNotas";
-import { MediaList } from "../../apis/anilist/types/MediaList";
+import { MediaList } from "../../apis/anilist/tipos/MediaList";
 
 export default class InteraccionComandoManga extends InteraccionComando {
     protected interaction: ChatInputCommandInteraction<CacheType>;
