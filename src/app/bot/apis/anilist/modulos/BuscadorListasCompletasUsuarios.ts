@@ -1,5 +1,7 @@
+import Aniuser from "../../../../database/modelos/Aniuser";
 import ErrorSinResultados from "../../../../errores/ErrorSinResultados";
 import Helpers from "../../../Helpers";
+import InteraccionComandoUnsetup from "../../../comandos/modulos/InteraccionComandoUnsetup";
 import { uRegistrado } from "../../../tipos";
 import AnilistAPI from "../AnilistAPI";
 import { MediaColeccion } from "../tipos/TiposMedia";
@@ -32,13 +34,47 @@ export default class BuscadorListasCompletasUsuarios {
         `;
     }
 
+    private static async encontrarUsuarioPrivado (usuarios: uRegistrado[]) {
+        for (const usuario of usuarios) {
+            const id = parseInt(usuario.anilistId);
+            const query = this.ConsultaListaCompletaUsuario(id);
+            let busqueda;
+            try {
+                busqueda = await AnilistAPI.peticion(query, null);
+            } catch (error) {
+                const message = error.message.toLowerCase();
+                if (message.includes('private user')) {
+                    const serverID = usuario.serverId;
+                    const userID = usuario.discordId;
+                    await InteraccionComandoUnsetup.UnsetupUsuario(serverID, userID);
+                }
+            }
+
+        }
+    }
+
     public static async BuscarListasCompletadosUsuarios (usuarios: Array<uRegistrado>): Promise<Array<MediaColeccion>> {
-        const querys = this.ConsultasListasCompletasUsuarios(usuarios);
+        const tandas = Helpers.dividirArreglo(usuarios, AnilistAPI.CANTIDAD_CONSULTAS_POR_PETICION);
+        const querys = this.ConsultasListasCompletasUsuarios(tandas);
 
         let mediaColeccionUsuarios = new Array<MediaColeccion>();
 
-        for (const query of querys) {
-            const respuesta = await AnilistAPI.peticion(query, null);
+        for (let indiceQuerys = 0; indiceQuerys < querys.length; indiceQuerys++) {
+            let respuesta;
+            
+            try {
+                respuesta = await AnilistAPI.peticion(querys[indiceQuerys], null);
+            } catch (error) {
+                if (error.message.toLowerCase().includes('private user')) {
+                    console.error(error);
+                    const tandaConUsuarioPrivado = tandas[indiceQuerys];
+                    this.encontrarUsuarioPrivado(tandaConUsuarioPrivado);
+                    continue;
+                }
+
+                throw error;
+            }
+
             const coleccionParcial = new Array<MediaColeccion>();
 
             for (let i = 0; i < usuarios.length; i++) {
@@ -53,10 +89,9 @@ export default class BuscadorListasCompletasUsuarios {
         return mediaColeccionUsuarios;
     }
 
-    private static ConsultasListasCompletasUsuarios (usuarios: Array<uRegistrado>): Array<string> {
+    private static ConsultasListasCompletasUsuarios (tandas: uRegistrado[][]): Array<string> {
         const consultas: Array<string> = new Array<string>();
-        const tandas = Helpers.dividirArreglo(usuarios, AnilistAPI.CANTIDAD_CONSULTAS_POR_PETICION);
-
+        
         for (const i of tandas) {
             consultas.push(this.ConsultaListasCompletasUsuarios(i));
         }

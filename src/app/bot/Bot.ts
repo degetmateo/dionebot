@@ -33,7 +33,7 @@ export default class Bot extends Client {
         this.comandosUtilizados = new Set<string>();
     }
 
-    public getVersion = (): string => this.version;
+    public obtenerVersion = (): string => this.version;
 
     public async iniciar(token: string | undefined) {
         this.on("ready", () => {
@@ -127,7 +127,7 @@ export default class Bot extends Client {
                             status: "online",
                             activities: [{
                                 type: ActivityType.Watching,
-                                name: this.getCantidadServidores() + " servidores!"
+                                name: this.obtenerCantidadServidores() + " servidores!"
                             }]
                         })
                 break;
@@ -135,7 +135,7 @@ export default class Bot extends Client {
         }, 5000);
     }
 
-    public getCantidadServidores = (): number => {
+    public obtenerCantidadServidores = (): number => {
         return this.guilds.cache.size;
     }
 
@@ -156,17 +156,18 @@ export default class Bot extends Client {
         return false;
     }
 
-    public getUsuario = (usuario: uRegistrado) => {
+    public obtenerUsuario = (usuario: uRegistrado) => {
         return this.usuarios.find(u => u.serverId === usuario?.serverId && u.discordId === usuario.discordId);
     }
 
-    public getUsuariosRegistrados = (serverID: string) => {
+    public obtenerUsuariosRegistrados = (serverID: string) => {
         return this.usuarios.filter(u => u.serverId === serverID);
     }
 
     public cargarUsuarios = async (): Promise<void> => {
         const aniusers =  await Aniuser.find();
-        
+        this.usuarios = new Array<uRegistrado>();
+
         for (let i = 0; i < aniusers.length; i++) {
             const serverID = aniusers[i].serverId;
             const dsID = aniusers[i].discordId;
@@ -184,5 +185,10 @@ export default class Bot extends Client {
                 anilistId: anilistID
             });
         }
+    }
+
+    public async obtenerUsuarioDiscord (id: string | number) {
+        if (typeof id === 'number') id = id.toString();
+        return await this.users.fetch(id);
     }
 }

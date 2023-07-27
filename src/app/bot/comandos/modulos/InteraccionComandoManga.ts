@@ -164,7 +164,7 @@ export default class InteraccionComandoManga extends InteraccionComando {
     }
 
     private async obtenerNotasUsuarios (animeID: number): Promise<Notas> {
-        let usuarios = this.bot.getUsuariosRegistrados(this.idServidor);
+        let usuarios = this.bot.obtenerUsuariosRegistrados(this.idServidor);
         usuarios = Helpers.eliminarElementosRepetidos(usuarios);
 
         let notasUsuarios = await AnilistAPI.buscarEstadoMediaUsuarios(usuarios, animeID);
@@ -186,7 +186,7 @@ export default class InteraccionComandoManga extends InteraccionComando {
     }
 
     private async obtenerNombresDiscord (notas: MediaList[]): Promise<MediaList[]> {
-        let usuarios = this.bot.getUsuariosRegistrados(this.idServidor);
+        let usuarios = this.bot.obtenerUsuariosRegistrados(this.idServidor);
         usuarios = Helpers.eliminarElementosRepetidos(usuarios);
         const notasConNombres = new Array<MediaList>();
 

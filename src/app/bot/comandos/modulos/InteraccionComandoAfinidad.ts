@@ -54,7 +54,7 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
 
         const usuarioID = (!this.usuario) ? this.interaction.user.id : this.usuario.id;
         
-        let usuariosRegistrados = this.bot.getUsuariosRegistrados(this.serverID);
+        let usuariosRegistrados = this.bot.obtenerUsuariosRegistrados(this.serverID);
         usuariosRegistrados = Helpers.eliminarElementosRepetidos(usuariosRegistrados);
         
         const usuarioRegistrado = usuariosRegistrados.find(u => u.discordId === usuarioID);

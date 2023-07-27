@@ -26,7 +26,7 @@ https://dionebot.onrender.com/
             .setTitle("Información")
             .setDescription(this.DESCRIPCION)
             .setColor(0xff8c00)
-            .setFooter({ text: `Dione v${bot.getVersion()}` });
+            .setFooter({ text: `Dione v${bot.obtenerVersion()}` });
 
         bot.user?.avatarURL() ? embed.setThumbnail(bot.user.avatarURL()) : null;
 

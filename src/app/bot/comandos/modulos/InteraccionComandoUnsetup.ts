@@ -40,9 +40,8 @@ export default class InteraccionComandoUnsetup extends InteraccionComando {
         })
     }
 
-    private static async UnsetupUsuario(serverID: string, userID: string): Promise<void> {
+    public static async UnsetupUsuario(serverID: string, userID: string): Promise<void> {
         const uRegistrado = await Aniuser.findOne({ serverId: serverID, discordId: userID });
-
         if (!uRegistrado) throw new ErrorSinResultados('No estas registrado en la base de datos.');
 
         try {

@@ -36,7 +36,7 @@ export default class InteraccionComandoSetup extends InteraccionComando {
         const serverID = this.interaction.guild?.id as string;
         const userID = this.interaction.user.id;
 
-        const uRegistrados = bot.getUsuariosRegistrados(serverID);
+        const uRegistrados = bot.obtenerUsuariosRegistrados(serverID);
         const uRegistrado = uRegistrados.find(u => u.discordId === userID);
     
         if (uRegistrado) throw new ErrorGenerico('Ya te encuentras registrado.');
