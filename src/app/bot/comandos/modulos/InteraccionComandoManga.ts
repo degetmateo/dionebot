@@ -107,11 +107,14 @@ export default class InteraccionComandoManga extends InteraccionComando {
         const manga = this.mangas[this.indiceInteraccion];
         const notas = await this.obtenerNotasUsuarios(manga.obtenerID());
 
-        const embedmanga = this.embeds[this.indiceInteraccion];
+        const embedManga = this.embeds[this.indiceInteraccion];
         const embedNotas = EmbedNotas.Crear(notas, manga);
 
+        const embeds = notas.hayNotas() ?
+            [embedManga, embedNotas] : [embedManga];
+
         const respuesta = await this.interaction.editReply({
-            embeds: [embedmanga, embedNotas],
+            embeds: embeds,
             components: [this.row]
         })
 
@@ -142,13 +145,20 @@ export default class InteraccionComandoManga extends InteraccionComando {
     }
 
     private async actualizarInteraccion (boton: ButtonInteraction) {
-        if (this.bot.tieneInteraccion(this.interaction.id)) return;
-        this.bot.agregarInteraccion(this.interaction.id);
+        if (this.bot.interacciones.existe(this.interaction.id)) return;
+        this.bot.interacciones.agregar(this.interaction.id);
 
         try {
             const manga = this.mangas[this.indiceInteraccion];
-            const embedNotas = EmbedNotas.Crear(await this.obtenerNotasUsuarios(manga.obtenerID()), manga);
-            await boton.editReply({ embeds: [this.embeds[this.indiceInteraccion], embedNotas], components: [this.row] }); 
+            const notas = await this.obtenerNotasUsuarios(manga.obtenerID());
+
+            if (!notas.hayNotas()) {
+                await boton.editReply({ embeds: [this.embeds[this.indiceInteraccion]], components: [this.row] }); 
+            } else {
+                const embedNotas = EmbedNotas.Crear(notas, manga);
+                await boton.editReply({ embeds: [this.embeds[this.indiceInteraccion], embedNotas], components: [this.row] }); 
+            }
+
         } catch (error) {
             if (error instanceof Error) {
                 if (error.message.toLowerCase().includes('too many requests')) {
@@ -160,11 +170,11 @@ export default class InteraccionComandoManga extends InteraccionComando {
             await boton.editReply({ embeds: [this.embeds[this.indiceInteraccion]], components: [this.row] });
         }
         
-        this.bot.eliminarInteraccion(this.interaction.id);
+        this.bot.interacciones.eliminar(this.interaction.id);
     }
 
     private async obtenerNotasUsuarios (animeID: number): Promise<Notas> {
-        let usuarios = this.bot.obtenerUsuariosRegistrados(this.idServidor);
+        let usuarios = this.bot.usuarios.obtenerUsuariosRegistrados(this.idServidor);
         usuarios = Helpers.eliminarElementosRepetidos(usuarios);
 
         let notasUsuarios = await AnilistAPI.buscarEstadoMediaUsuarios(usuarios, animeID);
@@ -186,7 +196,7 @@ export default class InteraccionComandoManga extends InteraccionComando {
     }
 
     private async obtenerNombresDiscord (notas: MediaList[]): Promise<MediaList[]> {
-        let usuarios = this.bot.obtenerUsuariosRegistrados(this.idServidor);
+        let usuarios = this.bot.usuarios.obtenerUsuariosRegistrados(this.idServidor);
         usuarios = Helpers.eliminarElementosRepetidos(usuarios);
         const notasConNombres = new Array<MediaList>();
 

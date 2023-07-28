@@ -28,7 +28,7 @@ export default class InteraccionComandoUnsetup extends InteraccionComando {
 
         await InteraccionComandoUnsetup.UnsetupUsuario(serverID, userID);
 
-        bot.eliminarUsuario(serverID, userID);
+        bot.usuarios.eliminar(serverID, userID);
 
         const embed = Embed.Crear()
             .establecerColor(Embed.COLOR_VERDE)

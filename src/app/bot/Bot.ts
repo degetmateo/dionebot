@@ -3,7 +3,6 @@ import { Client, Collection, GatewayIntentBits, Events, ActivityType, EmbedBuild
 import fs from "fs";
 import path from "path";
 import Aniuser from "../database/modelos/Aniuser";
-import { uRegistrado } from "./tipos";
 
 import { version } from '../../../package.json';
 import Embed from "./embeds/Embed";
@@ -12,35 +11,25 @@ import ErrorSinResultados from "../errores/ErrorSinResultados";
 import ErrorArgumentoInvalido from "../errores/ErrorArgumentoInvalido";
 import Comando from "./interfaces/InterfazComando";
 import ErrorDemasiadasPeticiones from "../errores/ErrorDemasiadasPeticiones";
+import ColeccionUsuarios from "./colecciones/ColeccionUsuarios";
+import ColeccionInteracciones from "./colecciones/ColeccionInteracciones";
 
 export default class Bot extends Client {
     private static readonly HORAS_EN_MILISEGUNDOS: number = 3600000;
 
     private comandos: Collection<string, Comando>;
-    private usuarios: Array<uRegistrado>;
     private version: string;
-
-    private interaccionesUtilizadas: Set<string>;
+    
+    public readonly usuarios: ColeccionUsuarios;
+    public readonly interacciones: ColeccionInteracciones;
 
     constructor() {
         super({ intents: [GatewayIntentBits.Guilds] });
 
         this.comandos = new Collection<string, Comando>();
-        this.usuarios = new Array<uRegistrado>();
+        this.usuarios = ColeccionUsuarios.CrearNueva();
+        this.interacciones = ColeccionInteracciones.CrearNueva();
         this.version = version;
-        this.interaccionesUtilizadas = new Set<string>();
-    }
-
-    public tieneInteraccion (id: string): boolean {
-        return this.interaccionesUtilizadas.has(id);
-    }
-
-    public eliminarInteraccion (id: string): boolean {
-        return this.interaccionesUtilizadas.delete(id);
-    }
-
-    public agregarInteraccion (id: string): Set<string> {
-        return this.interaccionesUtilizadas.add(id);
     }
 
     public obtenerVersion = (): string => this.version;
@@ -82,7 +71,7 @@ export default class Bot extends Client {
                     console.error(error);
                 }
 
-                this.eliminarInteraccion(interaction.id);
+                this.interacciones.eliminar(interaction.id);
             }
         });
 
@@ -151,34 +140,9 @@ export default class Bot extends Client {
         return this.guilds.cache.size;
     }
 
-    public insertarUsuario = (usuario: uRegistrado) => {
-        this.usuarios.push(usuario);
-    }
-
-    public eliminarUsuario = (serverId: string, userId: string): void => {
-        this.usuarios = this.usuarios.filter(u => u.serverId != serverId && u.discordId != userId);
-    }
-
-    public existeUsuario = (usuario: uRegistrado): boolean => {
-        for (let i = 0; i < this.usuarios.length; i++) {
-            const cond = this.usuarios[i].serverId === usuario?.serverId && this.usuarios[i].discordId === usuario.discordId;
-            if (cond) return true;
-        }
-
-        return false;
-    }
-
-    public obtenerUsuario = (usuario: uRegistrado) => {
-        return this.usuarios.find(u => u.serverId === usuario?.serverId && u.discordId === usuario.discordId);
-    }
-
-    public obtenerUsuariosRegistrados = (serverID: string) => {
-        return this.usuarios.filter(u => u.serverId === serverID);
-    }
-
     public cargarUsuarios = async (): Promise<void> => {
         const aniusers =  await Aniuser.find();
-        this.usuarios = new Array<uRegistrado>();
+        this.usuarios.vaciar();
 
         for (let i = 0; i < aniusers.length; i++) {
             const serverID = aniusers[i].serverId;
@@ -187,10 +151,11 @@ export default class Bot extends Client {
             const anilistID = aniusers[i].anilistId;
 
             if (!serverID || !dsID || !anilistUsername || !anilistID) {
+                await aniusers[i].deleteOne();
                 continue;
             }
 
-            this.insertarUsuario({
+            this.usuarios.insertar({
                 serverId: serverID,
                 discordId: dsID,
                 anilistUsername: anilistUsername,

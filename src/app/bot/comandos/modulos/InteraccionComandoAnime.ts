@@ -77,13 +77,12 @@ export default class InteraccionComandoAnime extends InteraccionComando {
         const embedAnime = this.traducirInformacion ? await EmbedAnime.CrearTraducido(anime) : EmbedAnime.Crear(anime);
 
         const notas = await this.obtenerNotasUsuarios(parseInt(this.criterioBusqueda));
-
-
-
         const embedNotas = EmbedNotas.Crear(notas, anime);
 
         try {
-            await this.interaction.editReply({ embeds: [embedAnime, embedNotas] }); 
+            notas.hayNotas() ?
+                await this.interaction.editReply({ embeds: [embedAnime, embedNotas] }) : 
+                await this.interaction.editReply( {embeds: [embedAnime] });
         } catch (error) {
             await this.interaction.editReply({ embeds: [embedAnime] });
             console.error(error);
@@ -103,8 +102,11 @@ export default class InteraccionComandoAnime extends InteraccionComando {
         const embedAnime = this.embeds[this.indiceInteraccion];
         const embedNotas = EmbedNotas.Crear(notas, anime);
 
+        const embeds = notas.hayNotas() ?
+            [embedAnime, embedNotas] : [embedAnime];
+
         const respuesta = await this.interaction.editReply({
-            embeds: [embedAnime, embedNotas],
+            embeds: embeds,
             components: [this.row]
         })
 
@@ -150,13 +152,20 @@ export default class InteraccionComandoAnime extends InteraccionComando {
     }
 
     private async actualizarInteraccion (boton: ButtonInteraction) {
-        if (this.bot.tieneInteraccion(this.interaction.id)) return;
-        this.bot.agregarInteraccion(this.interaction.id);
+        if (this.bot.interacciones.existe(this.interaction.id)) return;
+        this.bot.interacciones.agregar(this.interaction.id);
 
         try {
             const anime = this.animes[this.indiceInteraccion];
-            const embedNotas = EmbedNotas.Crear(await this.obtenerNotasUsuarios(anime.obtenerID()), anime);
-            await boton.editReply({ embeds: [this.embeds[this.indiceInteraccion], embedNotas], components: [this.row] }); 
+            const notas = await this.obtenerNotasUsuarios(anime.obtenerID());
+
+            if (!notas.hayNotas()) {
+                await boton.editReply({ embeds: [this.embeds[this.indiceInteraccion]], components: [this.row] });
+            } else {
+                const embedNotas = EmbedNotas.Crear(notas, anime);
+                await boton.editReply({ embeds: [this.embeds[this.indiceInteraccion], embedNotas], components: [this.row] }); 
+            }
+
         } catch (error) {
             if (error instanceof Error) {
                 if (error.message.toLowerCase().includes('too many requests')) {
@@ -166,13 +175,14 @@ export default class InteraccionComandoAnime extends InteraccionComando {
             }
 
             await boton.editReply({ embeds: [this.embeds[this.indiceInteraccion]], components: [this.row] });
+            console.error(error);
         }
 
-        this.bot.eliminarInteraccion(this.interaction.id);
+        this.bot.interacciones.eliminar(this.interaction.id);
     }
 
     private async obtenerNotasUsuarios (animeID: number): Promise<Notas> {
-        let usuarios = this.bot.obtenerUsuariosRegistrados(this.idServidor);
+        let usuarios = this.bot.usuarios.obtenerUsuariosRegistrados(this.idServidor);
         usuarios = Helpers.eliminarElementosRepetidos(usuarios);
 
         let notasUsuarios = await AnilistAPI.buscarEstadoMediaUsuarios(usuarios, animeID);
@@ -194,7 +204,7 @@ export default class InteraccionComandoAnime extends InteraccionComando {
     }
 
     private async obtenerNombresDiscord (notas: MediaList[]): Promise<MediaList[]> {
-        let usuarios = this.bot.obtenerUsuariosRegistrados(this.idServidor);
+        let usuarios = this.bot.usuarios.obtenerUsuariosRegistrados(this.idServidor);
         usuarios = Helpers.eliminarElementosRepetidos(usuarios);
         const notasConNombres = new Array<MediaList>();
 
