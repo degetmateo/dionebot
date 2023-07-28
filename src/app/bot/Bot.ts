@@ -20,8 +20,7 @@ export default class Bot extends Client {
     private usuarios: Array<uRegistrado>;
     private version: string;
 
-    public interacciones: Set<string>;
-    public comandosUtilizados: Set<string>;
+    private interaccionesUtilizadas: Set<string>;
 
     constructor() {
         super({ intents: [GatewayIntentBits.Guilds] });
@@ -29,8 +28,19 @@ export default class Bot extends Client {
         this.comandos = new Collection<string, Comando>();
         this.usuarios = new Array<uRegistrado>();
         this.version = version;
-        this.interacciones = new Set<string>();
-        this.comandosUtilizados = new Set<string>();
+        this.interaccionesUtilizadas = new Set<string>();
+    }
+
+    public tieneInteraccion (id: string): boolean {
+        return this.interaccionesUtilizadas.has(id);
+    }
+
+    public eliminarInteraccion (id: string): boolean {
+        return this.interaccionesUtilizadas.delete(id);
+    }
+
+    public agregarInteraccion (id: string): Set<string> {
+        return this.interaccionesUtilizadas.add(id);
     }
 
     public obtenerVersion = (): string => this.version;
@@ -71,6 +81,8 @@ export default class Bot extends Client {
                 } catch (error) {
                     console.error(error);
                 }
+
+                this.eliminarInteraccion(interaction.id);
             }
         });
 

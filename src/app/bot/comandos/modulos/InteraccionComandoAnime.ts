@@ -150,8 +150,8 @@ export default class InteraccionComandoAnime extends InteraccionComando {
     }
 
     private async actualizarInteraccion (boton: ButtonInteraction) {
-        const estaBuscandoNotas = this.bot.interacciones.has(this.interaction.id);
-        if (estaBuscandoNotas) return;
+        if (this.bot.tieneInteraccion(this.interaction.id)) return;
+        this.bot.agregarInteraccion(this.interaction.id);
 
         try {
             const anime = this.animes[this.indiceInteraccion];
@@ -168,7 +168,7 @@ export default class InteraccionComandoAnime extends InteraccionComando {
             await boton.editReply({ embeds: [this.embeds[this.indiceInteraccion]], components: [this.row] });
         }
 
-        this.bot.interacciones.delete(this.interaction.id);
+        this.bot.eliminarInteraccion(this.interaction.id);
     }
 
     private async obtenerNotasUsuarios (animeID: number): Promise<Notas> {

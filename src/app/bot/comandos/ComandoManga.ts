@@ -21,18 +21,6 @@ export default class ComandoManga implements Comando {
                 .setDescription('Si deseas traducir la sinopsis. (Traductor de Google)'));
     
     public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        const bot = interaction.client as Bot;
-        const serverID = interaction.guild?.id as string;
-
-        if (bot.comandosUtilizados.has(serverID)) throw new ErrorDemasiadasPeticiones('Se estan realizando muchas peticiones. Espera un momento.');
-        bot.comandosUtilizados.add(serverID);
-
-        try {
-            await InteraccionComandoManga.execute(interaction);
-            bot.comandosUtilizados.delete(serverID);
-        } catch (error) {
-            bot.comandosUtilizados.delete(serverID);
-            throw error;
-        }
+        await InteraccionComandoManga.execute(interaction);
     }
 }
