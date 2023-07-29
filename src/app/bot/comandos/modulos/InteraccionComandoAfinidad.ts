@@ -10,6 +10,7 @@ import Bot from "../../Bot";
 import ErrorArgumentoInvalido from "../../../errores/ErrorArgumentoInvalido";
 import ErrorSinResultados from "../../../errores/ErrorSinResultados";
 import Helpers from "../../Helpers";
+import InteraccionComandoUnsetup from "./InteraccionComandoUnsetup";
 
 export default class InteraccionComandoAfinidad extends InteraccionComando {
     protected interaction: ChatInputCommandInteraction<CacheType>;
@@ -192,17 +193,20 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
 
             const nombre = usuarioDiscord.username;
             
-            if (nombre.includes('Deleted User')) continue;
+            if (nombre.includes('Deleted User')) {
+                await InteraccionComandoUnsetup.UnsetupUsuario(this.serverID, usuarioDiscord.id);
+                continue
+            };
             
             afinidades.push({ nombre: nombre, afinidad: parseFloat(resultado.toFixed(2)) });
         }
 
-        return InteraccionComandoAfinidad.OrdenarAfinidades(Helpers.eliminarElementosRepetidos(afinidades));
+        return InteraccionComandoAfinidad.OrdenarAfinidades(afinidades);
     }
 
     private static async HandleAffinity (animes1: Array<{ mediaId: number, score: number }>, animes2: Array<{ mediaId: number, score: number }>) {
         const mediaCompartida = InteraccionComandoAfinidad.ObtenerMediaCompartida(animes1, animes2);
-        return this.CalcularAfinidad(Helpers.eliminarElementosRepetidos(mediaCompartida));
+        return this.CalcularAfinidad(mediaCompartida);
     }
 
     private static ObtenerMediaCompartida(l1: Array<{ mediaId: number, score: number }>, l2: Array<{ mediaId: number, score: number }>) {
@@ -222,7 +226,7 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
      * Basado en:
      * https://en.wikipedia.org/wiki/Pearson_correlation_coefficient
      * https://github.com/AlexanderColen/Annie-May-Discord-Bot/blob/default/Annie/Utility/AffinityUtility.cs
-     * @param sharedMedia Arreglo con la media compartida por los dos usuarios.
+     * @param mediaCompartida Arreglo con la media compartida por los dos usuarios.
      * @returns Porcentaje de la afinidad.
      */
 
