@@ -194,9 +194,9 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
             const nombre = usuarioDiscord.username;
             
             if (nombre.includes('Deleted User')) {
-                await InteraccionComandoUnsetup.UnsetupUsuario(this.serverID, usuarioDiscord.id);
-                continue
-            };
+                await InteraccionComandoUnsetup.UnsetupUsuario(this.serverID, u.discordId);
+                continue;
+            }
             
             afinidades.push({ nombre: nombre, afinidad: parseFloat(resultado.toFixed(2)) });
         }
