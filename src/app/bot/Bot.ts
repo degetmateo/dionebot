@@ -24,7 +24,7 @@ export default class Bot extends Client {
     public readonly interacciones: ColeccionInteracciones;
 
     constructor() {
-        super({ intents: [GatewayIntentBits.Guilds] });
+        super({ intents: [] });
 
         this.comandos = new Collection<string, Comando>();
         this.usuarios = ColeccionUsuarios.CrearNueva();

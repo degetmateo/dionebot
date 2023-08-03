@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, CacheType } from "discord.js";
 import InteraccionComando from "./InteraccionComando";
 import AnilistAPI from "../../apis/anilist/AnilistAPI";
 import Usuario from "../../apis/anilist/modelos/UsuarioAnilist";
-import Plataforma from "../types/Plataforma";
+import Plataforma from "../tipos/Plataforma";
 import { uRegistrado } from "../../tipos";
 import Bot from "../../Bot";
 import Aniuser from "../../../database/modelos/Aniuser";

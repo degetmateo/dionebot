@@ -1,11 +1,11 @@
-import { ChatInputCommandInteraction, CacheType, User, Embed, ActionRowBuilder, ButtonBuilder, ButtonInteraction, EmbedBuilder } from "discord.js";
+import { ChatInputCommandInteraction, CacheType, User, Embed, ActionRowBuilder, ButtonBuilder, ButtonInteraction, EmbedBuilder, CommandInteraction } from "discord.js";
 import InteraccionComando from "./InteraccionComando";
 import AnilistAPI from "../../apis/anilist/AnilistAPI";
 import { Usuario } from "../../apis/anilist/tipos/Usuario";
 import UsuarioAnilist from "../../apis/anilist/modelos/UsuarioAnilist";
 import { uRegistrado } from "../../tipos";
 import Boton from "../componentes/Boton";
-import { Afinidad, MediaCompartida } from "../types/Afinidad";
+import { Afinidad, MediaCompartida } from "../tipos/Afinidad";
 import Bot from "../../Bot";
 import ErrorArgumentoInvalido from "../../../errores/ErrorArgumentoInvalido";
 import ErrorSinResultados from "../../../errores/ErrorSinResultados";
@@ -13,7 +13,7 @@ import Helpers from "../../Helpers";
 import InteraccionComandoUnsetup from "./InteraccionComandoUnsetup";
 
 export default class InteraccionComandoAfinidad extends InteraccionComando {
-    protected interaction: ChatInputCommandInteraction<CacheType>;
+    protected interaction: CommandInteraction<CacheType>;
     
     private bot: Bot;
     private serverID: string;
@@ -30,7 +30,7 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
     private row = new ActionRowBuilder<ButtonBuilder>()
         .addComponents(this.botonPaginaPrevia, this.botonPaginaSiguiente);
 
-    private constructor (interaction: ChatInputCommandInteraction<CacheType>) {
+    private constructor (interaction: CommandInteraction<CacheType>) {
         super();
         this.interaction = interaction;
 
