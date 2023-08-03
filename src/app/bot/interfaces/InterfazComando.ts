@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js";
 
 export default interface Comando {
     readonly cooldown: number;
@@ -7,5 +7,5 @@ export default interface Comando {
     | Omit<SlashCommandBuilder, "addSubcommandGroup" | "addSubcommand">
     | SlashCommandSubcommandsOnlyBuilder;
 
-    execute (interaction: ChatInputCommandInteraction): Promise<void>;
+    execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void>;
 }

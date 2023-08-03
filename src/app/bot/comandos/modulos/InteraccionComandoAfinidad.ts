@@ -13,7 +13,7 @@ import Helpers from "../../Helpers";
 import InteraccionComandoUnsetup from "./InteraccionComandoUnsetup";
 
 export default class InteraccionComandoAfinidad extends InteraccionComando {
-    protected interaction: CommandInteraction<CacheType>;
+    protected interaction: ChatInputCommandInteraction<CacheType>;
     
     private bot: Bot;
     private serverID: string;
@@ -30,13 +30,14 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
     private row = new ActionRowBuilder<ButtonBuilder>()
         .addComponents(this.botonPaginaPrevia, this.botonPaginaSiguiente);
 
-    private constructor (interaction: CommandInteraction<CacheType>) {
+    private constructor (interaction: ChatInputCommandInteraction<CacheType>) {
         super();
         this.interaction = interaction;
 
         this.bot = interaction.client as Bot;
 
         this.serverID = interaction.guild?.id as string;
+
         this.usuario = this.interaction.options.getUser("usuario");
 
         this.embeds = new Array<EmbedBuilder>();
