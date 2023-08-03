@@ -12,7 +12,7 @@
     "delete-commands": "ts-node src/delete-commands.ts"
   },
   "engines": {
-    "node": "^18"
+    "node": "^20"
   },
   "type": "commonjs",
   "keywords": ["discord", "bot", "typescript", "anime", "manga"],
