@@ -69,4 +69,13 @@ export default class Helpers {
     public static calcularPromedioPonderado (cantidad: number, promedio: number, total: number): number {
         return ((cantidad / (cantidad + total)) * promedio) + ((total / (cantidad + total)) * 41);
     }
+
+    public static obtenerElementoAlAzar <T> (lista: T[]): T | undefined {
+        if (lista.length === 0) {
+          return undefined;
+        }
+
+        const indiceAleatorio = Math.floor(Math.random() * lista.length);
+        return lista[indiceAleatorio];
+    }
 }

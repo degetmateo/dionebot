@@ -1,8 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType, SlashCommandStringOption, SlashCommandBooleanOption } from "discord.js";
 import Comando from "../interfaces/InterfazComando";
 import InteraccionComandoAnime from "./modulos/InteraccionComandoAnime";
-import Bot from "../Bot";
-import ErrorDemasiadasPeticiones from "../../errores/ErrorDemasiadasPeticiones";
 
 export default class ComandoAnime implements Comando {
     public readonly nombre: string = 'anime';

@@ -1,7 +1,5 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
 import InterfazComando from "../interfaces/InterfazComando";
-import Bot from "../Bot";
-import ErrorDemasiadasPeticiones from "../../errores/ErrorDemasiadasPeticiones";
 import InteraccionComandoAfinidad from "./modulos/InteraccionComandoAfinidad";
 
 export default class ComandoAfinidad implements InterfazComando {
