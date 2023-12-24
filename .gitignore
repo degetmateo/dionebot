@@ -1,7 +1,8 @@
 .gitignore
 .env
-build
 node_modules
 config.json
 delete-commands.ts
 deploy-commands.ts
+delete-commands.js
+deploy-commands.js

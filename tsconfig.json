@@ -2,8 +2,9 @@
   "compilerOptions": {
     "moduleResolution": "Node",
     /* Visit https://aka.ms/tsconfig to read more about this file */
+    "rootDir": "./src",
     "target": "ES2017",
-    "outDir": "build/",
+    "outDir": "./build",
     // "baseUrl": ".",
     // "rootDir": "src/",
     /* Projects */
@@ -43,8 +44,8 @@
     // "noResolve": false,                                /* Disallow 'import's, 'require's or '<reference>'s from expanding the number of files TypeScript should add to a project. */
 
     /* JavaScript Support */
-    "allowJs": true,                                  /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
-    "checkJs": true,                                  /* Enable error reporting in type-checked JavaScript files. */
+    "allowJs": false,                                  /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
+    "checkJs": false,                                  /* Enable error reporting in type-checked JavaScript files. */
     // "maxNodeModuleJsDepth": 1,                        /* Specify the maximum folder depth used for checking JavaScript files from 'node_modules'. Only applicable with 'allowJs'. */
 
     /* Emit */
@@ -102,5 +103,12 @@
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
-  }
+  },
+  "include": [
+    "src/**/*.ts"                  /* Patrón de inclusión de archivos TypeScript. */
+  ],
+  "exclude": [
+    "node_modules",
+    "tests"                 /* Directorios y archivos excluidos del proceso de compilación. */
+  ]
 }
