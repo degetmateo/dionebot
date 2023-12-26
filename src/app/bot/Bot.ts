@@ -1,4 +1,4 @@
-import { Client, Collection, GatewayIntentBits, Events, ActivityType, EmbedBuilder } from "discord.js";
+import { Client, Collection, Events, ActivityType } from 'discord.js';
 
 import fs from "fs";
 import path from "path";
@@ -83,7 +83,7 @@ export default class Bot extends Client {
 
         this.on('guildMemberRemove', async (member) => {
             try {
-                await Aniuser.findOneAndRemove({ serverId: member.guild.id, discordId: member.id })
+                await Aniuser.findOneAndDelete({ serverId: member.guild.id, discordId: member.id })
                 await this.cargarUsuarios();
             } catch (error) {
                 console.error(error);

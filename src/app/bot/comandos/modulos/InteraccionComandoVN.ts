@@ -17,14 +17,14 @@ export default class InteraccionComandoVN extends InteraccionComando {
 
     public static async execute (interaction: ChatInputCommandInteraction<CacheType>) {
         const modulo = new InteraccionComandoVN(interaction);
-        await modulo.execute(interaction);    
+        await modulo.execute();    
     }
     
-    protected async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        await interaction.deferReply();
+    protected async execute(): Promise<void> {
+        await this.interaction.deferReply();
 
-        const criterio: string = interaction.options.getString('nombre-o-id') as string;
-        const traducir: boolean = interaction.options.getBoolean('traducir') || false;
+        const criterio: string = this.interaction.options.getString('nombre-o-id') as string;
+        const traducir: boolean = this.interaction.options.getBoolean('traducir') || false;
         
         let tipoCriterio: TipoCriterio;
         Helpers.esNumero(criterio) ? tipoCriterio = 'id' : tipoCriterio = 'search';
@@ -35,6 +35,6 @@ export default class InteraccionComandoVN extends InteraccionComando {
         const vn = new NovelaVisual(resultado);
         const embed = traducir ? await EmbedNovelaVisual.CrearTraducido(vn) : EmbedNovelaVisual.Crear(vn);
 
-        interaction.editReply({ embeds: [embed] });
+        this.interaction.editReply({ embeds: [embed] });
     }
 }

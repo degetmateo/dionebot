@@ -3,6 +3,9 @@ import path from 'path';
 import Bot from '../bot/Bot';
 import DB from '../database/DB';
 
+import Aniuser from '../database/modelos/Aniuser';
+import ServerModel from '../database/modelos/ServerModel';
+
 export default class Servidor {
     private puerto: number;
     private app: express.Express;
@@ -24,6 +27,8 @@ export default class Servidor {
         this.db = new DB();
 
         this.escuchar();
+
+        // this.CopyDatabase();
     }
 
     public static Iniciar (puerto: number): void {
@@ -38,13 +43,6 @@ export default class Servidor {
         this.app.get("/invitar", (req, res) => {
             res.redirect(process.env.ENLACE_INVITACION || "");
         })
-        
-        this.app.get('/anilist/login/', (req, res) => {
-            const codigo = req.query.code;
-            //AnilistAPI.obtenerTokenDeAcceso(codigo as string);
-            console.log(req.query.code);
-            res.redirect('/');
-        })
     }
 
     private async escuchar (): Promise<void> {
@@ -52,4 +50,29 @@ export default class Servidor {
         await this.db.conectar(process.env.DB);
         this.bot.iniciar(process.env.TOKEN);
     }
+
+    // private async CopyDatabase (): Promise<void> {
+    //     const aniusers = await Aniuser.find();
+        
+    //     for (const user of aniusers) {
+    //         const server = await ServerModel.findOne({ id: user.serverId });
+    //         const userData = {
+    //             discordId: user.discordId,
+    //             anilistId: user.anilistId
+    //         }
+            
+    //         if (!server) {
+    //             const Server = new ServerModel({
+    //                 id: user.serverId,
+    //                 premium: false,
+    //                 users: [userData]
+    //             })
+
+    //             await Server.save();
+    //         } else {
+    //             server.users.push(userData);
+    //             await server.save();
+    //         }
+    //     }
+    // }
 }

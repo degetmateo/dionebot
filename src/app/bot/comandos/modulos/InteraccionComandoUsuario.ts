@@ -2,9 +2,9 @@ import { ChatInputCommandInteraction, CacheType } from "discord.js";
 import InteraccionComando from "./InteraccionComando";
 import AnilistAPI from "../../apis/anilist/AnilistAPI";
 import Usuario from "../../apis/anilist/modelos/UsuarioAnilist";
-import Aniuser from "../../../database/modelos/Aniuser";
 import ErrorSinResultados from "../../../errores/ErrorSinResultados";
 import EmbedUsuario from "../../embeds/EmbedUsuario";
+import ServerModel from "../../../database/modelos/ServerModel";
 
 export default class InteraccionComandoUsuario extends InteraccionComando {
     protected interaction: ChatInputCommandInteraction<CacheType>;
@@ -17,25 +17,24 @@ export default class InteraccionComandoUsuario extends InteraccionComando {
     }
 
     public static async execute (interaction: ChatInputCommandInteraction<CacheType>) {
-        const modulo = new InteraccionComandoUsuario(interaction);
-        await modulo.execute();    
+        const module = new InteraccionComandoUsuario(interaction);
+        await module.execute();    
     }
 
     protected async execute (): Promise<void> {
         await this.interaction.deferReply();
 
-        const idUsuario = this.interaction.options.getUser("usuario")?.id || this.interaction.user.id;
-        const idServidor = this.interaction.guild?.id as string;
+        const userId = this.interaction.options.getUser("usuario")?.id || this.interaction.user.id;
+        const serverId = this.interaction.guild?.id as string;
 
-        const usuarioRegistrado = await Aniuser.findOne({ serverId: idServidor, discordId: idUsuario });
-        if (!usuarioRegistrado) throw new ErrorSinResultados('El usuario especificado no esta registrado.');
+        const server = await ServerModel.findOne({ id: serverId });
+        const registeredUser = server.users.find(u => u.discordId === userId);
 
-        const usuario: Usuario = new Usuario(await AnilistAPI.buscarUsuario(parseInt(usuarioRegistrado.anilistId as string)));  
+        if (!registeredUser) throw new ErrorSinResultados('El usuario especificado no esta registrado.');
+
+        const anilistUser = new Usuario(await AnilistAPI.buscarUsuario(parseInt(registeredUser.anilistId)));  
         
-        this.embeds.push(await EmbedUsuario.CrearPrincipal(usuario));
-
-        // const embedFavs = EmbedUsuario.CrearMediaFavorita(usuario);
-        // embedFavs ? this.embeds.push(embedFavs) : null;
+        this.embeds.push(await EmbedUsuario.CrearPrincipal(anilistUser));
 
         await this.interaction.editReply({
             embeds: this.embeds
