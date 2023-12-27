@@ -112,6 +112,7 @@ export default class Bot extends Client {
             }
         })
 
+        console.log('logeanding')
         this.login(token);
     }
 
