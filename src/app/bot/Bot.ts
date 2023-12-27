@@ -13,13 +13,18 @@ import Comando from "./interfaces/InterfazComando";
 import ErrorDemasiadasPeticiones from "../errores/ErrorDemasiadasPeticiones";
 import ColeccionUsuarios from "./colecciones/ColeccionUsuarios";
 import ColeccionInteracciones from "./colecciones/ColeccionInteracciones";
+import ServerModel from '../database/modelos/ServerModel';
+import ServerCollection from './colecciones/ServerCollection';
+import { Server } from '../database/types';
 
 export default class Bot extends Client {
-    private static readonly HORAS_EN_MILISEGUNDOS: number = 3600000;
+    private static readonly HORA_EN_MILISEGUNDOS: number = 3600000;
 
     private comandos: Collection<string, Comando>;
     private version: string;
     
+    public readonly servers: ServerCollection;
+
     public readonly usuarios: ColeccionUsuarios;
     public readonly interacciones: ColeccionInteracciones;
 
@@ -27,6 +32,9 @@ export default class Bot extends Client {
         super({ intents: [] });
 
         this.comandos = new Collection<string, Comando>();
+
+        this.servers = ServerCollection.Create();
+
         this.usuarios = ColeccionUsuarios.CrearNueva();
         this.interacciones = ColeccionInteracciones.CrearNueva();
         this.version = version;
@@ -79,7 +87,7 @@ export default class Bot extends Client {
 
         setInterval(async () => {
             await this.cargarUsuarios();
-        }, Bot.HORAS_EN_MILISEGUNDOS);
+        }, Bot.HORA_EN_MILISEGUNDOS);
 
         this.on('guildMemberRemove', async (member) => {
             try {
@@ -87,6 +95,20 @@ export default class Bot extends Client {
                 await this.cargarUsuarios();
             } catch (error) {
                 console.error(error);
+            }
+        })
+
+        this.on('guildCreate', async server => {
+            try {
+                const newServer = new ServerModel({
+                    id: server.id,
+                    premium: false,
+                    users: []
+                })
+
+                await newServer.save();
+            } catch (error) {
+                console.error(error)
             }
         })
 
@@ -162,6 +184,21 @@ export default class Bot extends Client {
                 anilistId: anilistID
             });
         }
+
+        this.servers.empty();
+        const servers = await ServerModel.find();
+
+        servers.forEach(server => {
+            this.servers.add({
+                id: server.id,
+                premium: server.premium,
+                users: server.users.toObject()
+            })
+        })
+    }
+
+    public async fetchServer (id: string) {
+        return await this.guilds.fetch(id);
     }
 
     public async obtenerUsuarioDiscord (id: string | number) {
