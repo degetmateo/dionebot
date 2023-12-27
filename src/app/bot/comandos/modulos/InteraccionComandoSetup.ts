@@ -20,11 +20,11 @@ export default class InteraccionComandoSetup extends InteraccionComando {
 
     public static async execute (interaction: ChatInputCommandInteraction<CacheType>) {
         const modulo = new InteraccionComandoSetup(interaction);
-        await modulo.execute();    
+        await modulo.execute(interaction);    
     }
     
-    protected async execute(): Promise<void> {
-        await this.interaction.deferReply({ ephemeral: true });
+    protected async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+        await interaction.deferReply({ ephemeral: true });
 
         const plataforma: Plataforma = this.interaction.options.getString('plataforma') as Plataforma;
         const criterio: string = this.interaction.options.getString('nombre-o-id') as string;

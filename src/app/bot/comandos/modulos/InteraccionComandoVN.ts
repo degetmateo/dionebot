@@ -17,11 +17,11 @@ export default class InteraccionComandoVN extends InteraccionComando {
 
     public static async execute (interaction: ChatInputCommandInteraction<CacheType>) {
         const modulo = new InteraccionComandoVN(interaction);
-        await modulo.execute();    
+        await modulo.execute(interaction);    
     }
     
-    protected async execute(): Promise<void> {
-        await this.interaction.deferReply();
+    protected async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+        await interaction.deferReply();
 
         const criterio: string = this.interaction.options.getString('nombre-o-id') as string;
         const traducir: boolean = this.interaction.options.getBoolean('traducir') || false;

@@ -53,11 +53,11 @@ export default class InteraccionComandoManga extends InteraccionComando {
     
     public static async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
         const modulo = new InteraccionComandoManga(interaction);
-        await modulo.execute();    
+        await modulo.execute(interaction);    
     }
 
-    protected async execute () {
-        await this.interaction.deferReply();
+    protected async execute (interaction: ChatInputCommandInteraction<CacheType>) {
+        await interaction.deferReply();
 
         this.criterioEsID ? 
             await this.buscarMangaPorID() :

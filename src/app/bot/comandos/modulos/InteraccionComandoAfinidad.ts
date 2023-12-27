@@ -48,11 +48,11 @@ export default class InteraccionComandoAfinidad extends InteraccionComando {
 
     public static async execute (interaction: ChatInputCommandInteraction<CacheType>) {
         const modulo = new InteraccionComandoAfinidad(interaction);
-        await modulo.execute();
+        await modulo.execute(interaction);
     }
 
-    protected async execute (): Promise<void> {
-        await this.interaction.deferReply();
+    protected async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+        await interaction.deferReply();
 
         const usuarioID = (!this.usuario) ? this.interaction.user.id : this.usuario.id;
         

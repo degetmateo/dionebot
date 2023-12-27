@@ -18,11 +18,11 @@ export default class InteraccionComandoUsuario extends InteraccionComando {
 
     public static async execute (interaction: ChatInputCommandInteraction<CacheType>) {
         const module = new InteraccionComandoUsuario(interaction);
-        await module.execute();    
+        await module.execute(interaction);    
     }
 
-    protected async execute (): Promise<void> {
-        await this.interaction.deferReply();
+    protected async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+        await interaction.deferReply();
 
         const userId = this.interaction.options.getUser("usuario")?.id || this.interaction.user.id;
         const serverId = this.interaction.guild?.id as string;

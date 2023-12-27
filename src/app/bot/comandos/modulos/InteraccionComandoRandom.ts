@@ -23,11 +23,11 @@ export default class InteraccionComandoRandom extends InteraccionComando {
 
     public static async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
         const modulo = new InteraccionComandoRandom(interaction);
-        await modulo.execute();    
+        await modulo.execute(interaction);    
     }
 
-    protected async execute (): Promise<void> {
-        await this.interaction.deferReply();
+    protected async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+        await interaction.deferReply();
 
         const serverUsers = this.bot.usuarios.obtenerUsuariosRegistrados(this.server_id);
         const user = serverUsers.find(u => u.discordId === this.interaction.user.id);
