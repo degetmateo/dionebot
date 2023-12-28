@@ -63,7 +63,7 @@ export default class AnilistAPI {
         const data = await fetch(this.API_URL, opciones);
         if (!data) throw new ErrorSinResultados('No se han encontrado resultados.');
 
-        const res = await data.json();
+        const res: any = await data.json();
         
         if (res.errors) {
             const e = res.errors[0];
