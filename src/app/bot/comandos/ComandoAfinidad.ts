@@ -14,6 +14,9 @@ export default class ComandoAfinidad implements InterfazComando {
                 .setDescription("Usuario del que quieres calcular la afinidad."));
 
     public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+        interaction.reply('Comando en mantenimiento.');
+        return;
+        
         await InteraccionComandoAfinidad.execute(interaction);
     }
 }

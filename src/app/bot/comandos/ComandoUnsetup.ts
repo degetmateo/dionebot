@@ -10,6 +10,9 @@ export default class ComandoUnsetup implements Comando {
         .setDescription("Te elimina de los usuarios registrados.");
     
     public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+        interaction.reply('Comando en mantenimiento.');
+        return;
+        
         await InteraccionComandoUnsetup.execute(interaction);    
     }
 }

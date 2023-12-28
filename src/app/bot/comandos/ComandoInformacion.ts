@@ -18,6 +18,9 @@ https://dionebot.onrender.com/
     `;
 
     public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+        interaction.reply('Comando en mantenimiento.');
+        return;
+        
         await interaction.deferReply();
 
         const bot: Bot = interaction.client as Bot;

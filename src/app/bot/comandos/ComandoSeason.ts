@@ -26,6 +26,9 @@ export default class ComandoSeason implements Comando {
                 .setRequired(true));
     
     public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+        interaction.reply('Comando en mantenimiento.');
+        return;
+        
         await InteraccionComandoSeason.execute(interaction);
     }
 }

@@ -22,7 +22,10 @@ export default class ComandoHelp implements Comando {
 ▸ **\`/season\`** - Devuelve todos los animes que salieron en la temporada que elijas.
     `;
 
-    public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {                
+    public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {  
+        interaction.reply('Comando en mantenimiento.');              
+        return;
+        
         await interaction.deferReply();
 
         const bot: Bot = interaction.client as Bot;

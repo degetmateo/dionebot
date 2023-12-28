@@ -14,6 +14,9 @@ export default class ComandoUsuario implements Comando {
                 .setDescription("El usuario del que se solicita la información."));
     
     public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+        interaction.reply('Comando en mantenimiento.');
+        return;
+        
         await InteraccionComandoUsuario.execute(interaction);
     }
 }

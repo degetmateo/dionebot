@@ -20,6 +20,9 @@ export default class ComandoAnime implements Comando {
                 .setDescription('Si deseas traducir la sinopsis.'));
 
     public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+        interaction.reply('Comando en mantenimiento.');
+        return;
+
         await InteraccionComandoAnime.execute(interaction);
     }
 }

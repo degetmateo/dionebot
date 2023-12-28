@@ -11,6 +11,9 @@ export default class ComandoRandom implements Comando {
         .setDescription('Elije al azar un anime para que veas de tus PTW.');
 
     public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+        interaction.reply('Comando en mantenimiento.');
+        return;
+        
         await InteraccionComandoRandom.execute(interaction);
     }
 }

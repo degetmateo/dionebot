@@ -24,6 +24,9 @@ export default class ComandoSetup implements Comando {
                 .setRequired(true));
     
     public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+        interaction.reply('Comando en mantenimiento.');
+        return;
+        
         await InteraccionComandoSetup.execute(interaction);    
     }
 }

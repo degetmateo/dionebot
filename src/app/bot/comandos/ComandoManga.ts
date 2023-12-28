@@ -21,6 +21,9 @@ export default class ComandoManga implements Comando {
                 .setDescription('Si deseas traducir la sinopsis. (Traductor de Google)'));
     
     public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+        interaction.reply('Comando en mantenimiento.');
+        return;
+
         await InteraccionComandoManga.execute(interaction);
     }
 }
