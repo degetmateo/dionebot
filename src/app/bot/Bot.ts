@@ -114,8 +114,12 @@ export default class Bot extends Client {
 
         console.log('logeanding')
 
-        const logged = await this.login(token);
-        console.log(logged)
+        try {
+            const logged = await this.login(token);
+            console.log(logged)
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     private cargarComandos = () => {
