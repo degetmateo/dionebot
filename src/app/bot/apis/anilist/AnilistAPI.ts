@@ -3,7 +3,9 @@ import { MediaList } from './tipos/MediaList';
 import { PeticionAPI } from '../tipos/PeticionAPI';
 import { uRegistrado } from '../../tipos';
 import * as Tipos from './TiposAnilist';
+
 import UsuarioAnilist from './modelos/UsuarioAnilist';
+
 import BuscadorMedia from './modulos/BuscadorMedia';
 import BuscadorAnimesTemporada from './modulos/BuscadorMediaTemporada';
 import BuscadorUsuario from './modulos/BuscadorUsuario';
