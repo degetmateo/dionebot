@@ -5,7 +5,7 @@ import InteraccionComandoVN from "./modulos/InteraccionComandoVN";
 export default class ComandoVN implements Comando {
     public readonly cooldown: number = 10;
     
-    public readonly datos = new SlashCommandBuilder()
+    public readonly data = new SlashCommandBuilder()
         .setName('vn')
         .setDescription('Obtén información acerca de una novela visual.')
         .addStringOption(opcion =>

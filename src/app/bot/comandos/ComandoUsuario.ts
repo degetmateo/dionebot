@@ -5,7 +5,7 @@ import InteraccionComandoUsuario from "./modulos/InteraccionComandoUsuario";
 export default class ComandoUsuario implements Comando {
     public readonly cooldown: number = 5;
 
-    public readonly datos = new SlashCommandBuilder()
+    public readonly data = new SlashCommandBuilder()
         .setName("usuario")
         .setDescription("Muestra la información del perfil de Anilist de un usuario.")
         .addUserOption(option => 

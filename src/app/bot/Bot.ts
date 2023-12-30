@@ -15,12 +15,13 @@ import ColeccionUsuarios from "./colecciones/ColeccionUsuarios";
 import ColeccionInteracciones from "./colecciones/ColeccionInteracciones";
 import ServerModel from '../database/modelos/ServerModel';
 import ServerCollection from './colecciones/ServerCollection';
-import { Server } from '../database/types';
 
 export default class Bot extends Client {
     private static readonly HORA_EN_MILISEGUNDOS: number = 3600000;
 
-    private comandos: Collection<string, Comando>;
+    private commands: Collection<string, Comando>;
+    private cooldowns: Collection<string, Collection<string, number>>;
+
     private version: string;
     
     public readonly servers: ServerCollection;
@@ -31,7 +32,8 @@ export default class Bot extends Client {
     constructor() {
         super({ intents: [] });
 
-        this.comandos = new Collection<string, Comando>();
+        this.commands = new Collection<string, Comando>();
+        this.cooldowns = new Collection<string, Collection<string, number>>();
 
         this.servers = ServerCollection.Create();
 
@@ -53,9 +55,45 @@ export default class Bot extends Client {
         this.on(Events.InteractionCreate, async interaction => {
             if (!interaction.isChatInputCommand()) return;
 
+            const command = this.commands.get(interaction.commandName);
+            if (!command) throw new Error(`No se ha encontrado ningun comando con el nombre: ${interaction.commandName}`);
+
+            if (!this.cooldowns.has(command.data.name)) this.cooldowns.set(command.data.name, new Collection<string, number>());
+
+            const now = Date.now();
+            const timestamps = this.cooldowns.get(command.data.name);
+            const defaultCooldownDuration = 3;
+            const cooldownAmount = (command.cooldown ?? defaultCooldownDuration) * 1_000;
+
+            if (timestamps.has(interaction.user.id)) {
+                const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount;
+
+                if (now < expirationTime) {
+                    const expirationSeconds = ((expirationTime - now) / 1000).toFixed(0);
+
+                    const desc = parseInt(expirationSeconds) === 1 ? 
+                    `Podrás volver a utilizar este comando \`en ${expirationSeconds} segundo.\`` :
+                    `Podrás volver a utilizar este comando \`en ${expirationSeconds} segundos.\``;
+
+                    const embedError = Embed.Crear()
+                        .establecerColor(Embed.COLOR_ROJO)
+                        .establecerDescripcion(`Podrás volver a utilizar este comando \`en ${expirationSeconds} segundos.\``);
+
+                    interaction.reply({
+                        embeds: [embedError.obtenerDatos()],
+                        ephemeral: true
+                    })
+
+                    this.interacciones.eliminar(interaction.id);
+
+                    return;
+                }
+            }
+
+            timestamps.set(interaction.user.id, now);
+            setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
+
             try {
-                const command = this.comandos.get(interaction.commandName);
-                if (!command) throw new Error(`No se ha encontrado ningun comando con el nombre: ${interaction.commandName}`);
                 await command.execute(interaction);
             } catch (error) {
                 const esErrorCritico =
@@ -134,9 +172,9 @@ export default class Bot extends Client {
             if (!datosComando.default) continue;
             
             const comando = new datosComando.default() as Comando;
-            if (!comando.execute || !comando.datos) continue;
+            if (!comando.execute || !comando.data) continue;
 
-            this.comandos.set(comando.datos.name, comando);
+            this.commands.set(comando.data.name, comando);
         }
     }
 

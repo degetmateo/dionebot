@@ -7,7 +7,7 @@ import ErrorDemasiadasPeticiones from "../../errores/ErrorDemasiadasPeticiones";
 export default class ComandoSeason implements Comando {
     public readonly cooldown: number = 10;
     
-    public readonly datos = new SlashCommandBuilder()
+    public readonly data = new SlashCommandBuilder()
         .setName("season")
         .setDescription("Devuelve los animes que salieron en el año y en la temporada pasados como parámetro.")
         .addIntegerOption(option =>

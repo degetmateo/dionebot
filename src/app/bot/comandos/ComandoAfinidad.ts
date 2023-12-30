@@ -5,7 +5,7 @@ import InteraccionComandoAfinidad from "./modulos/InteraccionComandoAfinidad";
 export default class ComandoAfinidad implements InterfazComando {
     public readonly cooldown: number = 10;
 
-    public readonly datos = new SlashCommandBuilder()
+    public readonly data = new SlashCommandBuilder()
         .setName("afinidad")
         .setDescription("Calcula la afinidad entre vos (u otro usuario) y los demás miembros registrados del servidor.")
         .addUserOption(option => 

@@ -6,7 +6,7 @@ export default class ComandoRandom implements Comando {
     public readonly nombre: string = 'random';
     public readonly cooldown: number = 10;
 
-    public readonly datos = new SlashCommandBuilder()
+    public readonly data = new SlashCommandBuilder()
         .setName('random')
         .setDescription('Elije al azar un anime para que veas de tus PTW.');
 

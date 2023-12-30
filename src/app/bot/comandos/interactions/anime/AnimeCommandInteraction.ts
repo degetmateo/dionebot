@@ -1,18 +1,18 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, CacheType, ChatInputCommandInteraction, Embed, UserSelectMenuBuilder } from "discord.js";
-import AnilistAPI from "../../apis/anilist/AnilistAPI";
-import Anime from "../../apis/anilist/modelos/media/Anime";
-import Notas from "../../apis/anilist/modelos/media/Notas";
-import Boton from "../componentes/Boton";
-import InteraccionComando from "./InteraccionComando";
-import * as Tipos from '../../apis/anilist/TiposAnilist';
-import Bot from "../../Bot";
-import EmbedAnime from "../../embeds/EmbedAnime";
-import Helpers from "../../Helpers";
-import ErrorArgumentoInvalido from "../../../errores/ErrorArgumentoInvalido";
-import EmbedNotas from "../../embeds/EmbedNotas";
-import { MediaList } from "../../apis/anilist/tipos/MediaList";
+import AnilistAPI from "../../../apis/anilist/AnilistAPI";
+import Anime from "../../../apis/anilist/modelos/media/Anime";
+import Notas from "../../../apis/anilist/modelos/media/Notas";
+import Boton from "../../componentes/Boton";
+import InteraccionComando from "../../modulos/InteraccionComando";
+import * as Tipos from '../../../apis/anilist/TiposAnilist';
+import Bot from "../../../Bot";
+import EmbedAnime from "../../../embeds/EmbedAnime";
+import Helpers from "../../../Helpers";
+import ErrorArgumentoInvalido from "../../../../errores/ErrorArgumentoInvalido";
+import EmbedNotas from "../../../embeds/EmbedNotas";
+import { MediaList } from "../../../apis/anilist/tipos/MediaList";
 
-export default class InteraccionComandoAnime extends InteraccionComando {
+export default class AnimeCommandInteraction extends InteraccionComando {
     protected interaction: ChatInputCommandInteraction<CacheType>;
 
     private bot: Bot;
@@ -33,7 +33,7 @@ export default class InteraccionComandoAnime extends InteraccionComando {
     private row = new ActionRowBuilder<ButtonBuilder>()
         .addComponents(this.botonPaginaPrevia, this.botonPaginaSiguiente);
 
-    private constructor (interaction: ChatInputCommandInteraction<CacheType>) {
+    constructor (interaction: ChatInputCommandInteraction<CacheType>) {
         super();
 
         this.interaction = interaction;
@@ -50,14 +50,9 @@ export default class InteraccionComandoAnime extends InteraccionComando {
         this.animes = new Array<Anime>();
         this.embeds = new Array<EmbedAnime>();
     }
-    
-    public static async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        const modulo = new InteraccionComandoAnime(interaction);
-        await modulo.execute(interaction);    
-    }
 
-    protected async execute (interaction: ChatInputCommandInteraction<CacheType>) {
-        await interaction.deferReply();
+    public async execute () {
+        await this.interaction.deferReply();
 
         this.criterioEsID ? 
             await this.buscarAnimePorID() :

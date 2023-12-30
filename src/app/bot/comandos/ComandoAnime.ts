@@ -1,12 +1,12 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType, SlashCommandStringOption, SlashCommandBooleanOption } from "discord.js";
 import Comando from "../interfaces/InterfazComando";
-import InteraccionComandoAnime from "./modulos/InteraccionComandoAnime";
+import AnimeCommandInteraction from "./interactions/anime/AnimeCommandInteraction";
 
 export default class ComandoAnime implements Comando {
     public readonly nombre: string = 'anime';
     public readonly cooldown: number = 10;
 
-    public readonly datos = new SlashCommandBuilder()
+    public readonly data = new SlashCommandBuilder()
         .setName('anime')
         .setDescription('Busca un anime en la base de datos de anilist.')
         .addStringOption((opcion: SlashCommandStringOption) =>
@@ -20,9 +20,7 @@ export default class ComandoAnime implements Comando {
                 .setDescription('Si deseas traducir la sinopsis.'));
 
     public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        interaction.reply('Comando en mantenimiento.');
-        return;
-
-        await InteraccionComandoAnime.execute(interaction);
+        const commandInteraction = new AnimeCommandInteraction(interaction);
+        await commandInteraction.execute();
     }
 }

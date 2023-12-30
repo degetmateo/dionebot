@@ -5,7 +5,7 @@ import InteraccionComandoSetup from "./modulos/InteraccionComandoSetup";
 export default class ComandoSetup implements Comando {
     public readonly cooldown: number = 0;
 
-    public readonly datos = new SlashCommandBuilder()
+    public readonly data = new SlashCommandBuilder()
         .setName("setup")
         .setDescription("Enlaza tu cuenta de una de estas plataformas.")
         .addStringOption(option => 

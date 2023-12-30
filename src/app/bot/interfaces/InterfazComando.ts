@@ -3,7 +3,7 @@ import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder, SlashComma
 export default interface Comando {
     readonly cooldown: number;
 
-    readonly datos:
+    readonly data:
     | Omit<SlashCommandBuilder, "addSubcommandGroup" | "addSubcommand">
     | SlashCommandSubcommandsOnlyBuilder;
 
