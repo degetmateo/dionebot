@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
 import Comando from "../interfaces/InterfazComando";
 import InteraccionComandoVN from "./modulos/InteraccionComandoVN";
+import CommandUnderMaintenanceException from "../../errores/CommandUnderMaintenanceException";
 
 export default class ComandoVN implements Comando {
     public readonly cooldown: number = 10;
@@ -19,9 +20,7 @@ export default class ComandoVN implements Comando {
                 .setDescription('Indicar si la información obtenida debe traducirse al español.'));
     
     public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        interaction.reply('Comando en mantenimiento.');
-        return;
-        
-        await InteraccionComandoVN.execute(interaction);    
+        const commandInteraction = new InteraccionComandoVN(interaction);
+        await commandInteraction.execute();    
     }
 }

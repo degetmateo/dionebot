@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
 import Comando from "../interfaces/InterfazComando";
-import InteraccionComandoUsuario from "./modulos/InteraccionComandoUsuario";
+import CommandUnderMaintenanceException from "../../errores/CommandUnderMaintenanceException";
 
 export default class ComandoUsuario implements Comando {
     public readonly cooldown: number = 5;
@@ -14,9 +14,6 @@ export default class ComandoUsuario implements Comando {
                 .setDescription("El usuario del que se solicita la información."));
     
     public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        interaction.reply('Comando en mantenimiento.');
-        return;
-        
-        await InteraccionComandoUsuario.execute(interaction);
+        throw new CommandUnderMaintenanceException('Comando en mantenimiento.');
     }
 }

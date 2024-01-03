@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
 import InterfazComando from "../interfaces/InterfazComando";
-import InteraccionComandoAfinidad from "./modulos/InteraccionComandoAfinidad";
+import CommandUnderMaintenanceException from "../../errores/CommandUnderMaintenanceException";
 
 export default class ComandoAfinidad implements InterfazComando {
     public readonly cooldown: number = 10;
@@ -14,9 +14,6 @@ export default class ComandoAfinidad implements InterfazComando {
                 .setDescription("Usuario del que quieres calcular la afinidad."));
 
     public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        interaction.reply('Comando en mantenimiento.');
-        return;
-        
-        await InteraccionComandoAfinidad.execute(interaction);
+        throw new CommandUnderMaintenanceException('Comando en mantenimiento.');
     }
 }

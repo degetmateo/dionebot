@@ -2,22 +2,20 @@ import { EmbedBuilder } from "discord.js";
 import Notas from "../apis/anilist/modelos/media/Notas";
 import Media from "../apis/anilist/modelos/media/Media";
 import EmbedUsuario from "./EmbedUsuario";
+import ScoreCollection from "../apis/anilist/ScoreCollection";
 
-export default class EmbedNotas extends EmbedBuilder {
-    private notas: Notas;
-    private media: Media;
+export default class EmbedScores extends EmbedBuilder {
+    private scores: ScoreCollection;
 
-    private constructor (notas: Notas, media: Media) {
+    private constructor (scores: ScoreCollection) {
         super();
-        this.notas = notas;
-        this.media = media;
+        this.scores = scores;
     }
 
-    public static Crear (notas: Notas, media: Media) {
-        const embed = new EmbedNotas(notas, media)
-            .setColor(media.obtenerColor())
+    public static Create (scores: ScoreCollection) {
+        const embed = new EmbedScores(scores);
 
-        if (!notas.hayNotas()) {
+        if (!scores.isEmpty()) {
             return embed.setDescription('No hay notas disponibles.');
         }
 
@@ -34,7 +32,7 @@ export default class EmbedNotas extends EmbedBuilder {
     }
 
     private establecerCampoCompletados (): void {
-        const usuarios = this.notas.obtenerCompletado();
+        const usuarios = this.scores.getCompleted();
         if (usuarios.length <= 0) return;
 
         const informacion = `${usuarios.map(n => n.user.name + ' **[' + n.score + ']**').join(' - ')}`;
@@ -45,7 +43,7 @@ export default class EmbedNotas extends EmbedBuilder {
     }
 
     private establecerCampoEnProgreso (): void {
-        const usuarios = this.notas.obtenerProgreso();
+        const usuarios = this.scores.getCurrent();
         if (usuarios.length <= 0) return;
 
         const informacion = `${usuarios.map(n => n.user.name + ' **(' + n.progress + ')**' + ' **[' + n.score + ']**').join(' - ')}`;
@@ -56,7 +54,7 @@ export default class EmbedNotas extends EmbedBuilder {
     }
 
     private establecerCampoEnPausa (): void {
-        const usuarios = this.notas.obtenerPausado();
+        const usuarios = this.scores.getPaused();
         if (usuarios.length <= 0) return;
 
         const informacion = `${usuarios.map(n => n.user.name + ' **(' + n.progress + ')**' + ' **[' + n.score + ']**').join(' - ')}`;
@@ -67,7 +65,7 @@ export default class EmbedNotas extends EmbedBuilder {
     }
 
     private establecerCampoDropeados (): void {
-        const usuarios = this.notas.obtenerDropeado();
+        const usuarios = this.scores.getDropped();
         if (usuarios.length <= 0) return;
 
         const informacion = `${usuarios.map(n => n.user.name + ' **(' + n.progress + ')**' + ' **[' + n.score + ']**').join(' - ')}`;
@@ -78,10 +76,10 @@ export default class EmbedNotas extends EmbedBuilder {
     }
 
     private establecerCampoPlaneando (): void {
-        const usuarios = this.notas.obtenerPlanificado();
+        const usuarios = this.scores.getPlanning();
         if (usuarios.length <= 0) return;
 
-        const informacion = `${this.notas.obtenerPlanificado().map(n => n.user.name).join(' - ')}`;
+        const informacion = `${usuarios.map(n => n.user.name).join(' - ')}`;
 
         informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
             this.addFields({ name: 'Planificado por', value: informacion, inline: false }) :

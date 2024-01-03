@@ -1,18 +1,17 @@
 import Helpers from "../../../Helpers";
-import { uRegistrado } from "../../../tipos";
 import AnilistAPI from "../AnilistAPI";
 import { MediaList } from "../tipos/MediaList";
 
 export default class BuscadorEstadoMediaUsuarios {
-    public static async BuscarEstadoMediaUsuarios (usuarios: Array<uRegistrado>, mediaID: number):  Promise<Array<MediaList>> {
-        const peticiones = this.ConsultasEstadoMediaUsuarios(usuarios);
+    public static async BuscarEstadoMediaUsuarios (mediaId: string, usersIds: Array<string>):  Promise<Array<MediaList>> {
+        const peticiones = this.ConsultasEstadoMediaUsuarios(usersIds);
         const resultados: Array<MediaList> = new Array<MediaList>();
 
         for (const peticion of peticiones) {
             let respuesta: { [x: string]: { mediaList: any[]; }; };
             
             try {
-                respuesta = await AnilistAPI.peticion(peticion, { mediaID });
+                respuesta = await AnilistAPI.peticion(peticion, { mediaId });
             } catch (error) {
                 const message = error.message.toLowerCase();
                 if (message.includes('private user')) continue;
@@ -28,7 +27,7 @@ export default class BuscadorEstadoMediaUsuarios {
         return resultados;
     }
 
-    private static ConsultasEstadoMediaUsuarios (usuarios: Array<uRegistrado>): Array<string> {
+    private static ConsultasEstadoMediaUsuarios (usuarios: Array<string>): Array<string> {
         const tandas = Helpers.dividirArreglo(usuarios, AnilistAPI.CANTIDAD_CONSULTAS_POR_PETICION);
         const peticiones = new Array<string>();
 
@@ -39,12 +38,12 @@ export default class BuscadorEstadoMediaUsuarios {
         return peticiones;
     }
 
-    private static ConsultaEstadoMediaUsuarios (usuarios: Array<uRegistrado>): string {
+    private static ConsultaEstadoMediaUsuarios (usuarios: Array<string>): string {
         return `
             query ($mediaID: Int) {
-                ${usuarios.map((u, i) => `
+                ${usuarios.map((userId, i) => `
                     q${i}: Page (perPage: 1) {
-                        mediaList(userId: ${u.anilistId}, mediaId: $mediaID) {
+                        mediaList(userId: ${userId}, mediaId: $mediaID) {
                             ...mediaList
                         }
                     }

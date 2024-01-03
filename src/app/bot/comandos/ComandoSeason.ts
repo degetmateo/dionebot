@@ -1,8 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
 import Comando from "../interfaces/InterfazComando";
 import InteraccionComandoSeason from "./modulos/InteraccionComandoSeason";
-import Bot from "../Bot";
-import ErrorDemasiadasPeticiones from "../../errores/ErrorDemasiadasPeticiones";
 
 export default class ComandoSeason implements Comando {
     public readonly cooldown: number = 10;
@@ -26,9 +24,7 @@ export default class ComandoSeason implements Comando {
                 .setRequired(true));
     
     public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        interaction.reply('Comando en mantenimiento.');
-        return;
-        
-        await InteraccionComandoSeason.execute(interaction);
+        const commandInteraction = new InteraccionComandoSeason(interaction);
+        await commandInteraction.execute();
     }
 }

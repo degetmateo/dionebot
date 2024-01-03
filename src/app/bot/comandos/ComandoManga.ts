@@ -1,8 +1,6 @@
-import { SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
+import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
 import Comando from "../interfaces/InterfazComando";
-import InteraccionComandoManga from "./modulos/InteraccionComandoManga";
-import Bot from "../Bot";
-import ErrorDemasiadasPeticiones from "../../errores/ErrorDemasiadasPeticiones";
+import CommandUnderMaintenanceException from "../../errores/CommandUnderMaintenanceException";
 
 export default class ComandoManga implements Comando {
     public readonly cooldown: number = 10;
@@ -21,9 +19,6 @@ export default class ComandoManga implements Comando {
                 .setDescription('Si deseas traducir la sinopsis. (Traductor de Google)'));
     
     public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        interaction.reply('Comando en mantenimiento.');
-        return;
-
-        await InteraccionComandoManga.execute(interaction);
+        throw new CommandUnderMaintenanceException('Comando en mantenimiento.');
     }
 }

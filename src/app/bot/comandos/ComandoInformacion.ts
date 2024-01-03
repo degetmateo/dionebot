@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, CacheType } from "discord.js";
 import Comando from "../interfaces/InterfazComando";
 import Bot from "../Bot";
+import CommandUnderMaintenanceException from "../../errores/CommandUnderMaintenanceException";
 
 export default class ComandoInformacion implements Comando {
     public readonly cooldown: number = 5;
@@ -18,8 +19,7 @@ https://dionebot.onrender.com/
     `;
 
     public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        interaction.reply('Comando en mantenimiento.');
-        return;
+        throw new CommandUnderMaintenanceException('Comando en mantenimiento.');
         
         await interaction.deferReply();
 

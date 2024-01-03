@@ -7,14 +7,14 @@ export default class EmbedAnime extends EmbedBuilder {
         super();
     }
 
-    public static Crear(anime: Anime): EmbedAnime {
+    public static Create (anime: Anime): EmbedAnime {
         const embed = this.CrearEmbedBasico(anime)
             .setDescription(anime.obtenerDescripcion());
 
         return embed;
     }
 
-    public static async CrearTraducido(anime: Anime): Promise<EmbedAnime> {
+    public static async CreateTranslated (anime: Anime): Promise<EmbedAnime> {
         const embed = this.CrearEmbedBasico(anime)
             .setDescription(await Helpers.traducir(anime.obtenerDescripcion()));
 

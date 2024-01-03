@@ -1,4 +1,4 @@
-import { Server } from "../../database/types";
+import { Server, User } from "../../database/types";
 
 export default class ServerCollection {
     private servers: Array<Server>;
@@ -24,7 +24,8 @@ export default class ServerCollection {
         return this.servers.find(s => s.id === server.id) ? true : false;
     }
 
-    public replace (servers: Array<Server>): void {
-        this.servers = servers;
+    public getUsers (serverId: string): Array<User> {
+        const server = this.servers.find(s => s.id === serverId);
+        return server.users;
     }
 }

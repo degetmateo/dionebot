@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
 import Comando from "../interfaces/InterfazComando";
-import InteraccionComandoSetup from "./modulos/InteraccionComandoSetup";
+import CommandUnderMaintenanceException from "../../errores/CommandUnderMaintenanceException";
 
 export default class ComandoSetup implements Comando {
     public readonly cooldown: number = 0;
@@ -24,9 +24,6 @@ export default class ComandoSetup implements Comando {
                 .setRequired(true));
     
     public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        interaction.reply('Comando en mantenimiento.');
-        return;
-        
-        await InteraccionComandoSetup.execute(interaction);    
+        throw new CommandUnderMaintenanceException('Comando en mantenimiento.');
     }
 }

@@ -1,7 +1,5 @@
-import Aniuser from "../../../../database/modelos/Aniuser";
 import ErrorSinResultados from "../../../../errores/ErrorSinResultados";
 import Helpers from "../../../Helpers";
-import InteraccionComandoUnsetup from "../../../comandos/modulos/InteraccionComandoUnsetup";
 import { uRegistrado } from "../../../tipos";
 import AnilistAPI from "../AnilistAPI";
 import { MediaColeccion } from "../tipos/TiposMedia";
@@ -46,7 +44,6 @@ export default class BuscadorListasCompletasUsuarios {
                 if (message.includes('private user')) {
                     const serverID = usuario.serverId;
                     const userID = usuario.discordId;
-                    await InteraccionComandoUnsetup.UnsetupUsuario(serverID, userID);
                 }
             }
 

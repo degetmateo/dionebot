@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType, SlashCommandStringOption, SlashCommandBooleanOption } from "discord.js";
+import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
 import Comando from "../interfaces/InterfazComando";
 import InteraccionComandoRandom from "./modulos/InteraccionComandoRandom";
 
@@ -11,9 +11,7 @@ export default class ComandoRandom implements Comando {
         .setDescription('Elije al azar un anime para que veas de tus PTW.');
 
     public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        interaction.reply('Comando en mantenimiento.');
-        return;
-        
-        await InteraccionComandoRandom.execute(interaction);
+        const commandInteraction = new InteraccionComandoRandom(interaction);
+        await commandInteraction.execute();
     }
 }

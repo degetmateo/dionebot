@@ -11,10 +11,12 @@ import ErrorSinResultados from "../errores/ErrorSinResultados";
 import ErrorArgumentoInvalido from "../errores/ErrorArgumentoInvalido";
 import Comando from "./interfaces/InterfazComando";
 import ErrorDemasiadasPeticiones from "../errores/ErrorDemasiadasPeticiones";
-import ColeccionUsuarios from "./colecciones/ColeccionUsuarios";
-import ColeccionInteracciones from "./colecciones/ColeccionInteracciones";
+import UserCollection from "./collections/UserCollection";
+import ColeccionInteracciones from "./collections/ColeccionInteracciones";
 import ServerModel from '../database/modelos/ServerModel';
-import ServerCollection from './colecciones/ServerCollection';
+import ServerCollection from './collections/ServerCollection';
+import IllegalArgumentException from '../errores/IllegalArgumentException';
+import CommandUnderMaintenanceException from '../errores/CommandUnderMaintenanceException';
 
 export default class Bot extends Client {
     private static readonly HORA_EN_MILISEGUNDOS: number = 3600000;
@@ -26,7 +28,6 @@ export default class Bot extends Client {
     
     public readonly servers: ServerCollection;
 
-    public readonly usuarios: ColeccionUsuarios;
     public readonly interacciones: ColeccionInteracciones;
 
     constructor() {
@@ -37,7 +38,6 @@ export default class Bot extends Client {
 
         this.servers = ServerCollection.Create();
 
-        this.usuarios = ColeccionUsuarios.CrearNueva();
         this.interacciones = ColeccionInteracciones.CrearNueva();
         this.version = version;
     }
@@ -100,7 +100,9 @@ export default class Bot extends Client {
                     !(error instanceof ErrorGenerico) &&
                     !(error instanceof ErrorSinResultados) &&
                     !(error instanceof ErrorArgumentoInvalido) &&
-                    !(error instanceof ErrorDemasiadasPeticiones);
+                    !(error instanceof ErrorDemasiadasPeticiones) &&
+                    !(error instanceof IllegalArgumentException) &&
+                    !(error instanceof CommandUnderMaintenanceException);
 
                 const embed = Embed.Crear()
                     .establecerColor(Embed.COLOR_ROJO);
@@ -121,16 +123,16 @@ export default class Bot extends Client {
             }
         });
 
-        await this.cargarUsuarios();
+        await this.loadServers();
 
         setInterval(async () => {
-            await this.cargarUsuarios();
+            await this.loadServers();
         }, Bot.HORA_EN_MILISEGUNDOS);
 
         this.on('guildMemberRemove', async (member) => {
             try {
                 await Aniuser.findOneAndDelete({ serverId: member.guild.id, discordId: member.id })
-                await this.cargarUsuarios();
+                await this.loadServers();
             } catch (error) {
                 console.error(error);
             }
@@ -150,11 +152,8 @@ export default class Bot extends Client {
             }
         })
 
-        console.log('logeanding')
-
         try {
-            const logged = await this.login(token);
-            console.log(logged)
+            await this.login(token);
         } catch (error) {
             console.error(error)
         }
@@ -207,29 +206,7 @@ export default class Bot extends Client {
         return this.guilds.cache.size;
     }
 
-    public cargarUsuarios = async (): Promise<void> => {
-        const aniusers =  await Aniuser.find();
-        this.usuarios.vaciar();
-
-        for (let i = 0; i < aniusers.length; i++) {
-            const serverID = aniusers[i].serverId;
-            const dsID = aniusers[i].discordId;
-            const anilistUsername = aniusers[i].anilistUsername;
-            const anilistID = aniusers[i].anilistId;
-
-            if (!serverID || !dsID || !anilistUsername || !anilistID) {
-                await aniusers[i].deleteOne();
-                continue;
-            }
-
-            this.usuarios.insertar({
-                serverId: serverID,
-                discordId: dsID,
-                anilistUsername: anilistUsername,
-                anilistId: anilistID
-            });
-        }
-
+    public loadServers = async (): Promise<void> => {
         this.servers.empty();
         const servers = await ServerModel.find();
 

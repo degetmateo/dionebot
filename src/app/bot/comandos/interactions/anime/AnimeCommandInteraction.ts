@@ -1,82 +1,80 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, CacheType, ChatInputCommandInteraction, Embed, UserSelectMenuBuilder } from "discord.js";
-import AnilistAPI from "../../../apis/anilist/AnilistAPI";
-import Anime from "../../../apis/anilist/modelos/media/Anime";
-import Notas from "../../../apis/anilist/modelos/media/Notas";
-import Boton from "../../componentes/Boton";
-import InteraccionComando from "../../modulos/InteraccionComando";
-import * as Tipos from '../../../apis/anilist/TiposAnilist';
+import { ChatInputCommandInteraction, CacheType, ActionRowBuilder, ButtonBuilder } from "discord.js";
+
+import CommandInteraction from "../CommandInteraction";
 import Bot from "../../../Bot";
+import Anime from "../../../apis/anilist/modelos/media/Anime";
 import EmbedAnime from "../../../embeds/EmbedAnime";
+import Button from "../../components/Button";
 import Helpers from "../../../Helpers";
-import ErrorArgumentoInvalido from "../../../../errores/ErrorArgumentoInvalido";
-import EmbedNotas from "../../../embeds/EmbedNotas";
-import { MediaList } from "../../../apis/anilist/tipos/MediaList";
+import IllegalArgumentException from "../../../../errores/IllegalArgumentException";
+import AnilistAPI from "../../../apis/anilist/AnilistAPI";
+import EmbedScores from "../../../embeds/EmbedScores";
+import CommandUnderMaintenanceException from "../../../../errores/CommandUnderMaintenanceException";
 
-export default class AnimeCommandInteraction extends InteraccionComando {
-    protected interaction: ChatInputCommandInteraction<CacheType>;
+export default class AnimeCommandInteraction extends CommandInteraction {
+    protected readonly interaction: ChatInputCommandInteraction<CacheType>;
 
-    private bot: Bot;
-    private idServidor: string;
-    private criterioBusqueda: string;
-    private criterioEsID: boolean;
-    private traducirInformacion: boolean;
-
-    private indiceInteraccion: number;
-    private ultimoIndiceInteraccion: number;
+    private readonly bot: Bot;
+    private readonly serverId: string;
+    private readonly query: string;
+    private readonly queryIsNumber: boolean;
+    private readonly translate: boolean;
+    
+    private page: number;
+    private lastPage: number;
 
     private animes: Array<Anime>;
     private embeds: Array<EmbedAnime>;
 
-    private botonPaginaPrevia = Boton.CrearPrevio();
-    private botonPaginaSiguiente = Boton.CrearSiguiente();
-
-    private row = new ActionRowBuilder<ButtonBuilder>()
-        .addComponents(this.botonPaginaPrevia, this.botonPaginaSiguiente);
+    private readonly buttonPreviousPage = Button.CreatePrevious();
+    private readonly buttonNextPage = Button.CreateNext();
+    private readonly row = new ActionRowBuilder<ButtonBuilder>()
+        .addComponents(this.buttonPreviousPage, this.buttonNextPage);
 
     constructor (interaction: ChatInputCommandInteraction<CacheType>) {
         super();
-
         this.interaction = interaction;
+        
+        this.bot = interaction.client as Bot;
+        this.serverId = interaction.guildId;
+        this.query = interaction.options.getString('nombre-o-id');
+        this.queryIsNumber = Helpers.isNumber(this.query);
+        this.translate = interaction.options.getBoolean('traducir') || false;
 
-        this.bot = this.interaction.client as Bot;
-        this.idServidor = this.interaction.guild?.id as string;
-        this.criterioBusqueda = this.interaction.options.getString('nombre-o-id') as string;
-        this.criterioEsID = Helpers.esNumero(this.criterioBusqueda);
-        this.traducirInformacion = this.interaction.options.getBoolean('traducir') || false;
-
-        this.indiceInteraccion = 0;
-        this.ultimoIndiceInteraccion = 0;
+        this.page = 0;
+        this.lastPage = 0;
 
         this.animes = new Array<Anime>();
         this.embeds = new Array<EmbedAnime>();
     }
 
-    public async execute () {
+    public async execute (): Promise<void> {
         await this.interaction.deferReply();
 
-        this.criterioEsID ? 
-            await this.buscarAnimePorID() :
-            await this.buscarAnimePorNombre();            
+        this.queryIsNumber ? 
+            await this.findAnimeById() :
+            await this.findAnimeByName();
     }
 
-    private async buscarAnimePorID () {
-        const animeID = parseInt(this.criterioBusqueda);
-        
-        if (animeID < 0 || animeID > InteraccionComando.NUMERO_MAXIMO_32_BITS) {
-            throw new ErrorArgumentoInvalido('La ID que has ingresado no es valida.');
-        }
-        
-        const resultado: Tipos.Media = await AnilistAPI.buscarAnimePorID(animeID);
-        
-        const anime: Anime = new Anime(resultado);
-        const embedAnime = this.traducirInformacion ? await EmbedAnime.CrearTraducido(anime) : EmbedAnime.Crear(anime);
+    private async findAnimeById (): Promise<void> {
+        const animeId = parseInt(this.query);
 
-        const notas = await this.obtenerNotasUsuarios(parseInt(this.criterioBusqueda));
-        const embedNotas = EmbedNotas.Crear(notas, anime);
+        if (animeId < 0 || animeId > CommandInteraction.NUMERO_MAXIMO_32_BITS) {
+            throw new IllegalArgumentException('La ID que has ingresado no es válida.');
+        }
+
+        const anime = await AnilistAPI.fetchAnimeById(animeId);
+        const embedAnime = this.translate ? await EmbedAnime.CreateTranslated(anime) : EmbedAnime.Create(anime);
+        
+        const users = this.bot.servers.getUsers(this.serverId);
+
+        const scores = await AnilistAPI.fetchUsersScores(this.query, users.map(user => user.anilistId));
+        const embedScores = EmbedScores.Create(scores).setColor(anime.obtenerColor());
+
 
         try {
-            notas.hayNotas() ?
-                await this.interaction.editReply({ embeds: [embedAnime, embedNotas] }) : 
+            scores.isEmpty() ?
+                await this.interaction.editReply({ embeds: [embedAnime, embedScores] }) : 
                 await this.interaction.editReply( {embeds: [embedAnime] });
         } catch (error) {
             await this.interaction.editReply({ embeds: [embedAnime] });
@@ -84,143 +82,7 @@ export default class AnimeCommandInteraction extends InteraccionComando {
         }
     }
 
-    private async buscarAnimePorNombre () {
-        this.animes = await this.obtenerResultados(this.criterioBusqueda);
-        this.embeds = await this.obtenerEmbeds(this.animes);
-
-        this.indiceInteraccion = 0;
-        this.ultimoIndiceInteraccion = this.embeds.length - 1;
-
-        const anime = this.animes[this.indiceInteraccion];
-        const notas = await this.obtenerNotasUsuarios(anime.obtenerID());
-
-        const embedAnime = this.embeds[this.indiceInteraccion];
-        const embedNotas = EmbedNotas.Crear(notas, anime);
-
-        const embeds = notas.hayNotas() ?
-            [embedAnime, embedNotas] : [embedAnime];
-
-        const respuesta = await this.interaction.editReply({
-            embeds: embeds,
-            components: [this.row]
-        })
-
-        try {
-            const collector = respuesta.createMessageComponentCollector({
-                time: InteraccionComando.TIEMPO_ESPERA_INTERACCION
-            });
-            
-            collector.on('collect', async (boton: ButtonInteraction) => {
-                await boton.deferUpdate();
-
-                if (boton.customId === Boton.BotonPrevioID) {
-                    this.indiceInteraccion--;
-                    if (this.indiceInteraccion < 0) this.indiceInteraccion = this.ultimoIndiceInteraccion;  
-                }
-
-                if (boton.customId === Boton.BotonSiguienteID) {
-                    this.indiceInteraccion++;
-                    if (this.indiceInteraccion > this.ultimoIndiceInteraccion) this.indiceInteraccion = 0;
-                }
-
-                await this.actualizarInteraccion(boton);
-            })
-        } catch (error) {
-            await this.interaction.editReply({ components: [] });
-            console.error(error);
-        }
-    }
-
-    private async obtenerResultados (criterio: string) {
-        const resultados = await AnilistAPI.buscarAnimePorNombre(criterio);
-        return resultados.map(r => new Anime(r));
-    }
-
-    private async obtenerEmbeds (animes: Array<Anime>) {
-        const embeds = new Array<EmbedAnime>();
-
-        for (const anime of animes) {
-            embeds.push(this.traducirInformacion ? await EmbedAnime.CrearTraducido(anime) : EmbedAnime.Crear(anime));
-        }
-
-        return embeds;
-    }
-
-    private async actualizarInteraccion (boton: ButtonInteraction) {
-        if (this.bot.interacciones.existe(this.interaction.id)) return;
-        this.bot.interacciones.agregar(this.interaction.id);
-
-        try {
-            const anime = this.animes[this.indiceInteraccion];
-            const notas = await this.obtenerNotasUsuarios(anime.obtenerID());
-
-            if (!notas.hayNotas()) {
-                await boton.editReply({ embeds: [this.embeds[this.indiceInteraccion]], components: [this.row] });
-            } else {
-                const embedNotas = EmbedNotas.Crear(notas, anime);
-                await boton.editReply({ embeds: [this.embeds[this.indiceInteraccion], embedNotas], components: [this.row] }); 
-            }
-
-        } catch (error) {
-            if (error instanceof Error) {
-                if (error.message.toLowerCase().includes('too many requests')) {
-                    await boton.editReply({ embeds: [this.embeds[this.indiceInteraccion]], components: [] });
-                    return;
-                }
-            }
-
-            await boton.editReply({ embeds: [this.embeds[this.indiceInteraccion]], components: [this.row] });
-            console.error(error);
-        }
-
-        this.bot.interacciones.eliminar(this.interaction.id);
-    }
-
-    private async obtenerNotasUsuarios (animeID: number): Promise<Notas> {
-        let usuarios = this.bot.usuarios.obtenerUsuariosRegistrados(this.idServidor);
-        usuarios = Helpers.eliminarElementosRepetidos(usuarios);
-
-        let notasUsuarios = await AnilistAPI.buscarEstadoMediaUsuarios(usuarios, animeID);
-        notasUsuarios = Helpers.eliminarElementosRepetidos(notasUsuarios);
-
-        let completadas = notasUsuarios.filter(ml => ml.status === 'COMPLETED');
-        let progreso = notasUsuarios.filter(ml => ml.status === 'CURRENT');
-        let dropeadas = notasUsuarios.filter(ml => ml.status === 'DROPPED');
-        let pausadas = notasUsuarios.filter(ml => ml.status === 'PAUSED');
-        let planificadas = notasUsuarios.filter(ml => ml.status === 'PLANNING');
-
-        completadas = await this.obtenerNombresDiscord(completadas);
-        progreso = await this.obtenerNombresDiscord(progreso);
-        dropeadas = await this.obtenerNombresDiscord(dropeadas);
-        pausadas = await this.obtenerNombresDiscord(pausadas);
-        planificadas = await this.obtenerNombresDiscord(planificadas);
-
-        return new Notas(completadas, progreso, dropeadas, planificadas, pausadas);
-    }
-
-    private async obtenerNombresDiscord (notas: MediaList[]): Promise<MediaList[]> {
-        let usuarios = this.bot.usuarios.obtenerUsuariosRegistrados(this.idServidor);
-        usuarios = Helpers.eliminarElementosRepetidos(usuarios);
-        const notasConNombres = new Array<MediaList>();
-
-        for (const nota of notas) {
-            const usuario = usuarios.find(ur => parseInt(ur.anilistId) === nota.user.id);
-            const usuarioDiscord = await this.bot.users.fetch(usuario?.discordId as string);
-
-            notasConNombres.push({
-                id: nota.id, 
-                mediaId: nota.mediaId,
-                progress: nota.progress,
-                repeat: nota.repeat,
-                score: nota.score,
-                status: nota.status,
-                user: {
-                    id: nota.user.id,
-                    name: usuarioDiscord.username
-                }
-            })
-        }
-
-        return notasConNombres;
+    private async findAnimeByName (): Promise<void> {
+        throw new CommandUnderMaintenanceException('Comando en mantenimiento.');
     }
 }

@@ -13,6 +13,8 @@ import BuscadorEstadoMediaUsuarios from './modulos/BuscadorEstadoMediaUsuarios';
 import BuscadorListasCompletasUsuarios from './modulos/BuscadorListasCompletasUsuarios';
 import ErrorDemasiadasPeticiones from '../../../errores/ErrorDemasiadasPeticiones';
 import ErrorSinResultados from '../../../errores/ErrorSinResultados';
+import Anime from './modelos/media/Anime';
+import ScoreCollection from './ScoreCollection';
 
 export default class AnilistAPI {
     private static readonly API_URL: string = "https://graphql.anilist.co";
@@ -21,9 +23,16 @@ export default class AnilistAPI {
 
     private static readonly URL_AUTORIZACION: string = 'https://anilist.co/api/v2/oauth/token';
 
-    public static async buscarAnimePorID (id: number): Promise<Tipos.Media> {
-        return await BuscadorMedia.BuscarMediaPorID(id, 'ANIME');
+    public static async fetchAnimeById (id: number): Promise<Anime> {
+        return new Anime (await BuscadorMedia.BuscarMediaPorID(id, 'ANIME'));
     }
+
+    public static async fetchUsersScores (mediaId: string, usersIds: Array<string>) {
+        return new ScoreCollection(await BuscadorEstadoMediaUsuarios.BuscarEstadoMediaUsuarios(mediaId, usersIds));
+    }
+
+
+
 
     public static async buscarMangaPorID (id: number): Promise<Tipos.Media> {
         return await BuscadorMedia.BuscarMediaPorID(id, 'MANGA');
@@ -45,8 +54,8 @@ export default class AnilistAPI {
         return await BuscadorUsuario.BuscarUsuario(criterio);
     }
 
-    public static async buscarEstadoMediaUsuarios (usuarios: Array<uRegistrado>, mediaID: number):  Promise<Array<MediaList>> {
-        return await BuscadorEstadoMediaUsuarios.BuscarEstadoMediaUsuarios(usuarios, mediaID);
+    public static async buscarEstadoMediaUsuarios (mediaId: string, usersIds: Array<string>):  Promise<Array<MediaList>> {
+        return await BuscadorEstadoMediaUsuarios.BuscarEstadoMediaUsuarios(mediaId, usersIds);
     }
 
     public static async buscarListasCompletadosUsuarios (usuario: UsuarioAnilist, usuarios: Array<uRegistrado>) {

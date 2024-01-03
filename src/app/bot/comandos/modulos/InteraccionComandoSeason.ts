@@ -1,26 +1,21 @@
 import { ChatInputCommandInteraction, CacheType, EmbedBuilder } from "discord.js";
-import InteraccionComando from "./InteraccionComando";
 import AnilistAPI from "../../apis/anilist/AnilistAPI";
 import { MediaTemporada } from "../../apis/anilist/tipos/TiposMedia";
+import CommandInteraction from "../interactions/CommandInteraction";
 
-export default class InteraccionComandoSeason extends InteraccionComando {
+export default class InteraccionComandoSeason extends CommandInteraction {
     protected interaction: ChatInputCommandInteraction<CacheType>;
 
-    private constructor (interaction: ChatInputCommandInteraction<CacheType>) {
+    constructor (interaction: ChatInputCommandInteraction<CacheType>) {
         super();
         this.interaction = interaction;
     }
-
-    public static async execute (interaction: ChatInputCommandInteraction<CacheType>) {
-        const modulo = new InteraccionComandoSeason(interaction);
-        await modulo.execute(interaction);    
-    }
     
-    protected async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        await interaction.deferReply();
+    public async execute (): Promise<void> {
+        await this.interaction.deferReply();
 
-        const anio: number = interaction.options.getInteger("año") as number;
-        const temporada = interaction.options.getString("temporada") as MediaTemporada;
+        const anio: number = this.interaction.options.getInteger("año") as number;
+        const temporada = this.interaction.options.getString("temporada") as MediaTemporada;
 
         const resultados = await AnilistAPI.buscarAnimesTemporada(anio, temporada);
 
@@ -36,6 +31,6 @@ export default class InteraccionComandoSeason extends InteraccionComando {
         }
 
         embed.setDescription(description);
-        interaction.editReply({ embeds: [embed] });
+        this.interaction.editReply({ embeds: [embed] });
     }
 }

@@ -24,7 +24,7 @@ export default class Helpers {
         return elementosTraducidos;
     }
 
-    public static esNumero (args: string) {
+    public static isNumber (args: string) {
         return !(isNaN(+args) || isNaN(parseFloat(args)));
     }
 

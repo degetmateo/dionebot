@@ -2,6 +2,7 @@ import { EmbedBuilder } from "@discordjs/builders";
 import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import Comando from "../interfaces/InterfazComando";
 import Bot from "../Bot";
+import CommandUnderMaintenanceException from "../../errores/CommandUnderMaintenanceException";
 
 export default class ComandoHelp implements Comando {
     public readonly cooldown: number = 5;
@@ -23,8 +24,7 @@ export default class ComandoHelp implements Comando {
     `;
 
     public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {  
-        interaction.reply('Comando en mantenimiento.');              
-        return;
+        throw new CommandUnderMaintenanceException('Comando en mantenimiento.');
         
         await interaction.deferReply();
 

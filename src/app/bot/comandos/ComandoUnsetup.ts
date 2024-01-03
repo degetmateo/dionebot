@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
 import Comando from "../interfaces/InterfazComando";
-import InteraccionComandoUnsetup from "./modulos/InteraccionComandoUnsetup";
+import CommandUnderMaintenanceException from "../../errores/CommandUnderMaintenanceException";
 
 export default class ComandoUnsetup implements Comando {
     public readonly cooldown: number = 0;
@@ -10,9 +10,6 @@ export default class ComandoUnsetup implements Comando {
         .setDescription("Te elimina de los usuarios registrados.");
     
     public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        interaction.reply('Comando en mantenimiento.');
-        return;
-        
-        await InteraccionComandoUnsetup.execute(interaction);    
+        throw new CommandUnderMaintenanceException('Comando en mantenimiento.');
     }
 }
