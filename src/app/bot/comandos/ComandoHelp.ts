@@ -2,7 +2,6 @@ import { EmbedBuilder } from "@discordjs/builders";
 import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import Comando from "../interfaces/InterfazComando";
 import Bot from "../Bot";
-import CommandUnderMaintenanceException from "../../errores/CommandUnderMaintenanceException";
 
 export default class ComandoHelp implements Comando {
     public readonly cooldown: number = 5;
@@ -21,11 +20,16 @@ export default class ComandoHelp implements Comando {
 ▸ **\`/manga\`** - Muestra la información del manga que busques.
 ▸ **\`/vn\`** - Muestra información de la novela visual que busques.
 ▸ **\`/season\`** - Devuelve todos los animes que salieron en la temporada que elijas.
+▸ **\`/random\`** - Devuelve un anime al azar de tus PTW.
+
+⚠️ - Comandos actualmente en funcionamiento:
+▸ **\`/anime\`** (solo id)
+▸ **\`/season\`**
+▸ **\`/random\`**
+▸ **\`/vn\`**
     `;
 
-    public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {  
-        throw new CommandUnderMaintenanceException('Comando en mantenimiento.');
-        
+    public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {          
         await interaction.deferReply();
 
         const bot: Bot = interaction.client as Bot;
