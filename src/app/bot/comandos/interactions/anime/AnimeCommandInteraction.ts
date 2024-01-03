@@ -71,11 +71,10 @@ export default class AnimeCommandInteraction extends CommandInteraction {
         const scores = await AnilistAPI.fetchUsersScores(this.query, users.map(user => user.anilistId));
         const embedScores = EmbedScores.Create(scores).setColor(anime.obtenerColor());
 
-
         try {
             scores.isEmpty() ?
-                await this.interaction.editReply({ embeds: [embedAnime, embedScores] }) : 
-                await this.interaction.editReply( {embeds: [embedAnime] });
+                await this.interaction.editReply( {embeds: [embedAnime] }) :
+                await this.interaction.editReply({ embeds: [embedAnime, embedScores] });
         } catch (error) {
             await this.interaction.editReply({ embeds: [embedAnime] });
             console.error(error);

@@ -40,10 +40,10 @@ export default class BuscadorEstadoMediaUsuarios {
 
     private static ConsultaEstadoMediaUsuarios (usuarios: Array<string>): string {
         return `
-            query ($mediaID: Int) {
+            query ($mediaId: Int) {
                 ${usuarios.map((userId, i) => `
                     q${i}: Page (perPage: 1) {
-                        mediaList(userId: ${userId}, mediaId: $mediaID) {
+                        mediaList(userId: ${userId}, mediaId: $mediaId) {
                             ...mediaList
                         }
                     }

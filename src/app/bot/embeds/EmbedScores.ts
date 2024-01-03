@@ -15,7 +15,7 @@ export default class EmbedScores extends EmbedBuilder {
     public static Create (scores: ScoreCollection) {
         const embed = new EmbedScores(scores);
 
-        if (!scores.isEmpty()) {
+        if (scores.isEmpty()) {
             return embed.setDescription('No hay notas disponibles.');
         }
 
