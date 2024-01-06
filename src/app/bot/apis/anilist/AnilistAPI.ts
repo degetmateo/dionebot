@@ -27,6 +27,10 @@ export default class AnilistAPI {
         return new Anime (await BuscadorMedia.BuscarMediaPorID(id, 'ANIME'));
     }
 
+    public static async fetchAnimeByName (name: string): Promise<Array<Anime>> {
+        return (await BuscadorMedia.BuscarMediaPorNombre(name, 'ANIME')).map(r => new Anime(r));
+    }
+
     public static async fetchUsersScores (mediaId: string, usersIds: Array<string>) {
         return new ScoreCollection(await BuscadorEstadoMediaUsuarios.BuscarEstadoMediaUsuarios(mediaId, usersIds));
     }

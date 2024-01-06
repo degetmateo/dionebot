@@ -1,8 +1,8 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
-import Comando from "../interfaces/InterfazComando";
+import CommandInterface from "../interfaces/CommandInterface";
 import InteraccionComandoRandom from "./modulos/InteraccionComandoRandom";
 
-export default class ComandoRandom implements Comando {
+export default class ComandoRandom implements CommandInterface {
     public readonly nombre: string = 'random';
     public readonly cooldown: number = 10;
 

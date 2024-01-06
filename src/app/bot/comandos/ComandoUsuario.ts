@@ -1,8 +1,8 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
-import Comando from "../interfaces/InterfazComando";
+import CommandInterface from "../interfaces/CommandInterface";
 import CommandUnderMaintenanceException from "../../errores/CommandUnderMaintenanceException";
 
-export default class ComandoUsuario implements Comando {
+export default class ComandoUsuario implements CommandInterface {
     public readonly cooldown: number = 5;
 
     public readonly data = new SlashCommandBuilder()

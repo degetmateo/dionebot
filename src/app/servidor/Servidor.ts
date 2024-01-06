@@ -48,7 +48,7 @@ export default class Servidor {
     private async escuchar (): Promise<void> {
         this.app.listen(this.puerto, () => console.log('✅ | Servidor iniciado en el puerto: ' + this.puerto));
         await this.db.connect(process.env.DB as string);
-        this.bot.iniciar(process.env.TOKEN);
+        this.bot.start(process.env.TOKEN);
     }
 
     // private async CopyDatabase (): Promise<void> {

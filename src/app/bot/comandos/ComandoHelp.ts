@@ -1,9 +1,9 @@
 import { EmbedBuilder } from "@discordjs/builders";
 import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import Comando from "../interfaces/InterfazComando";
+import CommandInterface from "../interfaces/CommandInterface";
 import Bot from "../Bot";
 
-export default class ComandoHelp implements Comando {
+export default class ComandoHelp implements CommandInterface {
     public readonly cooldown: number = 5;
 
     public readonly data: SlashCommandBuilder = new SlashCommandBuilder()
@@ -23,15 +23,13 @@ export default class ComandoHelp implements Comando {
 ▸ **\`/random\`** - Devuelve un anime al azar de tus PTW.
 
 ⚠️ - Comandos actualmente en funcionamiento:
-▸ **\`/anime\`** (solo id)
+▸ **\`/anime\`**
 ▸ **\`/season\`**
 ▸ **\`/random\`**
 ▸ **\`/vn\`**
     `;
 
     public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {          
-        await interaction.deferReply();
-
         const bot: Bot = interaction.client as Bot;
 
         const embed = new EmbedBuilder()
@@ -41,7 +39,7 @@ export default class ComandoHelp implements Comando {
 
         bot.user?.avatarURL() ? embed.setThumbnail(bot.user.avatarURL()) : null;
 
-        await interaction.editReply({
+        interaction.reply({
             embeds: [embed]
         })
     }

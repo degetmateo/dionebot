@@ -1,9 +1,8 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, CacheType } from "discord.js";
-import Comando from "../interfaces/InterfazComando";
+import CommandInterface from "../interfaces/CommandInterface";
 import Bot from "../Bot";
-import CommandUnderMaintenanceException from "../../errores/CommandUnderMaintenanceException";
 
-export default class ComandoInformacion implements Comando {
+export default class ComandoInformacion implements CommandInterface {
     public readonly cooldown: number = 5;
 
     public readonly data: SlashCommandBuilder = new SlashCommandBuilder()
@@ -18,9 +17,7 @@ Si lo deseas, puedes invitarme a tu servidor presionando el enlace que se encuen
 https://dionebot.onrender.com/
     `;
 
-    public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        throw new CommandUnderMaintenanceException('Comando en mantenimiento.');
-        
+    public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {        
         await interaction.deferReply();
 
         const bot: Bot = interaction.client as Bot;
@@ -29,7 +26,7 @@ https://dionebot.onrender.com/
             .setTitle("Información")
             .setDescription(this.DESCRIPCION)
             .setColor(0xff8c00)
-            .setFooter({ text: `Dione v${bot.obtenerVersion()}` });
+            .setFooter({ text: `Dione v${bot.getVersion()}` });
 
         bot.user?.avatarURL() ? embed.setThumbnail(bot.user.avatarURL()) : null;
 

@@ -1,8 +1,6 @@
-type uRegistrado = {
-    serverId: string,
+export type uRegistrado = {
+    anilistId: string,
     discordId: string,
     anilistUsername: string,
-    anilistId: string
-};
-
-export { uRegistrado };
+    serverId: string
+}

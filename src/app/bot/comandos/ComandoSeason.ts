@@ -1,8 +1,8 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
-import Comando from "../interfaces/InterfazComando";
+import CommandInterface from "../interfaces/CommandInterface";
 import InteraccionComandoSeason from "./modulos/InteraccionComandoSeason";
 
-export default class ComandoSeason implements Comando {
+export default class ComandoSeason implements CommandInterface {
     public readonly cooldown: number = 10;
     
     public readonly data = new SlashCommandBuilder()

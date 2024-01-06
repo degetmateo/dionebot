@@ -26,6 +26,6 @@ export default class ServerCollection {
 
     public getUsers (serverId: string): Array<User> {
         const server = this.servers.find(s => s.id === serverId);
-        return server.users;
+        return server ? server.users : [];
     }
 }
