@@ -1,0 +1,58 @@
+a {
+    color: rgb(255, 166, 0);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.remarcar {
+    color: rgb(255, 166, 0);
+}
+
+.contenedor-principal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+
+    background-color: #000;
+}
+
+.contenedor-contenido-principal {
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 1em;
+    color: #FFF;
+    
+    width: 30em;
+    padding: 20px;
+}
+
+.contenedor-formulario {
+    width: 100%;
+
+    height: 125px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.boton-enlace {
+    padding: 0.7em 1em;
+    border-radius: 5px;
+    background-color: #e09200;
+
+    transition: 0.2s ease all;
+
+    font-size: 1.5em;
+    text-decoration: none;
+    color: #FFF;
+}
+
+.boton-enlace:hover {
+    background-color: #b57600;
+    text-decoration: none;
+}
