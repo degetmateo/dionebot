@@ -23,10 +23,7 @@ export default class ComandoHelp implements CommandInterface {
 ▸ **\`/random\`** - Devuelve un anime al azar de tus PTW.
 
 ⚠️ - Comandos actualmente en funcionamiento:
-▸ **\`/anime\`**
-▸ **\`/season\`**
-▸ **\`/random\`**
-▸ **\`/vn\`**
+▸ **\`/anime\`**, **\`/season\`**, **\`/random\`**, **\`/vn\`**, **\`/setup\`**, **\`/unsetup\`**
     `;
 
     public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {          

@@ -44,6 +44,6 @@ class Embed {
         return this.embed.toJSON();
     }
 }
+exports.default = Embed;
 Embed.COLOR_ROJO = ('#FF0000');
 Embed.COLOR_VERDE = ('#00FF44');
-exports.default = Embed;

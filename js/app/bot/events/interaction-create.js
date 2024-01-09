@@ -11,6 +11,8 @@ const CommandUnderMaintenanceException_1 = __importDefault(require("../../errore
 const ErrorArgumentoInvalido_1 = __importDefault(require("../../errores/ErrorArgumentoInvalido"));
 const ErrorDemasiadasPeticiones_1 = __importDefault(require("../../errores/ErrorDemasiadasPeticiones"));
 const IllegalArgumentException_1 = __importDefault(require("../../errores/IllegalArgumentException"));
+const GenericException_1 = __importDefault(require("../../errores/GenericException"));
+const NoResultsException_1 = __importDefault(require("../../errores/NoResultsException"));
 module.exports = (bot) => {
     bot.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
         var _a;
@@ -52,7 +54,9 @@ module.exports = (bot) => {
                 !(error instanceof ErrorSinResultados_1.default) &&
                 !(error instanceof ErrorArgumentoInvalido_1.default) &&
                 !(error instanceof ErrorDemasiadasPeticiones_1.default) &&
+                !(error instanceof GenericException_1.default) &&
                 !(error instanceof IllegalArgumentException_1.default) &&
+                !(error instanceof NoResultsException_1.default) &&
                 !(error instanceof CommandUnderMaintenanceException_1.default);
             const embed = Embed_1.default.Crear()
                 .establecerColor(Embed_1.default.COLOR_ROJO);
@@ -60,6 +64,9 @@ module.exports = (bot) => {
                 embed.establecerDescripcion(error.message) :
                 embed.establecerDescripcion('Ha ocurrido un error. Inténtalo de nuevo más tarde.') && console.error('🟥 | ' + error.stack);
             try {
+                const stack = error.stack.toLowerCase();
+                (stack.includes('unknown interaction') || stack.includes('unknown message')) ?
+                    interaction.channel.send({ embeds: [embed.obtenerDatos()] }) : null;
                 (!interaction.deferred && !interaction.replied) ?
                     interaction.reply({ embeds: [embed.obtenerDatos()] }) :
                     interaction.editReply({ embeds: [embed.obtenerDatos()] });

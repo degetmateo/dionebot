@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const CommandUnderMaintenanceException_1 = __importDefault(require("../../errores/CommandUnderMaintenanceException"));
+const SetupCommandInteraction_1 = __importDefault(require("./interactions/setup/SetupCommandInteraction"));
 class ComandoSetup {
     constructor() {
         this.cooldown = 0;
@@ -22,7 +22,8 @@ class ComandoSetup {
             .setRequired(true));
     }
     async execute(interaction) {
-        throw new CommandUnderMaintenanceException_1.default('Comando en mantenimiento.');
+        const commandInteraction = new SetupCommandInteraction_1.default(interaction);
+        await commandInteraction.execute();
     }
 }
 exports.default = ComandoSetup;

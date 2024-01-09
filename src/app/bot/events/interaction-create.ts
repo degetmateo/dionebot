@@ -7,6 +7,8 @@ import CommandUnderMaintenanceException from "../../errores/CommandUnderMaintena
 import ErrorArgumentoInvalido from "../../errores/ErrorArgumentoInvalido";
 import ErrorDemasiadasPeticiones from "../../errores/ErrorDemasiadasPeticiones";
 import IllegalArgumentException from "../../errores/IllegalArgumentException";
+import GenericException from "../../errores/GenericException";
+import NoResultsException from "../../errores/NoResultsException";
 
 module.exports = (bot: Bot) => {
     bot.on(Events.InteractionCreate, async interaction => {
@@ -56,7 +58,9 @@ module.exports = (bot: Bot) => {
                 !(error instanceof ErrorSinResultados) &&
                 !(error instanceof ErrorArgumentoInvalido) &&
                 !(error instanceof ErrorDemasiadasPeticiones) &&
+                !(error instanceof GenericException) &&
                 !(error instanceof IllegalArgumentException) &&
+                !(error instanceof NoResultsException) &&
                 !(error instanceof CommandUnderMaintenanceException);
 
             const embed = Embed.Crear()
@@ -67,6 +71,11 @@ module.exports = (bot: Bot) => {
                 embed.establecerDescripcion('Ha ocurrido un error. Inténtalo de nuevo más tarde.') && console.error('🟥 | ' + error.stack);
 
             try {
+                const stack = error.stack.toLowerCase();
+
+                (stack.includes('unknown interaction') || stack.includes('unknown message')) ?
+                    interaction.channel.send({ embeds: [embed.obtenerDatos()] }) : null;
+
                 (!interaction.deferred && !interaction.replied) ?
                     interaction.reply({ embeds: [embed.obtenerDatos()] }) :
                     interaction.editReply({ embeds: [embed.obtenerDatos()] });

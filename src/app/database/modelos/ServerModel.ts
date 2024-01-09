@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import UserSchema from "../schemes/User";
+import UserSchema from "../schemes/UserSchema";
 
 const ServerSchema = new mongoose.Schema({
     id: { type: String, unique: true },

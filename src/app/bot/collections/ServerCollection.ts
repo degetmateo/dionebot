@@ -24,6 +24,10 @@ export default class ServerCollection {
         return this.servers.find(s => s.id === server.id) ? true : false;
     }
 
+    public get (id: string): Server {
+        return this.servers.find(server => server.id === id);
+    }
+
     public getUsers (serverId: string): Array<User> {
         const server = this.servers.find(s => s.id === serverId);
         return server ? server.users : [];

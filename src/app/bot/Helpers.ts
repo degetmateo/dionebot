@@ -78,4 +78,13 @@ export default class Helpers {
         const indiceAleatorio = Math.floor(Math.random() * lista.length);
         return lista[indiceAleatorio];
     }
+
+    public static getRandomElement <T> (elements: T[]): T | undefined {
+        if (elements.length === 0) {
+          return undefined;
+        }
+
+        const randomIndex = Math.floor(Math.random() * elements.length);
+        return elements[randomIndex];
+    }
 }

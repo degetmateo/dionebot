@@ -1,81 +1,99 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const colornames_1 = __importDefault(require("colornames"));
-const Helpers_1 = __importDefault(require("../../../Helpers"));
-class UsuarioAnilist {
-    constructor(usuario) {
+import toHex from 'colornames';
+import { ColorResolvable } from 'discord.js';
+import { Genero, Usuario, UsuarioEstadisticas, UsuarioGenerosFavoritosLista } from '../tipos/Usuario';
+import Helpers from '../../../Helpers';
+
+export default class AnilistUser {
+    private usuario: Usuario;
+    
+    constructor (usuario: Usuario) {
         this.usuario = usuario;
     }
-    obtenerID() {
+
+    public obtenerID (): number {
         return this.usuario.id;
     }
-    obtenerURL() {
+
+    public obtenerURL (): string {
         return this.usuario.siteUrl;
     }
-    obtenerNombre() {
+
+    public obtenerNombre (): string {
         return this.usuario.name;
     }
-    obtenerBio() {
-        return Helpers_1.default.eliminarEtiquetasHTML(this.usuario.about || '');
+
+    public obtenerBio (): string {
+        return Helpers.eliminarEtiquetasHTML(this.usuario.about || '');
     }
-    obtenerAvatarURL() {
+
+    public obtenerAvatarURL (): string {
         return this.usuario.avatar.large || this.usuario.avatar.medium;
     }
-    obtenerBannerURL() {
+
+    public obtenerBannerURL (): string {
         return this.usuario.bannerImage;
     }
-    obtenerColor() {
-        return (0, colornames_1.default)(this.usuario.options.profileColor);
+
+    public obtenerColor (): ColorResolvable {
+        return toHex(this.usuario.options.profileColor) as ColorResolvable;
     }
-    obtenerEstadisticas() {
+
+    public obtenerEstadisticas (): UsuarioEstadisticas {
         return this.usuario.statistics;
     }
-    obtenerGenerosOrdenadosPorCantidad() {
+
+    public obtenerGenerosOrdenadosPorCantidad (): UsuarioGenerosFavoritosLista {
         return this.obtenerGeneros().sort((a, b) => b.count - a.count);
     }
-    obtenerGenerosOrdenadosPorCalificacion() {
+
+    public obtenerGenerosOrdenadosPorCalificacion (): UsuarioGenerosFavoritosLista {
         return this.obtenerGeneros().sort((a, b) => b.meanScore - a.meanScore);
     }
-    obtenerGeneros() {
+
+    private obtenerGeneros (): UsuarioGenerosFavoritosLista {
         const generosAnime = this.obtenerEstadisticas().anime.genres;
         const generosManga = this.obtenerEstadisticas().manga.genres;
+
         const generos = generosAnime.map(ga => {
             let gm = generosManga.find(gm => gm.genre.toLowerCase() === ga.genre.toLowerCase());
+            
             if (!gm) {
                 gm = {
                     genre: ga.genre,
                     count: 0,
                     meanScore: 0,
-                };
+                }
             }
+
             const cantidad = ga.count + gm.count;
             const promedio = (ga.meanScore + gm.meanScore) / 2;
             const generoMasConsumido = this.obtenerGeneroMasConsumido();
-            const promedioPonderado = Helpers_1.default.calcularPromedioPonderado(cantidad, promedio, generoMasConsumido.count);
+            const promedioPonderado = Helpers.calcularPromedioPonderado(cantidad, promedio, generoMasConsumido.count);
+
             return { genre: ga.genre, count: cantidad, meanScore: promedioPonderado };
-        });
+        })
+
         return generos;
     }
-    obtenerGeneroMasConsumido() {
+
+    private obtenerGeneroMasConsumido (): Genero {
         const generosAnime = this.obtenerEstadisticas().anime.genres;
         const generosManga = this.obtenerEstadisticas().manga.genres;
-        let genero;
+
+        let genero: Genero;
+
         for (const ga of generosAnime) {
-            if (!genero)
-                genero = ga;
+            if (!genero) genero = ga;
             const gm = generosManga.find(g => g.genre === ga.genre);
-            if (!gm)
-                continue;
+            if (!gm) continue;
             const cantidad = ga.count + gm.count;
             (cantidad > genero.count) ? genero = ga : null;
         }
+
         return genero;
     }
-    obtenerFechaCreacion() {
+
+    public obtenerFechaCreacion (): Date {
         return new Date(this.usuario.createdAt * 1000);
     }
 }
-exports.default = UsuarioAnilist;

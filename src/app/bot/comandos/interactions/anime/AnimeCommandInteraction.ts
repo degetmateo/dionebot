@@ -10,7 +10,7 @@ import EmbedScores from "../../../embeds/EmbedScores";
 import InteractionController from "./InteractionController";
 
 export default class AnimeCommandInteraction extends CommandInteraction {
-    protected readonly interaction: ChatInputCommandInteraction<CacheType>;
+    protected interaction: ChatInputCommandInteraction<CacheType>;
 
     private readonly bot: Bot;
     private readonly serverId: string;

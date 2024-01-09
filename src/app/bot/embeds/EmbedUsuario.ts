@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import UsuarioAnilist from "../apis/anilist/modelos/UsuarioAnilist";
+import UsuarioAnilist from "../apis/anilist/modelos/AnilistUser";
 import Helpers from "../Helpers";
 
 export default class EmbedUsuario extends EmbedBuilder {

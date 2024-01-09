@@ -63,6 +63,6 @@ class EmbedUsuario extends discord_js_1.EmbedBuilder {
         bannerURL ? this.setImage(bannerURL) : null;
     }
 }
+exports.default = EmbedUsuario;
 EmbedUsuario.LIMITE_CARACTERES_DESCRIPCION = 2048;
 EmbedUsuario.LIMITE_CARACTERES_CAMPO = 1024;
-exports.default = EmbedUsuario;

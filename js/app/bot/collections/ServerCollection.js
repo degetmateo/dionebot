@@ -18,6 +18,9 @@ class ServerCollection {
     has(server) {
         return this.servers.find(s => s.id === server.id) ? true : false;
     }
+    get(id) {
+        return this.servers.find(server => server.id === id);
+    }
     getUsers(serverId) {
         const server = this.servers.find(s => s.id === serverId);
         return server ? server.users : [];

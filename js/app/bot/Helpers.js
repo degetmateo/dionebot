@@ -63,8 +63,15 @@ class Helpers {
         const indiceAleatorio = Math.floor(Math.random() * lista.length);
         return lista[indiceAleatorio];
     }
+    static getRandomElement(elements) {
+        if (elements.length === 0) {
+            return undefined;
+        }
+        const randomIndex = Math.floor(Math.random() * elements.length);
+        return elements[randomIndex];
+    }
 }
+exports.default = Helpers;
 Helpers.LENGUAJE_TRADUCCION = 'es';
 Helpers.REGEX_CADENA_SIN_HTML = /(<([^>]+)>|&\w+;)/gi;
 Helpers.REGEX_OBTENER_ENLACES = /https?:\/\/[^\s/$.?#].[^\s]*/gi;
-exports.default = Helpers;

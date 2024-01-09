@@ -21,10 +21,7 @@ class ComandoHelp {
 ▸ **\`/random\`** - Devuelve un anime al azar de tus PTW.
 
 ⚠️ - Comandos actualmente en funcionamiento:
-▸ **\`/anime\`**
-▸ **\`/season\`**
-▸ **\`/random\`**
-▸ **\`/vn\`**
+▸ **\`/anime\`**, **\`/season\`**, **\`/random\`**, **\`/vn\`**, **\`/setup\`**, **\`/unsetup\`**
     `;
     }
     async execute(interaction) {

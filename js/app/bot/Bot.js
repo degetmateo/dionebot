@@ -103,5 +103,5 @@ class Bot extends discord_js_1.Client {
         return this.version;
     }
 }
-Bot.HORA_EN_MILISEGUNDOS = 3600000;
 exports.default = Bot;
+Bot.HORA_EN_MILISEGUNDOS = 3600000;

@@ -4,7 +4,7 @@ import { PeticionAPI } from '../tipos/PeticionAPI';
 import { uRegistrado } from '../../tipos';
 import * as Tipos from './TiposAnilist';
 
-import UsuarioAnilist from './modelos/UsuarioAnilist';
+import AnilistUser from './modelos/AnilistUser';
 
 import BuscadorMedia from './modulos/BuscadorMedia';
 import BuscadorAnimesTemporada from './modulos/BuscadorMediaTemporada';
@@ -15,6 +15,7 @@ import ErrorDemasiadasPeticiones from '../../../errores/ErrorDemasiadasPeticione
 import ErrorSinResultados from '../../../errores/ErrorSinResultados';
 import Anime from './modelos/media/Anime';
 import ScoreCollection from './ScoreCollection';
+import { MediaCollection } from './types';
 
 export default class AnilistAPI {
     private static readonly API_URL: string = "https://graphql.anilist.co";
@@ -31,12 +32,38 @@ export default class AnilistAPI {
         return (await BuscadorMedia.BuscarMediaPorNombre(name, 'ANIME')).map(r => new Anime(r));
     }
 
+    public static async fetchUserById (id: number): Promise<AnilistUser> {
+        return new AnilistUser(await BuscadorUsuario.BuscarUsuario(id));
+    }
+
+    public static async fetchUserByName (name: string): Promise<AnilistUser> {
+        return new AnilistUser(await BuscadorUsuario.BuscarUsuario(name));
+    }
+
     public static async fetchUsersScores (mediaId: string, usersIds: Array<string>) {
         return new ScoreCollection(await BuscadorEstadoMediaUsuarios.BuscarEstadoMediaUsuarios(mediaId, usersIds));
     }
 
+    public static async fetchUserPlannedAnimes (userId: string): Promise<MediaCollection> {
+        const request = `
+            query {                
+                MediaListCollection (userId: ${userId}, type: ANIME, status: PLANNING) {
+                    ...mediaListCollection
+                }
+            }
 
+            fragment mediaListCollection on MediaListCollection {
+                lists {
+                    entries {
+                        mediaId
+                    }
+                }
+            }
+        `;
 
+        const res = await AnilistAPI.peticion(request, {});
+        return res.MediaListCollection as MediaCollection;
+    }
 
     public static async buscarMangaPorID (id: number): Promise<Tipos.Media> {
         return await BuscadorMedia.BuscarMediaPorID(id, 'MANGA');
@@ -62,7 +89,7 @@ export default class AnilistAPI {
         return await BuscadorEstadoMediaUsuarios.BuscarEstadoMediaUsuarios(mediaId, usersIds);
     }
 
-    public static async buscarListasCompletadosUsuarios (usuario: UsuarioAnilist, usuarios: Array<uRegistrado>) {
+    public static async buscarListasCompletadosUsuarios (usuario: AnilistUser, usuarios: Array<uRegistrado>) {
         const mediaUsuario: Tipos.MediaColeccion = await BuscadorListasCompletasUsuarios.BuscarListaCompletadosUsuario(usuario.obtenerID());
         const mediaUsuarios: Array<Tipos.MediaColeccion> = await BuscadorListasCompletasUsuarios.BuscarListasCompletadosUsuarios(usuarios);
         return { user: mediaUsuario, users: mediaUsuarios };
@@ -85,7 +112,7 @@ export default class AnilistAPI {
             const message = e.message.toLowerCase();
 
             if (message.includes('not found')) {
-                throw new ErrorSinResultados('QUERY: No se han encontrado resultados.');
+                throw new ErrorSinResultados('No se han encontrado resultados.');
             }
 
             if (message.includes('max query complexity')) {
