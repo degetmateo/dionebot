@@ -22,8 +22,8 @@ export default class ComandoHelp implements CommandInterface {
 ▸ **\`/season\`** - Devuelve todos los animes que salieron en la temporada que elijas.
 ▸ **\`/random\`** - Devuelve un anime al azar de tus PTW.
 
-⚠️ - Comandos actualmente en funcionamiento:
-▸ **\`/anime\`**, **\`/season\`**, **\`/random\`**, **\`/vn\`**, **\`/setup\`**, **\`/unsetup\`**
+⚠️ - Comandos en mantenimiento:
+▸ **\`/afinidad\`**, **\`/usuario\`**
     `;
 
     public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {          

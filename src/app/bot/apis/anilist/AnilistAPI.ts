@@ -16,6 +16,7 @@ import ErrorSinResultados from '../../../errores/ErrorSinResultados';
 import Anime from './modelos/media/Anime';
 import ScoreCollection from './ScoreCollection';
 import { MediaCollection } from './types';
+import Manga from './modelos/media/Manga';
 
 export default class AnilistAPI {
     private static readonly API_URL: string = "https://graphql.anilist.co";
@@ -30,6 +31,14 @@ export default class AnilistAPI {
 
     public static async fetchAnimeByName (name: string): Promise<Array<Anime>> {
         return (await BuscadorMedia.BuscarMediaPorNombre(name, 'ANIME')).map(r => new Anime(r));
+    }
+
+    public static async fetchMangaById (id: number): Promise<Manga> {
+        return new Manga(await BuscadorMedia.BuscarMediaPorID(id, 'MANGA'));
+    }
+
+    public static async fetchMangaByName (name: string): Promise<Array<Manga>> {
+        return (await BuscadorMedia.BuscarMediaPorNombre(name, 'MANGA')).map(r => new Manga(r));
     }
 
     public static async fetchUserById (id: number): Promise<AnilistUser> {

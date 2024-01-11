@@ -24,6 +24,10 @@ export default class ScoreCollection {
         return this.mediaList.find(m => (m.id === mediaList.id) && (m.user.id === mediaList.user.id)) ? true : false;
     }
 
+    public getMediaList () {
+        return this.mediaList;
+    }
+
     public getCompleted () {
         return this.mediaList.filter(media => media.status === 'COMPLETED');
     }

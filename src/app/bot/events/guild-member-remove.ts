@@ -1,5 +1,4 @@
 import { Events } from "discord.js";
-import Aniuser from "../../database/modelos/Aniuser";
 import Bot from "../Bot";
 import ServerModel from "../../database/modelos/ServerModel";
 

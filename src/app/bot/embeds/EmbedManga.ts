@@ -7,21 +7,21 @@ export default class EmbedManga extends EmbedBuilder {
         super();
     }
 
-    public static Crear(manga: Manga): EmbedManga {
+    public static Create (manga: Manga): EmbedManga {
         const embed = this.CrearEmbedBasico(manga)
             .setDescription(manga.obtenerDescripcion());
 
         return embed;
     }
 
-    public static async CrearTraducido(manga: Manga): Promise<EmbedManga> {
+    public static async CreateTranslated (manga: Manga): Promise<EmbedManga> {
         const embed = this.CrearEmbedBasico(manga)
             .setDescription(await Helpers.traducir(manga.obtenerDescripcion()));
 
         return embed;
     }
 
-    private static CrearEmbedBasico(manga: Manga): EmbedManga {
+    private static CrearEmbedBasico (manga: Manga): EmbedManga {
         const titulos = manga.obtenerTitulos();
 
         const embed = new EmbedManga()

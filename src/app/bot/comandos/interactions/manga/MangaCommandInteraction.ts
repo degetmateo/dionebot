@@ -1,14 +1,13 @@
 import { ChatInputCommandInteraction, CacheType } from "discord.js";
 import CommandInteraction from "../CommandInteraction";
-import Bot from "../../../Bot";
 import Helpers from "../../../Helpers";
 import IllegalArgumentException from "../../../../errores/IllegalArgumentException";
 import AnilistAPI from "../../../apis/anilist/AnilistAPI";
-import AnimeInteractionController from "./AnimeInteractionController";
+import MangaInteractionController from "./MangaInteractionController";
 
-export default class AnimeCommandInteraction extends CommandInteraction {
+export default class MangaCommandInteraction extends CommandInteraction {
     protected interaction: ChatInputCommandInteraction<CacheType>;
-
+    
     private readonly query: string;
     private readonly queryIsNumber: boolean;
     private readonly translate: boolean;
@@ -26,25 +25,25 @@ export default class AnimeCommandInteraction extends CommandInteraction {
         await this.interaction.deferReply();
 
         this.queryIsNumber ? 
-            await this.findAnimeById() :
-            await this.findAnimeByName();
+            await this.findMangaById() :
+            await this.findMangaByName();
     }
 
-    private async findAnimeById (): Promise<void> {
-        const animeId = parseInt(this.query);
+    private async findMangaById (): Promise<void> {
+        const mangaId = parseInt(this.query);
 
-        if (animeId < 0 || animeId > CommandInteraction.NUMERO_MAXIMO_32_BITS) {
+        if (mangaId < 0 || mangaId > CommandInteraction.NUMERO_MAXIMO_32_BITS) {
             throw new IllegalArgumentException('La ID que has ingresado no es válida.');
         }
 
-        const anime = await AnilistAPI.fetchAnimeById(animeId);
-        const controller = new AnimeInteractionController(this.interaction, [anime]);
+        const manga = await AnilistAPI.fetchMangaById(mangaId);
+        const controller = new MangaInteractionController(this.interaction, [manga]);
         await controller.execute();
     }
 
-    private async findAnimeByName (): Promise<void> {
-        const animes = await AnilistAPI.fetchAnimeByName(this.query);
-        const controller = new AnimeInteractionController(this.interaction, animes);
+    private async findMangaByName (): Promise<void> {
+        const mangas = await AnilistAPI.fetchMangaByName(this.query);
+        const controller = new MangaInteractionController(this.interaction, mangas);
         await controller.execute();
     }
 }
