@@ -9,12 +9,12 @@ class EmbedManga extends discord_js_1.EmbedBuilder {
     constructor() {
         super();
     }
-    static Crear(manga) {
+    static Create(manga) {
         const embed = this.CrearEmbedBasico(manga)
             .setDescription(manga.obtenerDescripcion());
         return embed;
     }
-    static async CrearTraducido(manga) {
+    static async CreateTranslated(manga) {
         const embed = this.CrearEmbedBasico(manga)
             .setDescription(await Helpers_1.default.traducir(manga.obtenerDescripcion()));
         return embed;

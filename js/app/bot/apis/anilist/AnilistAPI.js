@@ -14,12 +14,19 @@ const ErrorDemasiadasPeticiones_1 = __importDefault(require("../../../errores/Er
 const ErrorSinResultados_1 = __importDefault(require("../../../errores/ErrorSinResultados"));
 const Anime_1 = __importDefault(require("./modelos/media/Anime"));
 const ScoreCollection_1 = __importDefault(require("./ScoreCollection"));
+const Manga_1 = __importDefault(require("./modelos/media/Manga"));
 class AnilistAPI {
     static async fetchAnimeById(id) {
         return new Anime_1.default(await BuscadorMedia_1.default.BuscarMediaPorID(id, 'ANIME'));
     }
     static async fetchAnimeByName(name) {
         return (await BuscadorMedia_1.default.BuscarMediaPorNombre(name, 'ANIME')).map(r => new Anime_1.default(r));
+    }
+    static async fetchMangaById(id) {
+        return new Manga_1.default(await BuscadorMedia_1.default.BuscarMediaPorID(id, 'MANGA'));
+    }
+    static async fetchMangaByName(name) {
+        return (await BuscadorMedia_1.default.BuscarMediaPorNombre(name, 'MANGA')).map(r => new Manga_1.default(r));
     }
     static async fetchUserById(id) {
         return new AnilistUser_1.default(await BuscadorUsuario_1.default.BuscarUsuario(id));

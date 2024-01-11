@@ -18,6 +18,9 @@ class ScoreCollection {
     has(mediaList) {
         return this.mediaList.find(m => (m.id === mediaList.id) && (m.user.id === mediaList.user.id)) ? true : false;
     }
+    getMediaList() {
+        return this.mediaList;
+    }
     getCompleted() {
         return this.mediaList.filter(media => media.status === 'COMPLETED');
     }

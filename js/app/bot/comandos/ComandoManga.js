@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const CommandUnderMaintenanceException_1 = __importDefault(require("../../errores/CommandUnderMaintenanceException"));
+const MangaCommandInteraction_1 = __importDefault(require("./interactions/manga/MangaCommandInteraction"));
 class ComandoManga {
     constructor() {
         this.cooldown = 10;
@@ -20,7 +20,8 @@ class ComandoManga {
             .setDescription('Si deseas traducir la sinopsis. (Traductor de Google)'));
     }
     async execute(interaction) {
-        throw new CommandUnderMaintenanceException_1.default('Comando en mantenimiento.');
+        const commandInteraction = new MangaCommandInteraction_1.default(interaction);
+        await commandInteraction.execute();
     }
 }
 exports.default = ComandoManga;

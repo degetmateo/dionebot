@@ -7,8 +7,8 @@ const CommandInteraction_1 = __importDefault(require("../CommandInteraction"));
 const Helpers_1 = __importDefault(require("../../../Helpers"));
 const IllegalArgumentException_1 = __importDefault(require("../../../../errores/IllegalArgumentException"));
 const AnilistAPI_1 = __importDefault(require("../../../apis/anilist/AnilistAPI"));
-const AnimeInteractionController_1 = __importDefault(require("./AnimeInteractionController"));
-class AnimeCommandInteraction extends CommandInteraction_1.default {
+const MangaInteractionController_1 = __importDefault(require("./MangaInteractionController"));
+class MangaCommandInteraction extends CommandInteraction_1.default {
     constructor(interaction) {
         super();
         this.interaction = interaction;
@@ -19,22 +19,22 @@ class AnimeCommandInteraction extends CommandInteraction_1.default {
     async execute() {
         await this.interaction.deferReply();
         this.queryIsNumber ?
-            await this.findAnimeById() :
-            await this.findAnimeByName();
+            await this.findMangaById() :
+            await this.findMangaByName();
     }
-    async findAnimeById() {
-        const animeId = parseInt(this.query);
-        if (animeId < 0 || animeId > CommandInteraction_1.default.NUMERO_MAXIMO_32_BITS) {
+    async findMangaById() {
+        const mangaId = parseInt(this.query);
+        if (mangaId < 0 || mangaId > CommandInteraction_1.default.NUMERO_MAXIMO_32_BITS) {
             throw new IllegalArgumentException_1.default('La ID que has ingresado no es válida.');
         }
-        const anime = await AnilistAPI_1.default.fetchAnimeById(animeId);
-        const controller = new AnimeInteractionController_1.default(this.interaction, [anime]);
+        const manga = await AnilistAPI_1.default.fetchMangaById(mangaId);
+        const controller = new MangaInteractionController_1.default(this.interaction, [manga]);
         await controller.execute();
     }
-    async findAnimeByName() {
-        const animes = await AnilistAPI_1.default.fetchAnimeByName(this.query);
-        const controller = new AnimeInteractionController_1.default(this.interaction, animes);
+    async findMangaByName() {
+        const mangas = await AnilistAPI_1.default.fetchMangaByName(this.query);
+        const controller = new MangaInteractionController_1.default(this.interaction, mangas);
         await controller.execute();
     }
 }
-exports.default = AnimeCommandInteraction;
+exports.default = MangaCommandInteraction;
