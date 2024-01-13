@@ -7,6 +7,7 @@ const EmbedAnime_1 = __importDefault(require("../../../embeds/EmbedAnime"));
 const AnilistAPI_1 = __importDefault(require("../../../apis/anilist/AnilistAPI"));
 const EmbedScores_1 = __importDefault(require("../../../embeds/EmbedScores"));
 const InteractionController_1 = __importDefault(require("../InteractionController"));
+const Helpers_1 = __importDefault(require("../../../Helpers"));
 class AnimeInteractionController extends InteractionController_1.default {
     constructor(interaction, animes) {
         super(interaction, animes);
@@ -14,7 +15,10 @@ class AnimeInteractionController extends InteractionController_1.default {
     async execute() {
         const serverId = this.interaction.guildId;
         const users = this.bot.servers.getUsers(serverId);
-        this.embeds = this.media.map(media => EmbedAnime_1.default.Create(media));
+        const translate = this.interaction.options.getBoolean('traducir') || false;
+        this.embeds = translate ?
+            await Helpers_1.default.asyncMap(this.media, async (anime) => await EmbedAnime_1.default.CreateTranslated(anime)) :
+            this.media.map(media => EmbedAnime_1.default.Create(media));
         const anime = this.media[this.page];
         const scores = await this.fetchUsersUsernames(await AnilistAPI_1.default.fetchUsersScores(anime.obtenerID() + '', users.map(u => u.anilistId)));
         const embedAnime = this.embeds[this.page];

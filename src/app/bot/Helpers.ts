@@ -87,4 +87,8 @@ export default class Helpers {
         const randomIndex = Math.floor(Math.random() * elements.length);
         return elements[randomIndex];
     }
+
+    public static async asyncMap <T, U> (array: T[], asyncCallback: (element: T) => Promise<U>): Promise<U[]> {
+        return await Promise.all(array.map(asyncCallback));
+    }
 }

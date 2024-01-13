@@ -70,6 +70,9 @@ class Helpers {
         const randomIndex = Math.floor(Math.random() * elements.length);
         return elements[randomIndex];
     }
+    static async asyncMap(array, asyncCallback) {
+        return await Promise.all(array.map(asyncCallback));
+    }
 }
 exports.default = Helpers;
 Helpers.LENGUAJE_TRADUCCION = 'es';

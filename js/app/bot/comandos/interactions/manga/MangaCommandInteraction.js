@@ -14,7 +14,6 @@ class MangaCommandInteraction extends CommandInteraction_1.default {
         this.interaction = interaction;
         this.query = interaction.options.getString('nombre-o-id');
         this.queryIsNumber = Helpers_1.default.isNumber(this.query);
-        this.translate = interaction.options.getBoolean('traducir') || false;
     }
     async execute() {
         await this.interaction.deferReply();

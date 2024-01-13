@@ -11,7 +11,6 @@ export default class AnimeCommandInteraction extends CommandInteraction {
 
     private readonly query: string;
     private readonly queryIsNumber: boolean;
-    private readonly translate: boolean;
 
     constructor (interaction: ChatInputCommandInteraction<CacheType>) {
         super();
@@ -19,7 +18,6 @@ export default class AnimeCommandInteraction extends CommandInteraction {
         
         this.query = interaction.options.getString('nombre-o-id');
         this.queryIsNumber = Helpers.isNumber(this.query);
-        this.translate = interaction.options.getBoolean('traducir') || false;
     }
 
     public async execute (): Promise<void> {

@@ -4,6 +4,7 @@ import EmbedAnime from "../../../embeds/EmbedAnime";
 import AnilistAPI from "../../../apis/anilist/AnilistAPI";
 import EmbedScores from "../../../embeds/EmbedScores";
 import InteractionController from "../InteractionController";
+import Helpers from "../../../Helpers";
 
 export default class AnimeInteractionController extends InteractionController {
     protected media: Array<Anime>;
@@ -15,8 +16,11 @@ export default class AnimeInteractionController extends InteractionController {
     public async execute (): Promise<void> {
         const serverId = this.interaction.guildId;
         const users = this.bot.servers.getUsers(serverId);
+        const translate = this.interaction.options.getBoolean('traducir') || false;
 
-        this.embeds = this.media.map(media => EmbedAnime.Create(media));
+        this.embeds = translate ?
+            await Helpers.asyncMap(this.media, async anime => await EmbedAnime.CreateTranslated(anime)) :
+            this.media.map(media => EmbedAnime.Create(media));
 
         const anime = this.media[this.page];
         const scores = await this.fetchUsersUsernames(await AnilistAPI.fetchUsersScores(anime.obtenerID() + '', users.map(u => u.anilistId)));
