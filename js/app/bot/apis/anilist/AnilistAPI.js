@@ -75,7 +75,7 @@ class AnilistAPI {
         return await BuscadorEstadoMediaUsuarios_1.default.BuscarEstadoMediaUsuarios(mediaId, usersIds);
     }
     static async buscarListasCompletadosUsuarios(usuario, usuarios) {
-        const mediaUsuario = await BuscadorListasCompletasUsuarios_1.default.BuscarListaCompletadosUsuario(usuario.obtenerID());
+        const mediaUsuario = await BuscadorListasCompletasUsuarios_1.default.BuscarListaCompletadosUsuario(usuario.getId());
         const mediaUsuarios = await BuscadorListasCompletasUsuarios_1.default.BuscarListasCompletadosUsuarios(usuarios);
         return { user: mediaUsuario, users: mediaUsuarios };
     }

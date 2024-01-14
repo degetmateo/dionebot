@@ -8,60 +8,60 @@ class Media {
     constructor(media) {
         this.media = media;
     }
-    obtenerID() {
+    getId() {
         return this.media.id;
     }
-    obtenerMalID() {
+    getMalId() {
         return this.media.idMal;
     }
-    obtenerTituloPreferido() {
+    getPreferredTitle() {
         return this.media.title.userPreferred;
     }
-    obtenerTitulo() {
+    getTitle() {
         return this.media.title.userPreferred || this.media.title.romaji || this.media.title.english || this.media.title.native;
     }
-    obtenerColor() {
+    getColor() {
         return this.media.coverImage.color;
     }
-    obtenerBannerImageURL() {
+    getBannerURL() {
         return this.media.bannerImage;
     }
-    obtenerDescripcion() {
+    getDescription() {
         if (!this.media.description)
             return '?';
         return this.media.description.length <= 0 ? "?" : Helpers_1.default.eliminarEtiquetasHTML(this.media.description);
     }
-    obtenerEnlace() {
+    getURL() {
         return this.media.siteUrl;
     }
-    obtenerTitulos() {
+    getTitles() {
         return this.media.title;
     }
-    obtenerCoverImageURL() {
+    getCoverURL() {
         return this.media.coverImage.large || this.media.coverImage.medium || this.media.coverImage.small;
     }
-    obtenerFormato() {
+    getFormat() {
         return this.media.format;
     }
-    obtenerGeneros() {
+    getGenres() {
         return this.media.genres;
     }
-    obtenerCantidadFavoritos() {
+    getFavourites() {
         return this.media.favourites;
     }
-    obtenerPopularidad() {
+    getPopularity() {
         return this.media.popularity;
     }
-    obtenerEstado() {
+    getStatus() {
         return this.media.status;
     }
-    obtenerEstudios() {
+    getStudios() {
         return this.media.studios.edges;
     }
-    obtenerFechaEmision() {
+    getStartDate() {
         return this.media.startDate;
     }
-    obtenerCalificacionPromedio() {
+    getMeanScore() {
         return this.media.meanScore;
     }
 }

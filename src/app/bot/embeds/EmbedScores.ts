@@ -1,6 +1,4 @@
 import { EmbedBuilder } from "discord.js";
-import Notas from "../apis/anilist/modelos/media/Notas";
-import Media from "../apis/anilist/modelos/media/Media";
 import EmbedUsuario from "./EmbedUsuario";
 import ScoreCollection from "../apis/anilist/ScoreCollection";
 
@@ -35,7 +33,11 @@ export default class EmbedScores extends EmbedBuilder {
         const usuarios = this.scores.getCompleted();
         if (usuarios.length <= 0) return;
 
-        const informacion = `${usuarios.map(n => n.user.name + ' **[' + n.score + ']**').join(' - ')}`;
+        const informacion = `${usuarios.map(n => {
+            return n.repeat > 0 ?
+                n.user.name +  ` **[${n.score}] [x${n.repeat + 1}]**` :
+                n.user.name +  ` **[${n.score}]**`;
+        }).join(' - ')}`;
 
         informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
             this.addFields({ name: 'Completado por', value: informacion, inline: false }) :

@@ -23,10 +23,10 @@ export default class AnimeInteractionController extends InteractionController {
             this.media.map(media => EmbedAnime.Create(media));
 
         const anime = this.media[this.page];
-        const scores = await this.fetchUsersUsernames(await AnilistAPI.fetchUsersScores(anime.obtenerID() + '', users.map(u => u.anilistId)));
+        const scores = await this.fetchUsersUsernames(await AnilistAPI.fetchUsersScores(anime.getId() + '', users.map(u => u.anilistId)));
 
         const embedAnime = this.embeds[this.page];
-        const embedScores = EmbedScores.Create(scores).setColor(anime.obtenerColor());
+        const embedScores = EmbedScores.Create(scores).setColor(anime.getColor());
 
         const embeds = (!scores.isEmpty()) ?
             [embedAnime, embedScores] : [embedAnime];

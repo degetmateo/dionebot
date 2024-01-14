@@ -65,12 +65,12 @@ export default abstract class InteractionController {
 
         try {
             const media = this.media[this.page];
-            const scores = await this.fetchUsersUsernames(await AnilistAPI.fetchUsersScores(media.obtenerID() + '', users.map(u => u.anilistId)));
+            const scores = await this.fetchUsersUsernames(await AnilistAPI.fetchUsersScores(media.getId() + '', users.map(u => u.anilistId)));
 
             if (scores.isEmpty()) {
                 await button.editReply({ embeds: [this.embeds[this.page]], components: [this.row] });
             } else {
-                const embedScores = EmbedScores.Create(scores).setColor(media.obtenerColor());
+                const embedScores = EmbedScores.Create(scores).setColor(media.getColor());
                 await button.editReply({ embeds: [this.embeds[this.page], embedScores], components: [this.row] }); 
             }
         } catch (error) {

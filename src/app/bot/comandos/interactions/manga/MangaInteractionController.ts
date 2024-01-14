@@ -23,10 +23,10 @@ export default class MangaInteractionController extends InteractionController {
             this.media.map(manga => EmbedManga.Create(manga));
 
         const manga = this.media[this.page];
-        const scores = await this.fetchUsersUsernames(await AnilistAPI.fetchUsersScores(manga.obtenerID() + '', users.map(u => u.anilistId)));
+        const scores = await this.fetchUsersUsernames(await AnilistAPI.fetchUsersScores(manga.getId() + '', users.map(u => u.anilistId)));
 
         const embedManga = this.embeds[this.page];
-        const embedScores = EmbedScores.Create(scores).setColor(manga.obtenerColor());
+        const embedScores = EmbedScores.Create(scores).setColor(manga.getColor());
 
         const embeds = (!scores.isEmpty()) ?
             [embedManga, embedScores] : [embedManga];

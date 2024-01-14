@@ -9,76 +9,76 @@ export default abstract class Media {
         this.media = media;
     }
 
-    public obtenerID (): number {
+    public getId (): number {
         return this.media.id;
     }
 
-    public obtenerMalID (): number {
+    public getMalId (): number {
         return this.media.idMal;
     }
 
-    public obtenerTituloPreferido (): string {
+    public getPreferredTitle (): string {
         return this.media.title.userPreferred;
     }
 
-    public obtenerTitulo (): string {
+    public getTitle (): string {
         return this.media.title.userPreferred || this.media.title.romaji || this.media.title.english || this.media.title.native;
     }
 
-    public obtenerColor (): ColorResolvable {
+    public getColor (): ColorResolvable {
         return this.media.coverImage.color as ColorResolvable;
     }
 
-    public obtenerBannerImageURL (): string {
+    public getBannerURL (): string {
         return this.media.bannerImage;
     }
 
-    public obtenerDescripcion (): string {
+    public getDescription (): string {
         if (!this.media.description) return '?';
         return this.media.description.length <= 0 ? "?" : Helpers.eliminarEtiquetasHTML(this.media.description);
     }
 
-    public obtenerEnlace (): string {
+    public getURL (): string {
         return this.media.siteUrl;
     }
 
-    public obtenerTitulos (): TiposMedia.MediaTitulo {
+    public getTitles (): TiposMedia.MediaTitulo {
         return this.media.title;
     }
 
-    public obtenerCoverImageURL (): string {
+    public getCoverURL (): string {
         return this.media.coverImage.large || this.media.coverImage.medium || this.media.coverImage.small;
     }
 
-    public obtenerFormato (): string {
+    public getFormat (): string {
         return this.media.format;
     }
 
-    public obtenerGeneros (): Array<string> {
+    public getGenres (): Array<string> {
         return this.media.genres;
     }
 
-    public obtenerCantidadFavoritos (): number {
+    public getFavourites (): number {
         return this.media.favourites;
     }
 
-    public obtenerPopularidad (): number {
+    public getPopularity (): number {
         return this.media.popularity;
     }
 
-    public obtenerEstado (): TiposMedia.MediaEstado {
+    public getStatus (): TiposMedia.MediaEstado {
         return this.media.status;
     }
 
-    public obtenerEstudios (): TiposMedia.MediaListaEstudios {
+    public getStudios (): TiposMedia.MediaListaEstudios {
         return this.media.studios.edges;
     }
 
-    public obtenerFechaEmision (): TiposMedia.MediaFecha {
+    public getStartDate (): TiposMedia.MediaFecha {
         return this.media.startDate;
     }
 
-    public obtenerCalificacionPromedio (): number {
+    public getMeanScore (): number {
         return this.media.meanScore;
     }
 }

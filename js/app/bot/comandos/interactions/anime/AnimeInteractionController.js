@@ -20,9 +20,9 @@ class AnimeInteractionController extends InteractionController_1.default {
             await Helpers_1.default.asyncMap(this.media, async (anime) => await EmbedAnime_1.default.CreateTranslated(anime)) :
             this.media.map(media => EmbedAnime_1.default.Create(media));
         const anime = this.media[this.page];
-        const scores = await this.fetchUsersUsernames(await AnilistAPI_1.default.fetchUsersScores(anime.obtenerID() + '', users.map(u => u.anilistId)));
+        const scores = await this.fetchUsersUsernames(await AnilistAPI_1.default.fetchUsersScores(anime.getId() + '', users.map(u => u.anilistId)));
         const embedAnime = this.embeds[this.page];
-        const embedScores = EmbedScores_1.default.Create(scores).setColor(anime.obtenerColor());
+        const embedScores = EmbedScores_1.default.Create(scores).setColor(anime.getColor());
         const embeds = (!scores.isEmpty()) ?
             [embedAnime, embedScores] : [embedAnime];
         if (this.media.length === 1) {

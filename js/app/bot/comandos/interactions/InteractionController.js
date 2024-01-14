@@ -49,12 +49,12 @@ class InteractionController {
         const users = this.bot.servers.getUsers(button.guildId);
         try {
             const media = this.media[this.page];
-            const scores = await this.fetchUsersUsernames(await AnilistAPI_1.default.fetchUsersScores(media.obtenerID() + '', users.map(u => u.anilistId)));
+            const scores = await this.fetchUsersUsernames(await AnilistAPI_1.default.fetchUsersScores(media.getId() + '', users.map(u => u.anilistId)));
             if (scores.isEmpty()) {
                 await button.editReply({ embeds: [this.embeds[this.page]], components: [this.row] });
             }
             else {
-                const embedScores = EmbedScores_1.default.Create(scores).setColor(media.obtenerColor());
+                const embedScores = EmbedScores_1.default.Create(scores).setColor(media.getColor());
                 await button.editReply({ embeds: [this.embeds[this.page], embedScores], components: [this.row] });
             }
         }

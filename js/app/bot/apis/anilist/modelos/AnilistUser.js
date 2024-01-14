@@ -9,39 +9,39 @@ class AnilistUser {
     constructor(usuario) {
         this.usuario = usuario;
     }
-    obtenerID() {
+    getId() {
         return this.usuario.id;
     }
-    obtenerURL() {
+    getURL() {
         return this.usuario.siteUrl;
     }
-    obtenerNombre() {
+    getName() {
         return this.usuario.name;
     }
-    obtenerBio() {
+    getBio() {
         return Helpers_1.default.eliminarEtiquetasHTML(this.usuario.about || '');
     }
-    obtenerAvatarURL() {
+    getAvatarURL() {
         return this.usuario.avatar.large || this.usuario.avatar.medium;
     }
-    obtenerBannerURL() {
+    getBannerURL() {
         return this.usuario.bannerImage;
     }
-    obtenerColor() {
+    getColor() {
         return (0, colornames_1.default)(this.usuario.options.profileColor);
     }
-    obtenerEstadisticas() {
+    getStatistics() {
         return this.usuario.statistics;
     }
-    obtenerGenerosOrdenadosPorCantidad() {
-        return this.obtenerGeneros().sort((a, b) => b.count - a.count);
+    getGenresSortedByQuantity() {
+        return this.getGenres().sort((a, b) => b.count - a.count);
     }
-    obtenerGenerosOrdenadosPorCalificacion() {
-        return this.obtenerGeneros().sort((a, b) => b.meanScore - a.meanScore);
+    getGenresSortedByCalification() {
+        return this.getGenres().sort((a, b) => b.meanScore - a.meanScore);
     }
-    obtenerGeneros() {
-        const generosAnime = this.obtenerEstadisticas().anime.genres;
-        const generosManga = this.obtenerEstadisticas().manga.genres;
+    getGenres() {
+        const generosAnime = this.getStatistics().anime.genres;
+        const generosManga = this.getStatistics().manga.genres;
         const generos = generosAnime.map(ga => {
             let gm = generosManga.find(gm => gm.genre.toLowerCase() === ga.genre.toLowerCase());
             if (!gm) {
@@ -53,15 +53,15 @@ class AnilistUser {
             }
             const cantidad = ga.count + gm.count;
             const promedio = (ga.meanScore + gm.meanScore) / 2;
-            const generoMasConsumido = this.obtenerGeneroMasConsumido();
+            const generoMasConsumido = this.getMostConsumedGenre();
             const promedioPonderado = Helpers_1.default.calcularPromedioPonderado(cantidad, promedio, generoMasConsumido.count);
             return { genre: ga.genre, count: cantidad, meanScore: promedioPonderado };
         });
         return generos;
     }
-    obtenerGeneroMasConsumido() {
-        const generosAnime = this.obtenerEstadisticas().anime.genres;
-        const generosManga = this.obtenerEstadisticas().manga.genres;
+    getMostConsumedGenre() {
+        const generosAnime = this.getStatistics().anime.genres;
+        const generosManga = this.getStatistics().manga.genres;
         let genero;
         for (const ga of generosAnime) {
             if (!genero)
@@ -74,7 +74,7 @@ class AnilistUser {
         }
         return genero;
     }
-    obtenerFechaCreacion() {
+    getCreationDate() {
         return new Date(this.usuario.createdAt * 1000);
     }
 }

@@ -8,13 +8,13 @@ class Anime extends Media_1.default {
     constructor(media) {
         super(media);
     }
-    obtenerEpisodios() {
+    getEpisodes() {
         return this.media.episodes;
     }
-    obtenerTemporada() {
+    getSeason() {
         return this.media.season;
     }
-    obtenerDuracion() {
+    getDuration() {
         return this.media.duration;
     }
 }

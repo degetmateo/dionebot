@@ -99,7 +99,7 @@ export default class AnilistAPI {
     }
 
     public static async buscarListasCompletadosUsuarios (usuario: AnilistUser, usuarios: Array<uRegistrado>) {
-        const mediaUsuario: Tipos.MediaColeccion = await BuscadorListasCompletasUsuarios.BuscarListaCompletadosUsuario(usuario.obtenerID());
+        const mediaUsuario: Tipos.MediaColeccion = await BuscadorListasCompletasUsuarios.BuscarListaCompletadosUsuario(usuario.getId());
         const mediaUsuarios: Array<Tipos.MediaColeccion> = await BuscadorListasCompletasUsuarios.BuscarListasCompletadosUsuarios(usuarios);
         return { user: mediaUsuario, users: mediaUsuarios };
     }

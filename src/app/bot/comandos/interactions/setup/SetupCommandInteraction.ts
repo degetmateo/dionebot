@@ -48,7 +48,7 @@ export default class SetupCommandInteraction extends CommandInteraction {
             users: []
         });
 
-        server.users.push({ discordId: userId, anilistId: anilistUser.obtenerID() });
+        server.users.push({ discordId: userId, anilistId: anilistUser.getId() });
         await server.save();
 
         await bot.loadServers();

@@ -38,7 +38,7 @@ class SetupCommandInteraction extends CommandInteraction_1.default {
                 premium: false,
                 users: []
             });
-        server.users.push({ discordId: userId, anilistId: anilistUser.obtenerID() });
+        server.users.push({ discordId: userId, anilistId: anilistUser.getId() });
         await server.save();
         await bot.loadServers();
         const embed = Embed_1.default.Crear()

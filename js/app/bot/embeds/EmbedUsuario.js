@@ -19,28 +19,28 @@ class EmbedUsuario extends discord_js_1.EmbedBuilder {
         return embed;
     }
     establecerColor() {
-        this.setColor(this.usuario.obtenerColor());
+        this.setColor(this.usuario.getColor());
     }
     async establecerDescripcion() {
-        const estadisticas = this.usuario.obtenerEstadisticas();
-        const generosCantidad = this.usuario.obtenerGenerosOrdenadosPorCantidad();
-        const generosCalificacion = this.usuario.obtenerGenerosOrdenadosPorCalificacion();
+        const estadisticas = this.usuario.getStatistics();
+        const generosCantidad = this.usuario.getGenresSortedByQuantity();
+        const generosCalificacion = this.usuario.getGenresSortedByCalification();
         const generoMasConsumido = generosCantidad[0];
         const generoMenosConsumido = generosCantidad[generosCantidad.length - 1];
         const generoMejorCalificado = generosCalificacion[0];
         const generoPeorCalificado = generosCalificacion[generosCalificacion.length - 1];
         const mediaPonderadaURL = 'https://es.wikipedia.org/wiki/Media_ponderada';
         const descripcion = `
-**[${this.usuario.obtenerNombre()}](${this.usuario.obtenerURL()})**
-↪ Se unio el **${this.usuario.obtenerFechaCreacion().toLocaleDateString()}**
+**[${this.usuario.getName()}](${this.usuario.getURL()})**
+↪ Se unio el **${this.usuario.getCreationDate().toLocaleDateString()}**
 
-**[Anime](${this.usuario.obtenerURL()}/animelist)**
+**[Anime](${this.usuario.getURL()}/animelist)**
 ↪ Entradas: **${estadisticas.anime.count}**
 ↪ Episodios Vistos: **${estadisticas.anime.episodesWatched}**
 ↪ Tiempo Visto: **${(estadisticas.anime.minutesWatched / 60).toFixed(1)} horas**
 ↪ Calificación Promedio: **${estadisticas.anime.meanScore}**
 
-**[Manga](${this.usuario.obtenerURL()}/mangalist)**
+**[Manga](${this.usuario.getURL()}/mangalist)**
 ↪ Entradas: **${estadisticas.manga.count}**
 ↪ Capítulos Leídos: **${estadisticas.manga.chaptersRead}**
 ↪ Volúmenes Leídos: **${estadisticas.manga.volumesRead}**
@@ -55,11 +55,11 @@ class EmbedUsuario extends discord_js_1.EmbedBuilder {
         this.setDescription(descripcion);
     }
     establecerPortada() {
-        const avatarURL = this.usuario.obtenerAvatarURL();
+        const avatarURL = this.usuario.getAvatarURL();
         avatarURL ? this.setThumbnail(avatarURL) : null;
     }
     establecerBanner() {
-        const bannerURL = this.usuario.obtenerBannerURL();
+        const bannerURL = this.usuario.getBannerURL();
         bannerURL ? this.setImage(bannerURL) : null;
     }
 }

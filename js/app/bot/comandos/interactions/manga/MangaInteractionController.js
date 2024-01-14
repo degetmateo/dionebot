@@ -20,9 +20,9 @@ class MangaInteractionController extends InteractionController_1.default {
             await Helpers_1.default.asyncMap(this.media, async (manga) => await EmbedManga_1.default.CreateTranslated(manga)) :
             this.media.map(manga => EmbedManga_1.default.Create(manga));
         const manga = this.media[this.page];
-        const scores = await this.fetchUsersUsernames(await AnilistAPI_1.default.fetchUsersScores(manga.obtenerID() + '', users.map(u => u.anilistId)));
+        const scores = await this.fetchUsersUsernames(await AnilistAPI_1.default.fetchUsersScores(manga.getId() + '', users.map(u => u.anilistId)));
         const embedManga = this.embeds[this.page];
-        const embedScores = EmbedScores_1.default.Create(scores).setColor(manga.obtenerColor());
+        const embedScores = EmbedScores_1.default.Create(scores).setColor(manga.getColor());
         const embeds = (!scores.isEmpty()) ?
             [embedManga, embedScores] : [embedManga];
         if (this.media.length === 1) {

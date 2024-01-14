@@ -6,11 +6,11 @@ export default class Manga extends Media {
         super(media);
     }
 
-    public obtenerCapitulos (): number {
+    public getChapters (): number {
         return this.media.chapters;
     }
 
-    public obtenerVolumenes (): number {
+    public getVolumes (): number {
         return this.media.volumes;
     }
 }

@@ -6,15 +6,15 @@ export default class Anime extends Media {
         super(media);
     }
 
-    public obtenerEpisodios (): number {
+    public getEpisodes (): number {
         return this.media.episodes;
     }
 
-    public obtenerTemporada (): TiposMedia.MediaTemporada {
+    public getSeason (): TiposMedia.MediaTemporada {
         return this.media.season;
     }
 
-    public obtenerDuracion (): number {
+    public getDuration (): number {
         return this.media.duration;
     }
 }

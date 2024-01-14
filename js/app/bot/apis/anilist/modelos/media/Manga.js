@@ -8,10 +8,10 @@ class Manga extends Media_1.default {
     constructor(media) {
         super(media);
     }
-    obtenerCapitulos() {
+    getChapters() {
         return this.media.chapters;
     }
-    obtenerVolumenes() {
+    getVolumes() {
         return this.media.volumes;
     }
 }

@@ -11,33 +11,33 @@ class EmbedManga extends discord_js_1.EmbedBuilder {
     }
     static Create(manga) {
         const embed = this.CrearEmbedBasico(manga)
-            .setDescription(manga.obtenerDescripcion());
+            .setDescription(manga.getDescription());
         return embed;
     }
     static async CreateTranslated(manga) {
         const embed = this.CrearEmbedBasico(manga)
-            .setDescription(await Helpers_1.default.traducir(manga.obtenerDescripcion()));
+            .setDescription(await Helpers_1.default.traducir(manga.getDescription()));
         return embed;
     }
     static CrearEmbedBasico(manga) {
-        const titulos = manga.obtenerTitulos();
+        const titulos = manga.getTitles();
         const embed = new EmbedManga()
-            .setTitle(manga.obtenerTitulo())
-            .setURL(manga.obtenerEnlace())
-            .setThumbnail(manga.obtenerCoverImageURL())
-            .setImage(manga.obtenerBannerImageURL())
-            .setColor(manga.obtenerColor())
+            .setTitle(manga.getPreferredTitle())
+            .setURL(manga.getURL())
+            .setThumbnail(manga.getCoverURL())
+            .setImage(manga.getBannerURL())
+            .setColor(manga.getColor())
             .setFooter({ text: `${titulos.english} | ${titulos.native}` });
         const informacionCampos1 = `
-            ‣ **Formato**: ${manga.obtenerFormato()}\n‣ **Estado**: ${manga.obtenerEstado()}\n‣ **Calificación**: ${manga.obtenerCalificacionPromedio()}/100\n‣ **Popularidad**: ${manga.obtenerPopularidad()}
+            ‣ **Formato**: ${manga.getFormat()}\n‣ **Estado**: ${manga.getStatus()}\n‣ **Calificación**: ${manga.getMeanScore()}/100\n‣ **Popularidad**: ${manga.getPopularity()}
         `;
-        const fecha = manga.obtenerFechaEmision();
+        const fecha = manga.getStartDate();
         const informacionCampos2 = `
-            ‣ **Favoritos**: ${manga.obtenerCantidadFavoritos()}\n‣ **Emisión**: ${fecha.day}/${fecha.month}/${fecha.year}\n‣ **Capítulos**: ${manga.obtenerCapitulos()}\n‣ **Volúmenes**: ${manga.obtenerVolumenes()}
+            ‣ **Favoritos**: ${manga.getFavourites()}\n‣ **Emisión**: ${fecha.day}/${fecha.month}/${fecha.year}\n‣ **Capítulos**: ${manga.getChapters()}\n‣ **Volúmenes**: ${manga.getVolumes()}
         `;
         embed
             .addFields({ name: "▾", value: informacionCampos1, inline: true }, { name: "▾", value: informacionCampos2, inline: true });
-        embed.addFields({ name: "▾ Géneros", value: '`' + manga.obtenerGeneros().join('` - `') + '`', inline: false });
+        embed.addFields({ name: "▾ Géneros", value: '`' + manga.getGenres().join('` - `') + '`', inline: false });
         return embed;
     }
 }
