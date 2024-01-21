@@ -1,53 +1,59 @@
-import { EmbedBuilder } from "discord.js";
 import Anime from "../apis/anilist/modelos/media/Anime";
 import Helpers from "../Helpers";
+import EmbedMedia from "./EmbedMedia";
 
-export default class EmbedAnime extends EmbedBuilder {
-    private constructor() {
+export default class EmbedAnime extends EmbedMedia {
+    protected media: Anime;
+
+    private constructor(media: Anime) {
         super();
+        this.media = media;
     }
 
     public static Create (anime: Anime): EmbedAnime {
-        const embed = this.CrearEmbedBasico(anime)
-            .setDescription(anime.getDescription());
+        const embed = new EmbedAnime(anime);
 
+        embed.CreateBasic();
+        embed.setDescription(anime.getDescription());
+        embed.addInfoFields();
+        
         return embed;
     }
 
     public static async CreateTranslated (anime: Anime): Promise<EmbedAnime> {
-        const embed = this.CrearEmbedBasico(anime)
-            .setDescription(await Helpers.traducir(anime.getDescription()));
+        const embed = new EmbedAnime(anime);
+        
+        embed.CreateBasic();
+        embed.setDescription(await Helpers.traducir(anime.getDescription()));
+        embed.addInfoFields();
 
         return embed;
     }
 
-    private static CrearEmbedBasico(anime: Anime): EmbedAnime {
-        const titulos = anime.getTitles();
-
-        const embed = new EmbedAnime()
-            .setTitle(anime.getPreferredTitle())
-            .setURL(anime.getURL())
-            .setThumbnail(anime.getCoverURL())
-            .setImage(anime.getBannerURL())
-            .setColor(anime.getColor())
-            .setFooter({ text: `${titulos.english} | ${titulos.native}` });
-
+    private addInfoFields (): EmbedAnime {
         const informacionCampos1 = `
-            ‣ **Formato**: ${anime.getFormat()}\n‣ **Estado**: ${anime.getStatus()}\n‣ **Calificación**: ${anime.getMeanScore()}/100\n‣ **Popularidad**: ${anime.getPopularity()}
+            ‣ **Formato**: ${this.media.getFormat() || 'Desconocido'}\n‣ **Estado**: ${this.media.getStatus() || 'Desconocido'}\n‣ **Calificación**: ${this.media.getMeanScore() || 'Desconocido'}/100\n‣ **Popularidad**: ${this.media.getPopularity() || 'Desconocida'}
         `;
 
-        const fechaEmision = anime.getStartDate();
+        const fechaEmision = this.media.getStartDate();
         const fechaString = `${fechaEmision.day}/${fechaEmision.month}/${fechaEmision.year}`;
 
         const informacionCampos2 = `
-            ‣ **Favoritos**: ${anime.getFavourites()}\n‣ **Temporada**: ${anime.getSeason()}\n‣ **Emisión**: ${fechaString}\n‣ **Episodios**: ${anime.getEpisodes()}
+            ‣ **Favoritos**: ${this.media.getFavourites() || 'Desconocido'}\n‣ **Temporada**: ${this.media.getSeason() || 'Desconocida'}\n‣ **Emisión**: ${fechaString || 'Desconocida'}\n‣ **Episodios**: ${this.media.getEpisodes() || 'Desconocidos'}
         `;
 
-        embed.addFields({ name: "▾", value: informacionCampos1, inline: true },
+        this.addFields({ name: "▾", value: informacionCampos1, inline: true },
                         { name: "▾", value: informacionCampos2, inline: true });
 
-        embed.addFields({ name: "▾ Géneros", value: '`' + anime.getGenres().join('` - `') + '`', inline: false });
-        embed.addFields({ name: "▾ Estudios", value: '`' + anime.getStudios().map(e => e.node.name).join('` - `') + '`', inline: false });
-        return embed;
+        const valueGenres = this.media.getGenres().length >= 1 ?
+            '`' + this.media.getGenres().join('` - `') + '`' : '`Desconocidos`';
+        
+        const valueStudios = this.media.getStudios().length >= 1 ?
+            '`' + this.media.getStudios().map(e => e.node.name).join('` - `') + '`' : '`Desconocidos`';
+
+        this.addFields({ name: "▾ Géneros", value: valueGenres, inline: false });
+        this.addFields({ name: "▾ Estudios", value: valueStudios, inline: false });
+
+        return this;
     }
 }
