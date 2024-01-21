@@ -3,42 +3,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const discord_js_1 = require("discord.js");
 const Helpers_1 = __importDefault(require("../Helpers"));
-class EmbedManga extends discord_js_1.EmbedBuilder {
-    constructor() {
+const EmbedMedia_1 = __importDefault(require("./EmbedMedia"));
+class EmbedManga extends EmbedMedia_1.default {
+    constructor(media) {
         super();
+        this.media = media;
     }
     static Create(manga) {
-        const embed = this.CrearEmbedBasico(manga)
-            .setDescription(manga.getDescription());
+        const embed = new EmbedManga(manga);
+        embed.CreateBasic();
+        embed.setDescription(manga.getDescription());
+        embed.addInfoFields();
         return embed;
     }
     static async CreateTranslated(manga) {
-        const embed = this.CrearEmbedBasico(manga)
-            .setDescription(await Helpers_1.default.traducir(manga.getDescription()));
+        const embed = new EmbedManga(manga);
+        embed.CreateBasic();
+        embed.setDescription(await Helpers_1.default.traducir(manga.getDescription()));
+        embed.addInfoFields();
         return embed;
     }
-    static CrearEmbedBasico(manga) {
-        const titulos = manga.getTitles();
-        const embed = new EmbedManga()
-            .setTitle(manga.getPreferredTitle())
-            .setURL(manga.getURL())
-            .setThumbnail(manga.getCoverURL())
-            .setImage(manga.getBannerURL())
-            .setColor(manga.getColor())
-            .setFooter({ text: `${titulos.english} | ${titulos.native}` });
+    addInfoFields() {
         const informacionCampos1 = `
-            ‣ **Formato**: ${manga.getFormat()}\n‣ **Estado**: ${manga.getStatus()}\n‣ **Calificación**: ${manga.getMeanScore()}/100\n‣ **Popularidad**: ${manga.getPopularity()}
+            ‣ **Formato**: ${this.media.getFormat() || 'Desconocido'}\n‣ **Estado**: ${this.media.getStatus() || 'Desconocido'}\n‣ **Calificación**: ${this.media.getMeanScore() || '-'}/100\n‣ **Popularidad**: ${this.media.getPopularity() || 'Desconocida'}
         `;
-        const fecha = manga.getStartDate();
+        const fecha = this.media.getStartDate();
+        const fechaText = fecha ? `${fecha.day}/${fecha.month}/${fecha.year}` : 'Desconocida';
         const informacionCampos2 = `
-            ‣ **Favoritos**: ${manga.getFavourites()}\n‣ **Emisión**: ${fecha.day}/${fecha.month}/${fecha.year}\n‣ **Capítulos**: ${manga.getChapters()}\n‣ **Volúmenes**: ${manga.getVolumes()}
+            ‣ **Favoritos**: ${this.media.getFavourites() || 'Desconocidos'}\n‣ **Emisión**: ${fechaText}\n‣ **Capítulos**: ${this.media.getChapters() || 'Desconocidos'}\n‣ **Volúmenes**: ${this.media.getVolumes() || 'Desconocidos'}
         `;
-        embed
+        this
             .addFields({ name: "▾", value: informacionCampos1, inline: true }, { name: "▾", value: informacionCampos2, inline: true });
-        embed.addFields({ name: "▾ Géneros", value: '`' + manga.getGenres().join('` - `') + '`', inline: false });
-        return embed;
+        const generosInfo = this.media.getGenres().length === 0 ?
+            '\`Desconocidos\`' : '`' + this.media.getGenres().join('` - `') + '`';
+        this.addFields({ name: "▾ Géneros", value: generosInfo, inline: false });
+        return this;
     }
 }
 exports.default = EmbedManga;
