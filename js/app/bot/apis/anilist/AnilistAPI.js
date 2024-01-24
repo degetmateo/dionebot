@@ -56,17 +56,8 @@ class AnilistAPI {
         const res = await AnilistAPI.peticion(request, {});
         return res.MediaListCollection;
     }
-    static async buscarMangaPorID(id) {
-        return await BuscadorMedia_1.default.BuscarMediaPorID(id, 'MANGA');
-    }
-    static async buscarAnimePorNombre(criterio) {
-        return await BuscadorMedia_1.default.BuscarMediaPorNombre(criterio, 'ANIME');
-    }
-    static async buscarMangaPorNombre(criterio) {
-        return await BuscadorMedia_1.default.BuscarMediaPorNombre(criterio, 'MANGA');
-    }
-    static async buscarAnimesTemporada(anio, temporada) {
-        return await BuscadorMediaTemporada_1.default.buscarAnimesTemporada(anio, temporada);
+    static async fetchSeasonAnimes(year, season) {
+        return await BuscadorMediaTemporada_1.default.buscarAnimesTemporada(year, season);
     }
     static async buscarUsuario(criterio) {
         return await BuscadorUsuario_1.default.BuscarUsuario(criterio);

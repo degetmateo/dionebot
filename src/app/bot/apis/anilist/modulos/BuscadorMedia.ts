@@ -1,7 +1,7 @@
 
 import ErrorSinResultados from "../../../../errores/ErrorSinResultados";
 import AnilistAPI from "../AnilistAPI";
-import { Media, MediaTipo, ResultadosMedia } from "../tipos/TiposMedia";
+import { Media, MediaTipo, MediaResults } from "../tipos/TiposMedia";
 
 export default class BuscadorMedia {
     public static async BuscarMediaPorID (id: number, tipo: MediaTipo): Promise<Media> {
@@ -10,10 +10,10 @@ export default class BuscadorMedia {
         return respuesta.Media as Media;
     }
 
-    public static async BuscarMediaPorNombre (criterio: string, tipo: MediaTipo): Promise<ResultadosMedia> {
+    public static async BuscarMediaPorNombre (criterio: string, tipo: MediaTipo): Promise<MediaResults> {
         const query = this.ConsultaBuscarMediaPorNombre(criterio, tipo);
         const respuesta = await AnilistAPI.peticion(query, null);
-        const resultados = respuesta.Page.media as ResultadosMedia;
+        const resultados = respuesta.Page.media as MediaResults;
         if (resultados.length <= 0) throw new ErrorSinResultados('No se han encontrado resultados.');
         return resultados;
     }

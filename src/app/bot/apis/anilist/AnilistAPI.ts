@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import { MediaList } from './tipos/MediaList';
 import { PeticionAPI } from '../tipos/PeticionAPI';
 import { uRegistrado } from '../../tipos';
-import * as Tipos from './TiposAnilist';
+import * as Types from './TiposAnilist';
 
 import AnilistUser from './modelos/AnilistUser';
 
@@ -74,23 +74,11 @@ export default class AnilistAPI {
         return res.MediaListCollection as MediaCollection;
     }
 
-    public static async buscarMangaPorID (id: number): Promise<Tipos.Media> {
-        return await BuscadorMedia.BuscarMediaPorID(id, 'MANGA');
+    public static async fetchSeasonAnimes (year: number, season: Types.MediaSeason): Promise<Types.MediaResults> {
+        return await BuscadorAnimesTemporada.buscarAnimesTemporada(year, season);
     }
 
-    public static async buscarAnimePorNombre (criterio: string): Promise<Tipos.ResultadosMedia> {
-        return await BuscadorMedia.BuscarMediaPorNombre(criterio, 'ANIME');
-    }
-
-    public static async buscarMangaPorNombre (criterio: string): Promise<Tipos.ResultadosMedia> {
-        return await BuscadorMedia.BuscarMediaPorNombre(criterio, 'MANGA');
-    }
-
-    public static async buscarAnimesTemporada (anio: number, temporada: Tipos.MediaTemporada): Promise<Tipos.ResultadosMedia> {
-        return await BuscadorAnimesTemporada.buscarAnimesTemporada(anio, temporada);
-    }
-
-    public static async buscarUsuario (criterio: number | string): Promise<Tipos.Usuario> {
+    public static async buscarUsuario (criterio: number | string): Promise<Types.Usuario> {
         return await BuscadorUsuario.BuscarUsuario(criterio);
     }
 
@@ -99,8 +87,8 @@ export default class AnilistAPI {
     }
 
     public static async buscarListasCompletadosUsuarios (usuario: AnilistUser, usuarios: Array<uRegistrado>) {
-        const mediaUsuario: Tipos.MediaColeccion = await BuscadorListasCompletasUsuarios.BuscarListaCompletadosUsuario(usuario.getId());
-        const mediaUsuarios: Array<Tipos.MediaColeccion> = await BuscadorListasCompletasUsuarios.BuscarListasCompletadosUsuarios(usuarios);
+        const mediaUsuario: Types.MediaColeccion = await BuscadorListasCompletasUsuarios.BuscarListaCompletadosUsuario(usuario.getId());
+        const mediaUsuarios: Array<Types.MediaColeccion> = await BuscadorListasCompletasUsuarios.BuscarListasCompletadosUsuarios(usuarios);
         return { user: mediaUsuario, users: mediaUsuarios };
     }
 

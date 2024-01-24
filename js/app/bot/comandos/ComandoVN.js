@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const InteraccionComandoVN_1 = __importDefault(require("./modulos/InteraccionComandoVN"));
+const VNCommandInteraction_1 = __importDefault(require("./interactions/vn/VNCommandInteraction"));
 class ComandoVN {
     constructor() {
         this.cooldown = 10;
@@ -20,7 +20,7 @@ class ComandoVN {
             .setDescription('Indicar si la información obtenida debe traducirse al español.'));
     }
     async execute(interaction) {
-        const commandInteraction = new InteraccionComandoVN_1.default(interaction);
+        const commandInteraction = new VNCommandInteraction_1.default(interaction);
         await commandInteraction.execute();
     }
 }

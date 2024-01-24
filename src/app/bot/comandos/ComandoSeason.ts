@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
 import CommandInterface from "../interfaces/CommandInterface";
-import InteraccionComandoSeason from "./modulos/InteraccionComandoSeason";
+import SeasonCommandInteraction from "./interactions/season/SeasonCommandInteraction";
 
 export default class ComandoSeason implements CommandInterface {
     public readonly cooldown: number = 10;
@@ -24,7 +24,7 @@ export default class ComandoSeason implements CommandInterface {
                 .setRequired(true));
     
     public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        const commandInteraction = new InteraccionComandoSeason(interaction);
+        const commandInteraction = new SeasonCommandInteraction(interaction);
         await commandInteraction.execute();
     }
 }

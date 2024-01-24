@@ -3,7 +3,7 @@ import Helpers from "../../../Helpers";
 import ISO6391 from 'iso-639-1';
 import { DatosNovelaVisual, EstadoNovelaVisual } from "../tipos/NovelaVisual";
 
-export default class NovelaVisual {
+export default class VisualNovel {
     private _id: string;
     private _titulo: string;
     private _descripcion: string;
@@ -24,19 +24,19 @@ export default class NovelaVisual {
         this._titulo = datos.title;
         this._descripcion = Helpers.eliminarEtiquetasHTML(datos.description);
         this._codigoEstado = datos.devstatus;
-        this._estado = this.getEstado();
+        this._estado = this.getStatus();
         this._URL = `https://vndb.org/${this._id}`;
         this._imagenURL = datos.image.url;
         this._aliases = datos.aliases;
         this._fecha = new Date(datos.released);
-        this._idiomas = this.getNombresIdiomas(datos.languages);
+        this._idiomas = this.getLanguagesNames(datos.languages);
         this._plataformas = datos.platforms;
         this._duracion = datos.length_minutes;
         this._calificacion = datos.rating;
         this._popularidad = datos.popularity;
     }
 
-    private getNombresIdiomas(idiomas: Array<string>): Array<string> {
+    private getLanguagesNames (idiomas: Array<string>): Array<string> {
         const idiomasTraducidos = new Array<string>();
 
         for (let i = 0; i < idiomas.length; i++) {
@@ -50,15 +50,15 @@ export default class NovelaVisual {
         return idiomasTraducidos;
     }
 
-    public getID(): string {
+    public getId (): string {
         return this._id === null ? '?' : this._id;
     }
 
-    public getTitulo(): string {
+    public getTitle (): string {
         return this._titulo === null ? '?' : this._titulo;
     }
 
-    public getDescripcion(): string {
+    public getDescription (): string {
         return this.esDescripcionNula() ?
             'Descripcion Desconocida' : this._descripcion;
     }
@@ -68,7 +68,7 @@ export default class NovelaVisual {
         return (d.length <= 1 || d === null);
     }
 
-    public getEstado(): EstadoNovelaVisual {
+    public getStatus (): EstadoNovelaVisual {
         switch (this._codigoEstado) {
             case 0: return 'FINALIZADA';
             case 1: return 'EN DESARROLLO';
@@ -77,7 +77,7 @@ export default class NovelaVisual {
         }
     }
 
-    public getColorEstado(): ColorResolvable {
+    public getStatusColor (): ColorResolvable {
         let hex = "";
 
         switch (this._estado) {
@@ -91,39 +91,39 @@ export default class NovelaVisual {
         return ('#' + hex) as ColorResolvable;
     }
 
-    public getURL(): string {
+    public getUrl (): string {
         return this._URL;
     }
 
-    public getImagenURL(): string {
-        return this._imagenURL === null ? '?' : this._imagenURL;
+    public getCoverUrl(): string {
+        return this._imagenURL;
     }
 
-    public getAliases(): Array<string> {
+    public getAliases (): Array<string> {
         return this._aliases;
     }
 
-    public getFecha(): Date {
+    public getDate (): Date {
         return this._fecha;
     }
 
-    public getIdiomas(): Array<string> {
+    public getLanguages (): Array<string> {
         return this._idiomas;
     }
 
-    public getPlataformas(): Array<string> {
+    public getPlatforms (): Array<string> {
         return this._plataformas;
     }
 
-    public getDuracion(): number {
+    public getDuration (): number {
         return this._duracion;
     }
 
-    public getCalificacion(): number {
+    public getCalification (): number {
         return this._calificacion;
     }
 
-    public getPopularidad(): number {
+    public getPopularity (): number {
         return this._popularidad;
     }
 }

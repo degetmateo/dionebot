@@ -10,7 +10,7 @@ export default class Anime extends Media {
         return this.media.episodes;
     }
 
-    public getSeason (): TiposMedia.MediaTemporada {
+    public getSeason (): TiposMedia.MediaSeason {
         return this.media.season;
     }
 

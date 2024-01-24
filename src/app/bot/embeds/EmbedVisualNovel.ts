@@ -1,46 +1,62 @@
 import { EmbedBuilder } from "discord.js";
 import Helpers from "../Helpers";
-import NovelaVisual from "../apis/vndb/modelos/NovelaVisual";
+import NovelaVisual from "../apis/vndb/modelos/VisualNovel";
 
-export default class EmbedNovelaVisual extends EmbedBuilder {
+export default class EmbedVisualNovel extends EmbedBuilder {
     private constructor() {
         super();
     }
 
-    public static Crear(vn: NovelaVisual): EmbedNovelaVisual {
+    public static Create (vn: NovelaVisual): EmbedVisualNovel {
         const embed = this.CrearEmbedBasico(vn)
-            .setDescription(vn.getDescripcion());
+            .setDescription(vn.getDescription());
 
-        this.setCampoIdiomas(embed, vn.getIdiomas());
-        this.setCampoPlataformas(embed, vn.getPlataformas());
+        this.setCampoIdiomas(embed, vn.getLanguages());
+        this.setCampoPlataformas(embed, vn.getPlatforms());
 
         return embed;
     }
 
-    public static async CrearTraducido(vn: NovelaVisual): Promise<EmbedNovelaVisual> {
+    public static async CreateTranslated (vn: NovelaVisual): Promise<EmbedVisualNovel> {
         const embed = this.CrearEmbedBasico(vn)
-            .setDescription(await Helpers.traducir(vn.getDescripcion()));
+            .setDescription(await Helpers.traducir(vn.getDescription()));
 
 
-        this.setCampoIdiomas(embed, await Helpers.traducirElementosArreglo(vn.getIdiomas()));
-        this.setCampoPlataformas(embed, vn.getPlataformas());
+        this.setCampoIdiomas(embed, await Helpers.traducirElementosArreglo(vn.getLanguages()));
+        this.setCampoPlataformas(embed, vn.getPlatforms());
 
         return embed;
     }
 
-    private static CrearEmbedBasico(vn: NovelaVisual): EmbedNovelaVisual {
-        const embed = new EmbedNovelaVisual()
-            .setTitle(vn.getTitulo())
-            .setURL(vn.getURL())
-            .setThumbnail(vn.getImagenURL())
+    private static CrearEmbedBasico(vn: NovelaVisual): EmbedVisualNovel {
+        const embed = new EmbedVisualNovel()
+            .setTitle(vn.getTitle())
+            .setURL(vn.getUrl())
+            .setThumbnail(vn.getCoverUrl())
             .setFooter({ text: vn.getAliases().join(' | ') });
 
+        const calificationText = vn.getCalification() ?
+            `${vn.getCalification().toFixed(0)}/100` :
+            'Desconocida';
+
+        const popularityText = vn.getPopularity() ?
+            `${vn.getPopularity().toFixed(2)}` :
+            'Desconocida';
+
         const informacionCampos1 = `
-            ‣ **Estado**: ${vn.getEstado()}\n‣ **Calificación**: ${vn.getCalificacion()}/100\n‣ **Popularidad**: ${vn.getPopularidad()}
+            ‣ **Estado**: ${vn.getStatus()}\n‣ **Calificación**: ${calificationText}\n‣ **Popularidad**: ${popularityText}
         `;
 
+        const dateText = vn.getDate() ?
+            `${vn.getDate().toLocaleDateString()}` :
+            'Desconocida';
+
+        const durationText = vn.getDuration() ?
+            `${(vn.getDuration() / 60).toFixed(2)}hrs` :
+            'Desconocida';
+
         const informacionCampos2 = `
-            ‣ **Fecha de Salida**: ${vn.getFecha().toLocaleDateString()}\n‣ **Duración**: ${vn.getDuracion() / 60}hrs
+            ‣ **Fecha de Salida**: ${dateText}\n‣ **Duración**: ${durationText}
         `;
 
         embed.addFields(
@@ -51,7 +67,7 @@ export default class EmbedNovelaVisual extends EmbedBuilder {
         return embed;
     }
 
-    private static setCampoIdiomas(embed: EmbedNovelaVisual, idiomas: Array<string>) {
+    private static setCampoIdiomas(embed: EmbedVisualNovel, idiomas: Array<string>) {
         let informacionCampoIdiomas = "";
     
         for (let i = 0; i < idiomas.length; i++) {    
@@ -70,7 +86,7 @@ export default class EmbedNovelaVisual extends EmbedBuilder {
         })
     }
 
-    private static setCampoPlataformas(embed: EmbedNovelaVisual, plataformas: Array<string>) {
+    private static setCampoPlataformas(embed: EmbedVisualNovel, plataformas: Array<string>) {
         let informacionCampoPlataformas = "";
     
         for (let i = 0; i < plataformas.length; i++) {

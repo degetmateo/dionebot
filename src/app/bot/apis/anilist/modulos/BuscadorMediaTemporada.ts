@@ -1,19 +1,19 @@
 import ErrorSinResultados from "../../../../errores/ErrorSinResultados";
 import AnilistAPI from "../AnilistAPI";
-import { MediaTemporada, ResultadosMedia } from "../tipos/TiposMedia";
+import { MediaSeason, MediaResults } from "../tipos/TiposMedia";
 
 export default class BuscadorAnimesTemporada {
     public static readonly CANTIDAD_RESULTADOS: number = 50;
 
-    public static async buscarAnimesTemporada (anio: number, temporada: MediaTemporada): Promise<ResultadosMedia> {
+    public static async buscarAnimesTemporada (anio: number, temporada: MediaSeason): Promise<MediaResults> {
         const query: string = this.ConsultaBuscarMediaPorTemporada(anio, temporada);
         const respuesta = await AnilistAPI.peticion(query, null);
-        const resultados = respuesta.Page.media as ResultadosMedia;
+        const resultados = respuesta.Page.media as MediaResults;
         if (resultados.length <= 0) throw new ErrorSinResultados('No se han encontrado resultados.');
         return resultados;
     }
 
-    private static ConsultaBuscarMediaPorTemporada (anio: number, temporada: MediaTemporada): string {
+    private static ConsultaBuscarMediaPorTemporada (anio: number, temporada: MediaSeason): string {
         return `
             query  {
                 Page (perPage: ${this.CANTIDAD_RESULTADOS}) {

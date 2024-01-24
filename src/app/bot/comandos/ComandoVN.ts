@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
 import CommandInterface from "../interfaces/CommandInterface";
-import InteraccionComandoVN from "./modulos/InteraccionComandoVN";
+import VNCommandInteraction from "./interactions/vn/VNCommandInteraction";
 
 export default class ComandoVN implements CommandInterface {
     public readonly cooldown: number = 10;
@@ -19,7 +19,7 @@ export default class ComandoVN implements CommandInterface {
                 .setDescription('Indicar si la información obtenida debe traducirse al español.'));
     
     public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
-        const commandInteraction = new InteraccionComandoVN(interaction);
+        const commandInteraction = new VNCommandInteraction(interaction);
         await commandInteraction.execute();    
     }
 }

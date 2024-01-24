@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const InteraccionComandoSeason_1 = __importDefault(require("./modulos/InteraccionComandoSeason"));
+const SeasonCommandInteraction_1 = __importDefault(require("./interactions/season/SeasonCommandInteraction"));
 class ComandoSeason {
     constructor() {
         this.cooldown = 10;
@@ -22,7 +22,7 @@ class ComandoSeason {
             .setRequired(true));
     }
     async execute(interaction) {
-        const commandInteraction = new InteraccionComandoSeason_1.default(interaction);
+        const commandInteraction = new SeasonCommandInteraction_1.default(interaction);
         await commandInteraction.execute();
     }
 }
