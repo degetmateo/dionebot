@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import EmbedUsuario from "./EmbedUsuario";
+import EmbedUser from "./EmbedUser";
 import ScoreCollection from "../apis/anilist/ScoreCollection";
 
 export default class EmbedScores extends EmbedBuilder {
@@ -39,9 +39,9 @@ export default class EmbedScores extends EmbedBuilder {
                 n.user.name +  ` **[${n.score}]**`;
         }).join(' - ')}`;
 
-        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
+        informacion.length <= EmbedUser.LIMITE_CARACTERES_CAMPO ?
             this.addFields({ name: 'Completado por', value: informacion, inline: false }) :
-            this.addFields({ name: 'Completado por', value: informacion.slice(0, EmbedUsuario.LIMITE_CARACTERES_CAMPO - 4) + '\n...', inline: false });
+            this.addFields({ name: 'Completado por', value: informacion.slice(0, EmbedUser.LIMITE_CARACTERES_CAMPO - 4) + '\n...', inline: false });
     }
 
     private establecerCampoEnProgreso (): void {
@@ -50,9 +50,9 @@ export default class EmbedScores extends EmbedBuilder {
 
         const informacion = `${usuarios.map(n => n.user.name + ' **(' + n.progress + ')**' + ' **[' + n.score + ']**').join(' - ')}`;
 
-        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
+        informacion.length <= EmbedUser.LIMITE_CARACTERES_CAMPO ?
             this.addFields({ name: 'Comenzado por', value: informacion, inline: false }) :
-            this.addFields({ name: 'Comenzado por', value: informacion.slice(0, EmbedUsuario.LIMITE_CARACTERES_CAMPO - 4) + '\n...', inline: false });
+            this.addFields({ name: 'Comenzado por', value: informacion.slice(0, EmbedUser.LIMITE_CARACTERES_CAMPO - 4) + '\n...', inline: false });
     }
 
     private establecerCampoEnPausa (): void {
@@ -61,9 +61,9 @@ export default class EmbedScores extends EmbedBuilder {
 
         const informacion = `${usuarios.map(n => n.user.name + ' **(' + n.progress + ')**' + ' **[' + n.score + ']**').join(' - ')}`;
 
-        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
+        informacion.length <= EmbedUser.LIMITE_CARACTERES_CAMPO ?
             this.addFields({ name: 'Pausado por', value: informacion, inline: false }) :
-            this.addFields({ name: 'Pausado por', value: informacion.slice(0, EmbedUsuario.LIMITE_CARACTERES_CAMPO - 4) + '\n...', inline: false });
+            this.addFields({ name: 'Pausado por', value: informacion.slice(0, EmbedUser.LIMITE_CARACTERES_CAMPO - 4) + '\n...', inline: false });
     }
 
     private establecerCampoDropeados (): void {
@@ -72,9 +72,9 @@ export default class EmbedScores extends EmbedBuilder {
 
         const informacion = `${usuarios.map(n => n.user.name + ' **(' + n.progress + ')**' + ' **[' + n.score + ']**').join(' - ')}`;
 
-        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
+        informacion.length <= EmbedUser.LIMITE_CARACTERES_CAMPO ?
             this.addFields({ name: 'Dropeado por', value: informacion, inline: false }) :
-            this.addFields({ name: 'Dropeado por', value: informacion.slice(0, EmbedUsuario.LIMITE_CARACTERES_CAMPO - 4) + '\n...', inline: false });
+            this.addFields({ name: 'Dropeado por', value: informacion.slice(0, EmbedUser.LIMITE_CARACTERES_CAMPO - 4) + '\n...', inline: false });
     }
 
     private establecerCampoPlaneando (): void {
@@ -83,9 +83,9 @@ export default class EmbedScores extends EmbedBuilder {
 
         const informacion = `${usuarios.map(n => n.user.name).join(' - ')}`;
 
-        informacion.length <= EmbedUsuario.LIMITE_CARACTERES_CAMPO ?
+        informacion.length <= EmbedUser.LIMITE_CARACTERES_CAMPO ?
             this.addFields({ name: 'Planificado por', value: informacion, inline: false }) :
-            this.addFields({ name: 'Planificado por', value: informacion.slice(0, EmbedUsuario.LIMITE_CARACTERES_CAMPO - 4) + '\n...', inline: false });
+            this.addFields({ name: 'Planificado por', value: informacion.slice(0, EmbedUser.LIMITE_CARACTERES_CAMPO - 4) + '\n...', inline: false });
     }
 
     public estaVacio (): boolean {

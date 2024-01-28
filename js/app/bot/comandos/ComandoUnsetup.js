@@ -7,7 +7,7 @@ const discord_js_1 = require("discord.js");
 const UnsetupCommandInteraction_1 = __importDefault(require("./interactions/unsetup/UnsetupCommandInteraction"));
 class ComandoUnsetup {
     constructor() {
-        this.cooldown = 0;
+        this.cooldown = 5;
         this.data = new discord_js_1.SlashCommandBuilder()
             .setName("unsetup")
             .setDescription("Te elimina de los usuarios registrados.");

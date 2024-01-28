@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const CommandUnderMaintenanceException_1 = __importDefault(require("../../errores/CommandUnderMaintenanceException"));
+const UsuarioCommandInteraction_1 = __importDefault(require("./interactions/usuario/UsuarioCommandInteraction"));
 class ComandoUsuario {
     constructor() {
-        this.cooldown = 5;
+        this.cooldown = 10;
         this.data = new discord_js_1.SlashCommandBuilder()
             .setName("usuario")
             .setDescription("Muestra la información del perfil de Anilist de un usuario.")
@@ -16,7 +16,8 @@ class ComandoUsuario {
             .setDescription("El usuario del que se solicita la información."));
     }
     async execute(interaction) {
-        throw new CommandUnderMaintenanceException_1.default('Comando en mantenimiento.');
+        const commandInteraction = new UsuarioCommandInteraction_1.default(interaction);
+        await commandInteraction.execute();
     }
 }
 exports.default = ComandoUsuario;

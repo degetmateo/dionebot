@@ -23,7 +23,7 @@ export default class ComandoHelp implements CommandInterface {
 ▸ **\`/random\`** - Devuelve un anime al azar de tus PTW.
 
 ⚠️ - Comandos en mantenimiento:
-▸ **\`/afinidad\`**, **\`/usuario\`**
+▸ **\`/afinidad\`**
     `;
 
     public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {          

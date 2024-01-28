@@ -4,7 +4,7 @@ import CommandUnderMaintenanceException from "../../errores/CommandUnderMaintena
 import UnsetupCommandInteraction from "./interactions/unsetup/UnsetupCommandInteraction";
 
 export default class ComandoUnsetup implements CommandInterface {
-    public readonly cooldown: number = 0;
+    public readonly cooldown: number = 5;
 
     public readonly data = new SlashCommandBuilder()
         .setName("unsetup")

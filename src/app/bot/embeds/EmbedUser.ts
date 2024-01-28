@@ -1,37 +1,37 @@
 import { EmbedBuilder } from "discord.js";
-import UsuarioAnilist from "../apis/anilist/modelos/AnilistUser";
 import Helpers from "../Helpers";
+import AnilistUser from "../apis/anilist/modelos/AnilistUser";
 
-export default class EmbedUsuario extends EmbedBuilder {
-    private usuario: UsuarioAnilist;
+export default class EmbedUser extends EmbedBuilder {
+    private user: AnilistUser;
 
     public static readonly LIMITE_CARACTERES_DESCRIPCION: number = 2048;
     public static readonly LIMITE_CARACTERES_CAMPO: number = 1024;
 
-    private constructor(usuario: UsuarioAnilist) {
+    private constructor(user: AnilistUser) {
         super();
-        this.usuario = usuario;
+        this.user = user;
     }
 
-    public static async CrearPrincipal (usuario: UsuarioAnilist): Promise<EmbedUsuario> {
-        const embed = new EmbedUsuario(usuario);
+    public static Create (user: AnilistUser): EmbedUser {
+        const embed = new EmbedUser(user);
 
         embed.establecerColor();
         embed.establecerPortada();
         embed.establecerBanner();
-        await embed.establecerDescripcion();
+        embed.establecerDescripcion();
         
         return embed;
     }
 
     private establecerColor (): void {
-        this.setColor(this.usuario.getColor());
+        this.setColor(this.user.getColor());
     }
 
-    private async establecerDescripcion (): Promise<void> {
-        const estadisticas = this.usuario.getStatistics();
-        const generosCantidad = this.usuario.getGenresSortedByQuantity();
-        const generosCalificacion = this.usuario.getGenresSortedByCalification();
+    private establecerDescripcion (): void {
+        const estadisticas = this.user.getStatistics();
+        const generosCantidad = this.user.getGenresSortedByQuantity();
+        const generosCalificacion = this.user.getGenresSortedByCalification();
 
         const generoMasConsumido = generosCantidad[0]
         const generoMenosConsumido = generosCantidad[generosCantidad.length - 1]
@@ -41,16 +41,16 @@ export default class EmbedUsuario extends EmbedBuilder {
         const mediaPonderadaURL = 'https://es.wikipedia.org/wiki/Media_ponderada';
 
         const descripcion = `
-**[${this.usuario.getName()}](${this.usuario.getURL()})**
-↪ Se unio el **${this.usuario.getCreationDate().toLocaleDateString()}**
+**[${this.user.getName()}](${this.user.getURL()})**
+↪ Se unio el **${this.user.getCreationDate().toLocaleDateString()}**
 
-**[Anime](${this.usuario.getURL()}/animelist)**
+**[Anime](${this.user.getURL()}/animelist)**
 ↪ Entradas: **${estadisticas.anime.count}**
 ↪ Episodios Vistos: **${estadisticas.anime.episodesWatched}**
 ↪ Tiempo Visto: **${(estadisticas.anime.minutesWatched / 60).toFixed(1)} horas**
 ↪ Calificación Promedio: **${estadisticas.anime.meanScore}**
 
-**[Manga](${this.usuario.getURL()}/mangalist)**
+**[Manga](${this.user.getURL()}/mangalist)**
 ↪ Entradas: **${estadisticas.manga.count}**
 ↪ Capítulos Leídos: **${estadisticas.manga.chaptersRead}**
 ↪ Volúmenes Leídos: **${estadisticas.manga.volumesRead}**
@@ -67,12 +67,12 @@ export default class EmbedUsuario extends EmbedBuilder {
     }
 
     private establecerPortada (): void {
-        const avatarURL = this.usuario.getAvatarURL();
+        const avatarURL = this.user.getAvatarURL();
         avatarURL ? this.setThumbnail(avatarURL) : null;
     }
 
     private establecerBanner (): void {
-        const bannerURL = this.usuario.getBannerURL();
+        const bannerURL = this.user.getBannerURL();
         bannerURL ? this.setImage(bannerURL) : null;
     }
 }

@@ -3,7 +3,7 @@ import CommandInterface from "../interfaces/CommandInterface";
 import SetupCommandInteraction from "./interactions/setup/SetupCommandInteraction";
 
 export default class ComandoSetup implements CommandInterface {
-    public readonly cooldown: number = 0;
+    public readonly cooldown: number = 5;
 
     public readonly data = new SlashCommandBuilder()
         .setName("setup")

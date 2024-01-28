@@ -23,7 +23,7 @@ export default class ComandoSeason implements CommandInterface {
                             { name: "OTOÑO", value: "FALL" })
                 .setRequired(true));
     
-    public async execute(interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+    public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
         const commandInteraction = new SeasonCommandInteraction(interaction);
         await commandInteraction.execute();
     }

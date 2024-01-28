@@ -7,7 +7,7 @@ const discord_js_1 = require("discord.js");
 const SetupCommandInteraction_1 = __importDefault(require("./interactions/setup/SetupCommandInteraction"));
 class ComandoSetup {
     constructor() {
-        this.cooldown = 0;
+        this.cooldown = 5;
         this.data = new discord_js_1.SlashCommandBuilder()
             .setName("setup")
             .setDescription("Enlaza tu cuenta de una de estas plataformas.")

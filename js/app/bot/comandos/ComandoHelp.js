@@ -21,7 +21,7 @@ class ComandoHelp {
 ▸ **\`/random\`** - Devuelve un anime al azar de tus PTW.
 
 ⚠️ - Comandos en mantenimiento:
-▸ **\`/afinidad\`**, **\`/usuario\`**
+▸ **\`/afinidad\`**
     `;
     }
     async execute(interaction) {
