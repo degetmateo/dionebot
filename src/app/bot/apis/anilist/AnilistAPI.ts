@@ -42,7 +42,8 @@ export default class AnilistAPI {
     }
 
     public static async fetchUserById (id: number): Promise<AnilistUser> {
-        return new AnilistUser(await BuscadorUsuario.BuscarUsuario(id));
+        const result = await BuscadorUsuario.BuscarUsuario(id);
+        return result ? new AnilistUser(result) : null;
     }
 
     public static async fetchUserByName (name: string): Promise<AnilistUser> {
@@ -74,6 +75,12 @@ export default class AnilistAPI {
         return res.MediaListCollection as MediaCollection;
     }
 
+    public static async fetchUsersCompletedLists (user: AnilistUser, usersIds: Array<string>) {
+        const mediaUsuario: Types.MediaColeccion = await BuscadorListasCompletasUsuarios.BuscarListaCompletadosUsuario(user.getId());
+        const mediaUsuarios: Array<Types.MediaColeccion> = await BuscadorListasCompletasUsuarios.BuscarListasCompletadosUsuarios(usersIds);
+        return { user: mediaUsuario, users: mediaUsuarios };
+    }
+
     public static async fetchSeasonAnimes (year: number, season: Types.MediaSeason): Promise<Types.MediaResults> {
         return await BuscadorAnimesTemporada.buscarAnimesTemporada(year, season);
     }
@@ -86,11 +93,6 @@ export default class AnilistAPI {
         return await BuscadorEstadoMediaUsuarios.BuscarEstadoMediaUsuarios(mediaId, usersIds);
     }
 
-    public static async buscarListasCompletadosUsuarios (usuario: AnilistUser, usuarios: Array<uRegistrado>) {
-        const mediaUsuario: Types.MediaColeccion = await BuscadorListasCompletasUsuarios.BuscarListaCompletadosUsuario(usuario.getId());
-        const mediaUsuarios: Array<Types.MediaColeccion> = await BuscadorListasCompletasUsuarios.BuscarListasCompletadosUsuarios(usuarios);
-        return { user: mediaUsuario, users: mediaUsuarios };
-    }
 
     public static async peticion (query: string, variables: any): Promise<any | null> {
         const opciones: PeticionAPI = {

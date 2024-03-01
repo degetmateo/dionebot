@@ -32,9 +32,9 @@ export default class BuscadorListasCompletasUsuarios {
         `;
     }
 
-    private static async encontrarUsuarioPrivado (usuarios: uRegistrado[]) {
-        for (const usuario of usuarios) {
-            const id = parseInt(usuario.anilistId);
+    private static async encontrarUsuarioPrivado (usersIds: string[]) {
+        for (const userId of usersIds) {
+            const id = parseInt(userId);
             const query = this.ConsultaListaCompletaUsuario(id);
             let busqueda;
             try {
@@ -42,16 +42,17 @@ export default class BuscadorListasCompletasUsuarios {
             } catch (error) {
                 const message = error.message.toLowerCase();
                 if (message.includes('private user')) {
-                    const serverID = usuario.serverId;
-                    const userID = usuario.discordId;
+
+                    
+
                 }
             }
 
         }
     }
 
-    public static async BuscarListasCompletadosUsuarios (usuarios: Array<uRegistrado>): Promise<Array<MediaColeccion>> {
-        const tandas = Helpers.dividirArreglo(usuarios, AnilistAPI.CANTIDAD_CONSULTAS_POR_PETICION);
+    public static async BuscarListasCompletadosUsuarios (usersIds: Array<string>): Promise<Array<MediaColeccion>> {
+        const tandas = Helpers.dividirArreglo(usersIds, AnilistAPI.CANTIDAD_CONSULTAS_POR_PETICION);
         const querys = this.ConsultasListasCompletasUsuarios(tandas);
 
         let mediaColeccionUsuarios = new Array<MediaColeccion>();
@@ -74,7 +75,7 @@ export default class BuscadorListasCompletasUsuarios {
 
             const coleccionParcial = new Array<MediaColeccion>();
 
-            for (let i = 0; i < usuarios.length; i++) {
+            for (let i = 0; i < usersIds.length; i++) {
                 const u = respuesta[`u${i}`];
                 if (!u) continue;
                 coleccionParcial.push(u);
@@ -86,7 +87,7 @@ export default class BuscadorListasCompletasUsuarios {
         return mediaColeccionUsuarios;
     }
 
-    private static ConsultasListasCompletasUsuarios (tandas: uRegistrado[][]): Array<string> {
+    private static ConsultasListasCompletasUsuarios (tandas: string[][]): Array<string> {
         const consultas: Array<string> = new Array<string>();
         
         for (const i of tandas) {
@@ -96,11 +97,11 @@ export default class BuscadorListasCompletasUsuarios {
         return consultas;
     }
 
-    private static ConsultaListasCompletasUsuarios (usuarios: Array<uRegistrado>): string {
+    private static ConsultaListasCompletasUsuarios (usersIds: Array<string>): string {
         return `
             query {                
-                ${usuarios.map((u, i) => `
-                    u${i}: MediaListCollection (userId: ${u.anilistId}, type: ANIME, status: COMPLETED) {
+                ${usersIds.map((id, i) => `
+                    u${i}: MediaListCollection (userId: ${id}, type: ANIME, status: COMPLETED) {
                         ...mediaListCollection
                     }
                 `).join('\n')}

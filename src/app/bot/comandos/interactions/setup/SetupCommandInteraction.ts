@@ -33,6 +33,10 @@ export default class SetupCommandInteraction extends CommandInteraction {
 
         const registeredUsers = bot.servers.getUsers(serverId);
         
+        if (registeredUsers.length >= 30) {
+            throw new GenericException('Se ha alcanzado la cantidad máxima de usuarios registrados en este servidor.');
+        }
+        
         if (registeredUsers.find(user => user.discordId === userId)) {
             throw new GenericException('Ya te encuentras registrado.');
         }
@@ -47,6 +51,7 @@ export default class SetupCommandInteraction extends CommandInteraction {
             premium: false,
             users: []
         });
+
 
         server.users.push({ discordId: userId, anilistId: anilistUser.getId() });
         await server.save();

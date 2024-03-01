@@ -1,4 +1,4 @@
-import { Client, Collection, ActivityType } from 'discord.js';
+import { Client, Collection, ActivityType, PresenceData } from 'discord.js';
 
 import fs from "fs";
 import path from "path";
@@ -70,28 +70,35 @@ export default class Bot extends Client {
     }
 
     private setStatusInterval = () => {
-        setInterval(() => {
-            const num = Math.floor(Math.random() * 2);
-
-            switch (num) {
-                case 0: this.user?.presence.set({
-                            status: "online",
-                            activities: [{
-                                type: ActivityType.Listening,
-                                name: '/help'
-                            }]
-                        })
-                break;
-                case 1: this.user?.presence.set({
-                            status: "online",
-                            activities: [{
-                                type: ActivityType.Watching,
-                                name: this.getServersAmount() + " servidores!"
-                            }]
-                        })
-                break;
+        const states: Array<PresenceData> = [
+            {
+                status: "online",
+                activities: [{
+                    type: ActivityType.Listening,
+                    name: '/help'
+                }]
+            },
+    
+            {
+                status: "online",
+                activities: [{
+                    type: ActivityType.Watching,
+                    name: this.getServersAmount() + " servidores!"
+                }]  
             }
-        }, 5000);
+        ];
+
+        let i = 0;
+
+        setInterval(() => {
+            let presence = states[i];
+            if (!presence) {
+                i = 0;
+                presence = states[i];
+            }
+            this.user.presence.set(presence);
+            i++;
+        }, 10000);
     }
 
     public loadServers = async (): Promise<void> => {
