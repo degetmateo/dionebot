@@ -29,30 +29,32 @@ class Bot extends discord_js_1.Client {
             }
         };
         this.setStatusInterval = () => {
-            setInterval(() => {
-                var _a, _b;
-                const num = Math.floor(Math.random() * 2);
-                switch (num) {
-                    case 0:
-                        (_a = this.user) === null || _a === void 0 ? void 0 : _a.presence.set({
-                            status: "online",
-                            activities: [{
-                                    type: discord_js_1.ActivityType.Listening,
-                                    name: '/help'
-                                }]
-                        });
-                        break;
-                    case 1:
-                        (_b = this.user) === null || _b === void 0 ? void 0 : _b.presence.set({
-                            status: "online",
-                            activities: [{
-                                    type: discord_js_1.ActivityType.Watching,
-                                    name: this.getServersAmount() + " servidores!"
-                                }]
-                        });
-                        break;
+            const states = [
+                {
+                    status: "online",
+                    activities: [{
+                            type: discord_js_1.ActivityType.Listening,
+                            name: '/help'
+                        }]
+                },
+                {
+                    status: "online",
+                    activities: [{
+                            type: discord_js_1.ActivityType.Watching,
+                            name: this.getServersAmount() + " servidores!"
+                        }]
                 }
-            }, 5000);
+            ];
+            let i = 0;
+            setInterval(() => {
+                let presence = states[i];
+                if (!presence) {
+                    i = 0;
+                    presence = states[i];
+                }
+                this.user.presence.set(presence);
+                i++;
+            }, 10000);
         };
         this.loadServers = async () => {
             this.servers.empty();

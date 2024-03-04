@@ -33,9 +33,9 @@ class BuscadorListasCompletasUsuarios {
             }
         `;
     }
-    static async encontrarUsuarioPrivado(usuarios) {
-        for (const usuario of usuarios) {
-            const id = parseInt(usuario.anilistId);
+    static async encontrarUsuarioPrivado(usersIds) {
+        for (const userId of usersIds) {
+            const id = parseInt(userId);
             const query = this.ConsultaListaCompletaUsuario(id);
             let busqueda;
             try {
@@ -44,14 +44,12 @@ class BuscadorListasCompletasUsuarios {
             catch (error) {
                 const message = error.message.toLowerCase();
                 if (message.includes('private user')) {
-                    const serverID = usuario.serverId;
-                    const userID = usuario.discordId;
                 }
             }
         }
     }
-    static async BuscarListasCompletadosUsuarios(usuarios) {
-        const tandas = Helpers_1.default.dividirArreglo(usuarios, AnilistAPI_1.default.CANTIDAD_CONSULTAS_POR_PETICION);
+    static async BuscarListasCompletadosUsuarios(usersIds) {
+        const tandas = Helpers_1.default.dividirArreglo(usersIds, AnilistAPI_1.default.CANTIDAD_CONSULTAS_POR_PETICION);
         const querys = this.ConsultasListasCompletasUsuarios(tandas);
         let mediaColeccionUsuarios = new Array();
         for (let indiceQuerys = 0; indiceQuerys < querys.length; indiceQuerys++) {
@@ -69,7 +67,7 @@ class BuscadorListasCompletasUsuarios {
                 throw error;
             }
             const coleccionParcial = new Array();
-            for (let i = 0; i < usuarios.length; i++) {
+            for (let i = 0; i < usersIds.length; i++) {
                 const u = respuesta[`u${i}`];
                 if (!u)
                     continue;
@@ -86,11 +84,11 @@ class BuscadorListasCompletasUsuarios {
         }
         return consultas;
     }
-    static ConsultaListasCompletasUsuarios(usuarios) {
+    static ConsultaListasCompletasUsuarios(usersIds) {
         return `
             query {                
-                ${usuarios.map((u, i) => `
-                    u${i}: MediaListCollection (userId: ${u.anilistId}, type: ANIME, status: COMPLETED) {
+                ${usersIds.map((id, i) => `
+                    u${i}: MediaListCollection (userId: ${id}, type: ANIME, status: COMPLETED) {
                         ...mediaListCollection
                     }
                 `).join('\n')}

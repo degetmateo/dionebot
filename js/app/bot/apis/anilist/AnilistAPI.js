@@ -29,7 +29,8 @@ class AnilistAPI {
         return (await BuscadorMedia_1.default.BuscarMediaPorNombre(name, 'MANGA')).map(r => new Manga_1.default(r));
     }
     static async fetchUserById(id) {
-        return new AnilistUser_1.default(await BuscadorUsuario_1.default.BuscarUsuario(id));
+        const result = await BuscadorUsuario_1.default.BuscarUsuario(id);
+        return result ? new AnilistUser_1.default(result) : null;
     }
     static async fetchUserByName(name) {
         return new AnilistUser_1.default(await BuscadorUsuario_1.default.BuscarUsuario(name));
@@ -56,6 +57,11 @@ class AnilistAPI {
         const res = await AnilistAPI.peticion(request, {});
         return res.MediaListCollection;
     }
+    static async fetchUsersCompletedLists(user, usersIds) {
+        const mediaUsuario = await BuscadorListasCompletasUsuarios_1.default.BuscarListaCompletadosUsuario(user.getId());
+        const mediaUsuarios = await BuscadorListasCompletasUsuarios_1.default.BuscarListasCompletadosUsuarios(usersIds);
+        return { user: mediaUsuario, users: mediaUsuarios };
+    }
     static async fetchSeasonAnimes(year, season) {
         return await BuscadorMediaTemporada_1.default.buscarAnimesTemporada(year, season);
     }
@@ -64,11 +70,6 @@ class AnilistAPI {
     }
     static async buscarEstadoMediaUsuarios(mediaId, usersIds) {
         return await BuscadorEstadoMediaUsuarios_1.default.BuscarEstadoMediaUsuarios(mediaId, usersIds);
-    }
-    static async buscarListasCompletadosUsuarios(usuario, usuarios) {
-        const mediaUsuario = await BuscadorListasCompletasUsuarios_1.default.BuscarListaCompletadosUsuario(usuario.getId());
-        const mediaUsuarios = await BuscadorListasCompletasUsuarios_1.default.BuscarListasCompletadosUsuarios(usuarios);
-        return { user: mediaUsuario, users: mediaUsuarios };
     }
     static async peticion(query, variables) {
         const opciones = {

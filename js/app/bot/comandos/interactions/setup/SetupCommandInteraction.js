@@ -26,6 +26,9 @@ class SetupCommandInteraction extends CommandInteraction_1.default {
         const serverId = this.interaction.guildId;
         const userId = this.interaction.user.id;
         const registeredUsers = bot.servers.getUsers(serverId);
+        if (registeredUsers.length >= 30) {
+            throw new GenericException_1.default('Se ha alcanzado la cantidad máxima de usuarios registrados en este servidor.');
+        }
         if (registeredUsers.find(user => user.discordId === userId)) {
             throw new GenericException_1.default('Ya te encuentras registrado.');
         }
