@@ -73,6 +73,16 @@ class Helpers {
     static async asyncMap(array, asyncCallback) {
         return await Promise.all(array.map(asyncCallback));
     }
+    static addElements(array) {
+        let sum = 0;
+        for (const element of array) {
+            sum += element;
+        }
+        return sum;
+    }
+    static calculateAverage(array) {
+        return this.addElements(array) / array.length;
+    }
 }
 exports.default = Helpers;
 Helpers.LENGUAJE_TRADUCCION = 'es';

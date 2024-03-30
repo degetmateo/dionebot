@@ -19,9 +19,6 @@ class ComandoHelp {
 ▸ **\`/vn\`** - Muestra información de la novela visual que busques.
 ▸ **\`/season\`** - Devuelve todos los animes que salieron en la temporada que elijas.
 ▸ **\`/random\`** - Devuelve un anime al azar de tus PTW.
-
-⚠️ - Comandos en mantenimiento:
-▸ **\`/afinidad\`**
     `;
     }
     async execute(interaction) {

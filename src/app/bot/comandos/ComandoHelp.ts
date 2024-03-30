@@ -21,9 +21,6 @@ export default class ComandoHelp implements CommandInterface {
 ▸ **\`/vn\`** - Muestra información de la novela visual que busques.
 ▸ **\`/season\`** - Devuelve todos los animes que salieron en la temporada que elijas.
 ▸ **\`/random\`** - Devuelve un anime al azar de tus PTW.
-
-⚠️ - Comandos en mantenimiento:
-▸ **\`/afinidad\`**
     `;
 
     public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {          

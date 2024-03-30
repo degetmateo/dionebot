@@ -91,4 +91,18 @@ export default class Helpers {
     public static async asyncMap <T, U> (array: T[], asyncCallback: (element: T) => Promise<U>): Promise<U[]> {
         return await Promise.all(array.map(asyncCallback));
     }
+
+    public static addElements (array: number[]): number {
+        let sum = 0;
+
+        for (const element of array) {
+            sum += element;
+        }
+
+        return sum;
+    }
+
+    public static calculateAverage (array: number[]): number {
+        return this.addElements(array) / array.length;
+    }
 }
