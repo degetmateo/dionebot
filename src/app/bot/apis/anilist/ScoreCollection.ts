@@ -47,4 +47,8 @@ export default class ScoreCollection {
     public getDropped () {
         return this.mediaList.filter(media => media.status === 'DROPPED');
     }
+
+    public getRepeating () {
+        return this.mediaList.filter(media => media.status === 'REPEATING');
+    }
 }

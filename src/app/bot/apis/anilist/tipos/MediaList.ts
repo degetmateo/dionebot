@@ -11,4 +11,4 @@ export type MediaList = {
     repeat: number
 }
 
-export type MediaListEstado = 'COMPLETED' | 'CURRENT' | 'DROPPED' | 'PLANNING' | 'PAUSED';
+export type MediaListEstado = 'COMPLETED' | 'CURRENT' | 'DROPPED' | 'PLANNING' | 'PAUSED' | 'REPEATING';
