@@ -14,7 +14,7 @@ module.exports = (bot: Bot) => {
             const newServer = new ServerModel(props)
 
             await newServer.save();
-            bot.servers.add(props);
+            bot.loadServers();
         } catch (error) {
             console.error(error)
         }

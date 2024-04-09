@@ -83,8 +83,9 @@ class Bot extends discord_js_1.Client {
             await this.loadServers();
         }, Bot.HORA_EN_MILISEGUNDOS);
         require('./events/interaction-create')(this);
-        require('./events/guild-member-remove')(this);
         require('./events/guild-create')(this);
+        require('./events/guild-member-remove')(this);
+        require('./events/guild-delete')(this);
         try {
             await this.login(token);
         }
