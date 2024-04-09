@@ -115,6 +115,14 @@ export default class Bot extends Client {
         })
     }
 
+    public async createServer (id: string) {
+        await new ServerModel({
+            id: id,
+            premium: false,
+            users: []
+        }).save();
+    }
+
     public async fetchServer (id: string) {
         return await this.guilds.fetch(id);
     }

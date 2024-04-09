@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const CommandInteraction_1 = __importDefault(require("../CommandInteraction"));
-const ServerModel_1 = __importDefault(require("../../../../database/modelos/ServerModel"));
 const AnilistAPI_1 = __importDefault(require("../../../apis/anilist/AnilistAPI"));
 const EmbedUser_1 = __importDefault(require("../../../embeds/EmbedUser"));
 const NoResultsException_1 = __importDefault(require("../../../../errores/NoResultsException"));
@@ -16,11 +15,12 @@ class UsuarioCommandInteraction extends CommandInteraction_1.default {
     async execute() {
         var _a;
         await this.interaction.deferReply();
+        const bot = this.interaction.client;
         const user = this.interaction.options.getUser("usuario");
         const userId = user ? user.id : this.interaction.user.id;
         const serverId = (_a = this.interaction.guild) === null || _a === void 0 ? void 0 : _a.id;
-        const server = await ServerModel_1.default.findOne({ id: serverId });
-        const registeredUser = server.users.find(u => u.discordId === userId);
+        const registeredUsers = bot.servers.getUsers(serverId);
+        const registeredUser = registeredUsers.find(u => u.discordId === userId);
         if (!registeredUser)
             throw new NoResultsException_1.default('El usuario especificado no esta registrado.');
         const anilistUser = await AnilistAPI_1.default.fetchUserById(parseInt(registeredUser.anilistId));

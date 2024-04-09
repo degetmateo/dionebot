@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
-    anilistId: { type: String, unique: true },
-    discordId: { type: String, unique: true },
+    anilistId: { type: String },
+    discordId: { type: String },
     buff: Buffer
 });
 

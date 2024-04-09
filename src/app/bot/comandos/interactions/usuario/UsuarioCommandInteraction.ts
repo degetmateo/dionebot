@@ -4,6 +4,7 @@ import ServerModel from "../../../../database/modelos/ServerModel";
 import AnilistAPI from "../../../apis/anilist/AnilistAPI";
 import EmbedUser from "../../../embeds/EmbedUser";
 import NoResultsException from "../../../../errores/NoResultsException";
+import Bot from "../../../Bot";
 
 export default class UsuarioCommandInteraction extends CommandInteraction {
     protected interaction: ChatInputCommandInteraction<CacheType>;
@@ -16,13 +17,15 @@ export default class UsuarioCommandInteraction extends CommandInteraction {
     public async execute (): Promise<void> {
         await this.interaction.deferReply();
 
+        const bot = this.interaction.client as Bot;
+
         const user = this.interaction.options.getUser("usuario");
 
         const userId = user ? user.id : this.interaction.user.id;
         const serverId = this.interaction.guild?.id as string;
 
-        const server = await ServerModel.findOne({ id: serverId });
-        const registeredUser = server.users.find(u => u.discordId === userId);
+        const registeredUsers = bot.servers.getUsers(serverId);
+        const registeredUser = registeredUsers.find(u => u.discordId === userId);
 
         if (!registeredUser) throw new NoResultsException('El usuario especificado no esta registrado.');
 
