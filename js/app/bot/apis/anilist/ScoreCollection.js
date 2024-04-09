@@ -36,5 +36,8 @@ class ScoreCollection {
     getDropped() {
         return this.mediaList.filter(media => media.status === 'DROPPED');
     }
+    getRepeating() {
+        return this.mediaList.filter(media => media.status === 'REPEATING');
+    }
 }
 exports.default = ScoreCollection;

@@ -22,6 +22,7 @@ class EmbedScores extends discord_js_1.EmbedBuilder {
         embed.establecerCampoEnPausa();
         embed.establecerCampoDropeados();
         embed.establecerCampoPlaneando();
+        embed.establecerCampoRewatching();
         return embed;
     }
     establecerCampoCompletados() {
@@ -72,6 +73,15 @@ class EmbedScores extends discord_js_1.EmbedBuilder {
         informacion.length <= EmbedUser_1.default.LIMITE_CARACTERES_CAMPO ?
             this.addFields({ name: 'Planificado por', value: informacion, inline: false }) :
             this.addFields({ name: 'Planificado por', value: informacion.slice(0, EmbedUser_1.default.LIMITE_CARACTERES_CAMPO - 4) + '\n...', inline: false });
+    }
+    establecerCampoRewatching() {
+        const usuarios = this.scores.getRepeating();
+        if (usuarios.length <= 0)
+            return;
+        const informacion = `${usuarios.map(n => n.user.name + ' **(' + n.progress + ')**' + ' **[' + n.score + ']**').join(' - ')}`;
+        informacion.length <= EmbedUser_1.default.LIMITE_CARACTERES_CAMPO ?
+            this.addFields({ name: 'Volviendo a ver', value: informacion, inline: false }) :
+            this.addFields({ name: 'Volviendo a ver', value: informacion.slice(0, EmbedUser_1.default.LIMITE_CARACTERES_CAMPO - 4) + '\n...', inline: false });
     }
     estaVacio() {
         return (!this.toJSON().description && !this.toJSON().fields);
