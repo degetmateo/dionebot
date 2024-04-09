@@ -80,8 +80,8 @@ class EmbedScores extends discord_js_1.EmbedBuilder {
             return;
         const informacion = `${usuarios.map(n => n.user.name + ' **(' + n.progress + ')**' + ' **[' + n.score + ']**').join(' - ')}`;
         informacion.length <= EmbedUser_1.default.LIMITE_CARACTERES_CAMPO ?
-            this.addFields({ name: 'Volviendo a ver', value: informacion, inline: false }) :
-            this.addFields({ name: 'Volviendo a ver', value: informacion.slice(0, EmbedUser_1.default.LIMITE_CARACTERES_CAMPO - 4) + '\n...', inline: false });
+            this.addFields({ name: 'Volviendo a ver/leer', value: informacion, inline: false }) :
+            this.addFields({ name: 'Volviendo a ver/leer', value: informacion.slice(0, EmbedUser_1.default.LIMITE_CARACTERES_CAMPO - 4) + '\n...', inline: false });
     }
     estaVacio() {
         return (!this.toJSON().description && !this.toJSON().fields);
