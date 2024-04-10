@@ -10,6 +10,7 @@ import ServerModel from "../../../../database/modelos/ServerModel";
 import Embed from "../../../embeds/Embed";
 
 export default class SetupCommandInteraction extends CommandInteraction {
+    private static readonly MAX_USERS = 15;
     protected interaction: ChatInputCommandInteraction<CacheType>;
     
     constructor (interaction: ChatInputCommandInteraction<CacheType>) {
@@ -33,7 +34,7 @@ export default class SetupCommandInteraction extends CommandInteraction {
 
         const registeredUsers = bot.servers.getUsers(serverId);
         
-        if (registeredUsers.length >= 30) {
+        if (registeredUsers.length >= SetupCommandInteraction.MAX_USERS) {
             throw new GenericException('Se ha alcanzado la cantidad máxima de usuarios registrados en este servidor.');
         }
         
