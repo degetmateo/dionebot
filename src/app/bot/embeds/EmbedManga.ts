@@ -32,7 +32,7 @@ export default class EmbedManga extends EmbedMedia {
 
     private addInfoFields (): EmbedManga {
         const informacionCampos1 = `
-            ‣ **Formato**: ${this.media.getFormat() || 'Desconocido'}\n‣ **Estado**: ${this.media.getStatus() || 'Desconocido'}\n‣ **Calificación**: ${this.media.getMeanScore() || '-'}/100\n‣ **Popularidad**: ${this.media.getPopularity() || 'Desconocida'}
+            ‣ **Formato**: ${this.media.getFormat() || 'Desconocido'}\n‣ **Estado**: ${this.media.getStatus() || 'Desconocido'}\n‣ **Calificación**: ${this.media.getMeanScore() ? this.media.getMeanScore() + '/100' : 'Desconocida'}\n‣ **Popularidad**: ${this.media.getPopularity() || 'Desconocida'}
         `;
 
         const fecha = this.media.getStartDate();
