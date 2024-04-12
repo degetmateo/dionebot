@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const CommandInteraction_1 = __importDefault(require("../CommandInteraction"));
 const Helpers_1 = __importDefault(require("../../../Helpers"));
-const NoResultsException_1 = __importDefault(require("../../../../errores/NoResultsException"));
+const NoResultsException_1 = __importDefault(require("../../../../errors/NoResultsException"));
 const EmbedVisualNovel_1 = __importDefault(require("../../../embeds/EmbedVisualNovel"));
 const VisualNovel_1 = __importDefault(require("../../../apis/vndb/modelos/VisualNovel"));
 const VisualNovelDatabaseAPI_1 = __importDefault(require("../../../apis/vndb/VisualNovelDatabaseAPI"));

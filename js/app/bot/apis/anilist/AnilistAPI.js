@@ -10,11 +10,11 @@ const BuscadorMediaTemporada_1 = __importDefault(require("./modulos/BuscadorMedi
 const BuscadorUsuario_1 = __importDefault(require("./modulos/BuscadorUsuario"));
 const BuscadorEstadoMediaUsuarios_1 = __importDefault(require("./modulos/BuscadorEstadoMediaUsuarios"));
 const BuscadorListasCompletasUsuarios_1 = __importDefault(require("./modulos/BuscadorListasCompletasUsuarios"));
-const ErrorDemasiadasPeticiones_1 = __importDefault(require("../../../errores/ErrorDemasiadasPeticiones"));
-const ErrorSinResultados_1 = __importDefault(require("../../../errores/ErrorSinResultados"));
 const Anime_1 = __importDefault(require("./modelos/media/Anime"));
 const ScoreCollection_1 = __importDefault(require("./ScoreCollection"));
 const Manga_1 = __importDefault(require("./modelos/media/Manga"));
+const NoResultsException_1 = __importDefault(require("../../../errors/NoResultsException"));
+const TooManyRequestsException_1 = __importDefault(require("../../../errors/TooManyRequestsException"));
 class AnilistAPI {
     static async fetchAnimeById(id) {
         return new Anime_1.default(await BuscadorMedia_1.default.BuscarMediaPorID(id, 'ANIME'));
@@ -79,22 +79,22 @@ class AnilistAPI {
         };
         const data = await (0, node_fetch_1.default)(this.API_URL, opciones);
         if (!data)
-            throw new ErrorSinResultados_1.default('No se han encontrado resultados.');
+            throw new NoResultsException_1.default('No se han encontrado resultados.');
         const res = await data.json();
         if (res.errors) {
             const e = res.errors[0];
             const message = e.message.toLowerCase();
             if (message.includes('not found')) {
-                throw new ErrorSinResultados_1.default('No se han encontrado resultados.');
+                throw new NoResultsException_1.default('No se han encontrado resultados.');
             }
             if (message.includes('max query complexity')) {
                 console.error(e);
-                throw new ErrorDemasiadasPeticiones_1.default('Se han realizado demasiadas peticiones al servidor. Intentalo de nuevo mas tarde.');
+                throw new TooManyRequestsException_1.default('Se han realizado demasiadas peticiones al servidor. Intentalo de nuevo mas tarde.');
             }
             throw new Error(message);
         }
         if (!res || !res.data)
-            throw new ErrorSinResultados_1.default('No se han encontrado resultados.');
+            throw new NoResultsException_1.default('No se han encontrado resultados.');
         return res.data;
     }
     static async obtenerTokenDeAcceso(codigo) {

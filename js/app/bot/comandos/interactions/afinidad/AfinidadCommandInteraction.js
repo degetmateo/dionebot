@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const CommandInteraction_1 = __importDefault(require("../CommandInteraction"));
-const NoResultsException_1 = __importDefault(require("../../../../errores/NoResultsException"));
+const NoResultsException_1 = __importDefault(require("../../../../errors/NoResultsException"));
 const AnilistAPI_1 = __importDefault(require("../../../apis/anilist/AnilistAPI"));
 const Helpers_1 = __importDefault(require("../../../Helpers"));
 const ServerModel_1 = __importDefault(require("../../../../database/modelos/ServerModel"));

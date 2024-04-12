@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ErrorSinResultados_1 = __importDefault(require("../../../../errores/ErrorSinResultados"));
+const NoResultsException_1 = __importDefault(require("../../../../errors/NoResultsException"));
 const Helpers_1 = __importDefault(require("../../../Helpers"));
 const AnilistAPI_1 = __importDefault(require("../AnilistAPI"));
 class BuscadorListasCompletasUsuarios {
@@ -11,7 +11,7 @@ class BuscadorListasCompletasUsuarios {
         const query = this.ConsultaListaCompletaUsuario(id);
         const respuesta = await AnilistAPI_1.default.peticion(query, null);
         if (!respuesta.coleccion)
-            throw new ErrorSinResultados_1.default('Ha ocurrido un error al buscar al usuario principal.');
+            throw new NoResultsException_1.default('Ha ocurrido un error al buscar al usuario principal.');
         return respuesta.coleccion;
     }
     static ConsultaListaCompletaUsuario(id) {

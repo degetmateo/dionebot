@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const CommandInteraction_1 = __importDefault(require("../CommandInteraction"));
-const IllegalArgumentException_1 = __importDefault(require("../../../../errores/IllegalArgumentException"));
-const GenericException_1 = __importDefault(require("../../../../errores/GenericException"));
+const IllegalArgumentException_1 = __importDefault(require("../../../../errors/IllegalArgumentException"));
+const GenericException_1 = __importDefault(require("../../../../errors/GenericException"));
 const AnilistAPI_1 = __importDefault(require("../../../apis/anilist/AnilistAPI"));
 const Helpers_1 = __importDefault(require("../../../Helpers"));
 const ServerModel_1 = __importDefault(require("../../../../database/modelos/ServerModel"));

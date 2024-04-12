@@ -82,15 +82,22 @@ class Bot extends discord_js_1.Client {
         setInterval(async () => {
             await this.loadServers();
         }, Bot.HORA_EN_MILISEGUNDOS);
-        require('./events/interaction-create')(this);
-        require('./events/guild-create')(this);
-        require('./events/guild-member-remove')(this);
-        require('./events/guild-delete')(this);
+        this.loadEvents();
         try {
             await this.login(token);
         }
         catch (error) {
             console.error(error);
+        }
+    }
+    loadEvents() {
+        const eventsFolderPath = path_1.default.join(__dirname + '/events/');
+        const eventsFolderFiles = fs_1.default.readdirSync(eventsFolderPath);
+        for (const file of eventsFolderFiles) {
+            if (!file.endsWith('.ts') && !file.endsWith('.js'))
+                continue;
+            const filePath = path_1.default.join(eventsFolderPath, file);
+            require(filePath)(this);
         }
     }
     async createServer(id) {

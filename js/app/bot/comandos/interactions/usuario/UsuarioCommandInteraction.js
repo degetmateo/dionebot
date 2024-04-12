@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const CommandInteraction_1 = __importDefault(require("../CommandInteraction"));
 const AnilistAPI_1 = __importDefault(require("../../../apis/anilist/AnilistAPI"));
 const EmbedUser_1 = __importDefault(require("../../../embeds/EmbedUser"));
-const NoResultsException_1 = __importDefault(require("../../../../errores/NoResultsException"));
+const NoResultsException_1 = __importDefault(require("../../../../errors/NoResultsException"));
 class UsuarioCommandInteraction extends CommandInteraction_1.default {
     constructor(interaction) {
         super();

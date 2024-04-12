@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ErrorSinResultados_1 = __importDefault(require("../../../../errores/ErrorSinResultados"));
+const NoResultsException_1 = __importDefault(require("../../../../errors/NoResultsException"));
 const AnilistAPI_1 = __importDefault(require("../AnilistAPI"));
 class BuscadorAnimesTemporada {
     static async buscarAnimesTemporada(anio, temporada) {
@@ -11,7 +11,7 @@ class BuscadorAnimesTemporada {
         const respuesta = await AnilistAPI_1.default.peticion(query, null);
         const resultados = respuesta.Page.media;
         if (resultados.length <= 0)
-            throw new ErrorSinResultados_1.default('No se han encontrado resultados.');
+            throw new NoResultsException_1.default('No se han encontrado resultados.');
         return resultados;
     }
     static ConsultaBuscarMediaPorTemporada(anio, temporada) {

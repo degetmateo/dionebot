@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ErrorSinResultados_1 = __importDefault(require("../../../errores/ErrorSinResultados"));
+const NoResultsException_1 = __importDefault(require("../../../errors/NoResultsException"));
 class VisualNovelDatabaseAPI {
     static async consultarAPI(tipoCriterio, criterio) {
         const informacionPeticion = {
@@ -23,14 +23,14 @@ class VisualNovelDatabaseAPI {
         const respuesta = await this.consultarAPI(tipoCriterio, criterio);
         const resultado = respuesta.results[0];
         if (!resultado)
-            throw new ErrorSinResultados_1.default('No se han encontrado resultados.');
+            throw new NoResultsException_1.default('No se han encontrado resultados.');
         return resultado;
     }
     static async obtenerResultados(criterio) {
         const respuesta = await this.consultarAPI('search', criterio);
         const resultados = respuesta.results;
         if (resultados.length <= 0)
-            throw new ErrorSinResultados_1.default('No se han encontrado resultados.');
+            throw new NoResultsException_1.default('No se han encontrado resultados.');
         return resultados;
     }
 }

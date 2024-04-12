@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const CommandInteraction_1 = __importDefault(require("../CommandInteraction"));
-const NoResultsException_1 = __importDefault(require("../../../../errores/NoResultsException"));
+const NoResultsException_1 = __importDefault(require("../../../../errors/NoResultsException"));
 const ServerModel_1 = __importDefault(require("../../../../database/modelos/ServerModel"));
 const Embed_1 = __importDefault(require("../../../embeds/Embed"));
 class UnsetupCommandInteraction extends CommandInteraction_1.default {

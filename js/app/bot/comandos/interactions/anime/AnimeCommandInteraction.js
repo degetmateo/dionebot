@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const CommandInteraction_1 = __importDefault(require("../CommandInteraction"));
 const Helpers_1 = __importDefault(require("../../../Helpers"));
-const IllegalArgumentException_1 = __importDefault(require("../../../../errores/IllegalArgumentException"));
+const IllegalArgumentException_1 = __importDefault(require("../../../../errors/IllegalArgumentException"));
 const AnilistAPI_1 = __importDefault(require("../../../apis/anilist/AnilistAPI"));
 const AnimeInteractionController_1 = __importDefault(require("./AnimeInteractionController"));
 class AnimeCommandInteraction extends CommandInteraction_1.default {

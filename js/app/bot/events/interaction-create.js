@@ -5,14 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const Embed_1 = __importDefault(require("../embeds/Embed"));
-const ErrorGenerico_1 = __importDefault(require("../../errores/ErrorGenerico"));
-const ErrorSinResultados_1 = __importDefault(require("../../errores/ErrorSinResultados"));
-const CommandUnderMaintenanceException_1 = __importDefault(require("../../errores/CommandUnderMaintenanceException"));
-const ErrorArgumentoInvalido_1 = __importDefault(require("../../errores/ErrorArgumentoInvalido"));
-const ErrorDemasiadasPeticiones_1 = __importDefault(require("../../errores/ErrorDemasiadasPeticiones"));
-const IllegalArgumentException_1 = __importDefault(require("../../errores/IllegalArgumentException"));
-const GenericException_1 = __importDefault(require("../../errores/GenericException"));
-const NoResultsException_1 = __importDefault(require("../../errores/NoResultsException"));
+const CommandUnderMaintenanceException_1 = __importDefault(require("../../errors/CommandUnderMaintenanceException"));
+const IllegalArgumentException_1 = __importDefault(require("../../errors/IllegalArgumentException"));
+const GenericException_1 = __importDefault(require("../../errors/GenericException"));
+const NoResultsException_1 = __importDefault(require("../../errors/NoResultsException"));
+const TooManyRequestsException_1 = __importDefault(require("../../errors/TooManyRequestsException"));
 module.exports = (bot) => {
     bot.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
         var _a;
@@ -50,14 +47,11 @@ module.exports = (bot) => {
             await command.execute(interaction);
         }
         catch (error) {
-            const esErrorCritico = !(error instanceof ErrorGenerico_1.default) &&
-                !(error instanceof ErrorSinResultados_1.default) &&
-                !(error instanceof ErrorArgumentoInvalido_1.default) &&
-                !(error instanceof ErrorDemasiadasPeticiones_1.default) &&
-                !(error instanceof GenericException_1.default) &&
+            const esErrorCritico = !(error instanceof GenericException_1.default) &&
                 !(error instanceof IllegalArgumentException_1.default) &&
                 !(error instanceof NoResultsException_1.default) &&
-                !(error instanceof CommandUnderMaintenanceException_1.default);
+                !(error instanceof CommandUnderMaintenanceException_1.default) &&
+                !(error instanceof TooManyRequestsException_1.default);
             const embed = Embed_1.default.Crear()
                 .establecerColor(Embed_1.default.COLOR_ROJO);
             (!esErrorCritico) ?
