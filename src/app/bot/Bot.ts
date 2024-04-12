@@ -40,15 +40,25 @@ export default class Bot extends Client {
             await this.loadServers();
         }, Bot.HORA_EN_MILISEGUNDOS);
 
-        require('./events/interaction-create')(this);
-        require('./events/guild-create')(this);
-        require('./events/guild-member-remove')(this);
-        require('./events/guild-delete')(this);
+
+        this.loadEvents();
 
         try {
             await this.login(token);
         } catch (error) {
             console.error(error)
+        }
+    }
+
+    private loadEvents () {
+        const eventsFolderPath = path.join(__dirname + '/events/');
+        const eventsFolderFiles = fs.readdirSync(eventsFolderPath);
+
+        for (const file of eventsFolderFiles) {
+            if (!file.endsWith('.ts') && !file.endsWith('.js')) continue;
+
+            const filePath = path.join(eventsFolderPath, file);
+            require(filePath)(this);
         }
     }
 

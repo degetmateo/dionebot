@@ -3,9 +3,6 @@ import path from 'path';
 import Bot from '../bot/Bot';
 import DB from '../database/DB';
 
-import Aniuser from '../database/modelos/Aniuser';
-import ServerModel from '../database/modelos/ServerModel';
-
 export default class Servidor {
     private puerto: number;
     private app: express.Express;
