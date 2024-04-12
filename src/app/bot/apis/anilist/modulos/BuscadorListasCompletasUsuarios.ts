@@ -1,6 +1,5 @@
-import ErrorSinResultados from "../../../../errores/ErrorSinResultados";
+import NoResultsException from "../../../../errors/NoResultsException";
 import Helpers from "../../../Helpers";
-import { uRegistrado } from "../../../tipos";
 import AnilistAPI from "../AnilistAPI";
 import { MediaColeccion } from "../tipos/TiposMedia";
 
@@ -8,7 +7,7 @@ export default class BuscadorListasCompletasUsuarios {
     public static async BuscarListaCompletadosUsuario (id: number): Promise<MediaColeccion> {
         const query = this.ConsultaListaCompletaUsuario(id);
         const respuesta = await AnilistAPI.peticion(query, null);
-        if (!respuesta.coleccion) throw new ErrorSinResultados('Ha ocurrido un error al buscar al usuario principal.');
+        if (!respuesta.coleccion) throw new NoResultsException('Ha ocurrido un error al buscar al usuario principal.');
         return respuesta.coleccion as MediaColeccion;
     }
 

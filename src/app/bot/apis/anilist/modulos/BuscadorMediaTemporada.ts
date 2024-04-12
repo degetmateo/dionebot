@@ -1,4 +1,4 @@
-import ErrorSinResultados from "../../../../errores/ErrorSinResultados";
+import NoResultsException from "../../../../errors/NoResultsException";
 import AnilistAPI from "../AnilistAPI";
 import { MediaSeason, MediaResults } from "../tipos/TiposMedia";
 
@@ -9,7 +9,7 @@ export default class BuscadorAnimesTemporada {
         const query: string = this.ConsultaBuscarMediaPorTemporada(anio, temporada);
         const respuesta = await AnilistAPI.peticion(query, null);
         const resultados = respuesta.Page.media as MediaResults;
-        if (resultados.length <= 0) throw new ErrorSinResultados('No se han encontrado resultados.');
+        if (resultados.length <= 0) throw new NoResultsException('No se han encontrado resultados.');
         return resultados;
     }
 

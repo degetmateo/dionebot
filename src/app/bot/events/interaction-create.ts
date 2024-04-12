@@ -1,14 +1,11 @@
 import { Collection, Events } from "discord.js";
 import Bot from "../Bot";
 import Embed from "../embeds/Embed";
-import ErrorGenerico from "../../errores/ErrorGenerico";
-import ErrorSinResultados from "../../errores/ErrorSinResultados";
-import CommandUnderMaintenanceException from "../../errores/CommandUnderMaintenanceException";
-import ErrorArgumentoInvalido from "../../errores/ErrorArgumentoInvalido";
-import ErrorDemasiadasPeticiones from "../../errores/ErrorDemasiadasPeticiones";
-import IllegalArgumentException from "../../errores/IllegalArgumentException";
-import GenericException from "../../errores/GenericException";
-import NoResultsException from "../../errores/NoResultsException";
+import CommandUnderMaintenanceException from "../../errors/CommandUnderMaintenanceException";
+import IllegalArgumentException from "../../errors/IllegalArgumentException";
+import GenericException from "../../errors/GenericException";
+import NoResultsException from "../../errors/NoResultsException";
+import TooManyRequestsException from "../../errors/TooManyRequestsException";
 
 module.exports = (bot: Bot) => {
     bot.on(Events.InteractionCreate, async interaction => {
@@ -54,14 +51,11 @@ module.exports = (bot: Bot) => {
             await command.execute(interaction);
         } catch (error) {
             const esErrorCritico =
-                !(error instanceof ErrorGenerico) &&
-                !(error instanceof ErrorSinResultados) &&
-                !(error instanceof ErrorArgumentoInvalido) &&
-                !(error instanceof ErrorDemasiadasPeticiones) &&
                 !(error instanceof GenericException) &&
                 !(error instanceof IllegalArgumentException) &&
                 !(error instanceof NoResultsException) &&
-                !(error instanceof CommandUnderMaintenanceException);
+                !(error instanceof CommandUnderMaintenanceException) &&
+                !(error instanceof TooManyRequestsException);
 
             const embed = Embed.Crear()
                 .establecerColor(Embed.COLOR_ROJO);

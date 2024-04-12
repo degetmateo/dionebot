@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, CacheType } from "discord.js";
 import CommandInteraction from "../CommandInteraction";
 import Helpers from "../../../Helpers";
-import NoResultsException from "../../../../errores/NoResultsException";
+import NoResultsException from "../../../../errors/NoResultsException";
 import EmbedVisualNovel from "../../../embeds/EmbedVisualNovel";
 import VisualNovel from "../../../apis/vndb/modelos/VisualNovel";
 import VisualNovelDatabaseAPI from "../../../apis/vndb/VisualNovelDatabaseAPI";

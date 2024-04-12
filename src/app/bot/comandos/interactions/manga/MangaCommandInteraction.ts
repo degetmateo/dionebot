@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, CacheType } from "discord.js";
 import CommandInteraction from "../CommandInteraction";
 import Helpers from "../../../Helpers";
-import IllegalArgumentException from "../../../../errores/IllegalArgumentException";
+import IllegalArgumentException from "../../../../errors/IllegalArgumentException";
 import AnilistAPI from "../../../apis/anilist/AnilistAPI";
 import MangaInteractionController from "./MangaInteractionController";
 

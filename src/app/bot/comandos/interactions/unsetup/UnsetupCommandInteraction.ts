@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, CacheType } from "discord.js";
 import CommandInteraction from "../CommandInteraction";
 import Bot from "../../../Bot";
-import NoResultsException from "../../../../errores/NoResultsException";
+import NoResultsException from "../../../../errors/NoResultsException";
 import ServerModel from "../../../../database/modelos/ServerModel";
 import Embed from "../../../embeds/Embed";
 

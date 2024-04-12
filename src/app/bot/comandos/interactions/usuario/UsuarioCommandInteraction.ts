@@ -3,7 +3,7 @@ import CommandInteraction from "../CommandInteraction";
 import ServerModel from "../../../../database/modelos/ServerModel";
 import AnilistAPI from "../../../apis/anilist/AnilistAPI";
 import EmbedUser from "../../../embeds/EmbedUser";
-import NoResultsException from "../../../../errores/NoResultsException";
+import NoResultsException from "../../../../errors/NoResultsException";
 import Bot from "../../../Bot";
 
 export default class UsuarioCommandInteraction extends CommandInteraction {

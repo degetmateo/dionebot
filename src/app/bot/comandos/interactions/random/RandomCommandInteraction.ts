@@ -1,8 +1,8 @@
 import { ChatInputCommandInteraction, CacheType } from "discord.js";
 import CommandInteraction from "../CommandInteraction";
 import Bot from "../../../Bot";
-import NoResultsException from "../../../../errores/NoResultsException";
-import CommandUnderMaintenanceException from "../../../../errores/CommandUnderMaintenanceException";
+import NoResultsException from "../../../../errors/NoResultsException";
+import CommandUnderMaintenanceException from "../../../../errors/CommandUnderMaintenanceException";
 import AnilistAPI from "../../../apis/anilist/AnilistAPI";
 import Helpers from "../../../Helpers";
 import EmbedAnime from "../../../embeds/EmbedAnime";

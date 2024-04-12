@@ -1,7 +1,6 @@
 import fetch from 'node-fetch';
 import { MediaList } from './tipos/MediaList';
 import { PeticionAPI } from '../tipos/PeticionAPI';
-import { uRegistrado } from '../../tipos';
 import * as Types from './TiposAnilist';
 
 import AnilistUser from './modelos/AnilistUser';
@@ -11,12 +10,12 @@ import BuscadorAnimesTemporada from './modulos/BuscadorMediaTemporada';
 import BuscadorUsuario from './modulos/BuscadorUsuario';
 import BuscadorEstadoMediaUsuarios from './modulos/BuscadorEstadoMediaUsuarios';
 import BuscadorListasCompletasUsuarios from './modulos/BuscadorListasCompletasUsuarios';
-import ErrorDemasiadasPeticiones from '../../../errores/ErrorDemasiadasPeticiones';
-import ErrorSinResultados from '../../../errores/ErrorSinResultados';
 import Anime from './modelos/media/Anime';
 import ScoreCollection from './ScoreCollection';
 import { MediaCollection } from './types';
 import Manga from './modelos/media/Manga';
+import NoResultsException from '../../../errors/NoResultsException';
+import TooManyRequestsException from '../../../errors/TooManyRequestsException';
 
 export default class AnilistAPI {
     private static readonly API_URL: string = "https://graphql.anilist.co";
@@ -102,7 +101,7 @@ export default class AnilistAPI {
         }
         
         const data = await fetch(this.API_URL, opciones);
-        if (!data) throw new ErrorSinResultados('No se han encontrado resultados.');
+        if (!data) throw new NoResultsException('No se han encontrado resultados.');
 
         const res: any = await data.json();
         
@@ -111,18 +110,18 @@ export default class AnilistAPI {
             const message = e.message.toLowerCase();
 
             if (message.includes('not found')) {
-                throw new ErrorSinResultados('No se han encontrado resultados.');
+                throw new NoResultsException('No se han encontrado resultados.');
             }
 
             if (message.includes('max query complexity')) {
                 console.error(e);
-                throw new ErrorDemasiadasPeticiones('Se han realizado demasiadas peticiones al servidor. Intentalo de nuevo mas tarde.');
+                throw new TooManyRequestsException('Se han realizado demasiadas peticiones al servidor. Intentalo de nuevo mas tarde.');
             }
 
             throw new Error(message);
         }
 
-        if (!res || !res.data) throw new ErrorSinResultados('No se han encontrado resultados.');
+        if (!res || !res.data) throw new NoResultsException('No se han encontrado resultados.');
         return res.data;
     }
 

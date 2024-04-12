@@ -1,7 +1,7 @@
 import { DatosNovelaVisual } from "./tipos/NovelaVisual";
 import { PeticionAPI, TipoConsulta } from "../tipos/PeticionAPI";
 import { TipoCriterio } from "./tipos/PeticionNovelaVisual";
-import ErrorSinResultados from "../../../errores/ErrorSinResultados";
+import NoResultsException from "../../../errors/NoResultsException";
 
 export default class VisualNovelDatabaseAPI {
     private static readonly API_URL: string = 'https://api.vndb.org/kana/vn';
@@ -38,14 +38,14 @@ export default class VisualNovelDatabaseAPI {
     public static async obtenerPrimerResultado (tipoCriterio: TipoCriterio, criterio: string): Promise<DatosNovelaVisual | null> {
         const respuesta: RespuestaPeticion = await this.consultarAPI(tipoCriterio, criterio);
         const resultado = respuesta.results[0];
-        if (!resultado) throw new ErrorSinResultados('No se han encontrado resultados.');
+        if (!resultado) throw new NoResultsException('No se han encontrado resultados.');
         return resultado;
     }
 
     public static async obtenerResultados (criterio: string): Promise<Array<DatosNovelaVisual>> {
         const respuesta: RespuestaPeticion = await this.consultarAPI('search', criterio);
         const resultados = respuesta.results;
-        if (resultados.length <= 0) throw new ErrorSinResultados('No se han encontrado resultados.');
+        if (resultados.length <= 0) throw new NoResultsException('No se han encontrado resultados.');
         return resultados;
     }
 }
