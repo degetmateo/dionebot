@@ -115,7 +115,12 @@ export default class AnilistAPI {
 
             if (message.includes('max query complexity')) {
                 console.error(e);
-                throw new TooManyRequestsException('Se han realizado demasiadas peticiones al servidor. Intentalo de nuevo mas tarde.');
+                throw new TooManyRequestsException('Se han realizado demasiadas peticiones al servidor. Inténtalo de nuevo más tarde.');
+            }
+
+            if (message.includes('too many requests')) {
+                console.error(e);
+                throw new TooManyRequestsException('Se han realizado demasiadas peticiones al servidor. Inténtalo de nuevo más tarde.');
             }
 
             throw new Error(message);
