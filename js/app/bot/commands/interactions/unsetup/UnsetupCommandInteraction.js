@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const CommandInteraction_1 = __importDefault(require("../CommandInteraction"));
 const NoResultsException_1 = __importDefault(require("../../../../errors/NoResultsException"));
-const ServerModel_1 = __importDefault(require("../../../../database/modelos/ServerModel"));
 const Embed_1 = __importDefault(require("../../../embeds/Embed"));
+const DB_1 = __importDefault(require("../../../../database/DB"));
 class UnsetupCommandInteraction extends CommandInteraction_1.default {
     constructor(interaction) {
         super();
@@ -19,7 +19,7 @@ class UnsetupCommandInteraction extends CommandInteraction_1.default {
         const user = server.users.find(u => u.discordId === this.interaction.user.id);
         if (!user)
             throw new NoResultsException_1.default('No estas registrado.');
-        await ServerModel_1.default.updateOne({ id: this.interaction.guildId }, { $pull: { users: { discordId: this.interaction.user.id } } });
+        await DB_1.default.removeUser(server.id, user.discordId);
         await bot.loadServers();
         const embed = Embed_1.default.Crear()
             .establecerColor(Embed_1.default.COLOR_VERDE)

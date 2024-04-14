@@ -2,11 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const builders_1 = require("@discordjs/builders");
 const discord_js_1 = require("discord.js");
-class ComandoHelp {
+class CommandHelp {
     constructor() {
+        this.name = 'help';
         this.cooldown = 5;
         this.data = new discord_js_1.SlashCommandBuilder()
-            .setName("help")
+            .setName('help')
             .setDescription("Envía un mensaje con los comandos.");
         this.DESCRIPCION = `
 ▸ **\`/informacion\`** - Informacion acerca de mi.
@@ -34,4 +35,4 @@ class ComandoHelp {
         });
     }
 }
-exports.default = ComandoHelp;
+exports.default = CommandHelp;

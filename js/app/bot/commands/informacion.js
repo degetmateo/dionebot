@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-class ComandoInformacion {
+class CommandInformacion {
     constructor() {
+        this.name = 'informacion';
         this.cooldown = 5;
         this.data = new discord_js_1.SlashCommandBuilder()
-            .setName("informacion")
+            .setName('informacion')
             .setDescription("Obtén información acerca de mi!");
         this.DESCRIPCION = `
 Mi nombre es Dione y soy un bot de Discord que está siendo desarrollado en TypeScript.\n
@@ -30,4 +31,4 @@ https://dionebot.onrender.com/
         });
     }
 }
-exports.default = ComandoInformacion;
+exports.default = CommandInformacion;

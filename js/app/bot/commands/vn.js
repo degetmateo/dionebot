@@ -5,12 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const VNCommandInteraction_1 = __importDefault(require("./interactions/vn/VNCommandInteraction"));
-class ComandoVN {
+class CommandVN {
     constructor() {
+        this.name = 'vn';
         this.cooldown = 10;
         this.data = new discord_js_1.SlashCommandBuilder()
             .setName('vn')
             .setDescription('Obtén información acerca de una novela visual.')
+            .setDMPermission(false)
             .addStringOption(opcion => opcion
             .setName('nombre-o-id')
             .setDescription('El nombre o el ID con el que se va a buscar la novela visual.')
@@ -24,4 +26,4 @@ class ComandoVN {
         await commandInteraction.execute();
     }
 }
-exports.default = ComandoVN;
+exports.default = CommandVN;

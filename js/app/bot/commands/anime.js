@@ -5,13 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const AnimeCommandInteraction_1 = __importDefault(require("./interactions/anime/AnimeCommandInteraction"));
-class ComandoAnime {
+class CommandAnime {
     constructor() {
-        this.nombre = 'anime';
+        this.name = 'anime';
         this.cooldown = 10;
         this.data = new discord_js_1.SlashCommandBuilder()
             .setName('anime')
             .setDescription('Busca un anime en la base de datos de anilist.')
+            .setDMPermission(false)
             .addStringOption((opcion) => opcion
             .setName('nombre-o-id')
             .setDescription('El nombre o el ID con el que se va a buscar el anime.')
@@ -25,4 +26,4 @@ class ComandoAnime {
         await commandInteraction.execute();
     }
 }
-exports.default = ComandoAnime;
+exports.default = CommandAnime;

@@ -8,8 +8,9 @@ const IllegalArgumentException_1 = __importDefault(require("../../../../errors/I
 const GenericException_1 = __importDefault(require("../../../../errors/GenericException"));
 const AnilistAPI_1 = __importDefault(require("../../../apis/anilist/AnilistAPI"));
 const Helpers_1 = __importDefault(require("../../../Helpers"));
-const ServerModel_1 = __importDefault(require("../../../../database/modelos/ServerModel"));
 const Embed_1 = __importDefault(require("../../../embeds/Embed"));
+const NoResultsException_1 = __importDefault(require("../../../../errors/NoResultsException"));
+const DB_1 = __importDefault(require("../../../../database/DB"));
 class SetupCommandInteraction extends CommandInteraction_1.default {
     constructor(interaction) {
         super();
@@ -32,17 +33,17 @@ class SetupCommandInteraction extends CommandInteraction_1.default {
         if (registeredUsers.find(user => user.discordId === userId)) {
             throw new GenericException_1.default('Ya te encuentras registrado.');
         }
-        const anilistUser = Helpers_1.default.isNumber(query) ?
-            await AnilistAPI_1.default.fetchUserById(parseInt(query)) : await AnilistAPI_1.default.fetchUserByName(query);
-        let server = await ServerModel_1.default.findOne({ id: serverId });
-        if (!server)
-            server = new ServerModel_1.default({
-                id: serverId,
-                premium: false,
-                users: []
-            });
-        server.users.push({ discordId: userId, anilistId: anilistUser.getId() });
-        await server.save();
+        let anilistUser;
+        try {
+            anilistUser = Helpers_1.default.isNumber(query) ?
+                await AnilistAPI_1.default.fetchUserById(parseInt(query)) : await AnilistAPI_1.default.fetchUserByName(query);
+        }
+        catch (error) {
+            if (error instanceof NoResultsException_1.default) {
+                throw new NoResultsException_1.default('No se ha encontrado el usuario proporcionado en anilist.');
+            }
+        }
+        await DB_1.default.createUser(serverId, userId, anilistUser.getId() + '');
         await bot.loadServers();
         const embed = Embed_1.default.Crear()
             .establecerColor(Embed_1.default.COLOR_VERDE)

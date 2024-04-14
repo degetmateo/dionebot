@@ -23,7 +23,15 @@ class UsuarioCommandInteraction extends CommandInteraction_1.default {
         const registeredUser = registeredUsers.find(u => u.discordId === userId);
         if (!registeredUser)
             throw new NoResultsException_1.default('El usuario especificado no esta registrado.');
-        const anilistUser = await AnilistAPI_1.default.fetchUserById(parseInt(registeredUser.anilistId));
+        let anilistUser;
+        try {
+            anilistUser = await AnilistAPI_1.default.fetchUserById(parseInt(registeredUser.anilistId));
+        }
+        catch (error) {
+            if (error instanceof NoResultsException_1.default) {
+                throw new NoResultsException_1.default('El usuario registrado ya no se encuentra en anilist.');
+            }
+        }
         const embed = EmbedUser_1.default.Create(anilistUser);
         await this.interaction.editReply({
             embeds: [embed]

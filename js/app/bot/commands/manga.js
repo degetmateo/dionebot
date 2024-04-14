@@ -5,12 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const MangaCommandInteraction_1 = __importDefault(require("./interactions/manga/MangaCommandInteraction"));
-class ComandoManga {
+class CommandManga {
     constructor() {
+        this.name = 'manga';
         this.cooldown = 10;
         this.data = new discord_js_1.SlashCommandBuilder()
             .setName('manga')
             .setDescription('Busca un manga en la base de datos de anilist.')
+            .setDMPermission(false)
             .addStringOption(opcion => opcion
             .setName('nombre-o-id')
             .setDescription('El nombre o el ID con el que se va a buscar el manga.')
@@ -24,4 +26,4 @@ class ComandoManga {
         await commandInteraction.execute();
     }
 }
-exports.default = ComandoManga;
+exports.default = CommandManga;

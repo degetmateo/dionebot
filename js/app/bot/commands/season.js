@@ -5,12 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const SeasonCommandInteraction_1 = __importDefault(require("./interactions/season/SeasonCommandInteraction"));
-class ComandoSeason {
+class CommandSeason {
     constructor() {
+        this.name = 'season';
         this.cooldown = 10;
         this.data = new discord_js_1.SlashCommandBuilder()
-            .setName("season")
+            .setName('season')
             .setDescription("Devuelve los animes que salieron en el año y en la temporada pasados como parámetro.")
+            .setDMPermission(false)
             .addIntegerOption(option => option
             .setName("año")
             .setDescription("El año en el que se emitieron los animes.")
@@ -26,4 +28,4 @@ class ComandoSeason {
         await commandInteraction.execute();
     }
 }
-exports.default = ComandoSeason;
+exports.default = CommandSeason;

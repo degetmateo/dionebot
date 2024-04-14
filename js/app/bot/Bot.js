@@ -13,7 +13,7 @@ class Bot extends discord_js_1.Client {
     constructor() {
         super({ intents: [] });
         this.loadCommands = () => {
-            const directorioComandos = path_1.default.join(__dirname + "/comandos/");
+            const directorioComandos = path_1.default.join(__dirname + "/commands/");
             const archivos = fs_1.default.readdirSync(directorioComandos);
             for (const archivo of archivos) {
                 if (!archivo.endsWith('.ts') && !archivo.endsWith('.js'))
