@@ -3,11 +3,12 @@ import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder } from "dis
 import CommandInterface from "../interfaces/CommandInterface";
 import Bot from "../Bot";
 
-export default class ComandoHelp implements CommandInterface {
+export default class CommandHelp implements CommandInterface {
+    public readonly name: string = 'help';
     public readonly cooldown: number = 5;
 
     public readonly data: SlashCommandBuilder = new SlashCommandBuilder()
-        .setName("help")
+        .setName('help')
         .setDescription("Envía un mensaje con los comandos.");
 
     private readonly DESCRIPCION: string = `

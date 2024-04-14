@@ -1,6 +1,7 @@
 import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js";
 
 export default interface CommandInterface {
+    readonly name: string;
     readonly cooldown: number;
 
     readonly data:

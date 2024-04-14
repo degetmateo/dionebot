@@ -2,12 +2,14 @@ import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "dis
 import CommandInterface from "../interfaces/CommandInterface";
 import UsuarioCommandInteraction from "./interactions/usuario/UsuarioCommandInteraction";
 
-export default class ComandoUsuario implements CommandInterface {
+export default class CommandUsuario implements CommandInterface {
+    public readonly name: string = 'usuario';
     public readonly cooldown: number = 10;
 
     public readonly data = new SlashCommandBuilder()
-        .setName("usuario")
+        .setName('usuario')
         .setDescription("Muestra la información del perfil de Anilist de un usuario.")
+        .setDMPermission(false)
         .addUserOption(option => 
             option
                 .setName("usuario")

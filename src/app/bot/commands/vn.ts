@@ -2,12 +2,14 @@ import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "dis
 import CommandInterface from "../interfaces/CommandInterface";
 import VNCommandInteraction from "./interactions/vn/VNCommandInteraction";
 
-export default class ComandoVN implements CommandInterface {
+export default class CommandVN implements CommandInterface {
+    public readonly name: string = 'vn';
     public readonly cooldown: number = 10;
     
     public readonly data = new SlashCommandBuilder()
         .setName('vn')
         .setDescription('Obtén información acerca de una novela visual.')
+        .setDMPermission(false)
         .addStringOption(opcion =>
             opcion
                 .setName('nombre-o-id')

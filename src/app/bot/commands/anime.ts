@@ -2,13 +2,14 @@ import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType, SlashComma
 import CommandInterface from "../interfaces/CommandInterface";
 import AnimeCommandInteraction from "./interactions/anime/AnimeCommandInteraction";
 
-export default class ComandoAnime implements CommandInterface {
-    public readonly nombre: string = 'anime';
+export default class CommandAnime implements CommandInterface {
+    public readonly name: string = 'anime';
     public readonly cooldown: number = 10;
 
     public readonly data = new SlashCommandBuilder()
         .setName('anime')
         .setDescription('Busca un anime en la base de datos de anilist.')
+        .setDMPermission(false)
         .addStringOption((opcion: SlashCommandStringOption) =>
             opcion
                 .setName('nombre-o-id')

@@ -33,10 +33,10 @@ export default class EmbedUser extends EmbedBuilder {
         const generosCantidad = this.user.getGenresSortedByQuantity();
         const generosCalificacion = this.user.getGenresSortedByCalification();
 
-        const generoMasConsumido = generosCantidad[0]
-        const generoMenosConsumido = generosCantidad[generosCantidad.length - 1]
-        const generoMejorCalificado = generosCalificacion[0]
-        const generoPeorCalificado = generosCalificacion[generosCalificacion.length - 1]
+        const generoMasConsumido = generosCantidad[0] || { genre: 'Desconocido', count: '-', meanScore: 0 }
+        const generoMenosConsumido = generosCantidad[generosCantidad.length - 1] || { genre: 'Desconocido', count: '-', meanScore: 0 }
+        const generoMejorCalificado = generosCalificacion[0] || { genre: 'Desconocido', count: '-', meanScore: 0 }
+        const generoPeorCalificado = generosCalificacion[generosCalificacion.length - 1] || { genre: 'Desconocido', count: '-', meanScore: 0 }
 
         const mediaPonderadaURL = 'https://es.wikipedia.org/wiki/Media_ponderada';
 
@@ -45,13 +45,13 @@ export default class EmbedUser extends EmbedBuilder {
 ↪ Se unio el **${this.user.getCreationDate().toLocaleDateString()}**
 
 **[Anime](${this.user.getURL()}/animelist)**
-↪ Entradas: **${estadisticas.anime.count}**
+↪ Cantidad: **${estadisticas.anime.count}**
 ↪ Episodios Vistos: **${estadisticas.anime.episodesWatched}**
 ↪ Tiempo Visto: **${(estadisticas.anime.minutesWatched / 60).toFixed(1)} horas**
 ↪ Calificación Promedio: **${estadisticas.anime.meanScore}**
 
 **[Manga](${this.user.getURL()}/mangalist)**
-↪ Entradas: **${estadisticas.manga.count}**
+↪ Cantidad: **${estadisticas.manga.count}**
 ↪ Capítulos Leídos: **${estadisticas.manga.chaptersRead}**
 ↪ Volúmenes Leídos: **${estadisticas.manga.volumesRead}**
 ↪ Calificación Promedio: **${estadisticas.manga.meanScore}**

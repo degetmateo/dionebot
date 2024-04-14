@@ -2,11 +2,12 @@ import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, CacheTy
 import CommandInterface from "../interfaces/CommandInterface";
 import Bot from "../Bot";
 
-export default class ComandoInformacion implements CommandInterface {
+export default class CommandInformacion implements CommandInterface {
+    public readonly name: string = 'informacion';
     public readonly cooldown: number = 5;
 
     public readonly data: SlashCommandBuilder = new SlashCommandBuilder()
-        .setName("informacion")
+        .setName('informacion')
         .setDescription("Obtén información acerca de mi!");
 
     private readonly DESCRIPCION: string = `

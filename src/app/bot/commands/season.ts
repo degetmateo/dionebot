@@ -2,12 +2,14 @@ import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "dis
 import CommandInterface from "../interfaces/CommandInterface";
 import SeasonCommandInteraction from "./interactions/season/SeasonCommandInteraction";
 
-export default class ComandoSeason implements CommandInterface {
+export default class CommandSeason implements CommandInterface {
+    public readonly name: string = 'season';
     public readonly cooldown: number = 10;
     
     public readonly data = new SlashCommandBuilder()
-        .setName("season")
+        .setName('season')
         .setDescription("Devuelve los animes que salieron en el año y en la temporada pasados como parámetro.")
+        .setDMPermission(false)
         .addIntegerOption(option =>
             option
                 .setName("año")

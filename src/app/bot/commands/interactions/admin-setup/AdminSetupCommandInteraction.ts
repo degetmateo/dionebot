@@ -1,16 +1,18 @@
 import { ChatInputCommandInteraction, CacheType } from "discord.js";
 import CommandInteraction from "../CommandInteraction";
-import Bot from "../../../Bot";
-import { Platform } from "./types";
 import IllegalArgumentException from "../../../../errors/IllegalArgumentException";
+import Bot from "../../../Bot";
 import GenericException from "../../../../errors/GenericException";
-import AnilistAPI from "../../../apis/anilist/AnilistAPI";
+import { Platform } from "../setup/types";
 import Helpers from "../../../Helpers";
+import AnilistAPI from "../../../apis/anilist/AnilistAPI";
 import ServerModel from "../../../../database/modelos/ServerModel";
 import Embed from "../../../embeds/Embed";
+import NoResultsException from "../../../../errors/NoResultsException";
+import AnilistUser from "../../../apis/anilist/modelos/AnilistUser";
+import DB from "../../../../database/DB";
 
-export default class SetupCommandInteraction extends CommandInteraction {
-    private static readonly MAX_USERS = 15;
+export default class AdminSetupCommandInteraction extends CommandInteraction {
     protected interaction: ChatInputCommandInteraction<CacheType>;
     
     constructor (interaction: ChatInputCommandInteraction<CacheType>) {
@@ -18,10 +20,11 @@ export default class SetupCommandInteraction extends CommandInteraction {
         this.interaction = interaction;
     }
 
-    public async execute(): Promise<void> {
+    public async execute (): Promise<void> {
         await this.interaction.deferReply({ ephemeral: true });
-        
+
         const platform = this.interaction.options.getString('plataforma') as Platform;
+        const user = this.interaction.options.getUser('usuario');
         const query = this.interaction.options.getString('nombre-o-id');
 
         if (platform === 'MyAnimeList' || platform === 'VisualNovelDatabase') {
@@ -30,38 +33,30 @@ export default class SetupCommandInteraction extends CommandInteraction {
 
         const bot = this.interaction.client as Bot;
         const serverId = this.interaction.guildId;
-        const userId = this.interaction.user.id;
 
         const registeredUsers = bot.servers.getUsers(serverId);
         
-        if (registeredUsers.length >= SetupCommandInteraction.MAX_USERS) {
-            throw new GenericException('Se ha alcanzado la cantidad máxima de usuarios registrados en este servidor.');
-        }
-        
-        if (registeredUsers.find(user => user.discordId === userId)) {
-            throw new GenericException('Ya te encuentras registrado.');
+        if (registeredUsers.find(u => u.discordId === user.id)) {
+            throw new GenericException('El usuario proporcionado ya se encuentra registrado.');
         }
 
-        const anilistUser = Helpers.isNumber(query) ?
-            await AnilistAPI.fetchUserById(parseInt(query)) : await AnilistAPI.fetchUserByName(query);
+        let anilistUser: AnilistUser;
 
-        let server = await ServerModel.findOne({ id: serverId });
+        try {
+            anilistUser = Helpers.isNumber(query) ?
+                await AnilistAPI.fetchUserById(parseInt(query)) : await AnilistAPI.fetchUserByName(query);            
+        } catch (error) {
+            if (error instanceof NoResultsException) {
+                throw new NoResultsException('No se ha encontrado al usuario proporcionado en anilist.')
+            }
+        }
 
-        if (!server) server = new ServerModel({
-            id: serverId,
-            premium: false,
-            users: []
-        });
-
-
-        server.users.push({ discordId: userId, anilistId: anilistUser.getId() });
-        await server.save();
-
+        await DB.createUser(serverId, user.id, anilistUser.getId()+'');
         await bot.loadServers();
 
         const embed = Embed.Crear()
             .establecerColor(Embed.COLOR_VERDE)
-            .establecerDescripcion('Listo! Te has registrado con éxito.')
+            .establecerDescripcion('Se ha registrado al usuario con exito.')
             .obtenerDatos();
 
         await this.interaction.editReply({

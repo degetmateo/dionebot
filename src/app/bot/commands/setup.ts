@@ -2,12 +2,14 @@ import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "dis
 import CommandInterface from "../interfaces/CommandInterface";
 import SetupCommandInteraction from "./interactions/setup/SetupCommandInteraction";
 
-export default class ComandoSetup implements CommandInterface {
+export default class CommandSetup implements CommandInterface {
+    public readonly name: string = 'setup';
     public readonly cooldown: number = 5;
 
     public readonly data = new SlashCommandBuilder()
-        .setName("setup")
+        .setName('setup')
         .setDescription("Enlaza tu cuenta de una de estas plataformas.")
+        .setDMPermission(false)
         .addStringOption(option => 
             option
                 .setName('plataforma')

@@ -63,7 +63,7 @@ export default class Bot extends Client {
     }
 
     private loadCommands = () => {
-        const directorioComandos = path.join(__dirname + "/comandos/");
+        const directorioComandos = path.join(__dirname + "/commands/");
         const archivos = fs.readdirSync(directorioComandos);
 
         for (const archivo of archivos) {

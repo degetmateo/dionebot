@@ -4,8 +4,9 @@ import Bot from "../../../Bot";
 import NoResultsException from "../../../../errors/NoResultsException";
 import ServerModel from "../../../../database/modelos/ServerModel";
 import Embed from "../../../embeds/Embed";
+import DB from "../../../../database/DB";
 
-export default class UnsetupCommandInteraction extends CommandInteraction {
+export default class AdminUnsetupCommandInteraction extends CommandInteraction {
     protected interaction: ChatInputCommandInteraction<CacheType>;
     
     constructor (interaction: ChatInputCommandInteraction<CacheType>) {
@@ -17,21 +18,19 @@ export default class UnsetupCommandInteraction extends CommandInteraction {
         await this.interaction.deferReply({ ephemeral: true });
 
         const bot = this.interaction.client as Bot;
-
+        const user = this.interaction.options.getUser('usuario');
         const server = bot.servers.get(this.interaction.guildId);
-        const user = server.users.find(u => u.discordId === this.interaction.user.id);
 
-        if (!user) throw new NoResultsException('No estas registrado.');
+        const registeredUser = server.users.find(u => u.discordId === user.id);
 
-        await ServerModel.updateOne(
-            { id: this.interaction.guildId },
-            { $pull: { users: { discordId: this.interaction.user.id } } });
-        
+        if (!registeredUser) throw new NoResultsException('El usuario proporcionado no se encuentra registrado.');
+
+        await DB.removeUser(server.id, user.id);
         await bot.loadServers();
 
         const embed = Embed.Crear()
             .establecerColor(Embed.COLOR_VERDE)
-            .establecerDescripcion('Listo! Se ha eliminado tu cuenta.')
+            .establecerDescripcion('Se ha eliminado la cuenta del usuario.')
             .obtenerDatos();
 
         this.interaction.editReply({

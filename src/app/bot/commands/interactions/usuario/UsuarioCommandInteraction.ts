@@ -5,6 +5,7 @@ import AnilistAPI from "../../../apis/anilist/AnilistAPI";
 import EmbedUser from "../../../embeds/EmbedUser";
 import NoResultsException from "../../../../errors/NoResultsException";
 import Bot from "../../../Bot";
+import AnilistUser from "../../../apis/anilist/modelos/AnilistUser";
 
 export default class UsuarioCommandInteraction extends CommandInteraction {
     protected interaction: ChatInputCommandInteraction<CacheType>;
@@ -29,7 +30,15 @@ export default class UsuarioCommandInteraction extends CommandInteraction {
 
         if (!registeredUser) throw new NoResultsException('El usuario especificado no esta registrado.');
 
-        const anilistUser = await AnilistAPI.fetchUserById(parseInt(registeredUser.anilistId));
+        let anilistUser: AnilistUser;
+        try {
+            anilistUser = await AnilistAPI.fetchUserById(parseInt(registeredUser.anilistId));
+        } catch (error) {
+            if (error instanceof NoResultsException) {
+                throw new NoResultsException('El usuario registrado ya no se encuentra en anilist.');
+            }
+        }
+        
         const embed = EmbedUser.Create(anilistUser);
 
         await this.interaction.editReply({
