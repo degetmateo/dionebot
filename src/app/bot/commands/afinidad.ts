@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
-import AfinidadCommandInteraction from "./interactions/afinidad/AfinidadCommandInteraction";
+import AfinidadCommandInteraction from "../interactions/afinidad/AfinidadCommandInteraction";
 
 module.exports = {
     cooldown: 20,

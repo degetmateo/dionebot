@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
-import SeasonCommandInteraction from "./interactions/season/SeasonCommandInteraction";
+import SeasonCommandInteraction from "../interactions/season/SeasonCommandInteraction";
 
 module.exports = {
     cooldown: 10,

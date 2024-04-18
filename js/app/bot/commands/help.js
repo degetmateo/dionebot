@@ -2,14 +2,25 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const builders_1 = require("@discordjs/builders");
 const discord_js_1 = require("discord.js");
-class CommandHelp {
-    constructor() {
-        this.name = 'help';
-        this.cooldown = 5;
-        this.data = new discord_js_1.SlashCommandBuilder()
-            .setName('help')
-            .setDescription("Envía un mensaje con los comandos.");
-        this.DESCRIPCION = `
+module.exports = {
+    cooldown: 5,
+    data: new discord_js_1.SlashCommandBuilder()
+        .setName('help')
+        .setDescription("Envía un mensaje con los comandos."),
+    execute: async (interaction) => {
+        var _a;
+        const bot = interaction.client;
+        const embed = new builders_1.EmbedBuilder()
+            .setTitle("Comandos")
+            .setDescription(DESCRIPTION_HELP)
+            .setColor(0xff8c00);
+        ((_a = bot.user) === null || _a === void 0 ? void 0 : _a.avatarURL()) ? embed.setThumbnail(bot.user.avatarURL()) : null;
+        interaction.reply({
+            embeds: [embed]
+        });
+    }
+};
+const DESCRIPTION_HELP = `
 ▸ **\`/informacion\`** - Informacion acerca de mi.
 ▸ **\`/setup\`** - Guardar tu usuario de ANILIST.
 ▸ **\`/unsetup\`** - Elimina tu usuario de ANILIST.
@@ -20,19 +31,4 @@ class CommandHelp {
 ▸ **\`/vn\`** - Muestra información de la novela visual que busques.
 ▸ **\`/season\`** - Devuelve todos los animes que salieron en la temporada que elijas.
 ▸ **\`/random\`** - Devuelve un anime al azar de tus PTW.
-    `;
-    }
-    async execute(interaction) {
-        var _a;
-        const bot = interaction.client;
-        const embed = new builders_1.EmbedBuilder()
-            .setTitle("Comandos")
-            .setDescription(this.DESCRIPCION)
-            .setColor(0xff8c00);
-        ((_a = bot.user) === null || _a === void 0 ? void 0 : _a.avatarURL()) ? embed.setThumbnail(bot.user.avatarURL()) : null;
-        interaction.reply({
-            embeds: [embed]
-        });
-    }
-}
-exports.default = CommandHelp;
+`;

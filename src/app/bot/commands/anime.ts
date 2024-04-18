@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType, SlashCommandStringOption, SlashCommandBooleanOption } from "discord.js";
-import AnimeCommandInteraction from "./interactions/anime/AnimeCommandInteraction";
+import AnimeCommandInteraction from "../interactions/anime/AnimeCommandInteraction";
 
 module.exports = {
     cooldown: 10,

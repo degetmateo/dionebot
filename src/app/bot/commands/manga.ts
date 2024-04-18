@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
-import MangaCommandInteraction from "./interactions/manga/MangaCommandInteraction";
+import MangaCommandInteraction from "../interactions/manga/MangaCommandInteraction";
 
 module.exports = {
     cooldown: 10,

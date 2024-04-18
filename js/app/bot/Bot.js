@@ -19,13 +19,10 @@ class Bot extends discord_js_1.Client {
                 if (!archivo.endsWith('.ts') && !archivo.endsWith('.js'))
                     continue;
                 const direccionArchivo = path_1.default.join(directorioComandos, archivo);
-                const datosComando = require(direccionArchivo);
-                if (!datosComando.default)
+                const command = require(direccionArchivo);
+                if (!command.execute || !command.data)
                     continue;
-                const comando = new datosComando.default();
-                if (!comando.execute || !comando.data)
-                    continue;
-                this.commands.set(comando.data.name, comando);
+                this.commands.set(command.data.name, command);
             }
         };
         this.setStatusInterval = () => {

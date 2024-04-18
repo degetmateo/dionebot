@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
-import RandomCommandInteraction from "./interactions/random/RandomCommandInteraction";
+import RandomCommandInteraction from "../interactions/random/RandomCommandInteraction";
 
 module.exports = {
     cooldown: 10,

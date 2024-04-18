@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
-import VNCommandInteraction from "./interactions/vn/VNCommandInteraction";
+import VNCommandInteraction from "../interactions/vn/VNCommandInteraction";
 
 module.exports = {
     cooldown: 10,

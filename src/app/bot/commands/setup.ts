@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
-import SetupCommandInteraction from "./interactions/setup/SetupCommandInteraction";
+import SetupCommandInteraction from "../interactions/setup/SetupCommandInteraction";
 
 module.exports = {
     cooldown: 5,

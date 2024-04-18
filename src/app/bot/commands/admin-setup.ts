@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType, PermissionFlagsBits } from "discord.js";
-import AdminSetupCommandInteraction from "./interactions/admin-setup/AdminSetupCommandInteraction";
+import AdminSetupCommandInteraction from "../interactions/admin-setup/AdminSetupCommandInteraction";
 
 module.exports = {
     cooldown: 5,
