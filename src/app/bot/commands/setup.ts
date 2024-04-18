@@ -1,12 +1,9 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
-import CommandInterface from "../interfaces/CommandInterface";
 import SetupCommandInteraction from "./interactions/setup/SetupCommandInteraction";
 
-export default class CommandSetup implements CommandInterface {
-    public readonly name: string = 'setup';
-    public readonly cooldown: number = 5;
-
-    public readonly data = new SlashCommandBuilder()
+module.exports = {
+    cooldown: 5,
+    data: new SlashCommandBuilder()
         .setName('setup')
         .setDescription("Enlaza tu cuenta de una de estas plataformas.")
         .setDMPermission(false)
@@ -23,9 +20,8 @@ export default class CommandSetup implements CommandInterface {
             option
                 .setName('nombre-o-id')
                 .setDescription('Tu nombre o ID de usuario.')
-                .setRequired(true));
-    
-    public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+                .setRequired(true)),
+    execute: async (interaction: ChatInputCommandInteraction<CacheType>) => {
         const commandInteraction = new SetupCommandInteraction(interaction);
         await commandInteraction.execute();
     }

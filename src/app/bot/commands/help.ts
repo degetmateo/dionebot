@@ -1,17 +1,29 @@
 import { EmbedBuilder } from "@discordjs/builders";
 import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import CommandInterface from "../interfaces/CommandInterface";
 import Bot from "../Bot";
 
-export default class CommandHelp implements CommandInterface {
-    public readonly name: string = 'help';
-    public readonly cooldown: number = 5;
-
-    public readonly data: SlashCommandBuilder = new SlashCommandBuilder()
+module.exports = {
+    cooldown: 5,
+    data: new SlashCommandBuilder()
         .setName('help')
-        .setDescription("Envía un mensaje con los comandos.");
+        .setDescription("Envía un mensaje con los comandos."),
+    execute: async (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> => {
+        const bot: Bot = interaction.client as Bot;
 
-    private readonly DESCRIPCION: string = `
+        const embed = new EmbedBuilder()
+            .setTitle("Comandos")
+            .setDescription(DESCRIPTION_HELP)
+            .setColor(0xff8c00);
+
+        bot.user?.avatarURL() ? embed.setThumbnail(bot.user.avatarURL()) : null;
+
+        interaction.reply({
+            embeds: [embed]
+        })
+    }
+}
+
+const DESCRIPTION_HELP = `
 ▸ **\`/informacion\`** - Informacion acerca de mi.
 ▸ **\`/setup\`** - Guardar tu usuario de ANILIST.
 ▸ **\`/unsetup\`** - Elimina tu usuario de ANILIST.
@@ -22,20 +34,4 @@ export default class CommandHelp implements CommandInterface {
 ▸ **\`/vn\`** - Muestra información de la novela visual que busques.
 ▸ **\`/season\`** - Devuelve todos los animes que salieron en la temporada que elijas.
 ▸ **\`/random\`** - Devuelve un anime al azar de tus PTW.
-    `;
-
-    public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {          
-        const bot: Bot = interaction.client as Bot;
-
-        const embed = new EmbedBuilder()
-            .setTitle("Comandos")
-            .setDescription(this.DESCRIPCION)
-            .setColor(0xff8c00);
-
-        bot.user?.avatarURL() ? embed.setThumbnail(bot.user.avatarURL()) : null;
-
-        interaction.reply({
-            embeds: [embed]
-        })
-    }
-}
+`;

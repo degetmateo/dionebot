@@ -1,12 +1,9 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
-import CommandInterface from "../interfaces/CommandInterface";
 import SeasonCommandInteraction from "./interactions/season/SeasonCommandInteraction";
 
-export default class CommandSeason implements CommandInterface {
-    public readonly name: string = 'season';
-    public readonly cooldown: number = 10;
-    
-    public readonly data = new SlashCommandBuilder()
+module.exports = {
+    cooldown: 10,
+    data: new SlashCommandBuilder()
         .setName('season')
         .setDescription("Devuelve los animes que salieron en el año y en la temporada pasados como parámetro.")
         .setDMPermission(false)
@@ -23,9 +20,8 @@ export default class CommandSeason implements CommandInterface {
                             { name: "VERANO", value: "SUMMER" },
                             { name: "INVIERNO", value: "WINTER" },
                             { name: "OTOÑO", value: "FALL" })
-                .setRequired(true));
-    
-    public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {
+                .setRequired(true)),
+    execute: async (interaction: ChatInputCommandInteraction<CacheType>) => {
         const commandInteraction = new SeasonCommandInteraction(interaction);
         await commandInteraction.execute();
     }

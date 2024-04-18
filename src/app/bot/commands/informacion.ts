@@ -1,31 +1,18 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, CacheType } from "discord.js";
-import CommandInterface from "../interfaces/CommandInterface";
 import Bot from "../Bot";
 
-export default class CommandInformacion implements CommandInterface {
-    public readonly name: string = 'informacion';
-    public readonly cooldown: number = 5;
-
-    public readonly data: SlashCommandBuilder = new SlashCommandBuilder()
+module.exports = {
+    cooldown: 5,
+    data: new SlashCommandBuilder()
         .setName('informacion')
-        .setDescription("Obtén información acerca de mi!");
-
-    private readonly DESCRIPCION: string = `
-Mi nombre es Dione y soy un bot de Discord que está siendo desarrollado en TypeScript.\n
-Mis funciones principales incluyen buscar y mostrar información acerca de animes, mangas y novelas visuales en tu servidor.\n
-Aunque aún no poseo demasiadas opciones, en el futuro se irán implementando muchas más.\n
-Si lo deseas, puedes invitarme a tu servidor presionando el enlace que se encuentra debajo.\n
-https://dionebot.onrender.com/
-    `;
-
-    public async execute (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> {        
+        .setDescription("Obtén información acerca de mi!"),
+    execute: async (interaction: ChatInputCommandInteraction<CacheType>) => {
         await interaction.deferReply();
+        const bot = interaction.client as Bot;
 
-        const bot: Bot = interaction.client as Bot;
-                
         const embed = new EmbedBuilder()
             .setTitle("Información")
-            .setDescription(this.DESCRIPCION)
+            .setDescription(DESCRIPTION)
             .setColor(0xff8c00)
             .setFooter({ text: `Dione v${bot.getVersion()}` });
 
@@ -36,3 +23,11 @@ https://dionebot.onrender.com/
         })
     }
 }
+
+const DESCRIPTION = `
+Mi nombre es Dione y soy un bot de Discord que está siendo desarrollado en TypeScript.\n
+Mis funciones principales incluyen buscar y mostrar información acerca de animes, mangas y novelas visuales en tu servidor.\n
+Aunque aún no poseo demasiadas opciones, en el futuro se irán implementando muchas más.\n
+Si lo deseas, puedes invitarme a tu servidor presionando el enlace que se encuentra debajo.\n
+https://dionebot.onrender.com/
+`;

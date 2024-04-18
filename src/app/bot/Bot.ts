@@ -4,9 +4,9 @@ import fs from "fs";
 import path from "path";
 
 import { version } from '../../../package.json';
-import Command from "./interfaces/CommandInterface";
 import ServerModel from '../database/modelos/ServerModel';
 import ServerCollection from './collections/ServerCollection';
+import { Command } from './types';
 
 export default class Bot extends Client {
     private static readonly HORA_EN_MILISEGUNDOS: number = 3600000;
@@ -70,13 +70,11 @@ export default class Bot extends Client {
             if (!archivo.endsWith('.ts') && !archivo.endsWith('.js')) continue;
 
             const direccionArchivo = path.join(directorioComandos, archivo);
-            const datosComando = require(direccionArchivo);
-            if (!datosComando.default) continue;
-            
-            const comando = new datosComando.default() as Command;
-            if (!comando.execute || !comando.data) continue;
+            const command = require(direccionArchivo);
 
-            this.commands.set(comando.data.name, comando);
+            if (!command.execute || !command.data) continue;
+
+            this.commands.set(command.data.name, command);
         }
     }
 
