@@ -33,16 +33,16 @@ export default class SeasonCommandInteraction extends CommandInteraction {
             }
 
             const name = media.title.userPreferred || media.title.romaji || media.title.english || media.title.native;
-            titles[i] += `▸ ${name}\n`;
+            titles[i] += `▸ [${name}](${media.siteUrl})\n`;
         }
 
         for (let J = 0; J < titles.length; J++) {
             const embedInfo = titles[J];
 
             const embed = new EmbedBuilder()
-                .setTitle(`${season} ${year}`)
+                .setTitle(`TEMPORADA ${seasons[season]} ${year}`)
                 .setDescription(embedInfo)
-                .setFooter({ text: `Página ${J + 1} de ${titles.length}` });
+                .setFooter({ text: `Esto está limitado a 50 resultados.` });
 
             embeds.push(embed);
         }
@@ -50,4 +50,11 @@ export default class SeasonCommandInteraction extends CommandInteraction {
         const controller = new SeasonInteractionController(this.interaction, embeds);
         await controller.execute();
     }
+}
+
+const seasons = {
+    'WINTER': 'INVIERNO',
+    'FALL': 'OTOÑO',
+    'SUMMER': 'VERANO',
+    'SPRING': 'PRIMAVERA'
 }

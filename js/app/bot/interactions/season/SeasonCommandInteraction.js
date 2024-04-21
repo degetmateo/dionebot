@@ -27,14 +27,14 @@ class SeasonCommandInteraction extends CommandInteraction_1.default {
                 titles[i] = '';
             }
             const name = media.title.userPreferred || media.title.romaji || media.title.english || media.title.native;
-            titles[i] += `▸ ${name}\n`;
+            titles[i] += `▸ [${name}](${media.siteUrl})\n`;
         }
         for (let J = 0; J < titles.length; J++) {
             const embedInfo = titles[J];
             const embed = new discord_js_1.EmbedBuilder()
-                .setTitle(`${season} ${year}`)
+                .setTitle(`TEMPORADA ${seasons[season]} ${year}`)
                 .setDescription(embedInfo)
-                .setFooter({ text: `Página ${J + 1} de ${titles.length}` });
+                .setFooter({ text: `Esto está limitado a 50 resultados.` });
             embeds.push(embed);
         }
         const controller = new SeasonInteractionController_1.default(this.interaction, embeds);
@@ -42,3 +42,9 @@ class SeasonCommandInteraction extends CommandInteraction_1.default {
     }
 }
 exports.default = SeasonCommandInteraction;
+const seasons = {
+    'WINTER': 'INVIERNO',
+    'FALL': 'OTOÑO',
+    'SUMMER': 'VERANO',
+    'SPRING': 'PRIMAVERA'
+};

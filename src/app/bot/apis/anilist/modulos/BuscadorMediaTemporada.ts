@@ -24,45 +24,11 @@ export default class BuscadorAnimesTemporada {
             }
 
             fragment media on Media {
-                id
-                idMal
                 title {
                     romaji
                     english
                     native
                     userPreferred
-                }
-                format
-                status
-                description
-                episodes
-                duration
-                source
-                trailer {
-                    id
-                    site
-                    thumbnail
-                }
-                coverImage {
-                    extraLarge
-                    large
-                    medium
-                    color
-                }
-                bannerImage
-                genres
-                synonyms
-                averageScore
-                meanScore
-                popularity
-                favourites
-                studios {
-                    edges {
-                        node {
-                            id
-                            name
-                        }
-                    }
                 }
                 siteUrl
             }
