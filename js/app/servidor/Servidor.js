@@ -18,7 +18,6 @@ class Servidor {
         this.bot = new Bot_1.default();
         this.db = new DB_1.default();
         this.escuchar();
-        // this.CopyDatabase();
     }
     static Iniciar(puerto) {
         new Servidor(puerto);

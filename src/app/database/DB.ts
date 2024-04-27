@@ -24,6 +24,11 @@ export default class DB {
         await ServerModel.findOneAndDelete({ id });
     }
 
+    public static async serverExists (id: string) {
+        const server = await ServerModel.findOne({ id });
+        return server ? true : false;
+    }
+
     public static async createUser (serverId: string, discordId: string, anilistId: string) {
         let server = await ServerModel.findOne({ id: serverId });
         
@@ -35,16 +40,24 @@ export default class DB {
             })
         }
 
+        if (server.users.find(u => u.discordId === discordId)) throw new IllegalArgumentException('El usuario ya se encuentra registrado en este servidor.');
         server.users.push({ discordId, anilistId });
         await server.save();
     }
 
     public static async removeUser (serverId: string, discordId: string) {
         const server = await ServerModel.findOne({ id: serverId });
-        if (!server) throw new IllegalArgumentException('Server does not exist.');
+        if (!server) throw new IllegalArgumentException('No hay ningun usuario registrado en este servidor.');
 
         await ServerModel.updateOne(
             { id: serverId },
             { $pull: { users: { discordId } } });
+    }
+
+    public static async userExists (serverId: string, discordId: string) {
+        const server = await ServerModel.findOne({ id: serverId });
+        if (!server) return false;
+        const user = server.users.find(serverUser => serverUser.discordId === discordId);
+        return user ? true : false;
     }
 }

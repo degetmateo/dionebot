@@ -59,7 +59,7 @@ export default class SetupCommandInteraction extends CommandInteraction {
 
         const embed = Embed.Crear()
             .establecerColor(Embed.COLOR_VERDE)
-            .establecerDescripcion('Listo! Te has registrado con éxito.')
+            .establecerDescripcion('Te has registrado con éxito.')
             .obtenerDatos();
 
         await this.interaction.editReply({

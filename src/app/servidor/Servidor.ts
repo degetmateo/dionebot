@@ -24,8 +24,6 @@ export default class Servidor {
         this.db = new DB();
 
         this.escuchar();
-
-        // this.CopyDatabase();
     }
 
     public static Iniciar (puerto: number): void {
@@ -47,29 +45,4 @@ export default class Servidor {
         await this.db.connect(process.env.DB as string);
         this.bot.start(process.env.TOKEN);
     }
-
-    // private async CopyDatabase (): Promise<void> {
-    //     const aniusers = await Aniuser.find();
-        
-    //     for (const user of aniusers) {
-    //         const server = await ServerModel.findOne({ id: user.serverId });
-    //         const userData = {
-    //             discordId: user.discordId,
-    //             anilistId: user.anilistId
-    //         }
-            
-    //         if (!server) {
-    //             const Server = new ServerModel({
-    //                 id: user.serverId,
-    //                 premium: false,
-    //                 users: [userData]
-    //             })
-
-    //             await Server.save();
-    //         } else {
-    //             server.users.push(userData);
-    //             await server.save();
-    //         }
-    //     }
-    // }
 }

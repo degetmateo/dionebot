@@ -21,14 +21,20 @@ module.exports = {
     }
 };
 const DESCRIPTION_HELP = `
-▸ **\`/informacion\`** - Informacion acerca de mi.
-▸ **\`/setup\`** - Guardar tu usuario de ANILIST.
-▸ **\`/unsetup\`** - Elimina tu usuario de ANILIST.
-▸ **\`/usuario\`** - Ver la información del perfil de ANILIST de un usuario.
+▾ Para todos los usuarios ▾
+▸ **\`/help\`** - Este comando.
+▸ **\`/informacion\`** - Información acerca de mi.
+▸ **\`/setup\`** - Guarda tu perfil de anilist.
+▸ **\`/unsetup\`** - Elimina tu perfil de anilist.
+▸ **\`/usuario\`** - Ver la información del perfil de anilist de un usuario.
 ▸ **\`/afinidad\`** - Muestra tu afinidad o la otro usuario con el resto del servidor.
-▸ **\`/anime\`** - Muestra la información del anime que busques.
-▸ **\`/manga\`** - Muestra la información del manga que busques.
+▸ **\`/anime\`** - Muestra información del anime que busques.
+▸ **\`/manga\`** - Muestra información del manga que busques.
 ▸ **\`/vn\`** - Muestra información de la novela visual que busques.
-▸ **\`/season\`** - Devuelve todos los animes que salieron en la temporada que elijas.
-▸ **\`/random\`** - Devuelve un anime al azar de tus PTW.
+▸ **\`/season\`** - Devuelve los animes de la temporada que ingreses.
+▸ **\`/random\`** - Devuelve un anime al azar de tus Plan to Watch.
+
+▾ Para administradores ▾
+▸ **\`/admin-setup\`** - Guarda el perfil de anilist de un usuario.
+▸ **\`/admin-unsetup\`** - Elimina el perfil de anilist un usuario.
 `;

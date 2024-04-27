@@ -47,7 +47,7 @@ class SetupCommandInteraction extends CommandInteraction_1.default {
         await bot.loadServers();
         const embed = Embed_1.default.Crear()
             .establecerColor(Embed_1.default.COLOR_VERDE)
-            .establecerDescripcion('Listo! Te has registrado con éxito.')
+            .establecerDescripcion('Te has registrado con éxito.')
             .obtenerDatos();
         await this.interaction.editReply({
             embeds: [embed]

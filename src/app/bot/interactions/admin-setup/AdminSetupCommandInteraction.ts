@@ -36,7 +36,7 @@ export default class AdminSetupCommandInteraction extends CommandInteraction {
         const registeredUsers = bot.servers.getUsers(serverId);
         
         if (registeredUsers.find(u => u.discordId === user.id)) {
-            throw new GenericException('El usuario proporcionado ya se encuentra registrado.');
+            throw new GenericException('El usuario ingresado ya se encuentra registrado.');
         }
 
         let anilistUser: AnilistUser;
@@ -46,7 +46,7 @@ export default class AdminSetupCommandInteraction extends CommandInteraction {
                 await AnilistAPI.fetchUserById(parseInt(query)) : await AnilistAPI.fetchUserByName(query);            
         } catch (error) {
             if (error instanceof NoResultsException) {
-                throw new NoResultsException('No se ha encontrado al usuario proporcionado en anilist.')
+                throw new NoResultsException('No se ha encontrado al usuario ingresado en anilist.')
             }
         }
 
@@ -55,7 +55,7 @@ export default class AdminSetupCommandInteraction extends CommandInteraction {
 
         const embed = Embed.Crear()
             .establecerColor(Embed.COLOR_VERDE)
-            .establecerDescripcion('Se ha registrado al usuario con exito.')
+            .establecerDescripcion('Se ha registrado al usuario con éxito.')
             .obtenerDatos();
 
         await this.interaction.editReply({

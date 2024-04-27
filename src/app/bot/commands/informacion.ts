@@ -5,13 +5,12 @@ module.exports = {
     cooldown: 5,
     data: new SlashCommandBuilder()
         .setName('informacion')
-        .setDescription("Obtén información acerca de mi!"),
+        .setDescription("Información acerca de mi."),
     execute: async (interaction: ChatInputCommandInteraction<CacheType>) => {
         await interaction.deferReply();
         const bot = interaction.client as Bot;
 
         const embed = new EmbedBuilder()
-            .setTitle("Información")
             .setDescription(DESCRIPTION)
             .setColor(0xff8c00)
             .setFooter({ text: `Dione v${bot.getVersion()}` });
@@ -25,9 +24,12 @@ module.exports = {
 }
 
 const DESCRIPTION = `
-Mi nombre es Dione y soy un bot de Discord que está siendo desarrollado en TypeScript.\n
-Mis funciones principales incluyen buscar y mostrar información acerca de animes, mangas y novelas visuales en tu servidor.\n
-Aunque aún no poseo demasiadas opciones, en el futuro se irán implementando muchas más.\n
-Si lo deseas, puedes invitarme a tu servidor presionando el enlace que se encuentra debajo.\n
+Mi nombre es Dione y soy un bot de Discord cuyas funciones principales incluyen buscar y mostrar información de animes, mangas y novelas visuales en tu servidor.\n
+Estoy siendo desarrollado por una sola persona, por lo que aún no poseo demasiados comandos y estos se van agregando lentamente.\n
+Si lo deseas, puedes invitarme a tu servidor ingresando al enlace que se encuentra debajo.
+
 https://dionebot.onrender.com/
+
+Muchas gracias por leer!
+Si quieres agregarme en discord para enviarme comentarios soy \`\`malardo_bro\`\`.
 `;

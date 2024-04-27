@@ -97,13 +97,6 @@ class Bot extends discord_js_1.Client {
             require(filePath)(this);
         }
     }
-    async createServer(id) {
-        await new ServerModel_1.default({
-            id: id,
-            premium: false,
-            users: []
-        }).save();
-    }
     async fetchServer(id) {
         return await this.guilds.fetch(id);
     }

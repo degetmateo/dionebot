@@ -21,9 +21,14 @@ export default class UnsetupCommandInteraction extends CommandInteraction {
         const server = bot.servers.get(this.interaction.guildId);
         const user = server.users.find(u => u.discordId === this.interaction.user.id);
 
-        if (!user) throw new NoResultsException('No estas registrado.');
+        if (!user) throw new NoResultsException('No estás registrado.');
 
-        await DB.removeUser(server.id, user.discordId);        
+        if (await DB.userExists(server.id, user.discordId)) {
+            await DB.removeUser(server.id, user.discordId);        
+        } else {
+            throw new NoResultsException('No estás registrado.');
+        }
+
         await bot.loadServers();
 
         const embed = Embed.Crear()
