@@ -6,6 +6,7 @@ import AnilistAPI from "../apis/anilist/AnilistAPI";
 import ScoreCollection from "../apis/anilist/ScoreCollection";
 import EmbedScores from "../embeds/EmbedScores";
 import Media from "../apis/anilist/modelos/media/Media";
+import TooManyRequestsException from "../../errors/TooManyRequestsException";
 
 export default abstract class InteractionController {
     protected page: number;
@@ -55,8 +56,8 @@ export default abstract class InteractionController {
                 await this.updateInteraction(button);
             })
         } catch (error) {
-            await this.interaction.editReply({ components: [] });
             console.error(error);
+            throw error;
         }
     }
 
@@ -76,13 +77,12 @@ export default abstract class InteractionController {
         } catch (error) {
             if (error instanceof Error) {
                 if (error.message.toLowerCase().includes('too many requests')) {
-                    await button.editReply({ embeds: [this.embeds[this.page]], components: [] });
-                    return;
+                    throw new TooManyRequestsException('Se han realizado demasiadas peticiones al servidor. Inténtalo más tarde.');
                 }
             }
 
-            await button.editReply({ embeds: [this.embeds[this.page]], components: [this.row] });
             console.error(error);
+            throw error;
         }
     }
 

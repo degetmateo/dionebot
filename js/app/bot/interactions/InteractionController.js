@@ -8,6 +8,7 @@ const Button_1 = __importDefault(require("../components/Button"));
 const CommandInteraction_1 = __importDefault(require("./CommandInteraction"));
 const AnilistAPI_1 = __importDefault(require("../apis/anilist/AnilistAPI"));
 const EmbedScores_1 = __importDefault(require("../embeds/EmbedScores"));
+const TooManyRequestsException_1 = __importDefault(require("../../errors/TooManyRequestsException"));
 class InteractionController {
     constructor(interaction, media) {
         this.buttonPreviousPage = Button_1.default.CreatePrevious();
@@ -41,8 +42,8 @@ class InteractionController {
             });
         }
         catch (error) {
-            await this.interaction.editReply({ components: [] });
             console.error(error);
+            throw error;
         }
     }
     async updateInteraction(button) {
@@ -61,12 +62,11 @@ class InteractionController {
         catch (error) {
             if (error instanceof Error) {
                 if (error.message.toLowerCase().includes('too many requests')) {
-                    await button.editReply({ embeds: [this.embeds[this.page]], components: [] });
-                    return;
+                    throw new TooManyRequestsException_1.default('Se han realizado demasiadas peticiones al servidor. Inténtalo más tarde.');
                 }
             }
-            await button.editReply({ embeds: [this.embeds[this.page]], components: [this.row] });
             console.error(error);
+            throw error;
         }
     }
     async fetchUsersUsernames(scores) {
