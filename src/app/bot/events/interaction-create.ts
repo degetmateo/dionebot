@@ -57,6 +57,11 @@ module.exports = (bot: Bot) => {
                 !(error instanceof CommandUnderMaintenanceException) &&
                 !(error instanceof TooManyRequestsException);
 
+            if (!interaction || !interaction.isRepliable()) {
+                console.log(error)
+                return;
+            }
+
             const embed = Embed.Crear()
                 .establecerColor(Embed.COLOR_ROJO);
 

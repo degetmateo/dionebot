@@ -52,6 +52,10 @@ module.exports = (bot) => {
                 !(error instanceof NoResultsException_1.default) &&
                 !(error instanceof CommandUnderMaintenanceException_1.default) &&
                 !(error instanceof TooManyRequestsException_1.default);
+            if (!interaction || !interaction.isRepliable()) {
+                console.log(error);
+                return;
+            }
             const embed = Embed_1.default.Crear()
                 .establecerColor(Embed_1.default.COLOR_ROJO);
             (!esErrorCritico) ?

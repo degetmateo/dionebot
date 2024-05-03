@@ -5,6 +5,7 @@ import Bot from "../../Bot";
 import AnilistAPI from "../../apis/anilist/AnilistAPI";
 import AnilistUser from "../../apis/anilist/modelos/AnilistUser";
 import EmbedUser from "../../embeds/EmbedUser";
+import GenericException from "../../../errors/GenericException";
 
 export default class UsuarioCommandInteraction extends CommandInteraction {
     protected interaction: ChatInputCommandInteraction<CacheType>;
@@ -40,8 +41,12 @@ export default class UsuarioCommandInteraction extends CommandInteraction {
         
         const embed = EmbedUser.Create(anilistUser);
 
-        await this.interaction.editReply({
-            embeds: [embed]
-        })
+        try {
+            await this.interaction.editReply({
+                embeds: [embed]
+            })
+        } catch (error) {
+            throw new GenericException('Ha ocurrido un error inesperado. Vuelve a intentarlo más tarde.');
+        }
     }
 }
