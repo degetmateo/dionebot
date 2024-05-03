@@ -97,10 +97,10 @@ export default class Bot extends Client {
             // }
 
             {
-                status: "online",
+                status: "dnd",
                 activities: [{
-                    type: ActivityType.Listening,
-                    name: 'Server may be under maintenance...'
+                    type: ActivityType.Custom,
+                    name: '⚠️ Server may be under maintenance...'
                 }]
             },
         ];
