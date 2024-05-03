@@ -49,37 +49,39 @@ module.exports = (bot: Bot) => {
 
         try {
             await command.execute(interaction);
-        } catch (error) {
-            const esErrorCritico =
-                !(error instanceof GenericException) &&
-                !(error instanceof IllegalArgumentException) &&
-                !(error instanceof NoResultsException) &&
-                !(error instanceof CommandUnderMaintenanceException) &&
-                !(error instanceof TooManyRequestsException);
+        } catch (e1) {
+            const isCriticalError =
+                !(e1 instanceof GenericException) &&
+                !(e1 instanceof IllegalArgumentException) &&
+                !(e1 instanceof NoResultsException) &&
+                !(e1 instanceof CommandUnderMaintenanceException) &&
+                !(e1 instanceof TooManyRequestsException);
 
             if (!interaction || !interaction.isRepliable()) {
-                console.log(error)
+                console.log(e1)
                 return;
             }
 
             const embed = Embed.Crear()
                 .establecerColor(Embed.COLOR_ROJO);
 
-            (!esErrorCritico) ?
-                embed.establecerDescripcion(error.message) :
-                embed.establecerDescripcion('Ha ocurrido un error. Inténtalo de nuevo más tarde.') && console.error('🟥 | ' + error.stack);
+            (!isCriticalError) ?
+                embed.establecerDescripcion(e1.message) :
+                embed.establecerDescripcion('Ha ocurrido un error. Inténtalo de nuevo más tarde.') && console.error('🟥 | ' + e1.stack);
 
             try {
-                const stack = error.stack.toLowerCase();
+                const stack = e1.stack.toLowerCase();
 
-                (stack.includes('unknown interaction') || stack.includes('unknown message')) ?
-                    interaction.channel.send({ embeds: [embed.obtenerDatos()] }) : null;
+                if (stack.includes('unknown interaction') || stack.includes('unknown message')) {
+                    console.error(e1);
+                    return;
+                }
 
                 (!interaction.deferred && !interaction.replied) ?
                     interaction.reply({ embeds: [embed.obtenerDatos()] }) :
                     interaction.editReply({ embeds: [embed.obtenerDatos()] });
-            } catch (error) {
-                console.error(error);
+            } catch (e2) {
+                console.error(e2);
             }
         }
     });

@@ -6,16 +6,15 @@ module.exports = {
     data: new discord_js_1.SlashCommandBuilder()
         .setName('informacion')
         .setDescription("Información acerca de mi."),
-    execute: async (interaction) => {
+    execute: (interaction) => {
         var _a;
-        await interaction.deferReply();
         const bot = interaction.client;
         const embed = new discord_js_1.EmbedBuilder()
             .setDescription(DESCRIPTION)
             .setColor(0xff8c00)
             .setFooter({ text: `Dione v${bot.getVersion()}` });
         ((_a = bot.user) === null || _a === void 0 ? void 0 : _a.avatarURL()) ? embed.setThumbnail(bot.user.avatarURL()) : null;
-        await interaction.editReply({
+        interaction.reply({
             embeds: [embed]
         });
     }

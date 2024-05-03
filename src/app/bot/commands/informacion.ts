@@ -6,8 +6,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('informacion')
         .setDescription("Información acerca de mi."),
-    execute: async (interaction: ChatInputCommandInteraction<CacheType>) => {
-        await interaction.deferReply();
+    execute: (interaction: ChatInputCommandInteraction<CacheType>) => {
         const bot = interaction.client as Bot;
 
         const embed = new EmbedBuilder()
@@ -17,7 +16,7 @@ module.exports = {
 
         bot.user?.avatarURL() ? embed.setThumbnail(bot.user.avatarURL()) : null;
 
-        await interaction.editReply({
+        interaction.reply({
             embeds: [embed]
         })
     }

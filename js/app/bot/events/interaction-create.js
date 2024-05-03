@@ -46,31 +46,33 @@ module.exports = (bot) => {
         try {
             await command.execute(interaction);
         }
-        catch (error) {
-            const esErrorCritico = !(error instanceof GenericException_1.default) &&
-                !(error instanceof IllegalArgumentException_1.default) &&
-                !(error instanceof NoResultsException_1.default) &&
-                !(error instanceof CommandUnderMaintenanceException_1.default) &&
-                !(error instanceof TooManyRequestsException_1.default);
+        catch (e1) {
+            const isCriticalError = !(e1 instanceof GenericException_1.default) &&
+                !(e1 instanceof IllegalArgumentException_1.default) &&
+                !(e1 instanceof NoResultsException_1.default) &&
+                !(e1 instanceof CommandUnderMaintenanceException_1.default) &&
+                !(e1 instanceof TooManyRequestsException_1.default);
             if (!interaction || !interaction.isRepliable()) {
-                console.log(error);
+                console.log(e1);
                 return;
             }
             const embed = Embed_1.default.Crear()
                 .establecerColor(Embed_1.default.COLOR_ROJO);
-            (!esErrorCritico) ?
-                embed.establecerDescripcion(error.message) :
-                embed.establecerDescripcion('Ha ocurrido un error. Inténtalo de nuevo más tarde.') && console.error('🟥 | ' + error.stack);
+            (!isCriticalError) ?
+                embed.establecerDescripcion(e1.message) :
+                embed.establecerDescripcion('Ha ocurrido un error. Inténtalo de nuevo más tarde.') && console.error('🟥 | ' + e1.stack);
             try {
-                const stack = error.stack.toLowerCase();
-                (stack.includes('unknown interaction') || stack.includes('unknown message')) ?
-                    interaction.channel.send({ embeds: [embed.obtenerDatos()] }) : null;
+                const stack = e1.stack.toLowerCase();
+                if (stack.includes('unknown interaction') || stack.includes('unknown message')) {
+                    console.error(e1);
+                    return;
+                }
                 (!interaction.deferred && !interaction.replied) ?
                     interaction.reply({ embeds: [embed.obtenerDatos()] }) :
                     interaction.editReply({ embeds: [embed.obtenerDatos()] });
             }
-            catch (error) {
-                console.error(error);
+            catch (e2) {
+                console.error(e2);
             }
         }
     });
