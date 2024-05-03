@@ -80,21 +80,29 @@ export default class Bot extends Client {
 
     private setStatusInterval = () => {
         const states: Array<PresenceData> = [
+            // {
+            //     status: "online",
+            //     activities: [{
+            //         type: ActivityType.Listening,
+            //         name: '/help'
+            //     }]
+            // },
+    
+            // {
+            //     status: "online",
+            //     activities: [{
+            //         type: ActivityType.Watching,
+            //         name: this.getServersAmount() + " servidores!"
+            //     }]  
+            // }
+
             {
                 status: "online",
                 activities: [{
                     type: ActivityType.Listening,
-                    name: '/help'
+                    name: 'Server may be under maintenance...'
                 }]
             },
-    
-            {
-                status: "online",
-                activities: [{
-                    type: ActivityType.Watching,
-                    name: this.getServersAmount() + " servidores!"
-                }]  
-            }
         ];
 
         let i = 0;

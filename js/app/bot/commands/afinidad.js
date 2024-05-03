@@ -9,11 +9,11 @@ module.exports = {
     cooldown: 20,
     data: new discord_js_1.SlashCommandBuilder()
         .setName('afinidad')
-        .setDescription("Calcula la afinidad entre ti (u otro usuario) y los demás miembros registrados del servidor.")
+        .setDescription('Calcula la afinidad entre ti (u otro usuario) y los demás miembros registrados del servidor.')
         .setDMPermission(false)
         .addUserOption(option => option
-        .setName("usuario")
-        .setDescription("Usuario del que quieres calcular la afinidad.")),
+        .setName('usuario')
+        .setDescription('Usuario del cual quieres calcular la afinidad.')),
     execute: async (interaction) => {
         const commandInteraction = new AfinidadCommandInteraction_1.default(interaction);
         await commandInteraction.execute();

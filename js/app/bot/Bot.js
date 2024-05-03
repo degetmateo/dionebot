@@ -27,20 +27,27 @@ class Bot extends discord_js_1.Client {
         };
         this.setStatusInterval = () => {
             const states = [
+                // {
+                //     status: "online",
+                //     activities: [{
+                //         type: ActivityType.Listening,
+                //         name: '/help'
+                //     }]
+                // },
+                // {
+                //     status: "online",
+                //     activities: [{
+                //         type: ActivityType.Watching,
+                //         name: this.getServersAmount() + " servidores!"
+                //     }]  
+                // }
                 {
                     status: "online",
                     activities: [{
                             type: discord_js_1.ActivityType.Listening,
-                            name: '/help'
+                            name: 'Server may be under maintenance...'
                         }]
                 },
-                {
-                    status: "online",
-                    activities: [{
-                            type: discord_js_1.ActivityType.Watching,
-                            name: this.getServersAmount() + " servidores!"
-                        }]
-                }
             ];
             let i = 0;
             setInterval(() => {
