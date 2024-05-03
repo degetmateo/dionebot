@@ -42,10 +42,10 @@ class Bot extends discord_js_1.Client {
                 //     }]  
                 // }
                 {
-                    status: "online",
+                    status: "dnd",
                     activities: [{
-                            type: discord_js_1.ActivityType.Listening,
-                            name: 'Server may be under maintenance...'
+                            type: discord_js_1.ActivityType.Custom,
+                            name: '⚠️ Server may be under maintenance...'
                         }]
                 },
             ];
