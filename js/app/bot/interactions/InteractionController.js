@@ -42,7 +42,6 @@ class InteractionController {
             });
         }
         catch (error) {
-            console.error(error);
             throw error;
         }
     }
@@ -65,7 +64,6 @@ class InteractionController {
                     throw new TooManyRequestsException_1.default('Se han realizado demasiadas peticiones al servidor. Inténtalo más tarde.');
                 }
             }
-            console.error(error);
             throw error;
         }
     }

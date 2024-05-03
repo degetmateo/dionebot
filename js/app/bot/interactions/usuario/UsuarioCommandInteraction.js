@@ -7,7 +7,6 @@ const CommandInteraction_1 = __importDefault(require("../CommandInteraction"));
 const NoResultsException_1 = __importDefault(require("../../../errors/NoResultsException"));
 const AnilistAPI_1 = __importDefault(require("../../apis/anilist/AnilistAPI"));
 const EmbedUser_1 = __importDefault(require("../../embeds/EmbedUser"));
-const GenericException_1 = __importDefault(require("../../../errors/GenericException"));
 class UsuarioCommandInteraction extends CommandInteraction_1.default {
     constructor(interaction) {
         super();
@@ -34,14 +33,9 @@ class UsuarioCommandInteraction extends CommandInteraction_1.default {
             }
         }
         const embed = EmbedUser_1.default.Create(anilistUser);
-        try {
-            await this.interaction.editReply({
-                embeds: [embed]
-            });
-        }
-        catch (error) {
-            throw new GenericException_1.default('Ha ocurrido un error inesperado. Vuelve a intentarlo más tarde.');
-        }
+        await this.interaction.editReply({
+            embeds: [embed]
+        });
     }
 }
 exports.default = UsuarioCommandInteraction;

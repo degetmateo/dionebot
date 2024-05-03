@@ -41,12 +41,8 @@ export default class UsuarioCommandInteraction extends CommandInteraction {
         
         const embed = EmbedUser.Create(anilistUser);
 
-        try {
-            await this.interaction.editReply({
-                embeds: [embed]
-            })
-        } catch (error) {
-            throw new GenericException('Ha ocurrido un error inesperado. Vuelve a intentarlo más tarde.');
-        }
+        await this.interaction.editReply({
+            embeds: [embed]
+        })
     }
 }

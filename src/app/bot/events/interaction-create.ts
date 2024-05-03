@@ -72,7 +72,7 @@ module.exports = (bot: Bot) => {
             try {
                 const stack = e1.stack.toLowerCase();
 
-                if (stack.includes('unknown interaction') || stack.includes('unknown message')) {
+                if (stack.includes('unknown interaction') || stack.includes('unknown message') || stack.includes('invalid webhook token')) {
                     console.error(e1);
                     return;
                 }

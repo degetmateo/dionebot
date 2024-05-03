@@ -56,7 +56,6 @@ export default abstract class InteractionController {
                 await this.updateInteraction(button);
             })
         } catch (error) {
-            console.error(error);
             throw error;
         }
     }
@@ -81,7 +80,6 @@ export default abstract class InteractionController {
                 }
             }
 
-            console.error(error);
             throw error;
         }
     }

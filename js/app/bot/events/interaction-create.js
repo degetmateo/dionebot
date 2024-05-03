@@ -63,7 +63,7 @@ module.exports = (bot) => {
                 embed.establecerDescripcion('Ha ocurrido un error. Inténtalo de nuevo más tarde.') && console.error('🟥 | ' + e1.stack);
             try {
                 const stack = e1.stack.toLowerCase();
-                if (stack.includes('unknown interaction') || stack.includes('unknown message')) {
+                if (stack.includes('unknown interaction') || stack.includes('unknown message') || stack.includes('invalid webhook token')) {
                     console.error(e1);
                     return;
                 }
