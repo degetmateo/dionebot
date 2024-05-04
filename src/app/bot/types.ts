@@ -5,3 +5,5 @@ export type Command = {
     data: SlashCommandBuilder,
     execute: (interaction: ChatInputCommandInteraction<CacheType>) => Promise<void>
 }
+
+export type ServerStatus = 'online' | 'maintenance';

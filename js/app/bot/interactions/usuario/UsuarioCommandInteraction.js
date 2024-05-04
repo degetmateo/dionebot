@@ -14,7 +14,7 @@ class UsuarioCommandInteraction extends CommandInteraction_1.default {
     }
     async execute() {
         var _a;
-        await this.interaction.deferReply({ fetchReply: true });
+        await this.interaction.deferReply();
         const bot = this.interaction.client;
         const user = this.interaction.options.getUser("usuario");
         const userId = user ? user.id : this.interaction.user.id;

@@ -6,7 +6,7 @@ import path from "path";
 import { version } from '../../../package.json';
 import ServerModel from '../database/modelos/ServerModel';
 import ServerCollection from './collections/ServerCollection';
-import { Command } from './types';
+import { Command, ServerStatus } from './types';
 
 export default class Bot extends Client {
     private static readonly HORA_EN_MILISEGUNDOS: number = 3600000;
@@ -17,6 +17,8 @@ export default class Bot extends Client {
     public readonly servers: ServerCollection;
     private version: string;
 
+    private status: ServerStatus;
+
     constructor () {
         super({ intents: [] });
 
@@ -25,6 +27,7 @@ export default class Bot extends Client {
 
         this.servers = ServerCollection.Create();
         this.version = version;
+        this.status = 'maintenance';
     }
 
     public async start (token: string): Promise<void> {
@@ -79,35 +82,39 @@ export default class Bot extends Client {
     }
 
     private setStatusInterval = () => {
-        const states: Array<PresenceData> = [
-            // {
-            //     status: "online",
-            //     activities: [{
-            //         type: ActivityType.Listening,
-            //         name: '/help'
-            //     }]
-            // },
+        const onlineStatus: Array<PresenceData> = [
+            {
+                status: "online",
+                activities: [{
+                    type: ActivityType.Listening,
+                    name: '/help'
+                }]
+            },
     
-            // {
-            //     status: "online",
-            //     activities: [{
-            //         type: ActivityType.Watching,
-            //         name: this.getServersAmount() + " servidores!"
-            //     }]  
-            // }
+            {
+                status: "online",
+                activities: [{
+                    type: ActivityType.Watching,
+                    name: this.getServersAmount() + " servidores!"
+                }]  
+            }
+        ];
 
+        const maintenanceStatus: Array<PresenceData> = [
             {
                 status: "dnd",
                 activities: [{
                     type: ActivityType.Custom,
                     name: '⚠️ Server may be under maintenance...'
                 }]
-            },
+            }
         ];
 
         let i = 0;
 
         setInterval(() => {
+            const states = this.status === 'online' ? onlineStatus : maintenanceStatus;
+
             let presence = states[i];
             if (!presence) {
                 i = 0;
@@ -145,5 +152,9 @@ export default class Bot extends Client {
 
     public getVersion (): string {
         return this.version;
+    }
+
+    public setStatus (status: ServerStatus) {
+        this.status = status;
     }
 }

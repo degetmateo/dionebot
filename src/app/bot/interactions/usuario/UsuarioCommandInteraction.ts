@@ -16,7 +16,7 @@ export default class UsuarioCommandInteraction extends CommandInteraction {
     }
     
     public async execute (): Promise<void> {
-        await this.interaction.deferReply({ fetchReply: true });
+        await this.interaction.deferReply();
 
         const bot = this.interaction.client as Bot;
 

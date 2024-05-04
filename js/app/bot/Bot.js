@@ -26,31 +26,34 @@ class Bot extends discord_js_1.Client {
             }
         };
         this.setStatusInterval = () => {
-            const states = [
-                // {
-                //     status: "online",
-                //     activities: [{
-                //         type: ActivityType.Listening,
-                //         name: '/help'
-                //     }]
-                // },
-                // {
-                //     status: "online",
-                //     activities: [{
-                //         type: ActivityType.Watching,
-                //         name: this.getServersAmount() + " servidores!"
-                //     }]  
-                // }
+            const onlineStatus = [
+                {
+                    status: "online",
+                    activities: [{
+                            type: discord_js_1.ActivityType.Listening,
+                            name: '/help'
+                        }]
+                },
+                {
+                    status: "online",
+                    activities: [{
+                            type: discord_js_1.ActivityType.Watching,
+                            name: this.getServersAmount() + " servidores!"
+                        }]
+                }
+            ];
+            const maintenanceStatus = [
                 {
                     status: "dnd",
                     activities: [{
                             type: discord_js_1.ActivityType.Custom,
                             name: '⚠️ Server may be under maintenance...'
                         }]
-                },
+                }
             ];
             let i = 0;
             setInterval(() => {
+                const states = this.status === 'online' ? onlineStatus : maintenanceStatus;
                 let presence = states[i];
                 if (!presence) {
                     i = 0;
@@ -75,6 +78,7 @@ class Bot extends discord_js_1.Client {
         this.cooldowns = new discord_js_1.Collection();
         this.servers = ServerCollection_1.default.Create();
         this.version = package_json_1.version;
+        this.status = 'maintenance';
     }
     async start(token) {
         this.on("ready", () => {
@@ -115,6 +119,9 @@ class Bot extends discord_js_1.Client {
     }
     getVersion() {
         return this.version;
+    }
+    setStatus(status) {
+        this.status = status;
     }
 }
 exports.default = Bot;
