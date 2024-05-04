@@ -52,24 +52,28 @@ module.exports = (bot) => {
                 !(e1 instanceof NoResultsException_1.default) &&
                 !(e1 instanceof CommandUnderMaintenanceException_1.default) &&
                 !(e1 instanceof TooManyRequestsException_1.default);
-            if (!interaction || !interaction.isRepliable()) {
-                console.log(e1);
-                return;
-            }
             const embed = Embed_1.default.Crear()
                 .establecerColor(Embed_1.default.COLOR_ROJO);
-            (!isCriticalError) ?
-                embed.establecerDescripcion(e1.message) :
-                embed.establecerDescripcion('Ha ocurrido un error. Inténtalo de nuevo más tarde.') && console.error('🟥 | ' + e1.stack);
+            if (!isCriticalError) {
+                embed.establecerDescripcion(e1.message);
+            }
+            else {
+                console.error('🟥 | ' + e1.stack);
+                embed.establecerDescripcion('Ha ocurrido un error. Inténtalo de nuevo más tarde.');
+            }
             try {
                 const stack = e1.stack.toLowerCase();
                 if (stack.includes('unknown interaction') || stack.includes('unknown message') || stack.includes('invalid webhook token')) {
-                    console.error(e1);
                     return;
                 }
-                (!interaction.deferred && !interaction.replied) ?
-                    interaction.reply({ embeds: [embed.obtenerDatos()] }) :
-                    interaction.editReply({ embeds: [embed.obtenerDatos()] });
+                if (interaction.isRepliable()) {
+                    if (!interaction.deferred && !interaction.replied) {
+                        await interaction.reply({ embeds: [embed.embed] });
+                    }
+                    else {
+                        await interaction.editReply({ embeds: [embed.embed] });
+                    }
+                }
             }
             catch (e2) {
                 console.error(e2);
