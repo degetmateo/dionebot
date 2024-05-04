@@ -36,8 +36,12 @@ export default class UnsetupCommandInteraction extends CommandInteraction {
             .establecerDescripcion('Listo! Se ha eliminado tu cuenta.')
             .obtenerDatos();
 
-        this.interaction.editReply({
-            embeds: [embed]
-        })
+        try {
+            await this.interaction.editReply({
+                embeds: [embed]
+            })
+        } catch (error) {
+            throw error;
+        }
     }
 }

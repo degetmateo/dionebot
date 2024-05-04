@@ -31,6 +31,10 @@ export default class RandomCommandInteraction extends CommandInteraction {
         const anime = await AnilistAPI.fetchAnimeById(randomAnime.mediaId);
         const embed = EmbedAnime.Create(anime);
 
-        await this.interaction.editReply( {embeds: [embed] });
+        try {
+            await this.interaction.editReply( {embeds: [embed] });
+        } catch (error) {
+            throw error;
+        }
     }
 }

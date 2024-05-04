@@ -30,9 +30,14 @@ class UnsetupCommandInteraction extends CommandInteraction_1.default {
             .establecerColor(Embed_1.default.COLOR_VERDE)
             .establecerDescripcion('Listo! Se ha eliminado tu cuenta.')
             .obtenerDatos();
-        this.interaction.editReply({
-            embeds: [embed]
-        });
+        try {
+            await this.interaction.editReply({
+                embeds: [embed]
+            });
+        }
+        catch (error) {
+            throw error;
+        }
     }
 }
 exports.default = UnsetupCommandInteraction;

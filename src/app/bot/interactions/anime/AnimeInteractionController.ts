@@ -40,11 +40,15 @@ export default class AnimeInteractionController extends InteractionController {
             return;
         }
 
-        const res = await this.interaction.editReply({
-            embeds: embeds,
-            components: [this.row]
-        })
-
-        await this.createCollector(res);
+        try {
+            const res = await this.interaction.editReply({
+                embeds: embeds,
+                components: [this.row]
+            })
+    
+            await this.createCollector(res);
+        } catch (error) {
+            throw error;
+        }
     }
 }

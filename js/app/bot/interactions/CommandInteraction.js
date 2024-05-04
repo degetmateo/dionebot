@@ -4,4 +4,4 @@ class CommandInteraction {
 }
 exports.default = CommandInteraction;
 CommandInteraction.NUMERO_MAXIMO_32_BITS = 2147483647;
-CommandInteraction.TIEMPO_ESPERA_INTERACCION = 300000;
+CommandInteraction.TIEMPO_ESPERA_INTERACCION = 120000;

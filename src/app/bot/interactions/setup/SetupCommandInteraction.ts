@@ -62,8 +62,12 @@ export default class SetupCommandInteraction extends CommandInteraction {
             .establecerDescripcion('Te has registrado con éxito.')
             .obtenerDatos();
 
-        await this.interaction.editReply({
-            embeds: [embed]
-        })
+        try {
+            await this.interaction.editReply({
+                embeds: [embed]
+            })
+        } catch (error) {
+            throw error;
+        }
     }
 }

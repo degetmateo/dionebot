@@ -40,11 +40,15 @@ export default class MangaInteractionController extends InteractionController {
             return;
         }
 
-        const res = await this.interaction.editReply({
-            embeds: embeds,
-            components: [this.row]
-        })
+        try {
+            const res = await this.interaction.editReply({
+                embeds: embeds,
+                components: [this.row]
+            })
 
-        await this.createCollector(res);
+            await this.createCollector(res);
+        } catch (error) {
+            throw error;   
+        }
     }
 }

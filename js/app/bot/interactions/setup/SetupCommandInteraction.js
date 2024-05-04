@@ -49,9 +49,14 @@ class SetupCommandInteraction extends CommandInteraction_1.default {
             .establecerColor(Embed_1.default.COLOR_VERDE)
             .establecerDescripcion('Te has registrado con éxito.')
             .obtenerDatos();
-        await this.interaction.editReply({
-            embeds: [embed]
-        });
+        try {
+            await this.interaction.editReply({
+                embeds: [embed]
+            });
+        }
+        catch (error) {
+            throw error;
+        }
     }
 }
 exports.default = SetupCommandInteraction;

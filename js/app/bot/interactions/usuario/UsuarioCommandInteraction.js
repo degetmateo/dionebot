@@ -14,7 +14,7 @@ class UsuarioCommandInteraction extends CommandInteraction_1.default {
     }
     async execute() {
         var _a;
-        await this.interaction.deferReply();
+        await this.interaction.deferReply({ fetchReply: true });
         const bot = this.interaction.client;
         const user = this.interaction.options.getUser("usuario");
         const userId = user ? user.id : this.interaction.user.id;
@@ -31,11 +31,19 @@ class UsuarioCommandInteraction extends CommandInteraction_1.default {
             if (error instanceof NoResultsException_1.default) {
                 throw new NoResultsException_1.default('El usuario registrado ya no se encuentra en anilist.');
             }
+            else {
+                throw error;
+            }
         }
         const embed = EmbedUser_1.default.Create(anilistUser);
-        await this.interaction.editReply({
-            embeds: [embed]
-        });
+        try {
+            await this.interaction.editReply({
+                embeds: [embed]
+            });
+        }
+        catch (error) {
+            throw error;
+        }
     }
 }
 exports.default = UsuarioCommandInteraction;

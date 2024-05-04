@@ -31,11 +31,16 @@ class MangaInteractionController extends InteractionController_1.default {
             });
             return;
         }
-        const res = await this.interaction.editReply({
-            embeds: embeds,
-            components: [this.row]
-        });
-        await this.createCollector(res);
+        try {
+            const res = await this.interaction.editReply({
+                embeds: embeds,
+                components: [this.row]
+            });
+            await this.createCollector(res);
+        }
+        catch (error) {
+            throw error;
+        }
     }
 }
 exports.default = MangaInteractionController;

@@ -24,7 +24,12 @@ class VNCommandInteraction extends CommandInteraction_1.default {
             throw new NoResultsException_1.default('No se han encontrado resultados.');
         const vn = new VisualNovel_1.default(result);
         const embed = translate ? await EmbedVisualNovel_1.default.CreateTranslated(vn) : EmbedVisualNovel_1.default.Create(vn);
-        this.interaction.editReply({ embeds: [embed] });
+        try {
+            await this.interaction.editReply({ embeds: [embed] });
+        }
+        catch (error) {
+            throw error;
+        }
     }
 }
 exports.default = VNCommandInteraction;

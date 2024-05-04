@@ -26,7 +26,12 @@ class RandomCommandInteraction extends CommandInteraction_1.default {
             throw new NoResultsException_1.default('No se han encontrado animes planeados.');
         const anime = await AnilistAPI_1.default.fetchAnimeById(randomAnime.mediaId);
         const embed = EmbedAnime_1.default.Create(anime);
-        await this.interaction.editReply({ embeds: [embed] });
+        try {
+            await this.interaction.editReply({ embeds: [embed] });
+        }
+        catch (error) {
+            throw error;
+        }
     }
 }
 exports.default = RandomCommandInteraction;

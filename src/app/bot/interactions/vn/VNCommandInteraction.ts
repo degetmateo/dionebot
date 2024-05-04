@@ -28,6 +28,10 @@ export default class VNCommandInteraction extends CommandInteraction {
         const vn = new VisualNovel(result);
         const embed = translate ? await EmbedVisualNovel.CreateTranslated(vn) : EmbedVisualNovel.Create(vn);
 
-        this.interaction.editReply({ embeds: [embed] });
+        try {
+            await this.interaction.editReply({ embeds: [embed] });
+        } catch (error) {
+            throw error;
+        }
     }
 } 

@@ -67,15 +67,12 @@ export default class SeasonInteractionController {
         try {
             await button.editReply({ embeds: [this.embeds[this.page]], components: [this.row] });
         } catch (error) {
-            if (error instanceof Error) {
-                if (error.message.toLowerCase().includes('too many requests')) {
-                    await button.editReply({ embeds: [this.embeds[this.page]], components: [] });
-                    return;
-                }
+            if (error.message.toLowerCase().includes('too many requests')) {
+                await button.editReply({ embeds: [this.embeds[this.page]], components: [] });
+                return;
             }
 
-            await button.editReply({ embeds: [this.embeds[this.page]], components: [this.row] });
-            console.error(error);
+            throw error;
         }
     }
 }
