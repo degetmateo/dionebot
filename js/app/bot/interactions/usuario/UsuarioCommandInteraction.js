@@ -13,8 +13,8 @@ class UsuarioCommandInteraction extends CommandInteraction_1.default {
         this.interaction = interaction;
     }
     async execute() {
+        // await this.interaction.deferReply();
         var _a;
-        await this.interaction.deferReply();
         const bot = this.interaction.client;
         const user = this.interaction.options.getUser("usuario");
         const userId = user ? user.id : this.interaction.user.id;
@@ -37,7 +37,7 @@ class UsuarioCommandInteraction extends CommandInteraction_1.default {
         }
         const embed = EmbedUser_1.default.Create(anilistUser);
         try {
-            await this.interaction.editReply({
+            this.interaction.reply({
                 embeds: [embed]
             });
         }

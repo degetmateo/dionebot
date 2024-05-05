@@ -16,7 +16,7 @@ export default class UsuarioCommandInteraction extends CommandInteraction {
     }
     
     public async execute (): Promise<void> {
-        await this.interaction.deferReply();
+        // await this.interaction.deferReply();
 
         const bot = this.interaction.client as Bot;
 
@@ -44,7 +44,7 @@ export default class UsuarioCommandInteraction extends CommandInteraction {
         const embed = EmbedUser.Create(anilistUser);
 
         try {
-            await this.interaction.editReply({
+            this.interaction.reply({
                 embeds: [embed]
             })
         } catch (error) {
