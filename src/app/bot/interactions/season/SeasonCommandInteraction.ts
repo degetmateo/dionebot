@@ -13,7 +13,7 @@ export default class SeasonCommandInteraction extends CommandInteraction {
     }
 
     public async execute (): Promise<void> {
-        await this.interaction.deferReply();
+        // await this.interaction.deferReply();
 
         const year: number = this.interaction.options.getInteger("año") as number;
         const season = this.interaction.options.getString("temporada") as MediaSeason;

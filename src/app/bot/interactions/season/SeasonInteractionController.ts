@@ -24,13 +24,14 @@ export default class SeasonInteractionController {
 
     public async execute (): Promise<void> {
         if (this.embeds.length === 1) {
-            await this.interaction.editReply({ embeds: this.embeds });
+            await this.interaction.reply({ embeds: this.embeds });
             return;
         }
         
-        const res = await this.interaction.editReply({
+        const res = await this.interaction.reply({
             embeds: this.embeds,
-            components: [this.row]
+            components: [this.row],
+            fetchReply: true
         })
 
         await this.createCollector(res);

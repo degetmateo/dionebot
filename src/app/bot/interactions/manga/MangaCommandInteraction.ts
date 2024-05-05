@@ -20,7 +20,7 @@ export default class MangaCommandInteraction extends CommandInteraction {
     }
 
     public async execute (): Promise<void> {
-        await this.interaction.deferReply();
+        // await this.interaction.deferReply();
 
         this.queryIsNumber ? 
             await this.findMangaById() :

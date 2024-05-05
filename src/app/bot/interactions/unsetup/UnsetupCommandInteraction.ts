@@ -14,7 +14,7 @@ export default class UnsetupCommandInteraction extends CommandInteraction {
     }
 
     public async execute(): Promise<void> {
-        await this.interaction.deferReply({ ephemeral: true });
+        // await this.interaction.deferReply({ ephemeral: true });
 
         const bot = this.interaction.client as Bot;
 
@@ -37,8 +37,9 @@ export default class UnsetupCommandInteraction extends CommandInteraction {
             .obtenerDatos();
 
         try {
-            await this.interaction.editReply({
-                embeds: [embed]
+            await this.interaction.reply({
+                embeds: [embed],
+                ephemeral: true
             })
         } catch (error) {
             throw error;

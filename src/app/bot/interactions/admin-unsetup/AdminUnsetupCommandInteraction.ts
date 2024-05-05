@@ -14,7 +14,7 @@ export default class AdminUnsetupCommandInteraction extends CommandInteraction {
     }
 
     public async execute(): Promise<void> {
-        await this.interaction.deferReply({ ephemeral: true });
+        // await this.interaction.deferReply({ ephemeral: true });
 
         const bot = this.interaction.client as Bot;
         const user = this.interaction.options.getUser('usuario');
@@ -32,8 +32,9 @@ export default class AdminUnsetupCommandInteraction extends CommandInteraction {
             .establecerDescripcion('Se ha eliminado la cuenta del usuario.')
             .obtenerDatos();
 
-        this.interaction.editReply({
-            embeds: [embed]
+        await this.interaction.reply({
+            embeds: [embed],
+            ephemeral: true
         })
     }
 }

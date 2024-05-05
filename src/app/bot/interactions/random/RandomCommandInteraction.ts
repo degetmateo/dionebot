@@ -15,7 +15,7 @@ export default class RandomCommandInteraction extends CommandInteraction {
     }
 
     public async execute (): Promise<void> {
-        await this.interaction.deferReply();
+        // await this.interaction.deferReply();
 
         const bot = this.interaction.client as Bot;
         const registeredUsers = bot.servers.getUsers(this.interaction.guildId);
@@ -32,7 +32,7 @@ export default class RandomCommandInteraction extends CommandInteraction {
         const embed = EmbedAnime.Create(anime);
 
         try {
-            await this.interaction.editReply( {embeds: [embed] });
+            await this.interaction.reply( {embeds: [embed] });
         } catch (error) {
             throw error;
         }

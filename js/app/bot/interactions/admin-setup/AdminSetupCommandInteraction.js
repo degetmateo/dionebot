@@ -17,7 +17,7 @@ class AdminSetupCommandInteraction extends CommandInteraction_1.default {
         this.interaction = interaction;
     }
     async execute() {
-        await this.interaction.deferReply({ ephemeral: true });
+        // await this.interaction.deferReply({ ephemeral: true });
         const platform = this.interaction.options.getString('plataforma');
         const user = this.interaction.options.getUser('usuario');
         const query = this.interaction.options.getString('nombre-o-id');
@@ -46,8 +46,9 @@ class AdminSetupCommandInteraction extends CommandInteraction_1.default {
             .establecerColor(Embed_1.default.COLOR_VERDE)
             .establecerDescripcion('Se ha registrado al usuario con éxito.')
             .obtenerDatos();
-        await this.interaction.editReply({
-            embeds: [embed]
+        await this.interaction.reply({
+            embeds: [embed],
+            ephemeral: true
         });
     }
 }

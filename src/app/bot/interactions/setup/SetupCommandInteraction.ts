@@ -21,7 +21,7 @@ export default class SetupCommandInteraction extends CommandInteraction {
     }
 
     public async execute(): Promise<void> {
-        await this.interaction.deferReply({ ephemeral: true });
+        // await this.interaction.deferReply({ ephemeral: true });
         
         const platform = this.interaction.options.getString('plataforma') as Platform;
         const query = this.interaction.options.getString('nombre-o-id');
@@ -63,8 +63,9 @@ export default class SetupCommandInteraction extends CommandInteraction {
             .obtenerDatos();
 
         try {
-            await this.interaction.editReply({
-                embeds: [embed]
+            await this.interaction.reply({
+                embeds: [embed],
+                ephemeral: true
             })
         } catch (error) {
             throw error;

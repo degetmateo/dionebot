@@ -20,7 +20,7 @@ export default class AdminSetupCommandInteraction extends CommandInteraction {
     }
 
     public async execute (): Promise<void> {
-        await this.interaction.deferReply({ ephemeral: true });
+        // await this.interaction.deferReply({ ephemeral: true });
 
         const platform = this.interaction.options.getString('plataforma') as Platform;
         const user = this.interaction.options.getUser('usuario');
@@ -58,8 +58,9 @@ export default class AdminSetupCommandInteraction extends CommandInteraction {
             .establecerDescripcion('Se ha registrado al usuario con éxito.')
             .obtenerDatos();
 
-        await this.interaction.editReply({
-            embeds: [embed]
+        await this.interaction.reply({
+            embeds: [embed],
+            ephemeral: true
         })
     }
 }

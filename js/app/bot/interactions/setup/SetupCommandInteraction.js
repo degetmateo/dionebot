@@ -17,7 +17,7 @@ class SetupCommandInteraction extends CommandInteraction_1.default {
         this.interaction = interaction;
     }
     async execute() {
-        await this.interaction.deferReply({ ephemeral: true });
+        // await this.interaction.deferReply({ ephemeral: true });
         const platform = this.interaction.options.getString('plataforma');
         const query = this.interaction.options.getString('nombre-o-id');
         if (platform === 'MyAnimeList' || platform === 'VisualNovelDatabase') {
@@ -50,8 +50,9 @@ class SetupCommandInteraction extends CommandInteraction_1.default {
             .establecerDescripcion('Te has registrado con éxito.')
             .obtenerDatos();
         try {
-            await this.interaction.editReply({
-                embeds: [embed]
+            await this.interaction.reply({
+                embeds: [embed],
+                ephemeral: true
             });
         }
         catch (error) {

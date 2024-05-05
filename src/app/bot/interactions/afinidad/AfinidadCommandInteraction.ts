@@ -19,7 +19,7 @@ export default class AfinidadCommandInteraction extends CommandInteraction {
     }
 
     public async execute (): Promise<void> {
-        await this.interaction.deferReply();
+        // await this.interaction.deferReply();
         const bot = this.interaction.client as Bot;
         
         const inputUser = this.interaction.options.getUser('usuario');

@@ -26,15 +26,16 @@ class MangaInteractionController extends InteractionController_1.default {
         const embeds = (!scores.isEmpty()) ?
             [embedManga, embedScores] : [embedManga];
         if (this.media.length === 1) {
-            await this.interaction.editReply({
+            await this.interaction.reply({
                 embeds: embeds
             });
             return;
         }
         try {
-            const res = await this.interaction.editReply({
+            const res = await this.interaction.reply({
                 embeds: embeds,
-                components: [this.row]
+                components: [this.row],
+                fetchReply: true
             });
             await this.createCollector(res);
         }

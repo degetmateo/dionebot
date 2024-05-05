@@ -13,7 +13,7 @@ class UnsetupCommandInteraction extends CommandInteraction_1.default {
         this.interaction = interaction;
     }
     async execute() {
-        await this.interaction.deferReply({ ephemeral: true });
+        // await this.interaction.deferReply({ ephemeral: true });
         const bot = this.interaction.client;
         const server = bot.servers.get(this.interaction.guildId);
         const user = server.users.find(u => u.discordId === this.interaction.user.id);
@@ -31,8 +31,9 @@ class UnsetupCommandInteraction extends CommandInteraction_1.default {
             .establecerDescripcion('Listo! Se ha eliminado tu cuenta.')
             .obtenerDatos();
         try {
-            await this.interaction.editReply({
-                embeds: [embed]
+            await this.interaction.reply({
+                embeds: [embed],
+                ephemeral: true
             });
         }
         catch (error) {

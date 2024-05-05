@@ -13,7 +13,7 @@ class AdminUnsetupCommandInteraction extends CommandInteraction_1.default {
         this.interaction = interaction;
     }
     async execute() {
-        await this.interaction.deferReply({ ephemeral: true });
+        // await this.interaction.deferReply({ ephemeral: true });
         const bot = this.interaction.client;
         const user = this.interaction.options.getUser('usuario');
         const server = bot.servers.get(this.interaction.guildId);
@@ -26,8 +26,9 @@ class AdminUnsetupCommandInteraction extends CommandInteraction_1.default {
             .establecerColor(Embed_1.default.COLOR_VERDE)
             .establecerDescripcion('Se ha eliminado la cuenta del usuario.')
             .obtenerDatos();
-        this.interaction.editReply({
-            embeds: [embed]
+        await this.interaction.reply({
+            embeds: [embed],
+            ephemeral: true
         });
     }
 }

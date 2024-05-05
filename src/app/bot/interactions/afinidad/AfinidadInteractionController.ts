@@ -29,9 +29,10 @@ export default class AfinidadInteractionController {
     }
 
     public async execute () {
-        const res = await this.interaction.editReply({
+        const res = await this.interaction.reply({
             embeds: [this.embeds[0]],
-            components: [this.row]
+            components: [this.row],
+            fetchReply: true
         })
 
         try {

@@ -14,7 +14,7 @@ class RandomCommandInteraction extends CommandInteraction_1.default {
         this.interaction = interaction;
     }
     async execute() {
-        await this.interaction.deferReply();
+        // await this.interaction.deferReply();
         const bot = this.interaction.client;
         const registeredUsers = bot.servers.getUsers(this.interaction.guildId);
         const user = registeredUsers.find(u => u.discordId === this.interaction.user.id);
@@ -27,7 +27,7 @@ class RandomCommandInteraction extends CommandInteraction_1.default {
         const anime = await AnilistAPI_1.default.fetchAnimeById(randomAnime.mediaId);
         const embed = EmbedAnime_1.default.Create(anime);
         try {
-            await this.interaction.editReply({ embeds: [embed] });
+            await this.interaction.reply({ embeds: [embed] });
         }
         catch (error) {
             throw error;
