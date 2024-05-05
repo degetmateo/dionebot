@@ -61,7 +61,8 @@ export default class Bot extends Client {
             if (!file.endsWith('.ts') && !file.endsWith('.js')) continue;
 
             const filePath = path.join(eventsFolderPath, file);
-            require(filePath)(this);
+            const event = require(filePath);
+            event(this);
         }
     }
 
@@ -105,7 +106,7 @@ export default class Bot extends Client {
                 status: "dnd",
                 activities: [{
                     type: ActivityType.Custom,
-                    name: '⚠️ Server may be under maintenance...'
+                    name: '⚠️ Server is under maintenance...'
                 }]
             }
         ];

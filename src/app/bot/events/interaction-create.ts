@@ -48,6 +48,7 @@ module.exports = (bot: Bot) => {
         setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
 
         try {
+            console.log(`⚪ | ${interaction.user.username}: ${interaction.commandName}`)
             await command.execute(interaction);
         } catch (e1) {
             const isCriticalError =

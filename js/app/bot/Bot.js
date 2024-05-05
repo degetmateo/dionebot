@@ -47,7 +47,7 @@ class Bot extends discord_js_1.Client {
                     status: "dnd",
                     activities: [{
                             type: discord_js_1.ActivityType.Custom,
-                            name: '⚠️ Server may be under maintenance...'
+                            name: '⚠️ Server is under maintenance...'
                         }]
                 }
             ];
@@ -105,7 +105,8 @@ class Bot extends discord_js_1.Client {
             if (!file.endsWith('.ts') && !file.endsWith('.js'))
                 continue;
             const filePath = path_1.default.join(eventsFolderPath, file);
-            require(filePath)(this);
+            const event = require(filePath);
+            event(this);
         }
     }
     async fetchServer(id) {

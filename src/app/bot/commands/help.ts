@@ -12,7 +12,8 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setDescription(DESCRIPTION_HELP)
-            .setColor(0xff8c00);
+            .setColor(0xff8c00)
+            .setFooter({ text: `Dione v${bot.getVersion()}` });
 
         bot.user?.avatarURL() ? embed.setThumbnail(bot.user.avatarURL()) : null;
 
@@ -24,7 +25,7 @@ module.exports = {
 
 const DESCRIPTION_HELP = `
 **Información**
-▸ **\`/help\`** - Este comando.
+▸ **\`/help\`** - Todos los comandos disponibles.
 ▸ **\`/informacion\`** - Información acerca de mi.
 
 **Registrarse**
@@ -45,4 +46,6 @@ const DESCRIPTION_HELP = `
 **Administración**
 ▸ **\`/admin-setup\`** - Guarda el perfil de anilist de un usuario.
 ▸ **\`/admin-unsetup\`** - Elimina el perfil de anilist un usuario.
+
+▸ [Invitame a tu servidor!](${process.env.ENLACE_INVITACION})
 `;

@@ -23,12 +23,9 @@ module.exports = {
 }
 
 const DESCRIPTION = `
-Mi nombre es Dione y soy un bot de Discord cuyas funciones principales incluyen buscar y mostrar información de animes, mangas y novelas visuales en tu servidor.\n
-Estoy siendo desarrollado por una sola persona, por lo que aún no poseo demasiados comandos y estos se van agregando lentamente.\n
-Si lo deseas, puedes invitarme a tu servidor ingresando al enlace que se encuentra debajo.
+Soy Dione, un bot que busca información de animes, mangas y novelas visuales para que todos puedan verla en tu servidor.\n
+Puedes invitarme a tu servidor pulsando el enlace que se encuentra debajo.
 
-https://dionebot.onrender.com/
+▸ [Invitame a tu servidor!](${process.env.ENLACE_INVITACION})
 
-Muchas gracias por leer!
-Si quieres agregarme en discord para enviarme comentarios soy \`\`malardo_bro\`\`.
 `;
