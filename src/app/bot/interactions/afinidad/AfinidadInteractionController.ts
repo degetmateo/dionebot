@@ -1,9 +1,9 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, CacheType, ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, CacheType, ChatInputCommandInteraction, EmbedBuilder, InteractionResponse } from "discord.js";
 import Button from "../../components/Button";
 import CommandInteraction from "../CommandInteraction";
 
 export default class AfinidadInteractionController {
-    private interaction: ChatInputCommandInteraction<CacheType>;
+    private interaction: InteractionResponse<boolean>;
     private embeds: Array<EmbedBuilder>;
 
     private index: number;
@@ -14,7 +14,7 @@ export default class AfinidadInteractionController {
 
     private row: ActionRowBuilder<ButtonBuilder>;
 
-    constructor (interaction: ChatInputCommandInteraction<CacheType>, embeds: Array<EmbedBuilder>) {
+    constructor (interaction: InteractionResponse<boolean>, embeds: Array<EmbedBuilder>) {
         this.interaction = interaction;
         this.embeds = embeds;
 
@@ -29,10 +29,9 @@ export default class AfinidadInteractionController {
     }
 
     public async execute () {
-        const res = await this.interaction.reply({
+        const res = await this.interaction.edit({
             embeds: [this.embeds[0]],
-            components: [this.row],
-            fetchReply: true
+            components: [this.row]
         })
 
         try {
@@ -57,7 +56,7 @@ export default class AfinidadInteractionController {
                 await this.updateInteraction(button);
             })
         } catch (error) {
-            await this.interaction.editReply({ components: [] });
+            await this.interaction.edit({ components: [] });
             console.error(error);
         }
     }

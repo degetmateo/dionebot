@@ -18,10 +18,9 @@ class AfinidadInteractionController {
             .addComponents(this.previousPageButton, this.nextPageButton);
     }
     async execute() {
-        const res = await this.interaction.reply({
+        const res = await this.interaction.edit({
             embeds: [this.embeds[0]],
-            components: [this.row],
-            fetchReply: true
+            components: [this.row]
         });
         try {
             const collector = res.createMessageComponentCollector({
@@ -43,7 +42,7 @@ class AfinidadInteractionController {
             });
         }
         catch (error) {
-            await this.interaction.editReply({ components: [] });
+            await this.interaction.edit({ components: [] });
             console.error(error);
         }
     }

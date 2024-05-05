@@ -105,4 +105,8 @@ export default class Helpers {
     public static calculateAverage (array: number[]): number {
         return this.addElements(array) / array.length;
     }
+
+    public static async sleep (ms: number): Promise<void> {
+        return new Promise(r => setTimeout(r, ms));
+    }
 }
