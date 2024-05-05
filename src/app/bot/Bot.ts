@@ -27,7 +27,7 @@ export default class Bot extends Client {
 
         this.servers = ServerCollection.Create();
         this.version = version;
-        this.status = 'maintenance';
+        this.status = 'online';
     }
 
     public async start (token: string): Promise<void> {

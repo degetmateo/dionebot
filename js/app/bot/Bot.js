@@ -78,7 +78,7 @@ class Bot extends discord_js_1.Client {
         this.cooldowns = new discord_js_1.Collection();
         this.servers = ServerCollection_1.default.Create();
         this.version = package_json_1.version;
-        this.status = 'maintenance';
+        this.status = 'online';
     }
     async start(token) {
         this.on("ready", () => {
