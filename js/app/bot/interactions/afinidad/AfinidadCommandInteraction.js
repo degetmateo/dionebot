@@ -10,6 +10,7 @@ const ServerModel_1 = __importDefault(require("../../../database/modelos/ServerM
 const NoResultsException_1 = __importDefault(require("../../../errors/NoResultsException"));
 const Helpers_1 = __importDefault(require("../../Helpers"));
 const AnilistAPI_1 = __importDefault(require("../../apis/anilist/AnilistAPI"));
+const Embed_1 = __importDefault(require("../../embeds/Embed"));
 class AfinidadCommandInteraction extends CommandInteraction_1.default {
     constructor(interaction) {
         super();
@@ -17,7 +18,9 @@ class AfinidadCommandInteraction extends CommandInteraction_1.default {
         this.interaction = interaction;
     }
     async execute() {
-        const response = await this.interaction.deferReply();
+        const res = await this.interaction.reply({
+            embeds: [new discord_js_1.EmbedBuilder().setColor(Embed_1.default.COLOR_VERDE).setDescription(`🔄️ Calculando afinidades...`)]
+        });
         const bot = this.interaction.client;
         const inputUser = this.interaction.options.getUser('usuario');
         const userId = inputUser ? inputUser.id : this.interaction.user.id;
@@ -32,7 +35,7 @@ class AfinidadCommandInteraction extends CommandInteraction_1.default {
         if (!affinities || affinities.length <= 0)
             throw new NoResultsException_1.default('No hay afinidades disponibles.');
         const embeds = this.createEmbeds(anilistUser, affinities);
-        const interactionController = new AfinidadInteractionController_1.default(response, embeds);
+        const interactionController = new AfinidadInteractionController_1.default(res, embeds);
         await interactionController.execute();
     }
     async getUserAffinities(user, registeredUsers) {
@@ -131,7 +134,7 @@ class AfinidadCommandInteraction extends CommandInteraction_1.default {
             avatar ? embed.setThumbnail(avatar) : null;
             embed.setColor(user.getColor());
             embed.setTitle('Afinidad de ' + user.getName());
-            embed.setFooter({ text: `Pagina ${i + 1} de ${(numEmbeds - 1).toFixed(0)}` });
+            embed.setFooter({ text: `Pagina ${i + 1} de ${(numEmbeds).toFixed(0)}` });
             embeds.push(embed);
         }
         return embeds;

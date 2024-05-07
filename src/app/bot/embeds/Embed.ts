@@ -4,6 +4,10 @@ export default class Embed {
     public static readonly COLOR_ROJO: ColorResolvable = ('#FF0000') as ColorResolvable;
     public static readonly COLOR_VERDE: ColorResolvable = ('#00FF44') as ColorResolvable;
 
+    public static readonly COLOR_RED: ColorResolvable = ('#FF0000') as ColorResolvable;
+    public static readonly COLOR_GREEN: ColorResolvable = ('#00FF44') as ColorResolvable;
+    public static readonly COLOR_YELLOW: ColorResolvable = ('#fff700') as ColorResolvable;
+
     public embed: EmbedBuilder;
 
     private constructor () {

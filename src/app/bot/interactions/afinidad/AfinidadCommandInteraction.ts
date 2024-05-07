@@ -9,6 +9,7 @@ import AnilistAPI from "../../apis/anilist/AnilistAPI";
 import AnilistUser from "../../apis/anilist/modelos/AnilistUser";
 import { MediaScore, SharedMedia, Affinity } from "./types/affinity";
 import { User } from "../../../database/types";
+import Embed from "../../embeds/Embed";
 
 export default class AfinidadCommandInteraction extends CommandInteraction {
     protected interaction: ChatInputCommandInteraction<CacheType>;
@@ -19,7 +20,10 @@ export default class AfinidadCommandInteraction extends CommandInteraction {
     }
 
     public async execute (): Promise<void> {
-        const response = await this.interaction.deferReply();
+        const res = await this.interaction.reply({
+            embeds: [new EmbedBuilder().setColor(Embed.COLOR_VERDE).setDescription(`🔄️ Calculando afinidades...`)]
+        })
+
         const bot = this.interaction.client as Bot;
         
         const inputUser = this.interaction.options.getUser('usuario');
@@ -37,7 +41,7 @@ export default class AfinidadCommandInteraction extends CommandInteraction {
 
         const embeds = this.createEmbeds(anilistUser, affinities);
 
-        const interactionController = new AfinidadInteractionController(response, embeds);
+        const interactionController = new AfinidadInteractionController(res, embeds);
         await interactionController.execute();
     }
 
@@ -160,7 +164,7 @@ export default class AfinidadCommandInteraction extends CommandInteraction {
 
             embed.setColor(user.getColor());
             embed.setTitle('Afinidad de ' + user.getName());
-            embed.setFooter({ text: `Pagina ${i + 1} de ${(numEmbeds - 1).toFixed(0)}` });
+            embed.setFooter({ text: `Pagina ${i + 1} de ${(numEmbeds).toFixed(0)}` });
             embeds.push(embed);
         }
 

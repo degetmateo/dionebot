@@ -47,3 +47,6 @@ class Embed {
 exports.default = Embed;
 Embed.COLOR_ROJO = ('#FF0000');
 Embed.COLOR_VERDE = ('#00FF44');
+Embed.COLOR_RED = ('#FF0000');
+Embed.COLOR_GREEN = ('#00FF44');
+Embed.COLOR_YELLOW = ('#fff700');

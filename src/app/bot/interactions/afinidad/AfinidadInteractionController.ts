@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, CacheType, ChatInputCommandInteraction, EmbedBuilder, InteractionResponse } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, CacheType, ChatInputCommandInteraction, EmbedBuilder, InteractionResponse, Message } from "discord.js";
 import Button from "../../components/Button";
 import CommandInteraction from "../CommandInteraction";
 
