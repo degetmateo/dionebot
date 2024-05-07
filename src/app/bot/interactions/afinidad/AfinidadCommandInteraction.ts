@@ -20,10 +20,7 @@ export default class AfinidadCommandInteraction extends CommandInteraction {
     }
 
     public async execute (): Promise<void> {
-        const res = await this.interaction.reply({
-            embeds: [new EmbedBuilder().setColor(Embed.COLOR_VERDE).setDescription(`🔄️ Calculando afinidades...`)]
-        })
-
+        const res = await this.interaction.deferReply();
         const bot = this.interaction.client as Bot;
         
         const inputUser = this.interaction.options.getUser('usuario');
@@ -143,7 +140,7 @@ export default class AfinidadCommandInteraction extends CommandInteraction {
 
     private createEmbeds (user: AnilistUser, affinities: Array<Affinity>): Array<EmbedBuilder> {
         const embeds = Array<EmbedBuilder>();
-        const numEmbeds = (affinities.length / 10) + 1;
+        const numEmbeds = parseInt((affinities.length / 10)+'')+1;
 
         for (let i = 0; i < numEmbeds; i++) {
             let actualPart = affinities.slice(i * 10, (i * 10) + 10);

@@ -10,7 +10,6 @@ const ServerModel_1 = __importDefault(require("../../../database/modelos/ServerM
 const NoResultsException_1 = __importDefault(require("../../../errors/NoResultsException"));
 const Helpers_1 = __importDefault(require("../../Helpers"));
 const AnilistAPI_1 = __importDefault(require("../../apis/anilist/AnilistAPI"));
-const Embed_1 = __importDefault(require("../../embeds/Embed"));
 class AfinidadCommandInteraction extends CommandInteraction_1.default {
     constructor(interaction) {
         super();
@@ -18,9 +17,7 @@ class AfinidadCommandInteraction extends CommandInteraction_1.default {
         this.interaction = interaction;
     }
     async execute() {
-        const res = await this.interaction.reply({
-            embeds: [new discord_js_1.EmbedBuilder().setColor(Embed_1.default.COLOR_VERDE).setDescription(`🔄️ Calculando afinidades...`)]
-        });
+        const res = await this.interaction.deferReply();
         const bot = this.interaction.client;
         const inputUser = this.interaction.options.getUser('usuario');
         const userId = inputUser ? inputUser.id : this.interaction.user.id;
@@ -117,7 +114,7 @@ class AfinidadCommandInteraction extends CommandInteraction_1.default {
     }
     createEmbeds(user, affinities) {
         const embeds = Array();
-        const numEmbeds = (affinities.length / 10) + 1;
+        const numEmbeds = parseInt((affinities.length / 10) + '') + 1;
         for (let i = 0; i < numEmbeds; i++) {
             let actualPart = affinities.slice(i * 10, (i * 10) + 10);
             let actualCheckedPart = new Array();
