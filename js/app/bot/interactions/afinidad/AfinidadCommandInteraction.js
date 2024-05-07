@@ -17,7 +17,7 @@ class AfinidadCommandInteraction extends CommandInteraction_1.default {
         this.interaction = interaction;
     }
     async execute() {
-        const res = await this.interaction.deferReply();
+        await this.interaction.deferReply();
         const bot = this.interaction.client;
         const inputUser = this.interaction.options.getUser('usuario');
         const userId = inputUser ? inputUser.id : this.interaction.user.id;
@@ -32,7 +32,7 @@ class AfinidadCommandInteraction extends CommandInteraction_1.default {
         if (!affinities || affinities.length <= 0)
             throw new NoResultsException_1.default('No hay afinidades disponibles.');
         const embeds = this.createEmbeds(anilistUser, affinities);
-        const interactionController = new AfinidadInteractionController_1.default(res, embeds);
+        const interactionController = new AfinidadInteractionController_1.default(this.interaction, embeds);
         await interactionController.execute();
     }
     async getUserAffinities(user, registeredUsers) {

@@ -3,7 +3,7 @@ import Button from "../../components/Button";
 import CommandInteraction from "../CommandInteraction";
 
 export default class AfinidadInteractionController {
-    private interaction: InteractionResponse<boolean>;
+    private interaction: ChatInputCommandInteraction<CacheType>;
     private embeds: Array<EmbedBuilder>;
 
     private index: number;
@@ -14,7 +14,7 @@ export default class AfinidadInteractionController {
 
     private row: ActionRowBuilder<ButtonBuilder>;
 
-    constructor (interaction: InteractionResponse<boolean>, embeds: Array<EmbedBuilder>) {
+    constructor (interaction: ChatInputCommandInteraction<CacheType>, embeds: Array<EmbedBuilder>) {
         this.interaction = interaction;
         this.embeds = embeds;
 
@@ -29,7 +29,7 @@ export default class AfinidadInteractionController {
     }
 
     public async execute () {
-        const res = await this.interaction.edit({
+        const res = await this.interaction.followUp({
             embeds: [this.embeds[0]],
             components: [this.row]
         })
@@ -56,7 +56,7 @@ export default class AfinidadInteractionController {
                 await this.updateInteraction(button);
             })
         } catch (error) {
-            await this.interaction.edit({ components: [] });
+            await this.interaction.editReply({ components: [] });
             console.error(error);
         }
     }
