@@ -87,7 +87,7 @@ class Helpers {
         return new Promise(r => setTimeout(r, ms));
     }
 }
-exports.default = Helpers;
 Helpers.LENGUAJE_TRADUCCION = 'es';
 Helpers.REGEX_CADENA_SIN_HTML = /(<([^>]+)>|&\w+;)/gi;
 Helpers.REGEX_OBTENER_ENLACES = /https?:\/\/[^\s/$.?#].[^\s]*/gi;
+exports.default = Helpers;

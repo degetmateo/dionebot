@@ -19,8 +19,8 @@ class Button extends discord_js_1.ButtonBuilder {
             .setCustomId(Button.PreviousButtonID);
     }
 }
-exports.default = Button;
 Button.LabelNextButton = '→';
 Button.LabelPreviousButton = '←';
 Button.NextButtonID = 'nextButton';
 Button.PreviousButtonID = 'previousButton';
+exports.default = Button;

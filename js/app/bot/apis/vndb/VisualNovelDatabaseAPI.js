@@ -34,7 +34,6 @@ class VisualNovelDatabaseAPI {
         return resultados;
     }
 }
-exports.default = VisualNovelDatabaseAPI;
 VisualNovelDatabaseAPI.API_URL = 'https://api.vndb.org/kana/vn';
 VisualNovelDatabaseAPI.TIPO_CONSULTA = 'POST';
 VisualNovelDatabaseAPI.CAMPOS_CONSULTAR = [
@@ -50,3 +49,4 @@ VisualNovelDatabaseAPI.CAMPOS_CONSULTAR = [
     'rating',
     'popularity'
 ];
+exports.default = VisualNovelDatabaseAPI;

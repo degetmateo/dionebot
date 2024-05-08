@@ -17,7 +17,6 @@ class AfinidadCommandInteraction extends CommandInteraction_1.default {
         this.interaction = interaction;
     }
     async execute() {
-        await this.interaction.deferReply();
         const bot = this.interaction.client;
         const inputUser = this.interaction.options.getUser('usuario');
         const userId = inputUser ? inputUser.id : this.interaction.user.id;

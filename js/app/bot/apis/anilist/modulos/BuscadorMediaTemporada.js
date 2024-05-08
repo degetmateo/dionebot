@@ -36,5 +36,5 @@ class BuscadorAnimesTemporada {
         `;
     }
 }
-exports.default = BuscadorAnimesTemporada;
 BuscadorAnimesTemporada.CANTIDAD_RESULTADOS = 50;
+exports.default = BuscadorAnimesTemporada;

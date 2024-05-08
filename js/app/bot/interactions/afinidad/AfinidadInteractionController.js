@@ -18,7 +18,7 @@ class AfinidadInteractionController {
             .addComponents(this.previousPageButton, this.nextPageButton);
     }
     async execute() {
-        const res = await this.interaction.followUp({
+        const res = await this.interaction.reply({
             embeds: [this.embeds[0]],
             components: [this.row]
         });

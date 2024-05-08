@@ -60,5 +60,5 @@ class SetupCommandInteraction extends CommandInteraction_1.default {
         }
     }
 }
-exports.default = SetupCommandInteraction;
 SetupCommandInteraction.MAX_USERS = 15;
+exports.default = SetupCommandInteraction;

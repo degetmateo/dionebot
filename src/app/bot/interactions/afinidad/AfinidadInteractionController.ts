@@ -29,7 +29,7 @@ export default class AfinidadInteractionController {
     }
 
     public async execute () {
-        const res = await this.interaction.followUp({
+        const res = await this.interaction.reply({
             embeds: [this.embeds[0]],
             components: [this.row]
         })
@@ -38,7 +38,6 @@ export default class AfinidadInteractionController {
             const collector = res.createMessageComponentCollector({
                 time: CommandInteraction.TIEMPO_ESPERA_INTERACCION
             });
-
             
             collector.on('collect', async (button: ButtonInteraction) => {
                 await button.deferUpdate();

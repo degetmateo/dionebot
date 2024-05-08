@@ -119,8 +119,8 @@ class AnilistAPI {
             .catch(err => console.error(err));
     }
 }
-exports.default = AnilistAPI;
 AnilistAPI.API_URL = "https://graphql.anilist.co";
 AnilistAPI.RESULTADOS_PAGINA = 10;
 AnilistAPI.CANTIDAD_CONSULTAS_POR_PETICION = 10;
 AnilistAPI.URL_AUTORIZACION = 'https://anilist.co/api/v2/oauth/token';
+exports.default = AnilistAPI;
