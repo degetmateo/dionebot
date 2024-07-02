@@ -1,15 +1,12 @@
 import { ChatInputCommandInteraction, CacheType } from "discord.js";
 import CommandInteraction from "../CommandInteraction";
-import DB from "../../../database/DB";
 import GenericException from "../../../errors/GenericException";
-import IllegalArgumentException from "../../../errors/IllegalArgumentException";
 import NoResultsException from "../../../errors/NoResultsException";
-import Bot from "../../Bot";
 import Helpers from "../../Helpers";
 import AnilistAPI from "../../apis/anilist/AnilistAPI";
 import AnilistUser from "../../apis/anilist/modelos/AnilistUser";
-import { Platform } from "./types";
 import Embed from "../../embeds/Embed";
+import Postgres from "../../../database/postgres";
 
 export default class SetupCommandInteraction extends CommandInteraction {
     private static readonly MAX_USERS = 15;
@@ -23,17 +20,31 @@ export default class SetupCommandInteraction extends CommandInteraction {
     public async execute(): Promise<void> {
         const query = this.interaction.options.getString('nombre-o-id');
 
-        const bot = this.interaction.client as Bot;
-        const serverId = this.interaction.guildId;
+        const serverId = this.interaction.guild.id;
         const userId = this.interaction.user.id;
 
-        const registeredUsers = bot.servers.getUsers(serverId);
+        let queryUserCount: Array<{ user_count: number }> = await Postgres.query() `
+            SELECT user_count FROM 
+                discord_server
+            WHERE
+                id_server = ${serverId};
+        `;
+
+        const userCount = queryUserCount[0].user_count;
         
-        if (registeredUsers.length >= SetupCommandInteraction.MAX_USERS) {
+        if (userCount >= SetupCommandInteraction.MAX_USERS) {
             throw new GenericException('Se ha alcanzado la cantidad máxima de usuarios registrados en este servidor.');
         }
-        
-        if (registeredUsers.find(user => user.discordId === userId)) {
+
+        let queryUser: any = await Postgres.query() `
+            SELECT * FROM
+                discord_user
+            WHERE
+                id_user = ${userId} and
+                id_server = ${serverId};
+        `;
+
+        if (queryUser[0]) {
             throw new GenericException('Ya te encuentras registrado.');
         }
 
@@ -47,8 +58,26 @@ export default class SetupCommandInteraction extends CommandInteraction {
             }
         }
 
-        await DB.createUser(serverId, userId, anilistUser.getId()+'');
-        await bot.loadServers();
+        await Postgres.query().begin(async sql => {
+            await sql `
+                INSERT INTO 
+                    discord_user 
+                VALUES (
+                    ${userId},
+                    ${serverId},
+                    ${anilistUser.getId()}
+                );
+            `;
+
+            await sql `
+                UPDATE 
+                    discord_server
+                SET
+                    user_count = user_count + 1
+                WHERE
+                    id_server = ${serverId};
+            `;
+        });
 
         const embed = Embed.Crear()
             .establecerColor(Embed.COLOR_VERDE)

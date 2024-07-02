@@ -77,7 +77,7 @@ module.exports = (bot: Bot) => {
 
                 if (interaction.isRepliable()) {
                     if (!interaction.deferred && !interaction.replied) {
-                        await interaction.reply({ embeds: [embed.embed] });
+                        await interaction.reply({ embeds: [embed.embed], ephemeral: true });
                     } else {
                         await interaction.editReply({ embeds: [embed.embed] });
                     }

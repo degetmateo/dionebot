@@ -1,13 +1,9 @@
 import { Client, Collection, ActivityType, PresenceData } from 'discord.js';
-// import postgres from 'postgres';
-
 import fs from "fs";
 import path from "path";
-
 import { version } from '../../../package.json';
-import ServerModel from '../database/modelos/ServerModel';
-import ServerCollection from './collections/ServerCollection';
 import { Command, ServerStatus } from './types';
+import Postgres from '../database/postgres';
 
 export default class Bot extends Client {
     private static readonly HORA_EN_MILISEGUNDOS: number = 3600000;
@@ -15,7 +11,6 @@ export default class Bot extends Client {
     public readonly commands: Collection<string, Command>;
     public readonly cooldowns: Collection<string, Collection<string, number>>;
 
-    public readonly servers: ServerCollection;
     private version: string;
 
     private status: ServerStatus;
@@ -31,7 +26,6 @@ export default class Bot extends Client {
         this.commands = new Collection<string, Command>();
         this.cooldowns = new Collection<string, Collection<string, number>>();
 
-        this.servers = ServerCollection.Create();
         this.version = version;
         this.status = 'online';
     }
@@ -42,17 +36,18 @@ export default class Bot extends Client {
             this.setStatusInterval();
         });
 
-        // this.sql();
         this.loadCommands();
-        await this.loadServers();
 
         setInterval(async () => {
-            await this.loadServers();
+            const queryServer = await Postgres.query() `
+                SELECT * FROM discord_server;
+            `;
+
+            console.log(queryServer);
         }, Bot.HORA_EN_MILISEGUNDOS);
 
 
         this.loadEvents();
-
 
         try {
             await this.login(token);
@@ -60,40 +55,6 @@ export default class Bot extends Client {
             console.error(error)
         }
     }
-
-    // private sql () {
-    //     console.log('sql start')
-    //     const db = postgres ({
-    //         host: 'localhost',
-    //         port: 5432,
-    //         database: 'dione_db',
-    //         username: 'postgres',
-    //         password: 'password'
-    //     });
-    //     console.log('sql connection')
-
-    //     this.on(Events.MessageCreate, async message => {
-    //         console.log('message created');
-    //         await db `
-    //             insert into discord_user values (
-    //                 ${parseInt(message.author.id)},
-    //                 ${parseInt(message.guildId)},
-    //                 0
-    //             );
-    //         `;
-
-    //         await db`
-    //             update
-    //                 discord_server
-    //             set
-    //                 user_count = user_count + 1
-    //             where
-    //                 id_server = ${parseInt(message.guildId)};
-    //         `;
-    //     })
-
-    //     console.log('sql end')
-    // }
 
     private loadEvents () {
         const eventsFolderPath = path.join(__dirname + '/events/');
@@ -166,19 +127,6 @@ export default class Bot extends Client {
             this.user.presence.set(presence);
             i++;
         }, 10000);
-    }
-
-    public loadServers = async (): Promise<void> => {
-        this.servers.empty();
-        const servers = await ServerModel.find();
-
-        servers.forEach(server => {
-            this.servers.add({
-                id: server.id,
-                premium: server.premium,
-                users: server.users.toObject()
-            })
-        })
     }
 
     public async fetchServer (id: string) {

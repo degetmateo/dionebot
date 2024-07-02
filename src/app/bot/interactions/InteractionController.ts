@@ -7,6 +7,7 @@ import ScoreCollection from "../apis/anilist/ScoreCollection";
 import EmbedScores from "../embeds/EmbedScores";
 import Media from "../apis/anilist/modelos/media/Media";
 import TooManyRequestsException from "../../errors/TooManyRequestsException";
+import Postgres from "../../database/postgres";
 
 export default abstract class InteractionController {
     protected page: number;
@@ -61,11 +62,18 @@ export default abstract class InteractionController {
     }
 
     protected async updateInteraction (button: ButtonInteraction): Promise<void> {
-        const users = this.bot.servers.getUsers(button.guildId);
+        const serverId = button.guild.id;
+        
+        const queryUsers: Array<{ id_user: number, id_server: number, id_anilist: number }> = await Postgres.query() `
+            SELECT * FROM
+                discord_user
+            WHERE
+                id_server = ${serverId};
+        `;
 
         try {
             const media = this.media[this.page];
-            const scores = await this.fetchUsersUsernames(await AnilistAPI.fetchUsersScores(media.getId() + '', users.map(u => u.anilistId)));
+            const scores = await this.fetchUsersUsernames(await AnilistAPI.fetchUsersScores(media.getId() + '', queryUsers.map(u => u.id_anilist+'')));
 
             if (scores.isEmpty()) {
                 await button.editReply({ embeds: [this.embeds[this.page]], components: [this.row] });
@@ -85,11 +93,18 @@ export default abstract class InteractionController {
     }
 
     protected async fetchUsersUsernames (scores: ScoreCollection): Promise<ScoreCollection> {
-        const users = this.bot.servers.getUsers(this.interaction.guildId);
+        const serverId = this.interaction.guild.id;
         
+        const queryUsers: Array<any> = await Postgres.query() `
+            SELECT * FROM
+                discord_user
+            WHERE
+                id_server = ${serverId};
+        `;
+
         for (const score of scores.getMediaList()) {
-            const discordUser = users.find(u => parseInt(u.anilistId) === score.user.id);
-            score.user.name = (await this.bot.fetchUser(discordUser.discordId)).username;
+            const discordUser = queryUsers.find(u => u.id_anilist == score.user.id);
+            score.user.name = (await this.bot.fetchUser(discordUser.id_user)).username;
         }
 
         return scores;

@@ -5,6 +5,7 @@ import Manga from "../../apis/anilist/modelos/media/Manga";
 import EmbedManga from "../../embeds/EmbedManga";
 import EmbedScores from "../../embeds/EmbedScores";
 import InteractionController from "../InteractionController";
+import Postgres from "../../../database/postgres";
 
 export default class MangaInteractionController extends InteractionController {
     protected media: Array<Manga>;
@@ -15,15 +16,21 @@ export default class MangaInteractionController extends InteractionController {
 
     public async execute (): Promise<void> {
         const serverId = this.interaction.guildId;
-        const users = this.bot.servers.getUsers(serverId);
         const translate = this.interaction.options.getBoolean('traducir') || false;
+
+        const queryUsers: Array<{ id_user: number, id_server: number, id_anilist: number }> = await Postgres.query() `
+            SELECT * FROM
+                discord_user
+            WHERE
+                id_server = ${serverId};
+        `;
 
         this.embeds = translate ?
             await Helpers.asyncMap(this.media, async manga => await EmbedManga.CreateTranslated(manga)) :
             this.media.map(manga => EmbedManga.Create(manga));
 
         const manga = this.media[this.page];
-        const scores = await this.fetchUsersUsernames(await AnilistAPI.fetchUsersScores(manga.getId() + '', users.map(u => u.anilistId)));
+        const scores = await this.fetchUsersUsernames(await AnilistAPI.fetchUsersScores(manga.getId() + '', queryUsers.map(u => u.id_anilist+'')));
 
         const embedManga = this.embeds[this.page];
         const embedScores = EmbedScores.Create(scores).setColor(manga.getColor());

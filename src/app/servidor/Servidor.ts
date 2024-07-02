@@ -1,14 +1,13 @@
 import express from 'express';
 import path from 'path';
 import Bot from '../bot/Bot';
-import DB from '../database/DB';
+import Postgres from '../database/postgres';
 
 export default class Servidor {
     private puerto: number;
     private app: express.Express;
 
     private bot: Bot;
-    private db: DB;
 
     private constructor (puerto: number) {
         this.puerto = puerto;
@@ -21,7 +20,8 @@ export default class Servidor {
         this.cargarRutas();
 
         this.bot = new Bot();
-        this.db = new DB();
+
+        Postgres.init();
 
         this.escuchar();
     }
@@ -42,7 +42,6 @@ export default class Servidor {
 
     private async escuchar (): Promise<void> {
         this.app.listen(this.puerto, () => console.log('✅ | Servidor iniciado en el puerto: ' + this.puerto));
-        await this.db.connect(process.env.DB as string);
         this.bot.start(process.env.TOKEN);
     }
 }

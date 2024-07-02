@@ -5,6 +5,7 @@ import Bot from "../../Bot";
 import Helpers from "../../Helpers";
 import AnilistAPI from "../../apis/anilist/AnilistAPI";
 import EmbedAnime from "../../embeds/EmbedAnime";
+import Postgres from "../../../database/postgres";
 
 export default class RandomCommandInteraction extends CommandInteraction {
     protected interaction: ChatInputCommandInteraction<CacheType>;
@@ -15,15 +16,20 @@ export default class RandomCommandInteraction extends CommandInteraction {
     }
 
     public async execute (): Promise<void> {
-        // await this.interaction.deferReply();
+        const userId = this.interaction.user.id;
+        const serverId = this.interaction.guild.id;
 
-        const bot = this.interaction.client as Bot;
-        const registeredUsers = bot.servers.getUsers(this.interaction.guildId);
-        const user = registeredUsers.find(u => u.discordId === this.interaction.user.id);
+        const queryUser = await Postgres.query() `
+            SELECT * FROM
+                discord_user
+            WHERE
+                id_user = ${userId} and
+                id_server = ${serverId};
+        `;
 
-        if (!user) throw new NoResultsException('No estas registrado.');
+        if (!queryUser[0]) throw new NoResultsException('No estas registrado.');
 
-        const plannedAnimes = await AnilistAPI.fetchUserPlannedAnimes(user.anilistId);
+        const plannedAnimes = await AnilistAPI.fetchUserPlannedAnimes(queryUser[0].id_anilist);
         const randomAnime = Helpers.getRandomElement(plannedAnimes.lists[0].entries);
 
         if (!randomAnime) throw new NoResultsException('No se han encontrado animes planeados.');

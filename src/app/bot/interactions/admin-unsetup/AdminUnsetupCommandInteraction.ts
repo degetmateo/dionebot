@@ -1,9 +1,8 @@
 import { ChatInputCommandInteraction, CacheType } from "discord.js";
 import CommandInteraction from "../CommandInteraction";
 import Embed from "../../embeds/Embed";
-import DB from "../../../database/DB";
 import NoResultsException from "../../../errors/NoResultsException";
-import Bot from "../../Bot";
+import Postgres from "../../../database/postgres";
 
 export default class AdminUnsetupCommandInteraction extends CommandInteraction {
     protected interaction: ChatInputCommandInteraction<CacheType>;
@@ -14,18 +13,30 @@ export default class AdminUnsetupCommandInteraction extends CommandInteraction {
     }
 
     public async execute(): Promise<void> {
-        // await this.interaction.deferReply({ ephemeral: true });
-
-        const bot = this.interaction.client as Bot;
         const user = this.interaction.options.getUser('usuario');
-        const server = bot.servers.get(this.interaction.guildId);
 
-        const registeredUser = server.users.find(u => u.discordId === user.id);
+        const userId = user.id;
+        const serverId = this.interaction.guild.id;
 
-        if (!registeredUser) throw new NoResultsException('El usuario proporcionado no se encuentra registrado.');
+        const queryUser = await Postgres.query() `
+            SELECT * FROM
+                discord_user
+            WHERE
+                id_user = ${userId} and
+                id_server = ${serverId};
+        `;
 
-        await DB.removeUser(server.id, user.id);
-        await bot.loadServers();
+        if (!queryUser[0]) throw new NoResultsException('El usuario proporcionado no se encuentra registrado.');
+
+        await Postgres.query().begin(async sql => {
+            await sql `
+                DELETE FROM
+                    discord_user
+                WHERE
+                    id_user = ${userId} and
+                    id_server = ${serverId};
+            `;
+        });
 
         const embed = Embed.Crear()
             .establecerColor(Embed.COLOR_VERDE)

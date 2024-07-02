@@ -1,15 +1,13 @@
 import { ChatInputCommandInteraction, CacheType, EmbedBuilder } from "discord.js";
 import CommandInteraction from "../CommandInteraction";
 import AfinidadInteractionController from "./AfinidadInteractionController";
-import ServerModel from "../../../database/modelos/ServerModel";
 import NoResultsException from "../../../errors/NoResultsException";
-import Bot from "../../Bot";
 import Helpers from "../../Helpers";
 import AnilistAPI from "../../apis/anilist/AnilistAPI";
 import AnilistUser from "../../apis/anilist/modelos/AnilistUser";
 import { MediaScore, SharedMedia, Affinity } from "./types/affinity";
-import { User } from "../../../database/types";
-import Embed from "../../embeds/Embed";
+import Postgres from "../../../database/postgres";
+import { UserSchema } from "../../../database/types";
 
 export default class AfinidadCommandInteraction extends CommandInteraction {
     protected interaction: ChatInputCommandInteraction<CacheType>;
@@ -20,19 +18,31 @@ export default class AfinidadCommandInteraction extends CommandInteraction {
     }
 
     public async execute (): Promise<void> {
-        const bot = this.interaction.client as Bot;
-        
         const inputUser = this.interaction.options.getUser('usuario');
         const userId = inputUser ? inputUser.id : this.interaction.user.id;
+        const serverId = this.interaction.guild.id;
 
-        const registeredUsers = bot.servers.getUsers(this.interaction.guild.id);
-        const user = registeredUsers.find(u => u.discordId === userId);
-        if (!user) throw new NoResultsException('Tu o el usuario especificado no están registrados.');
+        const queryUser: Array<UserSchema> = await Postgres.query() `
+            SELECT * FROM
+                discord_user
+            WHERE
+                id_user = ${userId} and
+                id_server = ${serverId};
+        `;
 
-        const anilistUser = await AnilistAPI.fetchUserById(parseInt(user.anilistId));
+        if (!queryUser[0]) throw new NoResultsException('Tu o el usuario especificado no están registrados.');
+
+        const anilistUser = await AnilistAPI.fetchUserById(queryUser[0].id_anilist);
         if (!anilistUser) throw new NoResultsException('Tu o el usuario especificado no se encuentran en Anilist.');
 
-        const affinities = await this.getUserAffinities(anilistUser, registeredUsers);
+        const queryUsers: Array<UserSchema> = await Postgres.query() `
+            SELECT * FROM
+                discord_user
+            WHERE
+                id_server = ${serverId};
+        `;
+
+        const affinities = await this.getUserAffinities(anilistUser, queryUsers);
         if (!affinities || affinities.length <= 0) throw new NoResultsException('No hay afinidades disponibles.');
 
         const embeds = this.createEmbeds(anilistUser, affinities);
@@ -41,8 +51,8 @@ export default class AfinidadCommandInteraction extends CommandInteraction {
         await interactionController.execute();
     }
 
-    private async getUserAffinities (user: AnilistUser, registeredUsers: User[]) {
-        const usersCompletedLists = await AnilistAPI.fetchUsersCompletedLists(user, registeredUsers.map(u => u.anilistId));
+    private async getUserAffinities (user: AnilistUser, registeredUsers: UserSchema[]) {
+        const usersCompletedLists = await AnilistAPI.fetchUsersCompletedLists(user, registeredUsers.map(u => u.id_anilist+''));
         const mainUserCollection = usersCompletedLists.user.lists[0];
         const mainUserCompletedMedia = mainUserCollection.entries;
         
@@ -53,23 +63,27 @@ export default class AfinidadCommandInteraction extends CommandInteraction {
         const affinities: Array<{ name: string, affinity: number }> = [];
 
         for (const iterativeUser of registeredUsers) {
-            if (iterativeUser.anilistId === user.getId() + '') continue;
-            const iterativeUserDiscord = await this.interaction.client.users.fetch(iterativeUser.discordId);
+            if (iterativeUser.id_anilist+'' === user.getId() + '') continue;
+            const iterativeUserDiscord = await this.interaction.client.users.fetch(iterativeUser.id_user+'');
             if (!iterativeUserDiscord) continue;
 
             const iterativeUserUsername = iterativeUserDiscord.username;
             if (iterativeUserUsername.toLowerCase().includes('deleted user')) {
-                await ServerModel.updateOne(
-                    { id: this.interaction.guildId },
-                    { $pull: { users: { discordId: iterativeUser.discordId } } });
-                
-                const bot = this.interaction.client as Bot;
-                await bot.loadServers();
+
+                await Postgres.query().begin(async sql => {
+                    await sql `
+                        DELETE FROM
+                            discord_user
+                        WHERE
+                            id_user = ${iterativeUser.id_user} and
+                            id_server = ${iterativeUser.id_server}
+                    `;
+                });
 
                 continue;
             }
 
-            const iterativeUserCompletedCollection = usersCollection.find(u => u.user.id === parseInt(iterativeUser.anilistId)).lists[0];
+            const iterativeUserCompletedCollection = usersCollection.find(u => u.user.id === parseInt(iterativeUser.id_anilist+'')).lists[0];
             if (!iterativeUserCompletedCollection) continue;
             const iterativeUserCompletedMedia = iterativeUserCompletedCollection.entries;
             if (!iterativeUserCompletedMedia || iterativeUserCompletedMedia.length <= 0) continue;

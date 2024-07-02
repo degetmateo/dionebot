@@ -1,12 +1,19 @@
 import { Events } from "discord.js";
 import Bot from "../Bot";
-import DB from "../../database/DB";
+import Postgres from "../../database/postgres";
 
 module.exports = (bot: Bot) => {
     bot.on(Events.GuildMemberRemove, async (member) => {
         try {
-            await DB.removeUser(member.guild.id, member.id);
-            await bot.loadServers();
+            await Postgres.query().begin(async sql => {
+                await sql `
+                    DELETE FROM
+                        discord_user
+                    WHERE
+                        id_user = ${member.id} and
+                        id_server = ${member.guild.id};
+                `;
+            });
         } catch (error) {
             console.error(error);
         }

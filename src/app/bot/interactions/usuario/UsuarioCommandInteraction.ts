@@ -1,11 +1,11 @@
-import { ChatInputCommandInteraction, CacheType } from "discord.js";
+import { ChatInputCommandInteraction, CacheType, User } from "discord.js";
 import CommandInteraction from "../CommandInteraction";
 import NoResultsException from "../../../errors/NoResultsException";
-import Bot from "../../Bot";
 import AnilistAPI from "../../apis/anilist/AnilistAPI";
 import AnilistUser from "../../apis/anilist/modelos/AnilistUser";
 import EmbedUser from "../../embeds/EmbedUser";
-import GenericException from "../../../errors/GenericException";
+import Postgres from "../../../database/postgres";
+import { UserSchema } from "../../../database/types";
 
 export default class UsuarioCommandInteraction extends CommandInteraction {
     protected interaction: ChatInputCommandInteraction<CacheType>;
@@ -16,23 +16,25 @@ export default class UsuarioCommandInteraction extends CommandInteraction {
     }
     
     public async execute (): Promise<void> {
-        // await this.interaction.deferReply();
-
-        const bot = this.interaction.client as Bot;
-
         const user = this.interaction.options.getUser("usuario");
 
         const userId = user ? user.id : this.interaction.user.id;
-        const serverId = this.interaction.guild?.id as string;
+        const serverId = this.interaction.guild.id;
 
-        const registeredUsers = bot.servers.getUsers(serverId);
-        const registeredUser = registeredUsers.find(u => u.discordId === userId);
+        const queryUser = await Postgres.query() `
+            SELECT * FROM
+                discord_user
+            WHERE
+                id_user = ${userId} and
+                id_server = ${serverId};
+        `;
 
-        if (!registeredUser) throw new NoResultsException('El usuario especificado no esta registrado.');
+        if (!queryUser[0]) throw new NoResultsException('El usuario especificado no esta registrado.');
+
 
         let anilistUser: AnilistUser;
         try {
-            anilistUser = await AnilistAPI.fetchUserById(parseInt(registeredUser.anilistId));
+            anilistUser = await AnilistAPI.fetchUserById(parseInt(queryUser[0].id_anilist));
         } catch (error) {
             if (error instanceof NoResultsException) {
                 throw new NoResultsException('El usuario registrado ya no se encuentra en anilist.');

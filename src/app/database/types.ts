@@ -1,10 +1,5 @@
-export type User = {
-    discordId: string,
-    anilistId: string
-}
-
-export type Server = {
-    id: string,
-    premium: boolean,
-    users: Array<User>
+export type UserSchema = {
+    id_user: number,
+    id_server: number,
+    id_anilist: number
 }

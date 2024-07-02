@@ -20,8 +20,6 @@ export default class AnimeCommandInteraction extends CommandInteraction {
     }
 
     public async execute (): Promise<void> {
-        // await this.interaction.deferReply();
-
         this.queryIsNumber ? 
             await this.findAnimeById() :
             await this.findAnimeByName();

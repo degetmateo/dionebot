@@ -1,9 +1,8 @@
 import { ChatInputCommandInteraction, CacheType } from "discord.js";
 import CommandInteraction from "../CommandInteraction";
 import Embed from "../../embeds/Embed";
-import DB from "../../../database/DB";
 import NoResultsException from "../../../errors/NoResultsException";
-import Bot from "../../Bot";
+import Postgres from "../../../database/postgres";
 
 export default class UnsetupCommandInteraction extends CommandInteraction {
     protected interaction: ChatInputCommandInteraction<CacheType>;
@@ -14,22 +13,28 @@ export default class UnsetupCommandInteraction extends CommandInteraction {
     }
 
     public async execute(): Promise<void> {
-        // await this.interaction.deferReply({ ephemeral: true });
+        const userId = this.interaction.user.id;
+        const serverId = this.interaction.guild.id;
 
-        const bot = this.interaction.client as Bot;
+        const queryUser = await Postgres.query() `
+            SELECT * FROM
+                discord_user
+            WHERE
+                id_user = ${userId} and
+                id_server = ${serverId};
+        `;
 
-        const server = bot.servers.get(this.interaction.guildId);
-        const user = server.users.find(u => u.discordId === this.interaction.user.id);
+        if (!queryUser[0]) throw new NoResultsException('No estás registrado.');
 
-        if (!user) throw new NoResultsException('No estás registrado.');
-
-        if (await DB.userExists(server.id, user.discordId)) {
-            await DB.removeUser(server.id, user.discordId);        
-        } else {
-            throw new NoResultsException('No estás registrado.');
-        }
-
-        await bot.loadServers();
+        await Postgres.query().begin(async sql => {
+            await sql `
+                DELETE FROM
+                    discord_user
+                WHERE
+                    id_user = ${userId} and
+                    id_server = ${serverId};
+            `;
+        });
 
         const embed = Embed.Crear()
             .establecerColor(Embed.COLOR_VERDE)
