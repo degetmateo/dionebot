@@ -21,14 +21,7 @@ export default class SetupCommandInteraction extends CommandInteraction {
     }
 
     public async execute(): Promise<void> {
-        // await this.interaction.deferReply({ ephemeral: true });
-        
-        const platform = this.interaction.options.getString('plataforma') as Platform;
         const query = this.interaction.options.getString('nombre-o-id');
-
-        if (platform === 'MyAnimeList' || platform === 'VisualNovelDatabase') {
-            throw new IllegalArgumentException('La plataforma que has elegido no se encuentra disponible.');
-        }
 
         const bot = this.interaction.client as Bot;
         const serverId = this.interaction.guildId;

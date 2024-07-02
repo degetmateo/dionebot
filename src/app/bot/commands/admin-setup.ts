@@ -5,18 +5,9 @@ module.exports = {
     cooldown: 5,
     data: new SlashCommandBuilder()
         .setName('admin-setup')
-        .setDescription("Registra la cuenta de anilist de un usuario.")
+        .setDescription("Enlaza la cuenta de anilist de un usuario.")
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .setDMPermission(false)
-        .addStringOption(option => 
-            option
-                .setName('plataforma')
-                .setDescription('Plataformas.')
-                .addChoices(
-                    { name: 'Anilist', value: 'Anilist' },
-                    { name: 'MyAnimeList', value: 'MyAnimeList' },
-                    { name: 'VisualNovelDatabase', value: 'VisualNovelDatabase' })
-                .setRequired(true))
         .addUserOption(option =>
             option
                 .setName('usuario')
@@ -25,7 +16,7 @@ module.exports = {
         .addStringOption(option =>
             option
                 .setName('nombre-o-id')
-                .setDescription('Nombre o ID del usuario en la plataforma.')
+                .setDescription('Nombre o ID del usuario.')
                 .setRequired(true)),
     execute: async (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> => {
         const commandInteraction = new AdminSetupCommandInteraction(interaction);

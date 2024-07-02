@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const CommandInteraction_1 = __importDefault(require("../CommandInteraction"));
 const DB_1 = __importDefault(require("../../../database/DB"));
 const GenericException_1 = __importDefault(require("../../../errors/GenericException"));
-const IllegalArgumentException_1 = __importDefault(require("../../../errors/IllegalArgumentException"));
 const NoResultsException_1 = __importDefault(require("../../../errors/NoResultsException"));
 const Helpers_1 = __importDefault(require("../../Helpers"));
 const AnilistAPI_1 = __importDefault(require("../../apis/anilist/AnilistAPI"));
@@ -17,13 +16,8 @@ class AdminSetupCommandInteraction extends CommandInteraction_1.default {
         this.interaction = interaction;
     }
     async execute() {
-        // await this.interaction.deferReply({ ephemeral: true });
-        const platform = this.interaction.options.getString('plataforma');
         const user = this.interaction.options.getUser('usuario');
         const query = this.interaction.options.getString('nombre-o-id');
-        if (platform === 'MyAnimeList' || platform === 'VisualNovelDatabase') {
-            throw new IllegalArgumentException_1.default('La plataforma que has elegido no se encuentra disponible.');
-        }
         const bot = this.interaction.client;
         const serverId = this.interaction.guildId;
         const registeredUsers = bot.servers.getUsers(serverId);
