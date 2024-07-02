@@ -1,14 +1,11 @@
 import { Events } from "discord.js";
 import Bot from "../Bot";
-import ServerModel from "../../database/modelos/ServerModel";
+import DB from "../../database/DB";
 
 module.exports = (bot: Bot) => {
     bot.on(Events.GuildMemberRemove, async (member) => {
         try {
-            await ServerModel.updateOne(
-                { id: member.guild.id },
-                { $pull: { users: { discordId: member.id } } });
-
+            await DB.removeUser(member.guild.id, member.id);
             await bot.loadServers();
         } catch (error) {
             console.error(error);

@@ -4,11 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const ServerModel_1 = __importDefault(require("../../database/modelos/ServerModel"));
+const DB_1 = __importDefault(require("../../database/DB"));
 module.exports = (bot) => {
     bot.on(discord_js_1.Events.GuildMemberRemove, async (member) => {
         try {
-            await ServerModel_1.default.updateOne({ id: member.guild.id }, { $pull: { users: { discordId: member.id } } });
+            await DB_1.default.removeUser(member.guild.id, member.id);
             await bot.loadServers();
         }
         catch (error) {

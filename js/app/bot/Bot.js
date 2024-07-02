@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
+// import postgres from 'postgres';
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const package_json_1 = require("../../../package.json");
@@ -11,7 +12,12 @@ const ServerModel_1 = __importDefault(require("../database/modelos/ServerModel")
 const ServerCollection_1 = __importDefault(require("./collections/ServerCollection"));
 class Bot extends discord_js_1.Client {
     constructor() {
-        super({ intents: [] });
+        super({
+            intents: [
+                'Guilds',
+                'GuildMembers',
+            ]
+        });
         this.loadCommands = () => {
             const directorioComandos = path_1.default.join(__dirname + "/commands/");
             const archivos = fs_1.default.readdirSync(directorioComandos);
@@ -85,6 +91,7 @@ class Bot extends discord_js_1.Client {
             console.log("✅ | BOT iniciado.");
             this.setStatusInterval();
         });
+        // this.sql();
         this.loadCommands();
         await this.loadServers();
         setInterval(async () => {
@@ -98,6 +105,36 @@ class Bot extends discord_js_1.Client {
             console.error(error);
         }
     }
+    // private sql () {
+    //     console.log('sql start')
+    //     const db = postgres ({
+    //         host: 'localhost',
+    //         port: 5432,
+    //         database: 'dione_db',
+    //         username: 'postgres',
+    //         password: 'password'
+    //     });
+    //     console.log('sql connection')
+    //     this.on(Events.MessageCreate, async message => {
+    //         console.log('message created');
+    //         await db `
+    //             insert into discord_user values (
+    //                 ${parseInt(message.author.id)},
+    //                 ${parseInt(message.guildId)},
+    //                 0
+    //             );
+    //         `;
+    //         await db`
+    //             update
+    //                 discord_server
+    //             set
+    //                 user_count = user_count + 1
+    //             where
+    //                 id_server = ${parseInt(message.guildId)};
+    //         `;
+    //     })
+    //     console.log('sql end')
+    // }
     loadEvents() {
         const eventsFolderPath = path_1.default.join(__dirname + '/events/');
         const eventsFolderFiles = fs_1.default.readdirSync(eventsFolderPath);

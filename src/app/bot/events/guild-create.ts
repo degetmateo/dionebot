@@ -1,20 +1,12 @@
 import { Events } from "discord.js";
-import ServerModel from "../../database/modelos/ServerModel";
 import Bot from "../Bot";
+import DB from "../../database/DB";
 
 module.exports = (bot: Bot) => {
     bot.on(Events.GuildCreate, async server => {
         try {
-            const props = {
-                id: server.id,
-                premium: false,
-                users: []
-            }
-
-            const newServer = new ServerModel(props)
-
-            await newServer.save();
-            bot.loadServers();
+            await DB.createServer(server.id);
+            await bot.loadServers();
         } catch (error) {
             console.error(error)
         }

@@ -1,4 +1,5 @@
 import { Client, Collection, ActivityType, PresenceData } from 'discord.js';
+// import postgres from 'postgres';
 
 import fs from "fs";
 import path from "path";
@@ -20,7 +21,12 @@ export default class Bot extends Client {
     private status: ServerStatus;
 
     constructor () {
-        super({ intents: [] });
+        super ({ 
+            intents: [
+                'Guilds',
+                'GuildMembers',
+            ] 
+        });
 
         this.commands = new Collection<string, Command>();
         this.cooldowns = new Collection<string, Collection<string, number>>();
@@ -36,6 +42,7 @@ export default class Bot extends Client {
             this.setStatusInterval();
         });
 
+        // this.sql();
         this.loadCommands();
         await this.loadServers();
 
@@ -46,12 +53,47 @@ export default class Bot extends Client {
 
         this.loadEvents();
 
+
         try {
             await this.login(token);
         } catch (error) {
             console.error(error)
         }
     }
+
+    // private sql () {
+    //     console.log('sql start')
+    //     const db = postgres ({
+    //         host: 'localhost',
+    //         port: 5432,
+    //         database: 'dione_db',
+    //         username: 'postgres',
+    //         password: 'password'
+    //     });
+    //     console.log('sql connection')
+
+    //     this.on(Events.MessageCreate, async message => {
+    //         console.log('message created');
+    //         await db `
+    //             insert into discord_user values (
+    //                 ${parseInt(message.author.id)},
+    //                 ${parseInt(message.guildId)},
+    //                 0
+    //             );
+    //         `;
+
+    //         await db`
+    //             update
+    //                 discord_server
+    //             set
+    //                 user_count = user_count + 1
+    //             where
+    //                 id_server = ${parseInt(message.guildId)};
+    //         `;
+    //     })
+
+    //     console.log('sql end')
+    // }
 
     private loadEvents () {
         const eventsFolderPath = path.join(__dirname + '/events/');

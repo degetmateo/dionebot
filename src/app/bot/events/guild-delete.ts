@@ -1,11 +1,11 @@
 import { Events } from "discord.js";
-import ServerModel from "../../database/modelos/ServerModel";
 import Bot from "../Bot";
+import DB from "../../database/DB";
 
 module.exports = (bot: Bot) => {
     bot.on(Events.GuildDelete, async server => {
         try {
-            await ServerModel.findOneAndDelete({ id: server.id });
+            await DB.removeServer(server.id);
             await bot.loadServers();
         } catch (error) {
             console.error(error)
