@@ -1,4 +1,4 @@
-import { Collection, Events } from "discord.js";
+import { Collection, Events, InteractionCollector } from "discord.js";
 import Bot from "../Bot";
 import Embed from "../embeds/Embed";
 import CommandUnderMaintenanceException from "../../errors/CommandUnderMaintenanceException";
@@ -6,6 +6,7 @@ import IllegalArgumentException from "../../errors/IllegalArgumentException";
 import GenericException from "../../errors/GenericException";
 import NoResultsException from "../../errors/NoResultsException";
 import TooManyRequestsException from "../../errors/TooManyRequestsException";
+import Postgres from "../../database/postgres";
 
 module.exports = (bot: Bot) => {
     bot.on(Events.InteractionCreate, async interaction => {
@@ -50,6 +51,28 @@ module.exports = (bot: Bot) => {
         try {
             console.log(`⚪ | ${interaction.user.username}: ${interaction.commandName}`)
             await command.execute(interaction);
+
+            await Postgres.query().begin(async sql => {
+                const queryServer = await sql `
+                    SELECT * FROM
+                        discord_server
+                    WHERE
+                        id_server = ${interaction.guild.id};
+                `;
+
+                if (!queryServer[0]) {
+                    console.log('🟨 | Servidor no encontrado. Se creara su fila correspondiente.');
+
+                    await Postgres.query() `
+                        INSERT INTO
+                            discord_server
+                        VALUES (
+                            ${interaction.guild.id},
+                            0
+                        );
+                    `;
+                }
+            })
         } catch (e1) {
             const isCriticalError =
                 !(e1 instanceof GenericException) &&
