@@ -45,6 +45,8 @@ export default class Bot extends Client {
                 SELECT * FROM discord_server;
             `;
 
+            await ServerModel.find();
+
             console.log(queryServer);
         }, Bot.HORA_EN_MILISEGUNDOS);
 
@@ -85,15 +87,6 @@ export default class Bot extends Client {
                             ${server.id},
                             ${user.anilistId}
                         );
-                    `;
-
-                    await sql `
-                        UPDATE
-                            discord_server
-                        SET
-                            user_count = user_count + 1
-                        WHERE
-                            id_server = ${server.id};
                     `;
                 }
             })

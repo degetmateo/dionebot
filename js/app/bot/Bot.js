@@ -84,6 +84,7 @@ class Bot extends discord_js_1.Client {
             const queryServer = await postgres_1.default.query() `
                 SELECT * FROM discord_server;
             `;
+            await ServerModel_1.default.find();
             console.log(queryServer);
         }, Bot.HORA_EN_MILISEGUNDOS);
         this.loadEvents();
@@ -118,14 +119,6 @@ class Bot extends discord_js_1.Client {
                             ${server.id},
                             ${user.anilistId}
                         );
-                    `;
-                    await sql `
-                        UPDATE
-                            discord_server
-                        SET
-                            user_count = user_count + 1
-                        WHERE
-                            id_server = ${server.id};
                     `;
                 }
             });

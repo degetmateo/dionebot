@@ -68,15 +68,6 @@ export default class SetupCommandInteraction extends CommandInteraction {
                     ${anilistUser.getId()}
                 );
             `;
-
-            await sql `
-                UPDATE 
-                    discord_server
-                SET
-                    user_count = user_count + 1
-                WHERE
-                    id_server = ${serverId};
-            `;
         });
 
         const embed = Embed.Crear()

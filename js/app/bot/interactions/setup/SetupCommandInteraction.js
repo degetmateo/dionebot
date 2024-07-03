@@ -59,14 +59,6 @@ class SetupCommandInteraction extends CommandInteraction_1.default {
                     ${anilistUser.getId()}
                 );
             `;
-            await sql `
-                UPDATE 
-                    discord_server
-                SET
-                    user_count = user_count + 1
-                WHERE
-                    id_server = ${serverId};
-            `;
         });
         const embed = Embed_1.default.Crear()
             .establecerColor(Embed_1.default.COLOR_VERDE)
