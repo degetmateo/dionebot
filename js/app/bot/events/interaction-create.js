@@ -10,6 +10,7 @@ const IllegalArgumentException_1 = __importDefault(require("../../errors/Illegal
 const GenericException_1 = __importDefault(require("../../errors/GenericException"));
 const NoResultsException_1 = __importDefault(require("../../errors/NoResultsException"));
 const TooManyRequestsException_1 = __importDefault(require("../../errors/TooManyRequestsException"));
+const postgres_1 = __importDefault(require("../../database/postgres"));
 module.exports = (bot) => {
     bot.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
         var _a;
@@ -46,6 +47,25 @@ module.exports = (bot) => {
         try {
             console.log(`⚪ | ${interaction.user.username}: ${interaction.commandName}`);
             await command.execute(interaction);
+            await postgres_1.default.query().begin(async (sql) => {
+                const queryServer = await sql `
+                    SELECT * FROM
+                        discord_server
+                    WHERE
+                        id_server = ${interaction.guild.id};
+                `;
+                if (!queryServer[0]) {
+                    console.log('🟨 | Servidor no encontrado. Se creara su fila correspondiente.');
+                    await postgres_1.default.query() `
+                        INSERT INTO
+                            discord_server
+                        VALUES (
+                            ${interaction.guild.id},
+                            0
+                        );
+                    `;
+                }
+            });
         }
         catch (e1) {
             const isCriticalError = !(e1 instanceof GenericException_1.default) &&
