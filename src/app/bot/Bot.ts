@@ -4,6 +4,8 @@ import path from "path";
 import { version } from '../../../package.json';
 import { Command, ServerStatus } from './types';
 import Postgres from '../database/postgres';
+import DB from '../database/DB';
+import ServerModel from '../database/modelos/ServerModel';
 
 export default class Bot extends Client {
     private static readonly HORA_EN_MILISEGUNDOS: number = 3600000;
@@ -48,10 +50,53 @@ export default class Bot extends Client {
 
         this.loadEvents();
 
+        //await this.CopyFromMongoDB();
+
         try {
             await this.login(token);
         } catch (error) {
             console.error(error)
+        }
+    }
+
+    private async CopyFromMongoDB() {
+        const db = new DB();
+        await db.connect(process.env.DB);
+
+        const servers = await ServerModel.find();
+
+        for (const server of servers) {
+            await Postgres.query().begin(async sql => {
+                await sql `
+                    INSERT INTO 
+                        discord_server
+                    VALUES (
+                        ${server.id},
+                        0
+                    );
+                `;
+
+                for (const user of server.users) {
+                    await sql `
+                        INSERT INTO
+                            discord_user
+                        VALUES (
+                            ${user.discordId},
+                            ${server.id},
+                            ${user.anilistId}
+                        );
+                    `;
+
+                    await sql `
+                        UPDATE
+                            discord_server
+                        SET
+                            user_count = user_count + 1
+                        WHERE
+                            id_server = ${server.id};
+                    `;
+                }
+            })
         }
     }
 

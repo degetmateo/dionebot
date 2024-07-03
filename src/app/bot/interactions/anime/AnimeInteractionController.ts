@@ -6,6 +6,7 @@ import EmbedAnime from "../../embeds/EmbedAnime";
 import EmbedScores from "../../embeds/EmbedScores";
 import InteractionController from "../InteractionController";
 import Postgres from "../../../database/postgres";
+import { UserSchema } from "../../../database/types";
 
 export default class AnimeInteractionController extends InteractionController {
     protected media: Array<Anime>;
@@ -15,15 +16,17 @@ export default class AnimeInteractionController extends InteractionController {
     }
 
     public async execute (): Promise<void> {
-        const serverId = this.interaction.guildId;
+        const serverId = this.interaction.guild.id;
         const translate = this.interaction.options.getBoolean('traducir') || false;
 
-        const queryUsers: Array<{ id_user: number, id_server: number, id_anilist: number }> = await Postgres.query() `
+        const queryUsers: Array<UserSchema> = await Postgres.query() `
             SELECT * FROM
                 discord_user
             WHERE
                 id_server = ${serverId};
         `;
+
+        console.log(queryUsers)
 
         this.embeds = translate ?
             await Helpers.asyncMap(this.media, async anime => await EmbedAnime.CreateTranslated(anime)) :

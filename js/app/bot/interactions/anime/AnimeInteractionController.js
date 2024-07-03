@@ -14,7 +14,7 @@ class AnimeInteractionController extends InteractionController_1.default {
         super(interaction, animes);
     }
     async execute() {
-        const serverId = this.interaction.guildId;
+        const serverId = this.interaction.guild.id;
         const translate = this.interaction.options.getBoolean('traducir') || false;
         const queryUsers = await postgres_1.default.query() `
             SELECT * FROM
@@ -22,6 +22,7 @@ class AnimeInteractionController extends InteractionController_1.default {
             WHERE
                 id_server = ${serverId};
         `;
+        console.log(queryUsers);
         this.embeds = translate ?
             await Helpers_1.default.asyncMap(this.media, async (anime) => await EmbedAnime_1.default.CreateTranslated(anime)) :
             this.media.map(media => EmbedAnime_1.default.Create(media));
