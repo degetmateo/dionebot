@@ -10,20 +10,24 @@ export default class Servidor {
     private bot: Bot;
 
     private constructor (puerto: number) {
-        this.puerto = puerto;
-        this.app = express();
-
-        this.app.use(express.json());
-        this.app.use(express.static(path.join(__dirname + '/../../public')));
-        this.app.set("port", process.env.PORT || 4000);
-
-        this.cargarRutas();
-
-        this.bot = new Bot();
-
-        Postgres.init();
-
-        this.escuchar();
+        try {
+            this.puerto = puerto;
+            this.app = express();
+    
+            this.app.use(express.json());
+            this.app.use(express.static(path.join(__dirname + '/../../public')));
+            this.app.set("port", process.env.PORT || 4000);
+    
+            this.cargarRutas();
+    
+            this.bot = new Bot();
+    
+            Postgres.init();
+    
+            this.escuchar();            
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     public static Iniciar (puerto: number): void {

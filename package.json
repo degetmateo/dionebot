@@ -11,9 +11,6 @@
     "deploy-commands": "ts-node src/deploy-commands.ts",
     "delete-commands": "ts-node src/delete-commands.ts"
   },
-  "engines": {
-    "node": "^20"
-  },
   "type": "commonjs",
   "keywords": [
     "discord",

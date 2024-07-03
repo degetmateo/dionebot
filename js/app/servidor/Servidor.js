@@ -9,15 +9,20 @@ const Bot_1 = __importDefault(require("../bot/Bot"));
 const postgres_1 = __importDefault(require("../database/postgres"));
 class Servidor {
     constructor(puerto) {
-        this.puerto = puerto;
-        this.app = (0, express_1.default)();
-        this.app.use(express_1.default.json());
-        this.app.use(express_1.default.static(path_1.default.join(__dirname + '/../../public')));
-        this.app.set("port", process.env.PORT || 4000);
-        this.cargarRutas();
-        this.bot = new Bot_1.default();
-        postgres_1.default.init();
-        this.escuchar();
+        try {
+            this.puerto = puerto;
+            this.app = (0, express_1.default)();
+            this.app.use(express_1.default.json());
+            this.app.use(express_1.default.static(path_1.default.join(__dirname + '/../../public')));
+            this.app.set("port", process.env.PORT || 4000);
+            this.cargarRutas();
+            this.bot = new Bot_1.default();
+            postgres_1.default.init();
+            this.escuchar();
+        }
+        catch (error) {
+            console.error(error);
+        }
     }
     static Iniciar(puerto) {
         new Servidor(puerto);

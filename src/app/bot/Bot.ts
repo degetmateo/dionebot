@@ -46,7 +46,6 @@ export default class Bot extends Client {
             console.log(queryServer);
         }, Bot.HORA_EN_MILISEGUNDOS);
 
-
         this.loadEvents();
 
         try {
