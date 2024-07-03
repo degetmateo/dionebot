@@ -7,7 +7,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('help')
         .setDescription("Envía un mensaje con los comandos."),
-    execute: (interaction: ChatInputCommandInteraction<CacheType>) => {
+    execute: async (interaction: ChatInputCommandInteraction<CacheType>) => {
         const bot: Bot = interaction.client as Bot;
 
         const embed = new EmbedBuilder()
@@ -17,7 +17,7 @@ module.exports = {
 
         bot.user?.avatarURL() ? embed.setThumbnail(bot.user.avatarURL()) : null;
 
-        interaction.reply({
+        await interaction.reply({
             embeds: [embed]
         })
     }

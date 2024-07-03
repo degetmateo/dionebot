@@ -15,7 +15,6 @@ class VNCommandInteraction extends CommandInteraction_1.default {
         this.interaction = interaction;
     }
     async execute() {
-        await this.interaction.deferReply();
         const query = this.interaction.options.getString('nombre-o-id');
         const translate = this.interaction.options.getBoolean('traducir') || false;
         const queryType = Helpers_1.default.isNumber(query) ? 'id' : 'search';

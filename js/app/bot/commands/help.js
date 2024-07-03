@@ -7,7 +7,7 @@ module.exports = {
     data: new discord_js_1.SlashCommandBuilder()
         .setName('help')
         .setDescription("Envía un mensaje con los comandos."),
-    execute: (interaction) => {
+    execute: async (interaction) => {
         var _a;
         const bot = interaction.client;
         const embed = new builders_1.EmbedBuilder()
@@ -15,7 +15,7 @@ module.exports = {
             .setColor(0xff8c00)
             .setFooter({ text: `Dione v${bot.getVersion()}` });
         ((_a = bot.user) === null || _a === void 0 ? void 0 : _a.avatarURL()) ? embed.setThumbnail(bot.user.avatarURL()) : null;
-        interaction.reply({
+        await interaction.reply({
             embeds: [embed]
         });
     }

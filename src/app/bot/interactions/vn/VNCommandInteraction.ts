@@ -15,8 +15,6 @@ export default class VNCommandInteraction extends CommandInteraction {
     }
 
     public async execute (): Promise<void> {
-        await this.interaction.deferReply();
-
         const query: string = this.interaction.options.getString('nombre-o-id') as string;
         const translate: boolean = this.interaction.options.getBoolean('traducir') || false;
 

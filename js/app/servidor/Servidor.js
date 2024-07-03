@@ -21,7 +21,7 @@ class Servidor {
             this.escuchar();
         }
         catch (error) {
-            console.error(error);
+            console.error('Error catched on Servidor.ts: ', error);
         }
     }
     static Iniciar(puerto) {
@@ -37,7 +37,12 @@ class Servidor {
     }
     async escuchar() {
         this.app.listen(this.puerto, () => console.log('✅ | Servidor iniciado en el puerto: ' + this.puerto));
-        this.bot.start(process.env.TOKEN);
+        try {
+            await this.bot.start(process.env.TOKEN);
+        }
+        catch (error) {
+            console.error(error);
+        }
     }
 }
 exports.default = Servidor;
