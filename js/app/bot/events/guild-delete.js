@@ -4,12 +4,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const DB_1 = __importDefault(require("../../database/DB"));
+const postgres_1 = __importDefault(require("../../database/postgres"));
 module.exports = (bot) => {
     bot.on(discord_js_1.Events.GuildDelete, async (server) => {
         try {
-            await DB_1.default.removeServer(server.id);
-            await bot.loadServers();
+            await postgres_1.default.query().begin(async (sql) => {
+                await sql `
+                    DELETE FROM
+                        discord_user
+                    WHERE
+                        id_server = ${server.id};
+                `;
+                await sql `
+                    DELETE FROM
+                        discord_server
+                    WHERE
+                        id_server = ${server.id};
+                `;
+            });
         }
         catch (error) {
             console.error(error);

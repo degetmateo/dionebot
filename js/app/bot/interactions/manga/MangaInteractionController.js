@@ -8,19 +8,25 @@ const AnilistAPI_1 = __importDefault(require("../../apis/anilist/AnilistAPI"));
 const EmbedManga_1 = __importDefault(require("../../embeds/EmbedManga"));
 const EmbedScores_1 = __importDefault(require("../../embeds/EmbedScores"));
 const InteractionController_1 = __importDefault(require("../InteractionController"));
+const postgres_1 = __importDefault(require("../../../database/postgres"));
 class MangaInteractionController extends InteractionController_1.default {
     constructor(interaction, mangas) {
         super(interaction, mangas);
     }
     async execute() {
         const serverId = this.interaction.guildId;
-        const users = this.bot.servers.getUsers(serverId);
         const translate = this.interaction.options.getBoolean('traducir') || false;
+        const queryUsers = await postgres_1.default.query() `
+            SELECT * FROM
+                discord_user
+            WHERE
+                id_server = ${serverId};
+        `;
         this.embeds = translate ?
             await Helpers_1.default.asyncMap(this.media, async (manga) => await EmbedManga_1.default.CreateTranslated(manga)) :
             this.media.map(manga => EmbedManga_1.default.Create(manga));
         const manga = this.media[this.page];
-        const scores = await this.fetchUsersUsernames(await AnilistAPI_1.default.fetchUsersScores(manga.getId() + '', users.map(u => u.anilistId)));
+        const scores = await this.fetchUsersUsernames(await AnilistAPI_1.default.fetchUsersScores(manga.getId() + '', queryUsers.map(u => u.id_anilist + '')));
         const embedManga = this.embeds[this.page];
         const embedScores = EmbedScores_1.default.Create(scores).setColor(manga.getColor());
         const embeds = (!scores.isEmpty()) ?

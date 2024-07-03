@@ -4,12 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-// import postgres from 'postgres';
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const package_json_1 = require("../../../package.json");
-const ServerModel_1 = __importDefault(require("../database/modelos/ServerModel"));
-const ServerCollection_1 = __importDefault(require("./collections/ServerCollection"));
+const postgres_1 = __importDefault(require("../database/postgres"));
 class Bot extends discord_js_1.Client {
     constructor() {
         super({
@@ -69,20 +67,8 @@ class Bot extends discord_js_1.Client {
                 i++;
             }, 10000);
         };
-        this.loadServers = async () => {
-            this.servers.empty();
-            const servers = await ServerModel_1.default.find();
-            servers.forEach(server => {
-                this.servers.add({
-                    id: server.id,
-                    premium: server.premium,
-                    users: server.users.toObject()
-                });
-            });
-        };
         this.commands = new discord_js_1.Collection();
         this.cooldowns = new discord_js_1.Collection();
-        this.servers = ServerCollection_1.default.Create();
         this.version = package_json_1.version;
         this.status = 'online';
     }
@@ -91,11 +77,12 @@ class Bot extends discord_js_1.Client {
             console.log("✅ | BOT iniciado.");
             this.setStatusInterval();
         });
-        // this.sql();
         this.loadCommands();
-        await this.loadServers();
         setInterval(async () => {
-            await this.loadServers();
+            const queryServer = await postgres_1.default.query() `
+                SELECT * FROM discord_server;
+            `;
+            console.log(queryServer);
         }, Bot.HORA_EN_MILISEGUNDOS);
         this.loadEvents();
         try {
@@ -105,36 +92,6 @@ class Bot extends discord_js_1.Client {
             console.error(error);
         }
     }
-    // private sql () {
-    //     console.log('sql start')
-    //     const db = postgres ({
-    //         host: 'localhost',
-    //         port: 5432,
-    //         database: 'dione_db',
-    //         username: 'postgres',
-    //         password: 'password'
-    //     });
-    //     console.log('sql connection')
-    //     this.on(Events.MessageCreate, async message => {
-    //         console.log('message created');
-    //         await db `
-    //             insert into discord_user values (
-    //                 ${parseInt(message.author.id)},
-    //                 ${parseInt(message.guildId)},
-    //                 0
-    //             );
-    //         `;
-    //         await db`
-    //             update
-    //                 discord_server
-    //             set
-    //                 user_count = user_count + 1
-    //             where
-    //                 id_server = ${parseInt(message.guildId)};
-    //         `;
-    //     })
-    //     console.log('sql end')
-    // }
     loadEvents() {
         const eventsFolderPath = path_1.default.join(__dirname + '/events/');
         const eventsFolderFiles = fs_1.default.readdirSync(eventsFolderPath);

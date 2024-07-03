@@ -4,12 +4,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const DB_1 = __importDefault(require("../../database/DB"));
+const postgres_1 = __importDefault(require("../../database/postgres"));
 module.exports = (bot) => {
     bot.on(discord_js_1.Events.GuildCreate, async (server) => {
         try {
-            await DB_1.default.createServer(server.id);
-            await bot.loadServers();
+            await postgres_1.default.query().begin(async (sql) => {
+                await sql `
+                    INSERT INTO
+                        discord_server
+                    VALUES (
+                        ${server.id},
+                        0
+                    );
+                `;
+            });
         }
         catch (error) {
             console.error(error);

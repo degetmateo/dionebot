@@ -16,7 +16,6 @@ class MangaCommandInteraction extends CommandInteraction_1.default {
         this.queryIsNumber = Helpers_1.default.isNumber(this.query);
     }
     async execute() {
-        // await this.interaction.deferReply();
         this.queryIsNumber ?
             await this.findMangaById() :
             await this.findMangaByName();

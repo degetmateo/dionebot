@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
 const Bot_1 = __importDefault(require("../bot/Bot"));
-const DB_1 = __importDefault(require("../database/DB"));
+const postgres_1 = __importDefault(require("../database/postgres"));
 class Servidor {
     constructor(puerto) {
         this.puerto = puerto;
@@ -16,7 +16,7 @@ class Servidor {
         this.app.set("port", process.env.PORT || 4000);
         this.cargarRutas();
         this.bot = new Bot_1.default();
-        this.db = new DB_1.default();
+        postgres_1.default.init();
         this.escuchar();
     }
     static Iniciar(puerto) {
@@ -32,7 +32,6 @@ class Servidor {
     }
     async escuchar() {
         this.app.listen(this.puerto, () => console.log('✅ | Servidor iniciado en el puerto: ' + this.puerto));
-        await this.db.connect(process.env.DB);
         this.bot.start(process.env.TOKEN);
     }
 }

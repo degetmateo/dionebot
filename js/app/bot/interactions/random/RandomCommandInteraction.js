@@ -8,19 +8,25 @@ const NoResultsException_1 = __importDefault(require("../../../errors/NoResultsE
 const Helpers_1 = __importDefault(require("../../Helpers"));
 const AnilistAPI_1 = __importDefault(require("../../apis/anilist/AnilistAPI"));
 const EmbedAnime_1 = __importDefault(require("../../embeds/EmbedAnime"));
+const postgres_1 = __importDefault(require("../../../database/postgres"));
 class RandomCommandInteraction extends CommandInteraction_1.default {
     constructor(interaction) {
         super();
         this.interaction = interaction;
     }
     async execute() {
-        // await this.interaction.deferReply();
-        const bot = this.interaction.client;
-        const registeredUsers = bot.servers.getUsers(this.interaction.guildId);
-        const user = registeredUsers.find(u => u.discordId === this.interaction.user.id);
-        if (!user)
+        const userId = this.interaction.user.id;
+        const serverId = this.interaction.guild.id;
+        const queryUser = await postgres_1.default.query() `
+            SELECT * FROM
+                discord_user
+            WHERE
+                id_user = ${userId} and
+                id_server = ${serverId};
+        `;
+        if (!queryUser[0])
             throw new NoResultsException_1.default('No estas registrado.');
-        const plannedAnimes = await AnilistAPI_1.default.fetchUserPlannedAnimes(user.anilistId);
+        const plannedAnimes = await AnilistAPI_1.default.fetchUserPlannedAnimes(queryUser[0].id_anilist);
         const randomAnime = Helpers_1.default.getRandomElement(plannedAnimes.lists[0].entries);
         if (!randomAnime)
             throw new NoResultsException_1.default('No se han encontrado animes planeados.');

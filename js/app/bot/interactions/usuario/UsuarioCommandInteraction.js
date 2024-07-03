@@ -7,25 +7,28 @@ const CommandInteraction_1 = __importDefault(require("../CommandInteraction"));
 const NoResultsException_1 = __importDefault(require("../../../errors/NoResultsException"));
 const AnilistAPI_1 = __importDefault(require("../../apis/anilist/AnilistAPI"));
 const EmbedUser_1 = __importDefault(require("../../embeds/EmbedUser"));
+const postgres_1 = __importDefault(require("../../../database/postgres"));
 class UsuarioCommandInteraction extends CommandInteraction_1.default {
     constructor(interaction) {
         super();
         this.interaction = interaction;
     }
     async execute() {
-        // await this.interaction.deferReply();
-        var _a;
-        const bot = this.interaction.client;
         const user = this.interaction.options.getUser("usuario");
         const userId = user ? user.id : this.interaction.user.id;
-        const serverId = (_a = this.interaction.guild) === null || _a === void 0 ? void 0 : _a.id;
-        const registeredUsers = bot.servers.getUsers(serverId);
-        const registeredUser = registeredUsers.find(u => u.discordId === userId);
-        if (!registeredUser)
+        const serverId = this.interaction.guild.id;
+        const queryUser = await postgres_1.default.query() `
+            SELECT * FROM
+                discord_user
+            WHERE
+                id_user = ${userId} and
+                id_server = ${serverId};
+        `;
+        if (!queryUser[0])
             throw new NoResultsException_1.default('El usuario especificado no esta registrado.');
         let anilistUser;
         try {
-            anilistUser = await AnilistAPI_1.default.fetchUserById(parseInt(registeredUser.anilistId));
+            anilistUser = await AnilistAPI_1.default.fetchUserById(parseInt(queryUser[0].id_anilist));
         }
         catch (error) {
             if (error instanceof NoResultsException_1.default) {

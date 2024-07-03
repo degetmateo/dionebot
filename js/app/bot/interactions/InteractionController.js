@@ -9,6 +9,7 @@ const CommandInteraction_1 = __importDefault(require("./CommandInteraction"));
 const AnilistAPI_1 = __importDefault(require("../apis/anilist/AnilistAPI"));
 const EmbedScores_1 = __importDefault(require("../embeds/EmbedScores"));
 const TooManyRequestsException_1 = __importDefault(require("../../errors/TooManyRequestsException"));
+const postgres_1 = __importDefault(require("../../database/postgres"));
 class InteractionController {
     constructor(interaction, media) {
         this.buttonPreviousPage = Button_1.default.CreatePrevious();
@@ -46,10 +47,16 @@ class InteractionController {
         }
     }
     async updateInteraction(button) {
-        const users = this.bot.servers.getUsers(button.guildId);
+        const serverId = button.guild.id;
+        const queryUsers = await postgres_1.default.query() `
+            SELECT * FROM
+                discord_user
+            WHERE
+                id_server = ${serverId};
+        `;
         try {
             const media = this.media[this.page];
-            const scores = await this.fetchUsersUsernames(await AnilistAPI_1.default.fetchUsersScores(media.getId() + '', users.map(u => u.anilistId)));
+            const scores = await this.fetchUsersUsernames(await AnilistAPI_1.default.fetchUsersScores(media.getId() + '', queryUsers.map(u => u.id_anilist + '')));
             if (scores.isEmpty()) {
                 await button.editReply({ embeds: [this.embeds[this.page]], components: [this.row] });
             }
@@ -68,10 +75,16 @@ class InteractionController {
         }
     }
     async fetchUsersUsernames(scores) {
-        const users = this.bot.servers.getUsers(this.interaction.guildId);
+        const serverId = this.interaction.guild.id;
+        const queryUsers = await postgres_1.default.query() `
+            SELECT * FROM
+                discord_user
+            WHERE
+                id_server = ${serverId};
+        `;
         for (const score of scores.getMediaList()) {
-            const discordUser = users.find(u => parseInt(u.anilistId) === score.user.id);
-            score.user.name = (await this.bot.fetchUser(discordUser.discordId)).username;
+            const discordUser = queryUsers.find(u => u.id_anilist == score.user.id);
+            score.user.name = (await this.bot.fetchUser(discordUser.id_user)).username;
         }
         return scores;
     }

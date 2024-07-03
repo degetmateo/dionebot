@@ -13,7 +13,6 @@ class SeasonCommandInteraction extends CommandInteraction_1.default {
         this.interaction = interaction;
     }
     async execute() {
-        // await this.interaction.deferReply();
         const year = this.interaction.options.getInteger("año");
         const season = this.interaction.options.getString("temporada");
         const results = await AnilistAPI_1.default.fetchSeasonAnimes(year, season);
