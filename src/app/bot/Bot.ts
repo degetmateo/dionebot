@@ -40,6 +40,8 @@ export default class Bot extends Client {
 
         this.loadCommands();
 
+        await DB.connect(process.env.DB);
+
         setInterval(async () => {
             const queryServer = await Postgres.query() `
                 SELECT * FROM discord_server;
@@ -62,8 +64,6 @@ export default class Bot extends Client {
     }
 
     private async CopyFromMongoDB() {
-        const db = new DB();
-        await db.connect(process.env.DB);
 
         const servers = await ServerModel.find();
 

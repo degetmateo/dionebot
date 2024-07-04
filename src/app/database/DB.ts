@@ -3,7 +3,7 @@ import ServerModel from "./modelos/ServerModel";
 import IllegalArgumentException from "../errors/IllegalArgumentException";
 
 export default class DB {
-    public async connect (url: string) {
+    public static async connect (url: string) {
         await mongoose.connect(url)
             .then(() => console.log("✅ | Base de datos iniciada."))
             .catch(err => console.error(err));

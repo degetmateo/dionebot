@@ -7,7 +7,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const ServerModel_1 = __importDefault(require("./modelos/ServerModel"));
 const IllegalArgumentException_1 = __importDefault(require("../errors/IllegalArgumentException"));
 class DB {
-    async connect(url) {
+    static async connect(url) {
         await mongoose_1.default.connect(url)
             .then(() => console.log("✅ | Base de datos iniciada."))
             .catch(err => console.error(err));
