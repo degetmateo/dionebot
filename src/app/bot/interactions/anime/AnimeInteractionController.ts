@@ -26,8 +26,6 @@ export default class AnimeInteractionController extends InteractionController {
                 id_server = ${serverId};
         `;
 
-        console.log(queryUsers)
-
         this.embeds = translate ?
             await Helpers.asyncMap(this.media, async anime => await EmbedAnime.CreateTranslated(anime)) :
             this.media.map(media => EmbedAnime.Create(media));

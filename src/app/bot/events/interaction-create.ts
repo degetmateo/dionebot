@@ -88,7 +88,17 @@ module.exports = (bot: Bot) => {
                 embed.establecerDescripcion(e1.message);
             } else {
                 console.error('🟥 | ' + e1.stack);
+                
                 embed.establecerDescripcion('Ha ocurrido un error. Inténtalo de nuevo más tarde.');
+                
+                Postgres.query().begin(async sql => {
+                    await sql `
+                        SELECT insert_error (
+                            'interaction',
+                            ${e1.message}
+                        );
+                    `;
+                });
             }
 
             try {
@@ -107,6 +117,15 @@ module.exports = (bot: Bot) => {
                 }
             } catch (e2) {
                 console.error(e2);
+
+                await Postgres.query().begin(async sql => {
+                    await sql `
+                        SELECT insert_error (
+                            'interaction',
+                            ${e2.message}
+                        );
+                    `;
+                });
             }
         }
     });

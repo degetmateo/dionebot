@@ -81,6 +81,14 @@ module.exports = (bot) => {
             else {
                 console.error('🟥 | ' + e1.stack);
                 embed.establecerDescripcion('Ha ocurrido un error. Inténtalo de nuevo más tarde.');
+                postgres_1.default.query().begin(async (sql) => {
+                    await sql `
+                        SELECT insert_error (
+                            'interaction',
+                            ${e1.message}
+                        );
+                    `;
+                });
             }
             try {
                 const stack = e1.stack.toLowerCase();
@@ -98,6 +106,14 @@ module.exports = (bot) => {
             }
             catch (e2) {
                 console.error(e2);
+                await postgres_1.default.query().begin(async (sql) => {
+                    await sql `
+                        SELECT insert_error (
+                            'interaction',
+                            ${e2.message}
+                        );
+                    `;
+                });
             }
         }
     });
