@@ -85,6 +85,7 @@ module.exports = (bot) => {
                     await sql `
                         SELECT insert_error (
                             'interaction',
+                            ${e1.message},
                             ${e1.stack}
                         );
                     `;
@@ -110,6 +111,7 @@ module.exports = (bot) => {
                     await sql `
                         SELECT insert_error (
                             'interaction',
+                            ${e2.message},
                             ${e2.stack}
                         );
                     `;
