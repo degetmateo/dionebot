@@ -7,11 +7,8 @@ module.exports = (bot: Bot) => {
         try {
             await Postgres.query().begin(async sql => {
                 await sql `
-                    INSERT INTO
-                        discord_server
-                    VALUES (
-                        ${server.id},
-                        0
+                    SELECT insert_server (
+                        ${server.id}
                     );
                 `;
             });

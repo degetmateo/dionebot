@@ -41,18 +41,14 @@ class AdminSetupCommandInteraction extends CommandInteraction_1.default {
             }
         }
         await postgres_1.default.query().begin(async (sql) => {
-            await sql `
-                INSERT INTO 
-                    discord_user 
-                VALUES (
+            await sql ` 
+                SELECT insert_user (
                     ${userId},
                     ${anilistUser.getId()}
                 );
             `;
             await sql `
-                INSERT INTO
-                    membership
-                VALUES (
+                SELECT insert_membership (
                     ${userId},
                     ${serverId}
                 );
