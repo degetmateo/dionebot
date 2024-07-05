@@ -17,6 +17,7 @@ class AfinidadCommandInteraction extends CommandInteraction_1.default {
         this.interaction = interaction;
     }
     async execute() {
+        await this.interaction.deferReply();
         const inputUser = this.interaction.options.getUser('usuario');
         const userId = inputUser ? inputUser.id : this.interaction.user.id;
         const serverId = this.interaction.guild.id;
@@ -24,19 +25,31 @@ class AfinidadCommandInteraction extends CommandInteraction_1.default {
             SELECT * FROM
                 discord_user
             WHERE
-                id_user = ${userId} and
-                id_server = ${serverId};
+                id_user 
+            IN (
+                SELECT id_user FROM
+                    membership
+                WHERE
+                    id_user = ${userId} and
+                    id_server = ${serverId}
+            );
         `;
         if (!queryUser[0])
             throw new NoResultsException_1.default('Tu o el usuario especificado no están registrados.');
-        const anilistUser = await AnilistAPI_1.default.fetchUserById(queryUser[0].id_anilist);
+        const anilistUser = await AnilistAPI_1.default.fetchUserById(parseInt(queryUser[0].id_anilist));
         if (!anilistUser)
             throw new NoResultsException_1.default('Tu o el usuario especificado no se encuentran en Anilist.');
         const queryUsers = await postgres_1.default.query() `
             SELECT * FROM
                 discord_user
             WHERE
-                id_server = ${serverId};
+                id_user 
+            IN (
+                SELECT id_user FROM
+                    membership
+                WHERE
+                    id_server = ${serverId}
+            );
         `;
         const affinities = await this.getUserAffinities(anilistUser, queryUsers);
         if (!affinities || affinities.length <= 0)
@@ -64,10 +77,10 @@ class AfinidadCommandInteraction extends CommandInteraction_1.default {
                 await postgres_1.default.query().begin(async (sql) => {
                     await sql `
                         DELETE FROM
-                            discord_user
+                            membership
                         WHERE
                             id_user = ${iterativeUser.id_user} and
-                            id_server = ${iterativeUser.id_server}
+                            id_server = ${this.interaction.guild.id}
                     `;
                 });
                 continue;

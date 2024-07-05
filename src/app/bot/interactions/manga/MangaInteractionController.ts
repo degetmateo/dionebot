@@ -18,11 +18,14 @@ export default class MangaInteractionController extends InteractionController {
         const serverId = this.interaction.guildId;
         const translate = this.interaction.options.getBoolean('traducir') || false;
 
-        const queryUsers: Array<{ id_user: number, id_server: number, id_anilist: number }> = await Postgres.query() `
+        const queryUsers =  await Postgres.query() `
             SELECT * FROM
-                discord_user
-            WHERE
-                id_server = ${serverId};
+                discord_user du
+            JOIN
+                membership mem
+            ON
+                mem.id_server = ${serverId} and
+                mem.id_user = du.id_user;
         `;
 
         this.embeds = translate ?

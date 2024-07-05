@@ -17,15 +17,21 @@ class UsuarioCommandInteraction extends CommandInteraction_1.default {
         const user = this.interaction.options.getUser("usuario");
         const userId = user ? user.id : this.interaction.user.id;
         const serverId = this.interaction.guild.id;
-        const queryUser = await postgres_1.default.query() `
+        const queryMembership = await postgres_1.default.query() `
             SELECT * FROM
-                discord_user
+                membership
             WHERE
                 id_user = ${userId} and
                 id_server = ${serverId};
         `;
-        if (!queryUser[0])
+        if (!queryMembership[0])
             throw new NoResultsException_1.default('El usuario especificado no esta registrado.');
+        const queryUser = await postgres_1.default.query() `
+            SELECT * FROM
+                discord_user
+            WHERE
+                id_user = ${userId};
+        `;
         let anilistUser;
         try {
             anilistUser = await AnilistAPI_1.default.fetchUserById(parseInt(queryUser[0].id_anilist));

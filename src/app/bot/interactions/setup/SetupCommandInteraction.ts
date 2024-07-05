@@ -36,15 +36,15 @@ export default class SetupCommandInteraction extends CommandInteraction {
             throw new GenericException('Se ha alcanzado la cantidad máxima de usuarios registrados en este servidor.');
         }
 
-        let queryUser: any = await Postgres.query() `
+        let querMembership: any = await Postgres.query() `
             SELECT * FROM
-                discord_user
+                membership
             WHERE
                 id_user = ${userId} and
                 id_server = ${serverId};
         `;
 
-        if (queryUser[0]) {
+        if (querMembership[0]) {
             throw new GenericException('Ya te encuentras registrado.');
         }
 
@@ -64,8 +64,16 @@ export default class SetupCommandInteraction extends CommandInteraction {
                     discord_user 
                 VALUES (
                     ${userId},
-                    ${serverId},
                     ${anilistUser.getId()}
+                );
+            `;
+
+            await sql `
+                INSERT INTO
+                    membership
+                VALUES (
+                    ${userId},
+                    ${serverId}
                 );
             `;
         });

@@ -19,11 +19,14 @@ export default class AnimeInteractionController extends InteractionController {
         const serverId = this.interaction.guild.id;
         const translate = this.interaction.options.getBoolean('traducir') || false;
 
-        const queryUsers: Array<UserSchema> = await Postgres.query() `
+        const queryUsers =  await Postgres.query() `
             SELECT * FROM
-                discord_user
-            WHERE
-                id_server = ${serverId};
+                discord_user du
+            JOIN
+                membership mem
+            ON
+                mem.id_server = ${serverId} and
+                mem.id_user = du.id_user;
         `;
 
         this.embeds = translate ?

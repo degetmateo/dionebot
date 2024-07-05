@@ -15,19 +15,19 @@ class UnsetupCommandInteraction extends CommandInteraction_1.default {
     async execute() {
         const userId = this.interaction.user.id;
         const serverId = this.interaction.guild.id;
-        const queryUser = await postgres_1.default.query() `
+        const queryMembership = await postgres_1.default.query() `
             SELECT * FROM
-                discord_user
+                membership
             WHERE
                 id_user = ${userId} and
                 id_server = ${serverId};
         `;
-        if (!queryUser[0])
+        if (!queryMembership[0])
             throw new NoResultsException_1.default('No estás registrado.');
         await postgres_1.default.query().begin(async (sql) => {
             await sql `
                 DELETE FROM
-                    discord_user
+                    membership
                 WHERE
                     id_user = ${userId} and
                     id_server = ${serverId};

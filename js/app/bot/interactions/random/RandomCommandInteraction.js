@@ -17,15 +17,21 @@ class RandomCommandInteraction extends CommandInteraction_1.default {
     async execute() {
         const userId = this.interaction.user.id;
         const serverId = this.interaction.guild.id;
-        const queryUser = await postgres_1.default.query() `
+        const queryMembership = await postgres_1.default.query() `
             SELECT * FROM
-                discord_user
+                membership
             WHERE
                 id_user = ${userId} and
                 id_server = ${serverId};
         `;
-        if (!queryUser[0])
+        if (!queryMembership[0])
             throw new NoResultsException_1.default('No estas registrado.');
+        const queryUser = await postgres_1.default.query() `
+            SELECT * FROM
+                discord_user
+            WHERE
+                id_user = ${userId};
+        `;
         const plannedAnimes = await AnilistAPI_1.default.fetchUserPlannedAnimes(queryUser[0].id_anilist);
         const randomAnime = Helpers_1.default.getRandomElement(plannedAnimes.lists[0].entries);
         if (!randomAnime)

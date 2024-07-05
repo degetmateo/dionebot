@@ -21,17 +21,17 @@ export default class AdminSetupCommandInteraction extends CommandInteraction {
         const query = this.interaction.options.getString('nombre-o-id');
 
         const userId = user.id;
-        const serverId = this.interaction.guildId;
+        const serverId = this.interaction.guild.id;
 
-        const queryUser = await Postgres.query() `
+        const queryMembership = await Postgres.query() `
             SELECT * FROM
-                discord_user
+                membership
             WHERE
                 id_user = ${userId} and
                 id_server = ${serverId};
         `;
         
-        if (queryUser[0]) {
+        if (queryMembership[0]) {
             throw new GenericException('El usuario ingresado ya se encuentra registrado.');
         }
 
@@ -52,8 +52,16 @@ export default class AdminSetupCommandInteraction extends CommandInteraction {
                     discord_user 
                 VALUES (
                     ${userId},
-                    ${serverId},
                     ${anilistUser.getId()}
+                );
+            `;
+
+            await sql `
+                INSERT INTO
+                    membership
+                VALUES (
+                    ${userId},
+                    ${serverId}
                 );
             `;
         });    

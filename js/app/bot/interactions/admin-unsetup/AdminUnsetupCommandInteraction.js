@@ -18,7 +18,7 @@ class AdminUnsetupCommandInteraction extends CommandInteraction_1.default {
         const serverId = this.interaction.guild.id;
         const queryUser = await postgres_1.default.query() `
             SELECT * FROM
-                discord_user
+                membership
             WHERE
                 id_user = ${userId} and
                 id_server = ${serverId};
@@ -28,7 +28,7 @@ class AdminUnsetupCommandInteraction extends CommandInteraction_1.default {
         await postgres_1.default.query().begin(async (sql) => {
             await sql `
                 DELETE FROM
-                    discord_user
+                    membership
                 WHERE
                     id_user = ${userId} and
                     id_server = ${serverId};

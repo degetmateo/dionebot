@@ -8,7 +8,7 @@ module.exports = (bot: Bot) => {
             await Postgres.query().begin(async sql => {
                 await sql `
                     DELETE FROM
-                        discord_user
+                        membership
                     WHERE
                         id_server = ${server.id};
                 `;

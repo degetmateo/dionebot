@@ -18,9 +18,12 @@ class MangaInteractionController extends InteractionController_1.default {
         const translate = this.interaction.options.getBoolean('traducir') || false;
         const queryUsers = await postgres_1.default.query() `
             SELECT * FROM
-                discord_user
-            WHERE
-                id_server = ${serverId};
+                discord_user du
+            JOIN
+                membership mem
+            ON
+                mem.id_server = ${serverId} and
+                mem.id_user = du.id_user;
         `;
         this.embeds = translate ?
             await Helpers_1.default.asyncMap(this.media, async (manga) => await EmbedManga_1.default.CreateTranslated(manga)) :

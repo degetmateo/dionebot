@@ -18,28 +18,42 @@ export default class AfinidadCommandInteraction extends CommandInteraction {
     }
 
     public async execute (): Promise<void> {
+        await this.interaction.deferReply();
+
         const inputUser = this.interaction.options.getUser('usuario');
         const userId = inputUser ? inputUser.id : this.interaction.user.id;
         const serverId = this.interaction.guild.id;
 
-        const queryUser: Array<UserSchema> = await Postgres.query() `
+        const queryUser =  await Postgres.query() `
             SELECT * FROM
                 discord_user
             WHERE
-                id_user = ${userId} and
-                id_server = ${serverId};
+                id_user 
+            IN (
+                SELECT id_user FROM
+                    membership
+                WHERE
+                    id_user = ${userId} and
+                    id_server = ${serverId}
+            );
         `;
 
         if (!queryUser[0]) throw new NoResultsException('Tu o el usuario especificado no están registrados.');
 
-        const anilistUser = await AnilistAPI.fetchUserById(queryUser[0].id_anilist);
+        const anilistUser = await AnilistAPI.fetchUserById(parseInt(queryUser[0].id_anilist));
         if (!anilistUser) throw new NoResultsException('Tu o el usuario especificado no se encuentran en Anilist.');
 
-        const queryUsers: Array<UserSchema> = await Postgres.query() `
+        const queryUsers: Array<UserSchema> =  await Postgres.query() `
             SELECT * FROM
                 discord_user
             WHERE
-                id_server = ${serverId};
+                id_user 
+            IN (
+                SELECT id_user FROM
+                    membership
+                WHERE
+                    id_server = ${serverId}
+            );
         `;
 
         const affinities = await this.getUserAffinities(anilistUser, queryUsers);
@@ -73,10 +87,10 @@ export default class AfinidadCommandInteraction extends CommandInteraction {
                 await Postgres.query().begin(async sql => {
                     await sql `
                         DELETE FROM
-                            discord_user
+                            membership
                         WHERE
                             id_user = ${iterativeUser.id_user} and
-                            id_server = ${iterativeUser.id_server}
+                            id_server = ${this.interaction.guild.id}
                     `;
                 });
 

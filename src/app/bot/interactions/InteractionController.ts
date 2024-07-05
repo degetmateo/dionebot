@@ -95,11 +95,14 @@ export default abstract class InteractionController {
     protected async fetchUsersUsernames (scores: ScoreCollection): Promise<ScoreCollection> {
         const serverId = this.interaction.guild.id;
         
-        const queryUsers: Array<any> = await Postgres.query() `
+        const queryUsers =  await Postgres.query() `
             SELECT * FROM
-                discord_user
-            WHERE
-                id_server = ${serverId};
+                discord_user du
+            JOIN
+                membership mem
+            ON
+                mem.id_server = ${serverId} and
+                mem.id_user = du.id_user;
         `;
 
         for (const score of scores.getMediaList()) {

@@ -29,14 +29,14 @@ class SetupCommandInteraction extends CommandInteraction_1.default {
         if (userCount >= SetupCommandInteraction.MAX_USERS) {
             throw new GenericException_1.default('Se ha alcanzado la cantidad máxima de usuarios registrados en este servidor.');
         }
-        let queryUser = await postgres_1.default.query() `
+        let querMembership = await postgres_1.default.query() `
             SELECT * FROM
-                discord_user
+                membership
             WHERE
                 id_user = ${userId} and
                 id_server = ${serverId};
         `;
-        if (queryUser[0]) {
+        if (querMembership[0]) {
             throw new GenericException_1.default('Ya te encuentras registrado.');
         }
         let anilistUser;
@@ -55,8 +55,15 @@ class SetupCommandInteraction extends CommandInteraction_1.default {
                     discord_user 
                 VALUES (
                     ${userId},
-                    ${serverId},
                     ${anilistUser.getId()}
+                );
+            `;
+            await sql `
+                INSERT INTO
+                    membership
+                VALUES (
+                    ${userId},
+                    ${serverId}
                 );
             `;
         });
