@@ -22,7 +22,7 @@ export default class AnilistAPI {
     public static readonly RESULTADOS_PAGINA: number = 10;
     public static readonly CANTIDAD_CONSULTAS_POR_PETICION: number = 10;
 
-    private static readonly URL_AUTORIZACION: string = 'https://anilist.co/api/v2/oauth/token';
+    private static readonly AUTH_URL: string = 'https://anilist.co/api/v2/oauth/token';
 
     public static async fetchAnimeById (id: number): Promise<Anime> {
         return new Anime (await BuscadorMedia.BuscarMediaPorID(id, 'ANIME'));
@@ -130,22 +130,17 @@ export default class AnilistAPI {
         return res.data;
     }
 
-    public static async obtenerTokenDeAcceso (codigo: string) {
-        const opciones: PeticionAPI = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', },
-          body: JSON.stringify({
-            'grant_type': 'authorization_code',
-            'client_id': process.env.CLIENTE_ANILIST_ID,
-            'client_secret': process.env.CLIENTE_ANILIST_TOKEN,
-            'redirect_uri': process.env.URL_REDIRECCION,
-            'code': codigo,
-          })
-        };
-        
-        fetch(this.URL_AUTORIZACION, opciones)
-            .then(res => res.json())
-            .then(data => console.log(data))
-            .catch(err => console.error(err));
+    public static async authorizedFetch (token: string, query: string) {
+        const res = await fetch (this.API_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify ({ query })
+        })
+
+        return await res.json();
     }
 }

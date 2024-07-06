@@ -26,8 +26,8 @@ const DESCRIPTION_HELP = `
 ▸ **\`/informacion\`** - Información acerca de mi.
 
 **Registrarse**
-▸ **\`/setup\`** - Guarda tu perfil de anilist.
-▸ **\`/unsetup\`** - Elimina tu perfil de anilist.
+▸ **\`/setup\`** - Vincula tu perfil de anilist.
+▸ **\`/unsetup\`** - Desvincula tu perfil de anilist.
 
 **Estadísticas**
 ▸ **\`/usuario\`** - Información del perfil de anilist de un usuario.
@@ -41,8 +41,7 @@ const DESCRIPTION_HELP = `
 ▸ **\`/random\`** - Devuelve un anime al azar de tus Plan to Watch.
 
 **Administración**
-▸ **\`/admin-setup\`** - Guarda el perfil de anilist de un usuario.
-▸ **\`/admin-unsetup\`** - Elimina el perfil de anilist un usuario.
+▸ **\`/admin-unsetup\`** - Desvincula forzosamente el perfil de anilist de un usuario.
 
 ▸ [Invitame a tu servidor!](${process.env.ENLACE_INVITACION})
 `;

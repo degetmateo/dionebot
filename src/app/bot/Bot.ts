@@ -1,4 +1,4 @@
-import { Client, Collection, ActivityType, PresenceData } from 'discord.js';
+import { Client, Collection, ActivityType, PresenceData, ChatInputCommandInteraction } from 'discord.js';
 import fs from "fs";
 import path from "path";
 import { version } from '../../../package.json';
@@ -12,6 +12,8 @@ export default class Bot extends Client {
 
     public readonly commands: Collection<string, Command>;
     public readonly cooldowns: Collection<string, Collection<string, number>>;
+
+    public auths: Array<ChatInputCommandInteraction>;
 
     private version: string;
 
@@ -40,56 +42,20 @@ export default class Bot extends Client {
 
         this.loadCommands();
 
-        await DB.connect(process.env.DB);
-
         setInterval(async () => {
             const queryServer = await Postgres.query() `
                 SELECT * FROM discord_server;
             `;
-
-            await ServerModel.find();
 
             console.log(queryServer);
         }, Bot.HORA_EN_MILISEGUNDOS);
 
         this.loadEvents();
 
-        //await this.CopyFromMongoDB();
-
         try {
             await this.login(token);
         } catch (error) {
             console.error(error)
-        }
-    }
-
-    private async CopyFromMongoDB() {
-
-        const servers = await ServerModel.find();
-
-        for (const server of servers) {
-            await Postgres.query().begin(async sql => {
-                await sql `
-                    INSERT INTO 
-                        discord_server
-                    VALUES (
-                        ${server.id},
-                        0
-                    );
-                `;
-
-                for (const user of server.users) {
-                    await sql `
-                        INSERT INTO
-                            discord_user
-                        VALUES (
-                            ${user.discordId},
-                            ${server.id},
-                            ${user.anilistId}
-                        );
-                    `;
-                }
-            })
         }
     }
 

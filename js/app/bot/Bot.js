@@ -8,8 +8,6 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const package_json_1 = require("../../../package.json");
 const postgres_1 = __importDefault(require("../database/postgres"));
-const DB_1 = __importDefault(require("../database/DB"));
-const ServerModel_1 = __importDefault(require("../database/modelos/ServerModel"));
 class Bot extends discord_js_1.Client {
     constructor() {
         super({
@@ -80,47 +78,18 @@ class Bot extends discord_js_1.Client {
             this.setStatusInterval();
         });
         this.loadCommands();
-        await DB_1.default.connect(process.env.DB);
         setInterval(async () => {
             const queryServer = await postgres_1.default.query() `
                 SELECT * FROM discord_server;
             `;
-            await ServerModel_1.default.find();
             console.log(queryServer);
         }, Bot.HORA_EN_MILISEGUNDOS);
         this.loadEvents();
-        //await this.CopyFromMongoDB();
         try {
             await this.login(token);
         }
         catch (error) {
             console.error(error);
-        }
-    }
-    async CopyFromMongoDB() {
-        const servers = await ServerModel_1.default.find();
-        for (const server of servers) {
-            await postgres_1.default.query().begin(async (sql) => {
-                await sql `
-                    INSERT INTO 
-                        discord_server
-                    VALUES (
-                        ${server.id},
-                        0
-                    );
-                `;
-                for (const user of server.users) {
-                    await sql `
-                        INSERT INTO
-                            discord_user
-                        VALUES (
-                            ${user.discordId},
-                            ${server.id},
-                            ${user.anilistId}
-                        );
-                    `;
-                }
-            });
         }
     }
     loadEvents() {

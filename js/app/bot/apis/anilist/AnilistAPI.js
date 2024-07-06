@@ -101,26 +101,21 @@ class AnilistAPI {
             throw new NoResultsException_1.default('No se han encontrado resultados.');
         return res.data;
     }
-    static async obtenerTokenDeAcceso(codigo) {
-        const opciones = {
+    static async authorizedFetch(token, query) {
+        const res = await (0, node_fetch_1.default)(this.API_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', },
-            body: JSON.stringify({
-                'grant_type': 'authorization_code',
-                'client_id': process.env.CLIENTE_ANILIST_ID,
-                'client_secret': process.env.CLIENTE_ANILIST_TOKEN,
-                'redirect_uri': process.env.URL_REDIRECCION,
-                'code': codigo,
-            })
-        };
-        (0, node_fetch_1.default)(this.URL_AUTORIZACION, opciones)
-            .then(res => res.json())
-            .then(data => console.log(data))
-            .catch(err => console.error(err));
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ query })
+        });
+        return await res.json();
     }
 }
 AnilistAPI.API_URL = "https://graphql.anilist.co";
 AnilistAPI.RESULTADOS_PAGINA = 10;
 AnilistAPI.CANTIDAD_CONSULTAS_POR_PETICION = 10;
-AnilistAPI.URL_AUTORIZACION = 'https://anilist.co/api/v2/oauth/token';
+AnilistAPI.AUTH_URL = 'https://anilist.co/api/v2/oauth/token';
 exports.default = AnilistAPI;
