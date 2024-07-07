@@ -76,7 +76,6 @@ class Bot extends discord_js_1.Client {
         this.on("ready", () => {
             console.log("✅ | BOT iniciado.");
             this.setStatusInterval();
-            this.checkServers();
         });
         this.loadCommands();
         setInterval(async () => {
@@ -92,18 +91,6 @@ class Bot extends discord_js_1.Client {
         catch (error) {
             console.error(error);
         }
-    }
-    async checkServers() {
-        this.guilds.cache.each(async (server) => {
-            await postgres_1.default.query().begin(async (sql) => {
-                await sql `
-                    SELECT
-                        insert_server (
-                            ${server.id}
-                        );
-                `;
-            });
-        });
     }
     loadEvents() {
         const eventsFolderPath = path_1.default.join(__dirname + '/events/');
@@ -123,6 +110,9 @@ class Bot extends discord_js_1.Client {
         return await this.users.fetch(id);
     }
     getServersAmount() {
+        this.guilds.cache.each(server => {
+            console.log(server.name);
+        });
         return this.guilds.cache.size;
     }
     getVersion() {

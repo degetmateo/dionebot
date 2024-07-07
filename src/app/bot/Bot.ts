@@ -36,8 +36,6 @@ export default class Bot extends Client {
         this.on("ready", () => {
             console.log("✅ | BOT iniciado.");
             this.setStatusInterval();
-
-            this.checkServers();
         });
 
         this.loadCommands();
@@ -57,19 +55,6 @@ export default class Bot extends Client {
         } catch (error) {
             console.error(error)
         }
-    }
-
-    private async checkServers () {        
-        this.guilds.cache.each(async server => {
-            await Postgres.query().begin(async sql => {
-                await sql `
-                    SELECT
-                        insert_server (
-                            ${server.id}
-                        );
-                `;
-            })
-        })
     }
 
     private loadEvents () {
@@ -154,6 +139,10 @@ export default class Bot extends Client {
     }
 
     public getServersAmount (): number {
+        this.guilds.cache.each(server => {
+            console.log(server.name)
+        })
+
         return this.guilds.cache.size;
     } 
 
