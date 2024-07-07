@@ -151,10 +151,12 @@ export default class SetupCommandInteraction extends CommandInteraction {
             await this.saveUser(results.data.Viewer, token);
 
             const desc = `
-Autentificación completada correctamente como [${results.data.Viewer.name}](${results.data.Viewer.siteUrl})
-▸ Puedes utilizar \`/usuario\` para comprobar tu perfil.                
-▸ Si lo deseas o cambias de cuenta de anilist, deberás utilizar \`/unsetup\` para desvincular tu cuenta y luego realizar este proceso nuevamente.
-▸ Para conocer otros comandos, utiliza \`/help\`.
+Autentificación completada correctamente como [${results.data.Viewer.name}](${results.data.Viewer.siteUrl}).
+
+▸ Ahora puedes utilizar </usuario:1259062709849296896> para comprobar tu perfil.
+▸ Ahora tus notas se mostrarán al buscar un anime o manga (si lo tienes agregado).                
+▸ Si lo deseas o cambias de cuenta de anilist, deberás utilizar </unsetup:1259062709647839302> para desvincular tu cuenta y luego realizar este proceso nuevamente.
+▸ Para conocer otros comandos, utiliza </help:1259062709647839296>.
 `
 
             const embedAuthorization = new EmbedBuilder()

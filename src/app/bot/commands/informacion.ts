@@ -14,7 +14,7 @@ module.exports = {
             .setColor(0xff8c00)
             .setFooter({ text: `Dione v${bot.getVersion()}` });
 
-        bot.user?.avatarURL() ? embed.setThumbnail(bot.user.avatarURL()) : null;
+        // bot.user?.avatarURL() ? embed.setThumbnail(bot.user.avatarURL()) : null;
 
         await interaction.reply({
             embeds: [embed]
@@ -23,8 +23,13 @@ module.exports = {
 }
 
 const DESCRIPTION = `
-Soy Dione, un bot que busca información de animes, mangas y novelas visuales para que todos puedan verla en tu servidor.\n
-Puedes invitarme a tu servidor pulsando el enlace que se encuentra debajo.
+Soy Dione, un bot que muestra información de animes, mangas y novelas visuales en tu servidor.
+
+▸ Puedes ver todos mis comandos utilizando </help:1259062709647839296>.
+
+▸ Para vincular tu cuenta de anilist con este bot, debes usar </setup:1259062709647839301>. Si no haces esto, tus notas no se mostrarán y no podrás usar ciertos comandos.
+
+Puedes invitarme a tu servidor con el enlace a continuación.
 
 ▸ [Invitame a tu servidor!](${process.env.ENLACE_INVITACION})
 
