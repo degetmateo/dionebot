@@ -4,8 +4,6 @@ import path from "path";
 import { version } from '../../../package.json';
 import { Command, ServerStatus } from './types';
 import Postgres from '../database/postgres';
-import DB from '../database/DB';
-import ServerModel from '../database/modelos/ServerModel';
 
 export default class Bot extends Client {
     private static readonly HORA_EN_MILISEGUNDOS: number = 3600000;
@@ -38,6 +36,8 @@ export default class Bot extends Client {
         this.on("ready", () => {
             console.log("✅ | BOT iniciado.");
             this.setStatusInterval();
+
+            this.checkServers();
         });
 
         this.loadCommands();
@@ -57,6 +57,19 @@ export default class Bot extends Client {
         } catch (error) {
             console.error(error)
         }
+    }
+
+    private async checkServers () {        
+        this.guilds.cache.each(async server => {
+            await Postgres.query().begin(async sql => {
+                await sql `
+                    SELECT
+                        insert_server (
+                            ${server.id}
+                        );
+                `;
+            })
+        })
     }
 
     private loadEvents () {
