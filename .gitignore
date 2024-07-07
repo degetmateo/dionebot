@@ -7,3 +7,4 @@ deploy-commands.ts
 delete-commands.js
 deploy-commands.js
 .vs
+tsconfig.json
