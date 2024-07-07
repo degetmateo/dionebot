@@ -110,9 +110,6 @@ class Bot extends discord_js_1.Client {
         return await this.users.fetch(id);
     }
     getServersAmount() {
-        this.guilds.cache.each(server => {
-            console.log(server.name);
-        });
         return this.guilds.cache.size;
     }
     getVersion() {

@@ -7,7 +7,6 @@ const discord_js_1 = require("discord.js");
 const postgres_1 = __importDefault(require("../../database/postgres"));
 module.exports = (bot) => {
     bot.on(discord_js_1.Events.GuildCreate, async (server) => {
-        console.log('guild created ', server.name);
         try {
             await postgres_1.default.query().begin(async (sql) => {
                 await sql `

@@ -139,10 +139,6 @@ export default class Bot extends Client {
     }
 
     public getServersAmount (): number {
-        this.guilds.cache.each(server => {
-            console.log(server.name)
-        })
-
         return this.guilds.cache.size;
     } 
 

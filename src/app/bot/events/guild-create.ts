@@ -4,7 +4,6 @@ import Postgres from "../../database/postgres";
 
 module.exports = (bot: Bot) => {
     bot.on(Events.GuildCreate, async server => {
-        console.log('guild created ', server.name)
         try {
             await Postgres.query().begin(async sql => {
                 await sql `
