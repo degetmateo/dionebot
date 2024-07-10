@@ -1,4 +1,4 @@
-import { Client, Collection, ActivityType, PresenceData, ChatInputCommandInteraction } from 'discord.js';
+import { Client, Collection, ActivityType, PresenceData } from 'discord.js';
 import fs from "fs";
 import path from "path";
 import { version } from '../../../package.json';
@@ -11,10 +11,7 @@ export default class Bot extends Client {
     public readonly commands: Collection<string, Command>;
     public readonly cooldowns: Collection<string, Collection<string, number>>;
 
-    public auths: Array<ChatInputCommandInteraction>;
-
     private version: string;
-
     private status: ServerStatus;
 
     constructor () {

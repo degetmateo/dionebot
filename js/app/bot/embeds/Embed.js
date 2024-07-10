@@ -49,4 +49,5 @@ Embed.COLOR_VERDE = ('#00FF44');
 Embed.COLOR_RED = ('#FF0000');
 Embed.COLOR_GREEN = ('#00FF44');
 Embed.COLOR_YELLOW = ('#fff700');
+Embed.COLOR_ORANGE = ('#ff8c00');
 exports.default = Embed;

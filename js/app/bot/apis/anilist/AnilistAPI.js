@@ -113,6 +113,17 @@ class AnilistAPI {
         });
         return await res.json();
     }
+    static async fetch(query) {
+        const res = await (0, node_fetch_1.default)(this.API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ query })
+        });
+        return await res.json();
+    }
 }
 AnilistAPI.API_URL = "https://graphql.anilist.co";
 AnilistAPI.RESULTADOS_PAGINA = 10;

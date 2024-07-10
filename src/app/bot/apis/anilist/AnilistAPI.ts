@@ -143,4 +143,17 @@ export default class AnilistAPI {
 
         return await res.json();
     }
+
+    public static async fetch (query: string) {
+        const res = await fetch (this.API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify ({ query })
+        })
+
+        return await res.json();
+    }
 }
