@@ -36,6 +36,7 @@ const DESCRIPTION_HELP = `
 **Búsqueda**
 ▸ **\`/anime\`** - Muestra información del anime que busques.
 ▸ **\`/manga\`** - Muestra información del manga que busques.
+▸ **\`/character\`** - Muestra información del personaje que busques.
 ▸ **\`/vn\`** - Muestra información de la novela visual que busques.
 ▸ **\`/season\`** - Devuelve los animes de la temporada que ingreses.
 ▸ **\`/random\`** - Devuelve un anime al azar de tus Plan to Watch.
