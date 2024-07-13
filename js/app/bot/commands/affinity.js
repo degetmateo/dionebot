@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const AffinityCommandInteraction_1 = __importDefault(require("../interactions/affinity/AffinityCommandInteraction"));
 module.exports = {
-    cooldown: 10,
+    cooldown: 20,
     data: new discord_js_1.SlashCommandBuilder()
         .setName('affinity')
         .setNameLocalization('es-ES', 'afinidad')

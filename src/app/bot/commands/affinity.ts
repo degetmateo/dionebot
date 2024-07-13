@@ -2,7 +2,7 @@ import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder } from "dis
 import AffinityCommandInteraction from "../interactions/affinity/AffinityCommandInteraction";
 
 module.exports = {
-    cooldown: 10,
+    cooldown: 20,
     data: new SlashCommandBuilder()
         .setName('affinity')
         .setNameLocalization('es-ES', 'afinidad')

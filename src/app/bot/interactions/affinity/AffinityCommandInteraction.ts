@@ -4,10 +4,11 @@ import Postgres from "../../../database/postgres";
 import NoResultsException from "../../../errors/NoResultsException";
 import { UserSchema } from "../../../database/types";
 import AnilistAPI from "../../apis/anilist/AnilistAPI";
-import GenericException from "../../../errors/GenericException";
-import { MediaScore, SharedMedia } from "../afinidad/types/affinity";
 import Helpers from "../../Helpers";
 import Embed from "../../embeds/Embed";
+import { MediaScore, SharedMedia } from "./types";
+import AffinityCommandQueries, { Coleccion } from "./AffinityCommandQueries";
+import IllegalArgumentException from "../../../errors/IllegalArgumentException";
 
 export default class AffinityCommandInteraction extends CommandInteraction {
     protected interaction: ChatInputCommandInteraction<CacheType>;
@@ -21,6 +22,14 @@ export default class AffinityCommandInteraction extends CommandInteraction {
         await this.interaction.deferReply();
         const optionUser = this.interaction.options.getUser('user');
 
+        if (optionUser.bot) {
+            throw new IllegalArgumentException('No creo que puedas calcular tu afinidad con un bot!');
+        }
+
+        if (this.interaction.user.id === optionUser.id) {
+            throw new IllegalArgumentException('No puedes calcular la afinidad contigo mismo. Es obvio que sera del **100%**, ¿no? ');
+        }
+
         const queryInteractionUser = await this.findUser(this.interaction.user.id, this.interaction.guild.id);
         if (!queryInteractionUser) throw new NoResultsException('Antes de usar este comando debes autentificarte con </setup:1259062709647839301>.');
 
@@ -30,19 +39,26 @@ export default class AffinityCommandInteraction extends CommandInteraction {
         const interactionUserMediaCollection = await this.findUserCompletedMedia(queryInteractionUser.id_anilist+'');
         const optionUserMediaCollection = await this.findUserCompletedMedia(queryOptionUser.id_anilist+'');
 
-        if (interactionUserMediaCollection.errors || optionUserMediaCollection.errors) {
-            throw new GenericException('Ha ocurrido un error. Intentalo de nuevo mas tarde.');
-        }
-
         const interactionUserCompletedAnimes = interactionUserMediaCollection.data.coleccion.lists[0].entries;
         const optionUserCompletedAnimes = optionUserMediaCollection.data.coleccion.lists[0].entries;
 
         const sharedMedia = this.findSharedMedia(interactionUserCompletedAnimes, optionUserCompletedAnimes);
+        const sharedScore = this.findSharedScore(sharedMedia);
         const affinity = this.calculateAffinity(sharedMedia).toFixed(2);
+
+        const interactionUserAverageScore = Helpers.calculateAverage(sharedMedia.map(m => m.scoreA)).toFixed(1);
+        const optionUserAverageScore = Helpers.calculateAverage(sharedMedia.map(m => m.scoreB)).toFixed(1);
+
+        const EMBED_DESCRIPTION = 
+            `**${this.interaction.user.username}** y **${optionUser.username}** tienen un **${affinity}%** de afinidad.\n\n`+
+            `▸ Comparten **${sharedMedia.length}** animes.\n`+
+            `▸ Comparten **${sharedScore}** notas.\n\n`+
+            `▸ **${this.interaction.user.username}** tiene un promedio de **${interactionUserAverageScore}**.\n`+
+            `▸ **${optionUser.username}** tiene un promedio de **${optionUserAverageScore}**.`;
 
         const embed = new EmbedBuilder()
             .setColor(Embed.COLOR_ORANGE)
-            .setDescription(`La afinidad entre **${this.interaction.user.username}** y **${optionUser.username}** es de **${affinity}%**.`)
+            .setDescription(EMBED_DESCRIPTION)
 
         await this.interaction.editReply({
             embeds: [embed]
@@ -68,23 +84,12 @@ export default class AffinityCommandInteraction extends CommandInteraction {
     }
 
     private async findUserCompletedMedia (anilistId: string) {
-        const query = `
-            query {
-                coleccion: MediaListCollection (userId: ${anilistId}, type: ANIME, status: COMPLETED) {
-                    user {
-                        id
-                    }
-                    lists {
-                        entries {
-                            mediaId
-                            score(format: POINT_100)
-                        }
-                    }
-                }
-            }
-        `;
-
-        return await AnilistAPI.fetch(query);
+        const query = AffinityCommandQueries.CreateUserCompletedMediaQuery(anilistId);
+        const results = await AnilistAPI.fetch(query);
+        if (results.errors) {
+            throw new Error(results.errors[0].message);
+        }
+        return results;
     }
 
     private findSharedMedia (u1_completedMedia: Array<MediaScore>, u2_completedMedia: Array<MediaScore>) {
@@ -97,6 +102,10 @@ export default class AffinityCommandInteraction extends CommandInteraction {
         }
 
         return sharedMedia;
+    }
+
+    private findSharedScore (sharedMedia: Array<SharedMedia>) {
+        return sharedMedia.filter(media => media.scoreA === media.scoreB).length;
     }
 
     /**
