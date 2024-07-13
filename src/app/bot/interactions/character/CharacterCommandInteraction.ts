@@ -23,12 +23,9 @@ export default class CharacterCommandInteraction extends CommandInteraction {
         const character = await this.findCharacter(characterQuery);
         const characterEmbed = await this.createEmbed(character);
 
-        const res = await this.interaction.editReply({
-            embeds: [characterEmbed],
-            components: [this.createRow()]
+        await this.interaction.editReply({
+            embeds: [characterEmbed]
         });
-
-        this.createCollector(res, character);
     }
 
     private async findCharacter (query: string): Promise<Character> {
@@ -54,16 +51,6 @@ export default class CharacterCommandInteraction extends CommandInteraction {
         })
 
         return embed;
-    }
-
-    private createRow () {
-        const button = new ButtonBuilder()
-            .setCustomId('buttonFavs')
-            .setStyle(ButtonStyle.Secondary)
-            .setLabel('Favs ❤️')
-        
-        return new ActionRowBuilder<ButtonBuilder>()
-            .addComponents([button]);
     }
 
     private createCollector (res: Message<boolean>, character: Character) {

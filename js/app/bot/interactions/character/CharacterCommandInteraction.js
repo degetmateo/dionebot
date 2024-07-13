@@ -21,11 +21,9 @@ class CharacterCommandInteraction extends CommandInteraction_1.default {
         const characterQuery = this.interaction.options.getString('name-or-id');
         const character = await this.findCharacter(characterQuery);
         const characterEmbed = await this.createEmbed(character);
-        const res = await this.interaction.editReply({
-            embeds: [characterEmbed],
-            components: [this.createRow()]
+        await this.interaction.editReply({
+            embeds: [characterEmbed]
         });
-        this.createCollector(res, character);
     }
     async findCharacter(query) {
         const characterQuery = CharacterCommandQueries_1.default.CreateCharacterQuery(query);
@@ -48,14 +46,6 @@ class CharacterCommandInteraction extends CommandInteraction_1.default {
             text: `▸ Fue marcado ${character.getFavourites()} veces.`
         });
         return embed;
-    }
-    createRow() {
-        const button = new discord_js_1.ButtonBuilder()
-            .setCustomId('buttonFavs')
-            .setStyle(discord_js_1.ButtonStyle.Secondary)
-            .setLabel('Favs ❤️');
-        return new discord_js_1.ActionRowBuilder()
-            .addComponents([button]);
     }
     createCollector(res, character) {
         const collector = res.createMessageComponentCollector({
