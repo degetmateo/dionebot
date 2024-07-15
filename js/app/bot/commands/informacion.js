@@ -5,14 +5,15 @@ module.exports = {
     cooldown: 5,
     data: new discord_js_1.SlashCommandBuilder()
         .setName('informacion')
-        .setDescription("Información acerca de mi."),
+        .setDescription("Información acerca de mi.")
+        .setDMPermission(false)
+        .setNSFW(false),
     execute: async (interaction) => {
         const bot = interaction.client;
         const embed = new discord_js_1.EmbedBuilder()
             .setDescription(DESCRIPTION)
             .setColor(0xff8c00)
             .setFooter({ text: `Dione v${bot.getVersion()}` });
-        // bot.user?.avatarURL() ? embed.setThumbnail(bot.user.avatarURL()) : null;
         await interaction.reply({
             embeds: [embed]
         });

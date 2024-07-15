@@ -44,7 +44,7 @@ export default class AnimeInteractionController extends InteractionController {
 
 
         if (this.media.length === 1) {
-            await this.interaction.reply({
+            await this.interaction.editReply({
                 embeds: embeds
             })
 
@@ -52,15 +52,14 @@ export default class AnimeInteractionController extends InteractionController {
         }
 
         try {
-            const res = await this.interaction.reply({
+            const res = await this.interaction.editReply({
                 embeds: embeds,
-                components: [this.row],
-                fetchReply: true
+                components: [this.row]
             })
     
             await this.createCollector(res);
         } catch (error) {
-            throw error;
+            throw new Error(error.message);
         }
     }
 }

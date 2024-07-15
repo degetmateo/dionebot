@@ -5,7 +5,9 @@ module.exports = {
     cooldown: 5,
     data: new SlashCommandBuilder()
         .setName('informacion')
-        .setDescription("Información acerca de mi."),
+        .setDescription("Información acerca de mi.")
+        .setDMPermission(false)
+        .setNSFW(false),
     execute: async (interaction: ChatInputCommandInteraction<CacheType>) => {
         const bot = interaction.client as Bot;
 
@@ -13,8 +15,6 @@ module.exports = {
             .setDescription(DESCRIPTION)
             .setColor(0xff8c00)
             .setFooter({ text: `Dione v${bot.getVersion()}` });
-
-        // bot.user?.avatarURL() ? embed.setThumbnail(bot.user.avatarURL()) : null;
 
         await interaction.reply({
             embeds: [embed]

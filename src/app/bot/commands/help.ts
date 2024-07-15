@@ -6,7 +6,9 @@ module.exports = {
     cooldown: 5,
     data: new SlashCommandBuilder()
         .setName('help')
-        .setDescription("Envía un mensaje con los comandos."),
+        .setDescription("Envía un mensaje con los comandos.")
+        .setDMPermission(false)
+        .setNSFW(false),
     execute: async (interaction: ChatInputCommandInteraction<CacheType>) => {
         const bot: Bot = interaction.client as Bot;
 

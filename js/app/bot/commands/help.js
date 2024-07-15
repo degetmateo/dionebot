@@ -6,7 +6,9 @@ module.exports = {
     cooldown: 5,
     data: new discord_js_1.SlashCommandBuilder()
         .setName('help')
-        .setDescription("Envía un mensaje con los comandos."),
+        .setDescription("Envía un mensaje con los comandos.")
+        .setDMPermission(false)
+        .setNSFW(false),
     execute: async (interaction) => {
         var _a;
         const bot = interaction.client;
