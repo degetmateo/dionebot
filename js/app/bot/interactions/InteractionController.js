@@ -50,9 +50,12 @@ class InteractionController {
         const serverId = button.guild.id;
         const queryUsers = await postgres_1.default.query() `
             SELECT * FROM
-                discord_user
-            WHERE
-                id_server = ${serverId};
+                discord_user du
+            JOIN
+                membership mem
+            ON
+                mem.id_server = ${serverId} and
+                mem.id_user = du.id_user;
         `;
         try {
             const media = this.media[this.page];

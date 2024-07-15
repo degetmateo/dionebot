@@ -66,9 +66,12 @@ export default abstract class InteractionController {
         
         const queryUsers: Array<{ id_user: number, id_server: number, id_anilist: number }> = await Postgres.query() `
             SELECT * FROM
-                discord_user
-            WHERE
-                id_server = ${serverId};
+                discord_user du
+            JOIN
+                membership mem
+            ON
+                mem.id_server = ${serverId} and
+                mem.id_user = du.id_user;
         `;
 
         try {
