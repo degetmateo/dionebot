@@ -6,7 +6,6 @@ import EmbedAnime from "../../embeds/EmbedAnime";
 import EmbedScores from "../../embeds/EmbedScores";
 import InteractionController from "../InteractionController";
 import Postgres from "../../../database/postgres";
-import { UserSchema } from "../../../database/types";
 
 export default class AnimeInteractionController extends InteractionController {
     protected media: Array<Anime>;

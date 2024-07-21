@@ -5,6 +5,12 @@ export default class AffinityCommandQueries {
                 coleccion: MediaListCollection (userId: ${anilistId}, type: ANIME, status: COMPLETED) {
                     user {
                         id
+                        statistics {
+                            anime {
+                                standardDeviation
+                                meanScore
+                            }
+                        }
                     }
                     lists {
                         entries {
@@ -20,7 +26,13 @@ export default class AffinityCommandQueries {
 
 export type Coleccion = {
     user: {
-        id: number
+        id: number,
+        statistics: {
+            anime: {
+                standardDeviation: number,
+                meanScore: number
+            }
+        }
     },
     lists: Array<{
         entries: Array<{

@@ -15,7 +15,6 @@ const IllegalArgumentException_1 = __importDefault(require("../../../errors/Ille
 class AffinityCommandInteraction extends CommandInteraction_1.default {
     constructor(interaction) {
         super();
-        this.zip = (a, b) => a.map((k, i) => [k, b[i]]);
         this.interaction = interaction;
     }
     async execute() {
@@ -35,18 +34,24 @@ class AffinityCommandInteraction extends CommandInteraction_1.default {
             throw new NoResultsException_1.default(`${optionUser.username} no esta autentificado.`);
         const interactionUserMediaCollection = await this.findUserCompletedMedia(queryInteractionUser.id_anilist + '');
         const optionUserMediaCollection = await this.findUserCompletedMedia(queryOptionUser.id_anilist + '');
+        const interactionUserStandardDeviation = interactionUserMediaCollection.data.coleccion.user.statistics.anime.standardDeviation.toFixed(1);
+        const interactionUserMeanScore = interactionUserMediaCollection.data.coleccion.user.statistics.anime.meanScore.toFixed(1);
+        const optionUserStandardDeviation = optionUserMediaCollection.data.coleccion.user.statistics.anime.standardDeviation.toFixed(1);
+        const optionUserMeanScore = optionUserMediaCollection.data.coleccion.user.statistics.anime.meanScore.toFixed(1);
         const interactionUserCompletedAnimes = interactionUserMediaCollection.data.coleccion.lists[0].entries;
         const optionUserCompletedAnimes = optionUserMediaCollection.data.coleccion.lists[0].entries;
         const sharedMedia = this.findSharedMedia(interactionUserCompletedAnimes, optionUserCompletedAnimes);
         const sharedScore = this.findSharedScore(sharedMedia);
-        const affinity = this.calculateAffinity(sharedMedia).toFixed(2);
-        const interactionUserAverageScore = Helpers_1.default.calculateAverage(sharedMedia.map(m => m.scoreA)).toFixed(1);
-        const optionUserAverageScore = Helpers_1.default.calculateAverage(sharedMedia.map(m => m.scoreB)).toFixed(1);
-        const EMBED_DESCRIPTION = `**${this.interaction.user.username}** y **${optionUser.username}** tienen un **${affinity}%** de afinidad.\n\n` +
+        const affinity = this.pearsonCorrelation(sharedMedia.map(media => media.scoreA), sharedMedia.map(media => media.scoreB)).toFixed(2);
+        const EMBED_DESCRIPTION = `**${this.interaction.user.username}** y **${optionUser.username}** tienen un **${affinity}%** de [afinidad](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient).\n\n` +
             `▸ Comparten **${sharedMedia.length}** animes.\n` +
             `▸ Comparten **${sharedScore}** notas.\n\n` +
-            `▸ **${this.interaction.user.username}** tiene un promedio de **${interactionUserAverageScore}**.\n` +
-            `▸ **${optionUser.username}** tiene un promedio de **${optionUserAverageScore}**.`;
+            `**${this.interaction.user.username}**:\n` +
+            `▸ Tiene un promedio de **${interactionUserMeanScore}**.\n` +
+            `▸ Tiene una [desviación estándar](https://es.wikipedia.org/wiki/Desviaci%C3%B3n_t%C3%ADpica) del **${interactionUserStandardDeviation}**.\n\n` +
+            `**${optionUser.username}**:\n` +
+            `▸ Tiene un promedio de **${optionUserMeanScore}**.\n` +
+            `▸ Tiene una [desviación estándar](https://es.wikipedia.org/wiki/Desviaci%C3%B3n_t%C3%ADpica) del **${optionUserStandardDeviation}**.`;
         const embed = new discord_js_1.EmbedBuilder()
             .setColor(Embed_1.default.COLOR_ORANGE)
             .setDescription(EMBED_DESCRIPTION);
@@ -92,26 +97,49 @@ class AffinityCommandInteraction extends CommandInteraction_1.default {
         return sharedMedia.filter(media => media.scoreA === media.scoreB).length;
     }
     /**
-     * Método que calcula el coeficiente de correlación personal entre dos usuarios.
-     * Basado en:
-     * https://en.wikipedia.org/wiki/Pearson_correlation_coefficient
+     * Método que calcula el coeficiente de correlación de Pearson entre dos usuarios.
      *
-     * https://github.com/AlexanderColen/Annie-May-Discord-Bot/blob/default/Annie/Utility/AffinityUtility.cs
-     * @param sharedMedia Arreglo con la media compartida por los dos usuarios.
-     * @returns Porcentaje de la afinidad.
+     * https://en.wikipedia.org/wiki/Pearson_correlation_coefficient
+     * @param arrX - Primer array de números
+     * @param arrY - Segundo array de números
+     * @returns El coeficiente de correlación de Pearson entre los dos arrays
      */
-    calculateAffinity(sharedMedia) {
-        const scoresA = sharedMedia.map(media => media.scoreA);
-        const scoresB = sharedMedia.map(media => media.scoreB);
-        const ma = Helpers_1.default.calculateAverage(scoresA);
-        const mb = Helpers_1.default.calculateAverage(scoresB);
-        const am = scoresA.map(score => score - ma);
-        const bm = scoresB.map(score => score - mb);
-        const sa = am.map(x => Math.pow(x, 2));
-        const sb = bm.map(x => Math.pow(x, 2));
-        const numerator = Helpers_1.default.addElements(this.zip(am, bm).map(tupla => tupla[0] * tupla[1]));
-        const denominator = Math.sqrt(Helpers_1.default.addElements(sa) * Helpers_1.default.addElements(sb));
-        return (numerator <= 0 || denominator <= 0 ? 0 : numerator / denominator) * 100;
+    pearsonCorrelation(arrX, arrY) {
+        if (arrX.length !== arrY.length) {
+            throw new Error('Los arrays deben tener la misma longitud.');
+        }
+        const meanX = Helpers_1.default.calculateAverage(arrX);
+        const meanY = Helpers_1.default.calculateAverage(arrY);
+        const stdDevX = this.standardDeviation(arrX, meanX);
+        const stdDevY = this.standardDeviation(arrY, meanY);
+        const covar = this.covariance(arrX, arrY, meanX, meanY);
+        return covar / (stdDevX * stdDevY);
+    }
+    /**
+     * Función para calcular la desviación estándar de un array de números.
+     * @param arr - Array de números.
+     * @param mean - La media de los números en el array.
+     * @returns La desviación estándar de los números en el array.
+     */
+    standardDeviation(arr, mean) {
+        const squareDiffs = arr.map(val => Math.pow(val - mean, 2));
+        const avgSquareDiff = Helpers_1.default.calculateAverage(squareDiffs);
+        return Math.sqrt(avgSquareDiff);
+    }
+    /**
+     * Función para calcular la covarianza entre dos arrays de números.
+     * @param arrX - Primer array de números.
+     * @param arrY - Segundo array de números.
+     * @param meanX - La media del primer array.
+     * @param meanY - La media del segundo array.
+     * @returns La covarianza entre los dos arrays.
+     */
+    covariance(arrX, arrY, meanX, meanY) {
+        let covar = 0;
+        for (let i = 0; i < arrX.length; i++) {
+            covar += (arrX[i] - meanX) * (arrY[i] - meanY);
+        }
+        return covar;
     }
 }
 exports.default = AffinityCommandInteraction;

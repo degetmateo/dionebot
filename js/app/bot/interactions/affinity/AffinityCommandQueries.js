@@ -7,6 +7,12 @@ class AffinityCommandQueries {
                 coleccion: MediaListCollection (userId: ${anilistId}, type: ANIME, status: COMPLETED) {
                     user {
                         id
+                        statistics {
+                            anime {
+                                standardDeviation
+                                meanScore
+                            }
+                        }
                     }
                     lists {
                         entries {

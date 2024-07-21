@@ -16,16 +16,16 @@ class AdminUnsetupCommandInteraction extends CommandInteraction_1.default {
         const user = this.interaction.options.getUser('usuario');
         const userId = user.id;
         const serverId = this.interaction.guild.id;
-        const queryUser = await postgres_1.default.query() `
-            SELECT * FROM
-                membership
-            WHERE
-                id_user = ${userId} and
-                id_server = ${serverId};
-        `;
-        if (!queryUser[0])
-            throw new NoResultsException_1.default('El usuario proporcionado no se encuentra registrado.');
         await postgres_1.default.query().begin(async (sql) => {
+            const queryUser = await sql `
+                SELECT * FROM
+                    membership
+                WHERE
+                    id_user = ${userId} and
+                    id_server = ${serverId};
+            `;
+            if (!queryUser[0])
+                throw new NoResultsException_1.default('El usuario no se encuentra registrado.');
             await sql `
                 DELETE FROM
                     membership
