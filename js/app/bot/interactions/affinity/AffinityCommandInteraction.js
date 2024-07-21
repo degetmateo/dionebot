@@ -42,7 +42,8 @@ class AffinityCommandInteraction extends CommandInteraction_1.default {
         const optionUserCompletedAnimes = optionUserMediaCollection.data.coleccion.lists[0].entries;
         const sharedMedia = this.findSharedMedia(interactionUserCompletedAnimes, optionUserCompletedAnimes);
         const sharedScore = this.findSharedScore(sharedMedia);
-        const affinity = this.pearsonCorrelation(sharedMedia.map(media => media.scoreA), sharedMedia.map(media => media.scoreB)).toFixed(2);
+        const pearson = this.pearsonCorrelation(sharedMedia.map(media => media.scoreA), sharedMedia.map(media => media.scoreB));
+        let affinity = isNaN(pearson) ? 0 : pearson.toFixed(2);
         const EMBED_DESCRIPTION = `**${this.interaction.user.username}** y **${optionUser.username}** tienen un **${affinity}%** de [afinidad](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient).\n\n` +
             `▸ Comparten **${sharedMedia.length}** animes.\n` +
             `▸ Comparten **${sharedScore}** notas.\n\n` +
@@ -113,7 +114,7 @@ class AffinityCommandInteraction extends CommandInteraction_1.default {
         const stdDevX = this.standardDeviation(arrX, meanX);
         const stdDevY = this.standardDeviation(arrY, meanY);
         const covar = this.covariance(arrX, arrY, meanX, meanY);
-        return covar / (stdDevX * stdDevY);
+        return covar / (stdDevX * stdDevY) || 0;
     }
     /**
      * Función para calcular la desviación estándar de un array de números.

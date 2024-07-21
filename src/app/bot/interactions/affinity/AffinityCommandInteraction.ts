@@ -50,7 +50,8 @@ export default class AffinityCommandInteraction extends CommandInteraction {
         const sharedMedia = this.findSharedMedia(interactionUserCompletedAnimes, optionUserCompletedAnimes);
         const sharedScore = this.findSharedScore(sharedMedia);
 
-        const affinity = this.pearsonCorrelation(sharedMedia.map(media => media.scoreA), sharedMedia.map(media => media.scoreB)).toFixed(2);
+        const pearson = this.pearsonCorrelation(sharedMedia.map(media => media.scoreA), sharedMedia.map(media => media.scoreB));
+        let affinity = isNaN(pearson) ? 0 : pearson.toFixed(2);
 
         const EMBED_DESCRIPTION = 
             `**${this.interaction.user.username}** y **${optionUser.username}** tienen un **${affinity}%** de [afinidad](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient).\n\n`+
@@ -138,7 +139,7 @@ export default class AffinityCommandInteraction extends CommandInteraction {
         const stdDevY = this.standardDeviation(arrY, meanY);
         const covar = this.covariance(arrX, arrY, meanX, meanY);
     
-        return covar / (stdDevX * stdDevY);
+        return covar / (stdDevX * stdDevY) || 0;
     } 
 
     /**
