@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
+const colornames_1 = __importDefault(require("colornames"));
 const CommandInteraction_1 = __importDefault(require("../CommandInteraction"));
 const GenericException_1 = __importDefault(require("../../../errors/GenericException"));
 const AnilistAPI_1 = __importDefault(require("../../apis/anilist/AnilistAPI"));
@@ -113,6 +114,12 @@ class SetupCommandInteraction extends CommandInteraction_1.default {
                     id
                     name
                     siteUrl
+                    avatar {
+                        large
+                    }
+                    options {
+                        profileColor                    
+                    }   
                 }
             }
         `;
@@ -135,12 +142,13 @@ Autentificación completada correctamente como [${results.data.Viewer.name}](${r
 
 ▸ Ahora puedes utilizar </usuario:1259062709849296896> para comprobar tu perfil.
 ▸ Ahora tus notas se mostrarán al buscar un anime o manga (si lo tienes agregado).                
-▸ Si lo deseas o cambias de cuenta de anilist, deberás utilizar </unsetup:1259062709647839302> para desvincular tu cuenta y luego realizar este proceso nuevamente.
+▸ Si lo deseas, puedes usar </unsetup:1259062709647839302> para desvincular tu cuenta actual.
 ▸ Para conocer otros comandos, utiliza </help:1259062709647839296>.
 `;
             const embedAuthorization = new discord_js_1.EmbedBuilder()
                 .setDescription(desc)
-                .setColor(Embed_1.default.COLOR_GREEN);
+                .setColor((0, colornames_1.default)(results.data.Viewer.options.profileColor))
+                .setThumbnail(results.data.Viewer.avatar.large);
             await modal.editReply({
                 embeds: [embedAuthorization]
             });

@@ -1,4 +1,5 @@
-import { ChatInputCommandInteraction, CacheType, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, InteractionResponse, TextInputBuilder, ModalBuilder, TextInputStyle, ModalSubmitInteraction } from "discord.js";
+import { ChatInputCommandInteraction, CacheType, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, InteractionResponse, TextInputBuilder, ModalBuilder, TextInputStyle, ModalSubmitInteraction, ColorResolvable } from "discord.js";
+import toHex from 'colornames';
 import CommandInteraction from "../CommandInteraction";
 import GenericException from "../../../errors/GenericException";
 import AnilistAPI from "../../apis/anilist/AnilistAPI";
@@ -128,6 +129,12 @@ export default class SetupCommandInteraction extends CommandInteraction {
                     id
                     name
                     siteUrl
+                    avatar {
+                        large
+                    }
+                    options {
+                        profileColor                    
+                    }   
                 }
             }
         `;
@@ -155,13 +162,14 @@ Autentificación completada correctamente como [${results.data.Viewer.name}](${r
 
 ▸ Ahora puedes utilizar </usuario:1259062709849296896> para comprobar tu perfil.
 ▸ Ahora tus notas se mostrarán al buscar un anime o manga (si lo tienes agregado).                
-▸ Si lo deseas o cambias de cuenta de anilist, deberás utilizar </unsetup:1259062709647839302> para desvincular tu cuenta y luego realizar este proceso nuevamente.
+▸ Si lo deseas, puedes usar </unsetup:1259062709647839302> para desvincular tu cuenta actual.
 ▸ Para conocer otros comandos, utiliza </help:1259062709647839296>.
 `
 
             const embedAuthorization = new EmbedBuilder()
                 .setDescription(desc)
-                .setColor(Embed.COLOR_GREEN)
+                .setColor(toHex(results.data.Viewer.options.profileColor) as ColorResolvable)
+                .setThumbnail(results.data.Viewer.avatar.large)
 
             await modal.editReply ({
                 embeds: [embedAuthorization]

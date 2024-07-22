@@ -14,6 +14,8 @@ export default class Bot extends Client {
     private version: string;
     private status: ServerStatus;
 
+    private serverCount: number;
+
     constructor () {
         super ({ 
             intents: [
@@ -27,6 +29,7 @@ export default class Bot extends Client {
 
         this.version = version;
         this.status = 'online';
+        this.serverCount = 0;
     }
 
     public async start (token: string): Promise<void> {
@@ -36,13 +39,10 @@ export default class Bot extends Client {
         });
 
         this.loadCommands();
+        await this.loadServers();
 
         setInterval(async () => {
-            const queryServer = await Postgres.query() `
-                SELECT * FROM discord_server;
-            `;
-
-            console.log(queryServer);
+            await this.loadServers();
         }, Bot.HORA_EN_MILISEGUNDOS);
 
         this.loadEvents();
@@ -52,6 +52,15 @@ export default class Bot extends Client {
         } catch (error) {
             console.error(error)
         }
+    }
+
+    private async loadServers () {
+        const queryServer = await Postgres.query() `
+            SELECT * FROM discord_server;
+        `;
+
+        this.serverCount = queryServer.length;
+        console.log(queryServer);
     }
 
     private loadEvents () {
@@ -84,38 +93,42 @@ export default class Bot extends Client {
     }
 
     private setStatusInterval = () => {
-        const onlineStatus: Array<PresenceData> = [
-            {
-                status: "online",
-                activities: [{
-                    type: ActivityType.Listening,
-                    name: '/help'
-                }]
-            },
-    
-            {
-                status: "online",
-                activities: [{
-                    type: ActivityType.Watching,
-                    name: this.getServersAmount() + " servidores!"
-                }]  
-            }
-        ];
+        const onlineStatus = (): Array<PresenceData> => {
+            return [
+                {
+                    status: "online",
+                    activities: [{
+                        type: ActivityType.Listening,
+                        name: '/help'
+                    }]
+                },
+        
+                {
+                    status: "online",
+                    activities: [{
+                        type: ActivityType.Watching,
+                        name: this.getServersAmount() + " servidores!"
+                    }]  
+                }
+            ];
+        }
 
-        const maintenanceStatus: Array<PresenceData> = [
-            {
-                status: "dnd",
-                activities: [{
-                    type: ActivityType.Custom,
-                    name: '⚠️ Server is under maintenance...'
-                }]
-            }
-        ];
+        const maintenanceStatus = (): Array<PresenceData> => {
+            return [
+                {
+                    status: "dnd",
+                    activities: [{
+                        type: ActivityType.Custom,
+                        name: '⚠️ Server is under maintenance...'
+                    }]
+                }
+            ];
+        }
 
         let i = 0;
 
         setInterval(() => {
-            const states = this.status === 'online' ? onlineStatus : maintenanceStatus;
+            const states = this.status === 'online' ? onlineStatus() : maintenanceStatus();
 
             let presence = states[i];
             if (!presence) {
@@ -136,8 +149,12 @@ export default class Bot extends Client {
     }
 
     public getServersAmount (): number {
-        return this.guilds.cache.size;
-    } 
+        return this.serverCount;
+    }
+
+    public setServersCount (count: number) {
+        this.serverCount = count;
+    }
 
     public getVersion (): string {
         return this.version;

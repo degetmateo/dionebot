@@ -22,6 +22,7 @@ module.exports = (bot) => {
                         id_server = ${server.id};
                 `;
             });
+            bot.setServersCount(bot.getServersAmount() - 1);
         }
         catch (error) {
             console.error(error);

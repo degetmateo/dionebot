@@ -30,34 +30,38 @@ class Bot extends discord_js_1.Client {
             }
         };
         this.setStatusInterval = () => {
-            const onlineStatus = [
-                {
-                    status: "online",
-                    activities: [{
-                            type: discord_js_1.ActivityType.Listening,
-                            name: '/help'
-                        }]
-                },
-                {
-                    status: "online",
-                    activities: [{
-                            type: discord_js_1.ActivityType.Watching,
-                            name: this.getServersAmount() + " servidores!"
-                        }]
-                }
-            ];
-            const maintenanceStatus = [
-                {
-                    status: "dnd",
-                    activities: [{
-                            type: discord_js_1.ActivityType.Custom,
-                            name: '⚠️ Server is under maintenance...'
-                        }]
-                }
-            ];
+            const onlineStatus = () => {
+                return [
+                    {
+                        status: "online",
+                        activities: [{
+                                type: discord_js_1.ActivityType.Listening,
+                                name: '/help'
+                            }]
+                    },
+                    {
+                        status: "online",
+                        activities: [{
+                                type: discord_js_1.ActivityType.Watching,
+                                name: this.getServersAmount() + " servidores!"
+                            }]
+                    }
+                ];
+            };
+            const maintenanceStatus = () => {
+                return [
+                    {
+                        status: "dnd",
+                        activities: [{
+                                type: discord_js_1.ActivityType.Custom,
+                                name: '⚠️ Server is under maintenance...'
+                            }]
+                    }
+                ];
+            };
             let i = 0;
             setInterval(() => {
-                const states = this.status === 'online' ? onlineStatus : maintenanceStatus;
+                const states = this.status === 'online' ? onlineStatus() : maintenanceStatus();
                 let presence = states[i];
                 if (!presence) {
                     i = 0;
@@ -71,6 +75,7 @@ class Bot extends discord_js_1.Client {
         this.cooldowns = new discord_js_1.Collection();
         this.version = package_json_1.version;
         this.status = 'online';
+        this.serverCount = 0;
     }
     async start(token) {
         this.on("ready", () => {
@@ -78,11 +83,9 @@ class Bot extends discord_js_1.Client {
             this.setStatusInterval();
         });
         this.loadCommands();
+        await this.loadServers();
         setInterval(async () => {
-            const queryServer = await postgres_1.default.query() `
-                SELECT * FROM discord_server;
-            `;
-            console.log(queryServer);
+            await this.loadServers();
         }, Bot.HORA_EN_MILISEGUNDOS);
         this.loadEvents();
         try {
@@ -91,6 +94,13 @@ class Bot extends discord_js_1.Client {
         catch (error) {
             console.error(error);
         }
+    }
+    async loadServers() {
+        const queryServer = await postgres_1.default.query() `
+            SELECT * FROM discord_server;
+        `;
+        this.serverCount = queryServer.length;
+        console.log(queryServer);
     }
     loadEvents() {
         const eventsFolderPath = path_1.default.join(__dirname + '/events/');
@@ -110,7 +120,10 @@ class Bot extends discord_js_1.Client {
         return await this.users.fetch(id);
     }
     getServersAmount() {
-        return this.guilds.cache.size;
+        return this.serverCount;
+    }
+    setServersCount(count) {
+        this.serverCount = count;
     }
     getVersion() {
         return this.version;

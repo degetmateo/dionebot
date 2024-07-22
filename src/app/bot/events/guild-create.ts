@@ -12,6 +12,8 @@ module.exports = (bot: Bot) => {
                     );
                 `;
             });
+
+            bot.setServersCount(bot.getServersAmount() + 1);
         } catch (error) {
             console.error(error)
         }

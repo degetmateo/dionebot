@@ -1,11 +1,10 @@
-import { ChatInputCommandInteraction, CacheType, User } from "discord.js";
+import { ChatInputCommandInteraction, CacheType } from "discord.js";
 import CommandInteraction from "../CommandInteraction";
 import NoResultsException from "../../../errors/NoResultsException";
 import AnilistAPI from "../../apis/anilist/AnilistAPI";
 import AnilistUser from "../../apis/anilist/modelos/AnilistUser";
 import EmbedUser from "../../embeds/EmbedUser";
 import Postgres from "../../../database/postgres";
-import { UserSchema } from "../../../database/types";
 
 export default class UsuarioCommandInteraction extends CommandInteraction {
     protected interaction: ChatInputCommandInteraction<CacheType>;
