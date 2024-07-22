@@ -114,7 +114,8 @@ class AffinityCommandInteraction extends CommandInteraction_1.default {
         const stdDevX = this.standardDeviation(arrX, meanX);
         const stdDevY = this.standardDeviation(arrY, meanY);
         const covar = this.covariance(arrX, arrY, meanX, meanY);
-        return covar / (stdDevX * stdDevY) || 0;
+        const result = covar / (stdDevX * stdDevY);
+        return result <= 0 ? 0 : result;
     }
     /**
      * Función para calcular la desviación estándar de un array de números.

@@ -135,11 +135,15 @@ export default class AffinityCommandInteraction extends CommandInteraction {
     
         const meanX = Helpers.calculateAverage(arrX);
         const meanY = Helpers.calculateAverage(arrY);
+
         const stdDevX = this.standardDeviation(arrX, meanX);
         const stdDevY = this.standardDeviation(arrY, meanY);
+        
         const covar = this.covariance(arrX, arrY, meanX, meanY);
     
-        return covar / (stdDevX * stdDevY) || 0;
+        const result = covar / (stdDevX * stdDevY);
+
+        return result <= 0 ? 0 : result;
     } 
 
     /**
