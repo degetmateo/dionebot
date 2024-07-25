@@ -106,6 +106,10 @@ export default class Helpers {
         return this.addElements(array) / array.length;
     }
 
+    public static mean (array: number[]): number {
+        return this.addElements(array) / array.length;
+    }
+
     public static async sleep (ms: number): Promise<void> {
         return new Promise(r => setTimeout(r, ms));
     }

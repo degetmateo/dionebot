@@ -42,11 +42,17 @@ class AffinityCommandInteraction extends CommandInteraction_1.default {
         const optionUserCompletedAnimes = optionUserMediaCollection.data.coleccion.lists[0].entries;
         const sharedMedia = this.findSharedMedia(interactionUserCompletedAnimes, optionUserCompletedAnimes);
         const sharedScore = this.findSharedScore(sharedMedia);
-        const pearson = this.pearsonCorrelation(sharedMedia.map(media => media.scoreA), sharedMedia.map(media => media.scoreB));
+        const mediaA = sharedMedia.map(media => media.scoreA);
+        const mediaB = sharedMedia.map(media => media.scoreB);
+        const pearson = this.pearsonCorrelation(mediaA, mediaB);
+        const meanX = Helpers_1.default.mean(mediaA);
+        const meanY = Helpers_1.default.mean(mediaB);
+        const covar = this.covariance(mediaA, mediaB, meanX, meanY);
         let affinity = isNaN(pearson) ? 0 : pearson.toFixed(2);
         const EMBED_DESCRIPTION = `**${this.interaction.user.username}** y **${optionUser.username}** tienen un **${affinity}%** de [afinidad](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient).\n\n` +
             `▸ Comparten **${sharedMedia.length}** animes.\n` +
-            `▸ Comparten **${sharedScore}** notas.\n\n` +
+            `▸ Comparten **${sharedScore}** notas.\n` +
+            `▸ La [variabilidad](https://en.wikipedia.org/wiki/Covariance) entre sus notas es de **${covar.toFixed(0)}**.\n\n` +
             `**${this.interaction.user.username}**:\n` +
             `▸ Tiene un promedio de **${interactionUserMeanScore}**.\n` +
             `▸ Tiene una [desviación estándar](https://es.wikipedia.org/wiki/Desviaci%C3%B3n_t%C3%ADpica) del **${interactionUserStandardDeviation}**.\n\n` +
@@ -109,13 +115,16 @@ class AffinityCommandInteraction extends CommandInteraction_1.default {
         if (arrX.length !== arrY.length) {
             throw new Error('Los arrays deben tener la misma longitud.');
         }
-        const meanX = Helpers_1.default.calculateAverage(arrX);
-        const meanY = Helpers_1.default.calculateAverage(arrY);
+        const meanX = Helpers_1.default.mean(arrX);
+        const meanY = Helpers_1.default.mean(arrY);
         const stdDevX = this.standardDeviation(arrX, meanX);
         const stdDevY = this.standardDeviation(arrY, meanY);
         const covar = this.covariance(arrX, arrY, meanX, meanY);
-        const result = covar / (stdDevX * stdDevY);
-        return result <= 0 ? 0 : result;
+        const denominator = (stdDevX * stdDevY);
+        const pearson = denominator <= 0 ? 0 : covar / denominator;
+        const normalized = pearson + 100;
+        const scaled = normalized / 200;
+        return scaled * 100;
     }
     /**
      * Función para calcular la desviación estándar de un array de números.
@@ -125,7 +134,7 @@ class AffinityCommandInteraction extends CommandInteraction_1.default {
      */
     standardDeviation(arr, mean) {
         const squareDiffs = arr.map(val => Math.pow(val - mean, 2));
-        const avgSquareDiff = Helpers_1.default.calculateAverage(squareDiffs);
+        const avgSquareDiff = Helpers_1.default.mean(squareDiffs);
         return Math.sqrt(avgSquareDiff);
     }
     /**

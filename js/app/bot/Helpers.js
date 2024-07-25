@@ -83,6 +83,9 @@ class Helpers {
     static calculateAverage(array) {
         return this.addElements(array) / array.length;
     }
+    static mean(array) {
+        return this.addElements(array) / array.length;
+    }
     static async sleep(ms) {
         return new Promise(r => setTimeout(r, ms));
     }

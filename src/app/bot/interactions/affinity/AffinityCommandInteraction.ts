@@ -50,14 +50,23 @@ export default class AffinityCommandInteraction extends CommandInteraction {
         const sharedMedia = this.findSharedMedia(interactionUserCompletedAnimes, optionUserCompletedAnimes);
         const sharedScore = this.findSharedScore(sharedMedia);
 
-        const pearson = this.pearsonCorrelation(sharedMedia.map(media => media.scoreA), sharedMedia.map(media => media.scoreB));
+        const mediaA = sharedMedia.map(media => media.scoreA);
+        const mediaB = sharedMedia.map(media => media.scoreB);
+
+        const pearson = this.pearsonCorrelation(mediaA, mediaB);
+
+        const meanX = Helpers.mean(mediaA);
+        const meanY = Helpers.mean(mediaB);
+        const covar = this.covariance(mediaA, mediaB, meanX, meanY);
+
         let affinity = isNaN(pearson) ? 0 : pearson.toFixed(2);
 
         const EMBED_DESCRIPTION = 
             `**${this.interaction.user.username}** y **${optionUser.username}** tienen un **${affinity}%** de [afinidad](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient).\n\n`+
 
             `▸ Comparten **${sharedMedia.length}** animes.\n`+
-            `▸ Comparten **${sharedScore}** notas.\n\n`+
+            `▸ Comparten **${sharedScore}** notas.\n`+
+            `▸ La [variabilidad](https://en.wikipedia.org/wiki/Covariance) entre sus notas es de **${covar.toFixed(0)}**.\n\n`+
 
             `**${this.interaction.user.username}**:\n`+
             `▸ Tiene un promedio de **${interactionUserMeanScore}**.\n`+
@@ -133,18 +142,21 @@ export default class AffinityCommandInteraction extends CommandInteraction {
             throw new Error('Los arrays deben tener la misma longitud.');
         }
     
-        const meanX = Helpers.calculateAverage(arrX);
-        const meanY = Helpers.calculateAverage(arrY);
+        const meanX = Helpers.mean(arrX);
+        const meanY = Helpers.mean(arrY);
 
         const stdDevX = this.standardDeviation(arrX, meanX);
         const stdDevY = this.standardDeviation(arrY, meanY);
         
         const covar = this.covariance(arrX, arrY, meanX, meanY);
-    
-        const result = covar / (stdDevX * stdDevY);
+        const denominator = (stdDevX * stdDevY);
+        const pearson = denominator <= 0 ? 0 : covar / denominator;
 
-        return result <= 0 ? 0 : result;
-    } 
+        const normalized = pearson + 100;
+        const scaled = normalized / 200;
+
+        return scaled * 100;
+    }
 
     /**
      * Función para calcular la desviación estándar de un array de números.
@@ -155,7 +167,7 @@ export default class AffinityCommandInteraction extends CommandInteraction {
 
     private standardDeviation (arr: number[], mean: number): number {
         const squareDiffs = arr.map(val => Math.pow(val - mean, 2));
-        const avgSquareDiff = Helpers.calculateAverage(squareDiffs);
+        const avgSquareDiff = Helpers.mean(squareDiffs);
         return Math.sqrt(avgSquareDiff);
     }
 
