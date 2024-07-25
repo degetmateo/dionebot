@@ -77,7 +77,7 @@ export default class AffinityCommandInteraction extends CommandInteraction {
             `▸ Tiene una [desviación estándar](https://es.wikipedia.org/wiki/Desviaci%C3%B3n_t%C3%ADpica) del **${optionUserStandardDeviation}**.`;
 
         const embed = new EmbedBuilder()
-            .setColor(Embed.COLOR_ORANGE)
+            .setColor('Random')
             .setDescription(EMBED_DESCRIPTION)
 
         await this.interaction.editReply({

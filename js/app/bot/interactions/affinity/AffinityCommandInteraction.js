@@ -9,7 +9,6 @@ const postgres_1 = __importDefault(require("../../../database/postgres"));
 const NoResultsException_1 = __importDefault(require("../../../errors/NoResultsException"));
 const AnilistAPI_1 = __importDefault(require("../../apis/anilist/AnilistAPI"));
 const Helpers_1 = __importDefault(require("../../Helpers"));
-const Embed_1 = __importDefault(require("../../embeds/Embed"));
 const AffinityCommandQueries_1 = __importDefault(require("./AffinityCommandQueries"));
 const IllegalArgumentException_1 = __importDefault(require("../../../errors/IllegalArgumentException"));
 class AffinityCommandInteraction extends CommandInteraction_1.default {
@@ -60,7 +59,7 @@ class AffinityCommandInteraction extends CommandInteraction_1.default {
             `▸ Tiene un promedio de **${optionUserMeanScore}**.\n` +
             `▸ Tiene una [desviación estándar](https://es.wikipedia.org/wiki/Desviaci%C3%B3n_t%C3%ADpica) del **${optionUserStandardDeviation}**.`;
         const embed = new discord_js_1.EmbedBuilder()
-            .setColor(Embed_1.default.COLOR_ORANGE)
+            .setColor('Random')
             .setDescription(EMBED_DESCRIPTION);
         await this.interaction.editReply({
             embeds: [embed]
