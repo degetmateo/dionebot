@@ -6,8 +6,8 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('character')
         .setNameLocalization('es-ES', 'personaje')
-        .setDescription('Search for a character in anilist!')
-        .setDescriptionLocalization('es-ES', 'Busca un personaje en anilist!')
+        .setDescription('Search for a character!')
+        .setDescriptionLocalization('es-ES', 'Busca un personaje!')
         .setNSFW(false)
         .setDMPermission(false)
         .addStringOption(option =>

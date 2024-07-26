@@ -15,7 +15,7 @@ export default class MangaCommandInteraction extends CommandInteraction {
         super();
         this.interaction = interaction;
         
-        this.query = interaction.options.getString('nombre-o-id');
+        this.query = interaction.options.getString('name-o-id');
         this.queryIsNumber = Helpers.isNumber(this.query);
     }
 

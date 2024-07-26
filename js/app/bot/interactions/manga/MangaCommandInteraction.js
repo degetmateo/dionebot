@@ -12,7 +12,7 @@ class MangaCommandInteraction extends CommandInteraction_1.default {
     constructor(interaction) {
         super();
         this.interaction = interaction;
-        this.query = interaction.options.getString('nombre-o-id');
+        this.query = interaction.options.getString('name-o-id');
         this.queryIsNumber = Helpers_1.default.isNumber(this.query);
     }
     async execute() {

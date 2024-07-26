@@ -59,7 +59,7 @@ export default class AffinityCommandInteraction extends CommandInteraction {
         const meanY = Helpers.mean(mediaB);
         const covar = this.covariance(mediaA, mediaB, meanX, meanY);
 
-        let affinity = isNaN(pearson) ? 0 : pearson.toFixed(2);
+        const affinity = isNaN(pearson) ? 0 : pearson.toFixed(2);
 
         const EMBED_DESCRIPTION = 
             `**${this.interaction.user.username}** y **${optionUser.username}** tienen un **${affinity}%** de [afinidad](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient).\n\n`+

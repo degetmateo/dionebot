@@ -9,15 +9,16 @@ module.exports = {
     cooldown: 10,
     data: new discord_js_1.SlashCommandBuilder()
         .setName('anime')
-        .setDescription('Busca un anime en la base de datos de anilist.')
+        .setDescription('Search for an anime!')
+        .setDescriptionLocalization('es-ES', 'Busca un anime!')
         .setDMPermission(false)
+        .setNSFW(false)
         .addStringOption((opcion) => opcion
-        .setName('nombre-o-id')
-        .setDescription('El nombre o el ID con el que se va a buscar el anime.')
-        .setRequired(true))
-        .addBooleanOption((opcion) => opcion
-        .setName('traducir')
-        .setDescription('Si deseas traducir la sinopsis.')),
+        .setName('name-or-id')
+        .setNameLocalization('es-ES', 'nombre-o-id')
+        .setDescription('Name or id of the character you want to search for.')
+        .setDescriptionLocalization('es-ES', 'Nombre o id del anime que quieres buscar.')
+        .setRequired(true)),
     execute: async (interaction) => {
         const commandInteraction = new AnimeCommandInteraction_1.default(interaction);
         await commandInteraction.execute();
