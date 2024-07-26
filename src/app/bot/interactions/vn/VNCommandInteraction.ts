@@ -15,8 +15,7 @@ export default class VNCommandInteraction extends CommandInteraction {
     }
 
     public async execute (): Promise<void> {
-        const query: string = this.interaction.options.getString('nombre-o-id') as string;
-        const translate: boolean = this.interaction.options.getBoolean('traducir') || false;
+        const query: string = this.interaction.options.getString('name-or-id') as string;
 
         const queryType = Helpers.isNumber(query) ? 'id' : 'search';
 
@@ -24,7 +23,7 @@ export default class VNCommandInteraction extends CommandInteraction {
         if (!result) throw new NoResultsException('No se han encontrado resultados.');
 
         const vn = new VisualNovel(result);
-        const embed = translate ? await EmbedVisualNovel.CreateTranslated(vn) : EmbedVisualNovel.Create(vn);
+        const embed = EmbedVisualNovel.Create(vn);
 
         try {
             await this.interaction.editReply({ embeds: [embed] });

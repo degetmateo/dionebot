@@ -1,10 +1,6 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const Helpers_1 = __importDefault(require("../Helpers"));
 class EmbedVisualNovel extends discord_js_1.EmbedBuilder {
     constructor() {
         super();
@@ -13,13 +9,6 @@ class EmbedVisualNovel extends discord_js_1.EmbedBuilder {
         const embed = this.CrearEmbedBasico(vn)
             .setDescription(vn.getDescription());
         this.setCampoIdiomas(embed, vn.getLanguages());
-        this.setCampoPlataformas(embed, vn.getPlatforms());
-        return embed;
-    }
-    static async CreateTranslated(vn) {
-        const embed = this.CrearEmbedBasico(vn)
-            .setDescription(await Helpers_1.default.traducir(vn.getDescription()));
-        this.setCampoIdiomas(embed, await Helpers_1.default.traducirElementosArreglo(vn.getLanguages()));
         this.setCampoPlataformas(embed, vn.getPlatforms());
         return embed;
     }

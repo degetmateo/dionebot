@@ -15,14 +15,13 @@ class VNCommandInteraction extends CommandInteraction_1.default {
         this.interaction = interaction;
     }
     async execute() {
-        const query = this.interaction.options.getString('nombre-o-id');
-        const translate = this.interaction.options.getBoolean('traducir') || false;
+        const query = this.interaction.options.getString('name-or-id');
         const queryType = Helpers_1.default.isNumber(query) ? 'id' : 'search';
         const result = await VisualNovelDatabaseAPI_1.default.obtenerPrimerResultado(queryType, query);
         if (!result)
             throw new NoResultsException_1.default('No se han encontrado resultados.');
         const vn = new VisualNovel_1.default(result);
-        const embed = translate ? await EmbedVisualNovel_1.default.CreateTranslated(vn) : EmbedVisualNovel_1.default.Create(vn);
+        const embed = EmbedVisualNovel_1.default.Create(vn);
         try {
             await this.interaction.editReply({ embeds: [embed] });
         }

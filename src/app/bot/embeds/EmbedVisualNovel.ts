@@ -17,17 +17,6 @@ export default class EmbedVisualNovel extends EmbedBuilder {
         return embed;
     }
 
-    public static async CreateTranslated (vn: NovelaVisual): Promise<EmbedVisualNovel> {
-        const embed = this.CrearEmbedBasico(vn)
-            .setDescription(await Helpers.traducir(vn.getDescription()));
-
-
-        this.setCampoIdiomas(embed, await Helpers.traducirElementosArreglo(vn.getLanguages()));
-        this.setCampoPlataformas(embed, vn.getPlatforms());
-
-        return embed;
-    }
-
     private static CrearEmbedBasico(vn: NovelaVisual): EmbedVisualNovel {
         const embed = new EmbedVisualNovel()
             .setTitle(vn.getTitle())

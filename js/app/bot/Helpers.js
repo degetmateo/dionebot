@@ -1,23 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const translate = require('translate');
 class Helpers {
-    static async traducir(texto) {
-        return await translate(texto, this.LENGUAJE_TRADUCCION);
-    }
-    static async traducirElementosArreglo(elementos) {
-        const elementosTraducidos = new Array();
-        for (let i = 0; i < elementos.length; i++) {
-            try {
-                elementosTraducidos.push(await this.traducir(elementos[i]));
-            }
-            catch (error) {
-                elementosTraducidos.push(elementos[i]);
-                continue;
-            }
-        }
-        return elementosTraducidos;
-    }
     static isNumber(args) {
         return !(isNaN(+args) || isNaN(parseFloat(args)));
     }
@@ -90,7 +73,6 @@ class Helpers {
         return new Promise(r => setTimeout(r, ms));
     }
 }
-Helpers.LENGUAJE_TRADUCCION = 'es';
 Helpers.REGEX_CADENA_SIN_HTML = /(<([^>]+)>|&\w+;)/gi;
 Helpers.REGEX_OBTENER_ENLACES = /https?:\/\/[^\s/$.?#].[^\s]*/gi;
 exports.default = Helpers;
