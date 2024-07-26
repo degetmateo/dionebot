@@ -15,8 +15,9 @@ export default class VNCommandInteraction extends CommandInteraction {
     }
 
     public async execute (): Promise<void> {
-        const query: string = this.interaction.options.getString('name-or-id') as string;
+        await this.interaction.deferReply();
 
+        const query: string = this.interaction.options.getString('name-or-id') as string;
         const queryType = Helpers.isNumber(query) ? 'id' : 'search';
 
         const result = await VisualNovelDatabaseAPI.obtenerPrimerResultado(queryType, query);
