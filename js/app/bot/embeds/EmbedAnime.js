@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Helpers_1 = __importDefault(require("../Helpers"));
 const EmbedMedia_1 = __importDefault(require("./EmbedMedia"));
 class EmbedAnime extends EmbedMedia_1.default {
     constructor(media) {
@@ -14,13 +13,6 @@ class EmbedAnime extends EmbedMedia_1.default {
         const embed = new EmbedAnime(anime);
         embed.CreateBasic();
         embed.setDescription(anime.getDescription());
-        embed.addInfoFields();
-        return embed;
-    }
-    static async CreateTranslated(anime) {
-        const embed = new EmbedAnime(anime);
-        embed.CreateBasic();
-        embed.setDescription(await Helpers_1.default.traducir(anime.getDescription()));
         embed.addInfoFields();
         return embed;
     }

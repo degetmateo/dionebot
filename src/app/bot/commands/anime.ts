@@ -9,11 +9,11 @@ module.exports = {
         .setDescriptionLocalization('es-ES', 'Busca un anime!')
         .setDMPermission(false)
         .setNSFW(false)
-        .addStringOption((opcion: SlashCommandStringOption) =>
-            opcion
+        .addStringOption((option) =>
+            option
                 .setName('name-or-id')
                 .setNameLocalization('es-ES', 'nombre-o-id')
-                .setDescription('Name or id of the character you want to search for.')
+                .setDescription('Name or id of the anime you want to search for.')
                 .setDescriptionLocalization('es-ES', 'Nombre o id del anime que quieres buscar.')
                 .setRequired(true)),
     execute: async (interaction: ChatInputCommandInteraction<CacheType>): Promise<void> => {

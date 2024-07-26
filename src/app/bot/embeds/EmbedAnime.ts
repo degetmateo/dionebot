@@ -20,16 +20,6 @@ export default class EmbedAnime extends EmbedMedia {
         return embed;
     }
 
-    public static async CreateTranslated (anime: Anime): Promise<EmbedAnime> {
-        const embed = new EmbedAnime(anime);
-        
-        embed.CreateBasic();
-        embed.setDescription(await Helpers.traducir(anime.getDescription()));
-        embed.addInfoFields();
-
-        return embed;
-    }
-
     private addInfoFields (): EmbedAnime {
         const informacionCampos1 = `
             ‣ **Formato**: ${this.media.getFormat() || 'Desconocido'}\n‣ **Estado**: ${this.media.getStatus() || 'Desconocido'}\n‣ **Calificación**: ${this.media.getMeanScore() ? this.media.getMeanScore() + '/100' : 'Desconocida'}\n‣ **Popularidad**: ${this.media.getPopularity() || 'Desconocida'}

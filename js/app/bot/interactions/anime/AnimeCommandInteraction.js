@@ -12,7 +12,7 @@ class AnimeCommandInteraction extends CommandInteraction_1.default {
     constructor(interaction) {
         super();
         this.interaction = interaction;
-        this.query = interaction.options.getString('name-o-id');
+        this.query = interaction.options.getString('name-or-id');
         this.queryIsNumber = Helpers_1.default.isNumber(this.query);
     }
     async execute() {

@@ -1,5 +1,4 @@
 import { CacheType, ChatInputCommandInteraction } from "discord.js";
-import Helpers from "../../Helpers";
 import AnilistAPI from "../../apis/anilist/AnilistAPI";
 import Anime from "../../apis/anilist/modelos/media/Anime";
 import EmbedAnime from "../../embeds/EmbedAnime";
@@ -16,7 +15,6 @@ export default class AnimeInteractionController extends InteractionController {
 
     public async execute (): Promise<void> {
         const serverId = this.interaction.guild.id;
-        const translate = this.interaction.options.getBoolean('traducir') || false;
 
         const queryUsers =  await Postgres.query() `
             SELECT * FROM
@@ -28,9 +26,7 @@ export default class AnimeInteractionController extends InteractionController {
                 mem.id_user = du.id_user;
         `;
 
-        this.embeds = translate ?
-            await Helpers.asyncMap(this.media, async anime => await EmbedAnime.CreateTranslated(anime)) :
-            this.media.map(media => EmbedAnime.Create(media));
+        this.embeds = this.media.map(media => EmbedAnime.Create(media));
 
         const anime = this.media[this.page];
         const scores = await this.fetchUsersUsernames(await AnilistAPI.fetchUsersScores(anime.getId() + '', queryUsers.map(u => u.id_anilist+'')));

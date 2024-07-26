@@ -20,16 +20,6 @@ export default class EmbedManga extends EmbedMedia {
         return embed;
     }
 
-    public static async CreateTranslated (manga: Manga): Promise<EmbedManga> {
-        const embed = new EmbedManga(manga);
-        
-        embed.CreateBasic();
-        embed.setDescription(await Helpers.traducir(manga.getDescription()));
-        embed.addInfoFields();
-
-        return embed;
-    }
-
     private addInfoFields (): EmbedManga {
         const informacionCampos1 = `
             ‣ **Formato**: ${this.media.getFormat() || 'Desconocido'}\n‣ **Estado**: ${this.media.getStatus() || 'Desconocido'}\n‣ **Calificación**: ${this.media.getMeanScore() ? this.media.getMeanScore() + '/100' : 'Desconocida'}\n‣ **Popularidad**: ${this.media.getPopularity() || 'Desconocida'}

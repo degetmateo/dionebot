@@ -16,7 +16,6 @@ export default class MangaInteractionController extends InteractionController {
 
     public async execute (): Promise<void> {
         const serverId = this.interaction.guildId;
-        const translate = this.interaction.options.getBoolean('traducir') || false;
 
         const queryUsers =  await Postgres.query() `
             SELECT * FROM
@@ -28,9 +27,7 @@ export default class MangaInteractionController extends InteractionController {
                 mem.id_user = du.id_user;
         `;
 
-        this.embeds = translate ?
-            await Helpers.asyncMap(this.media, async manga => await EmbedManga.CreateTranslated(manga)) :
-            this.media.map(manga => EmbedManga.Create(manga));
+        this.embeds = this.media.map(manga => EmbedManga.Create(manga));
 
         const manga = this.media[this.page];
         const scores = await this.fetchUsersUsernames(await AnilistAPI.fetchUsersScores(manga.getId() + '', queryUsers.map(u => u.id_anilist+'')));

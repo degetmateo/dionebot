@@ -15,7 +15,7 @@ export default class AnimeCommandInteraction extends CommandInteraction {
         super();
         this.interaction = interaction;
         
-        this.query = interaction.options.getString('name-o-id');
+        this.query = interaction.options.getString('name-or-id');
         this.queryIsNumber = Helpers.isNumber(this.query);
     }
 
