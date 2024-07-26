@@ -43,7 +43,7 @@ class CharacterCommandInteraction extends CommandInteraction_1.default {
         embed.setURL(character.getURL());
         embed.setColor(Helpers_1.default.getRandomElement(['Blue', 'Red', 'Yellow']));
         embed.setFooter({
-            text: `▸ Fue marcado ${character.getFavourites()} veces.`
+            text: `▸ Le gusta a ${character.getFavourites()} usuarios!`
         });
         return embed;
     }
