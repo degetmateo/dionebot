@@ -2,7 +2,7 @@ import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder } from "dis
 import SuggestionCommandInteraction from "../interactions/suggestion/SuggestionCommandInteracion";
 
 module.exports = {
-    cooldown: 20,
+    cooldown: 60,
     data: new SlashCommandBuilder()
         .setName('suggestion')
         .setNameLocalization('es-ES', 'sugerencia')

@@ -29,7 +29,6 @@ module.exports = {
 const DESCRIPTION_HELP = `
 **Información**
 ▸ **\`/help\`** - Todos los comandos disponibles.
-▸ **\`/informacion\`** - Información acerca de mi.
 
 **Registrarse**
 ▸ **\`/setup\`** - Vincula tu perfil de anilist.
@@ -37,7 +36,7 @@ const DESCRIPTION_HELP = `
 
 **Estadísticas**
 ▸ **\`/usuario\`** - Información del perfil de anilist de un usuario.
-▸ **\`/afinidad\`** - Calcula la afinidad de un usuario con el resto del servidor.
+▸ **\`/affinity\`** - Calcula la afinidad de un usuario con el resto del servidor.
 
 **Búsqueda**
 ▸ **\`/anime\`** - Muestra información del anime que busques.
@@ -52,6 +51,9 @@ const DESCRIPTION_HELP = `
 
 **Administración**
 ▸ **\`/admin-unsetup\`** - Desvincula forzosamente el anilist de un usuario.
+
+**Otros**
+▸ **\`/suggestion\`** - ¡Envíanos una sugerencia para ayudar con el desarrollo!
 
 ▸ [Invitame a tu servidor!](${process.env.ENLACE_INVITACION})
 `;

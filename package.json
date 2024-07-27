@@ -7,8 +7,8 @@
     "start": "node js/index.js",
     "dev": "ts-node src/index.ts",
     "build": "tsc",
-    "deploy-commands": "ts-node scripts/deploy-commands.ts",
-    "delete-commands": "ts-node scripts/delete-commands.ts"
+    "deploy-commands": "ts-node ./scripts/deploy-commands.ts",
+    "delete-commands": "ts-node ./scripts/delete-commands.ts"
   },
   "type": "commonjs",
   "keywords": [
