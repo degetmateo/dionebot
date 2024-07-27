@@ -1,7 +1,7 @@
 import { Client, Collection, ActivityType, PresenceData } from 'discord.js';
 import fs from "fs";
 import path from "path";
-import { version } from '../../../package.json';
+import { version } from '../../package.json';
 import { Command, ServerStatus } from './types';
 import Postgres from '../database/postgres';
 
