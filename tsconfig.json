@@ -3,7 +3,7 @@
     "moduleResolution": "Node",
     /* Visit https://aka.ms/tsconfig to read more about this file */
     "rootDir": "./src",
-    "target": "ES2017",
+    "target": "ES6",
     "outDir": "./js",
     // "baseUrl": ".",
     // "rootDir": "src/",
@@ -105,7 +105,7 @@
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
   "include": [
-    "src/**/*.ts"                  /* Patrón de inclusión de archivos TypeScript. */
+    "src/**/*"                  /* Patrón de inclusión de archivos TypeScript. */
   ],
   "exclude": [
     "node_modules",
