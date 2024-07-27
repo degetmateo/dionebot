@@ -15,7 +15,7 @@ export default class Servidor {
             this.app = express();
     
             this.app.use(express.json());
-            this.app.use(express.static(path.join(__dirname + '/../../public')));
+            this.app.use(express.static(path.join(__dirname + "/../../../public/")));
             this.app.set("port", process.env.PORT || 4000);
     
             this.cargarRutas();
@@ -36,7 +36,7 @@ export default class Servidor {
 
     private cargarRutas ():void {
         this.app.get("/", (req: express.Request, res: express.Response) => {
-            res.sendFile(path.join(__dirname + "/../../public/views/index.html"));
+            res.sendFile(path.join(__dirname + "/../../../public/views/index.html"));
         });
         
         this.app.get("/invitar", (req, res) => {
