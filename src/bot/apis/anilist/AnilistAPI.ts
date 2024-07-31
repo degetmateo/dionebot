@@ -1,6 +1,5 @@
 import fetch from 'node-fetch';
 import { MediaList } from './tipos/MediaList';
-import { PeticionAPI } from '../tipos/PeticionAPI';
 import * as Types from './TiposAnilist';
 
 import AnilistUser from './modelos/AnilistUser';
@@ -94,7 +93,7 @@ export default class AnilistAPI {
 
 
     public static async peticion (query: string, variables: any): Promise<any | null> {
-        const opciones: PeticionAPI = {
+        const opciones = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', },
             body: JSON.stringify({ query, variables })
@@ -131,7 +130,7 @@ export default class AnilistAPI {
     }
 
     public static async authorizedFetch (token: string, query: string) {
-        const res = await fetch (this.API_URL, {
+        const req = await fetch (this.API_URL, {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + token,
@@ -141,11 +140,13 @@ export default class AnilistAPI {
             body: JSON.stringify ({ query })
         })
 
-        return await res.json();
+        const res = await req.json();
+        if (res.errors) this.handleErrors(res.errors);
+        return res;
     }
 
     public static async fetch (query: string) {
-        const res = await fetch (this.API_URL, {
+        const req = await fetch (this.API_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -154,6 +155,25 @@ export default class AnilistAPI {
             body: JSON.stringify ({ query })
         })
 
-        return await res.json();
+        const res = await req.json();
+        if (res.errors) this.handleErrors(res.errors);
+        return res;
+    }
+
+    private static handleErrors (errors: Array<any>) {
+        const error = errors[0];
+        const message = error.message.toLowerCase();
+
+        if (message.includes('max query complexity')) {
+            console.error(error);
+            throw new TooManyRequestsException('Se han realizado demasiadas peticiones al servidor. Inténtalo de nuevo más tarde.');
+        }
+
+        if (message.includes('too many requests')) {
+            console.error(error);
+            throw new TooManyRequestsException('Se han realizado demasiadas peticiones al servidor. Inténtalo de nuevo más tarde.');
+        }
+
+        throw new Error(message);
     }
 }

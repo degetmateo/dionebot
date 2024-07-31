@@ -20,29 +20,4 @@ export default class CharacterCommandQueries {
             }
         `;
     }
-
-    public static CreateCharacterFavouritesQuery (users: Array<{ id_user: string, id_anilist: string }>) {
-        return  `
-            query {
-                ${users.map((user, i) => `
-                    q${i}: Page (perPage: 1) {
-                        users (id: ${user.id_anilist}) {
-                            ...user
-                        }
-                    }
-                `).join('\n')}
-            }
-
-            fragment user on User {
-                id
-                favourites {
-                    characters {
-                        nodes {
-                            id
-                        }
-                    }
-                }
-            }
-        `;
-    }   
 }

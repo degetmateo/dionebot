@@ -1,11 +1,10 @@
 import { DatosNovelaVisual } from "./tipos/NovelaVisual";
-import { PeticionAPI, TipoConsulta } from "../tipos/PeticionAPI";
 import { TipoCriterio } from "./tipos/PeticionNovelaVisual";
 import NoResultsException from "../../../errors/NoResultsException";
 
 export default class VisualNovelDatabaseAPI {
     private static readonly API_URL: string = 'https://api.vndb.org/kana/vn';
-    private static readonly TIPO_CONSULTA: TipoConsulta = 'POST';
+    private static readonly TIPO_CONSULTA = 'POST';
     private static readonly CAMPOS_CONSULTAR: Array<string> = [
         'title',
         'image.url',
@@ -21,7 +20,7 @@ export default class VisualNovelDatabaseAPI {
     ];
     
     private static async consultarAPI (tipoCriterio: TipoCriterio, criterio: string): Promise<RespuestaPeticion> {
-        const informacionPeticion: PeticionAPI = {
+        const informacionPeticion = {
             method: this.TIPO_CONSULTA,
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', },
             body: JSON.stringify({ "filters": [tipoCriterio, "=", criterio], "fields": this.CAMPOS_CONSULTAR.join(', ') })
