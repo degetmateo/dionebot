@@ -17,7 +17,7 @@ module.exports = {
             await interaction.reply({
                 content: "interactionCreate"
             });
-            
+
             const bot = interaction.client as Bot;
             const command = bot.commands.get(interaction.commandName);
 
@@ -70,8 +70,8 @@ module.exports = {
             console.error(error);
 
             if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ 
-                    embeds: [new ErrorEmbed(error.message)], flags: MessageFlags.Ephemeral
+                await interaction.editReply({ 
+                    embeds: [new ErrorEmbed(error.message)]
                 });
             } else {
                 await interaction.reply({ 
