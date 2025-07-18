@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ES2021",                          // Soporte moderno para async/await, etc.
-    "module": "CommonJS",                        // O "ESNext" si usás imports ES
-    "lib": ["ES2021", "DOM"],                           // Incluye las APIs de ES2021
+    "target": "ES2021",                     
+    "module": "CommonJS",                  
+    "lib": ["ES2021", "DOM"],           
     "moduleResolution": "node",
-    "esModuleInterop": true,                     // Permite importar módulos CommonJS
+    "esModuleInterop": true,   
     "forceConsistentCasingInFileNames": true,    
-    "strict": true,                              // Habilita verificación estricta de tipos
-    "skipLibCheck": true,                        // Acelera la compilación (ignora type defs de libs)
-    "resolveJsonModule": true,                   // Permite importar archivos .json
-    "outDir": "./js",                          // Carpeta de salida del JS compilado
+    "strict": true,                              
+    "skipLibCheck": true,                        
+    "resolveJsonModule": true,                  
+    "outDir": "./js",                  
     "rootDir": "./src",
     "noImplicitAny": true,
     "noUnusedLocals": true,
