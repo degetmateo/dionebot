@@ -23,6 +23,7 @@ for (const folder of commandFolders) {
 
         if ('data' in command && 'execute' in command) {
             client.commands.set(command.data.name, command);
+            console.log(command.data.name, 'loaded');
         } else {
             console.log(`🟧 | The command at ${filePath} is missing a required "data" or "execute" property.`);
         };
@@ -39,6 +40,8 @@ for (const file of eventFiles) {
     event.once ?
         client.once(event.name, (...args) => event.execute(...args)) :
         client.on(event.name, (...args) => event.execute(...args));
+
+    console.log(event.name, 'loaded');
 };
 
 client.login(TOKEN);
