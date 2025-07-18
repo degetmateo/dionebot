@@ -34,7 +34,7 @@ export default class AnimeCommandInteraction {
 
         const data = await searchAnimeById(id);
 
-        await this.interaction.followUp({
+        await this.interaction.channel.send({
             embeds: [new AnimeEmbed(data)]
         });
     };
@@ -44,7 +44,7 @@ export default class AnimeCommandInteraction {
 
         const data = await searchAnimeByName(name);
 
-        await this.interaction.followUp({
+        await this.interaction.channel.send({
             embeds: [new AnimeEmbed(data)]
         });
     };

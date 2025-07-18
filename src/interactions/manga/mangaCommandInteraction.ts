@@ -34,7 +34,7 @@ export default class MangaCommandInteraction {
 
         const data = await searchMangaById(id);
 
-        await this.interaction.followUp({
+        await this.interaction.channel.send({
             embeds: [new MangaEmbed(data)]
         });
     };
@@ -44,7 +44,7 @@ export default class MangaCommandInteraction {
 
         const data = await searchMangaByName(name);
 
-        await this.interaction.followUp({
+        await this.interaction.channel.send({
             embeds: [new MangaEmbed(data)]
         });
     };
