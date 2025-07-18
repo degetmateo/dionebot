@@ -10,9 +10,9 @@ module.exports = {
     execute: async (interaction: ChatInputCommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
 
-        await interaction.deferReply();
+        // await interaction.deferReply();
 
-        await interaction.editReply({
+        await interaction.reply({
             content: "interactionCreate"
         });
 
