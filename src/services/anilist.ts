@@ -1,6 +1,6 @@
 import GenericError from "../errors/genericError";
 import { codes } from "./codes";
-import fetch from "node-fetch";
+const fetch = require('node-fetch');
 
 export default class Anilist {
     private static readonly URL: string = 'https://graphql.anilist.co';
@@ -15,7 +15,7 @@ export default class Anilist {
             body: JSON.stringify({ query })
         });
 
-        const response: any = await request.json();
+        const response = await request.json();
         
         if (!request.ok) {
             const error = codes[response.errors[0].status];
