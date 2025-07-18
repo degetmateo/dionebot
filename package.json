@@ -7,7 +7,7 @@
     "start": "node js/index.js",
     "dev": "ts-node src/index.ts",
     "build": "tsc",
-    "deploy-commands": "ts-node ./scripts/deploy-commands.ts",
+    "deploy-commands-global": "ts-node ./scripts/deploy-commands-global.ts",
     "delete-commands": "ts-node ./scripts/delete-commands.ts"
   },
   "engines": {
