@@ -25,7 +25,7 @@ module.exports = {
                 throw new GenericError();
             };
 
-            await interaction.followUp({
+            await interaction.editReply({
                 content: "interactionCreate command"
             });
 
@@ -53,14 +53,14 @@ module.exports = {
                 };
             };
 
-            await interaction.followUp({
+            await interaction.editReply({
                 content: "interactionCreate setTimeout"
             });
 
             timestamps?.set(interaction.user.id, now);
             setTimeout(() => timestamps?.delete(interaction.user.id), cooldownAmount);
 
-            await interaction.followUp({
+            await interaction.editReply({
                 content: "interactionCreate command.execute"
             });
 
