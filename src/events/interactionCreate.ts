@@ -36,7 +36,7 @@ module.exports = {
                 if (now < expirationTime) {
                     const expirationSeconds = ((expirationTime - now) / 1000).toFixed(0);
 
-                    return interaction.reply({
+                    return await interaction.reply({
                         embeds: [new ErrorEmbed(cooldownMessages(interaction.locale, expirationSeconds))],
                         flags: [MessageFlags.Ephemeral]
                     });

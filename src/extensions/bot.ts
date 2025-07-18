@@ -9,6 +9,8 @@ export default class Bot extends Client<true> {
 
     public cooldowns: Collection<string, Collection<string, any>>;
 
+    public rateLimited: boolean;
+
     constructor () {
         super({
             intents: [GatewayIntentBits.Guilds]
@@ -16,5 +18,6 @@ export default class Bot extends Client<true> {
 
         this.commands = new Collection();
         this.cooldowns = new Collection();
+        this.rateLimited = false;
     };
 };

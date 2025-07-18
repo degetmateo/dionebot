@@ -41,6 +41,18 @@ for (const file of eventFiles) {
         client.on(event.name, (...args) => event.execute(...args));
 };
 
+// const restEventsPath = path.join(__dirname, 'rest');
+// const restEventsFiles = fs.readdirSync(restEventsPath).filter(file => file.endsWith('.js') || file.endsWith('.ts'));
+
+// for (const file of restEventsFiles) {
+//     const filePath = path.join(restEventsPath, file);
+//     const event = require(filePath);
+
+//     event.once ?
+//         client.rest.once(event.name, (...args) => event.execute(...args)) :
+//         client.rest.on(event.name, (...args) => event.execute(...args));
+// };
+
 client.login(TOKEN);
 
 const app = express();

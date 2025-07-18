@@ -4,6 +4,7 @@ import AnimeValidator from "../../validators/animeValidator";
 import searchMangaByName from "./searchMangaByName";
 import searchMangaById from "./searchMangaById";
 import MangaEmbed from "../../embeds/mangaEmbed";
+import SuccessEmbed from "../../embeds/successEmbed";
 
 export default class MangaCommandInteraction {
     private interaction: ChatInputCommandInteraction;
@@ -13,11 +14,19 @@ export default class MangaCommandInteraction {
     };
 
     async execute () {
+        await this.interaction.reply({
+            embeds: [new SuccessEmbed('Buscando...')]
+        });
+
         const args = this.interaction.options.getString('name-or-id') as string;
         
         Helpers.isNumber(args) ?
             await this.searchById(args) :
             await this.searchByName(args);
+
+        await this.interaction.editReply({
+            embeds: [new SuccessEmbed('¡Resultados listos!')]
+        });
     };
 
     async searchById (id: any) {
@@ -25,7 +34,7 @@ export default class MangaCommandInteraction {
 
         const data = await searchMangaById(id);
 
-        await this.interaction.reply({
+        await this.interaction.followUp({
             embeds: [new MangaEmbed(data)]
         });
     };
@@ -35,7 +44,7 @@ export default class MangaCommandInteraction {
 
         const data = await searchMangaByName(name);
 
-        await this.interaction.reply({
+        await this.interaction.followUp({
             embeds: [new MangaEmbed(data)]
         });
     };

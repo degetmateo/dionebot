@@ -1,9 +1,10 @@
-import { ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, MessageFlags } from "discord.js";
 import Helpers from "../../helpers";
 import AnimeValidator from "../../validators/animeValidator";
 import AnimeEmbed from "../../embeds/animeEmbed";
 import searchAnimeById from "./searchAnimeById";
 import searchAnimeByName from "./searchAnimeByName";
+import SuccessEmbed from "../../embeds/successEmbed";
 
 export default class AnimeCommandInteraction {
     private interaction: ChatInputCommandInteraction;
@@ -13,11 +14,19 @@ export default class AnimeCommandInteraction {
     };
 
     async execute () {
+        await this.interaction.reply({
+            embeds: [new SuccessEmbed('Buscando...')]
+        });
+
         const args = this.interaction.options.getString('name-or-id') as string;
 
         Helpers.isNumber(args) ?
             await this.searchById(args) :
             await this.searchByName(args);
+
+        await this.interaction.editReply({
+            embeds: [new SuccessEmbed('¡Resultados listos!')]
+        });
     };
 
     async searchById (id: any) {
@@ -25,7 +34,7 @@ export default class AnimeCommandInteraction {
 
         const data = await searchAnimeById(id);
 
-        await this.interaction.reply({
+        await this.interaction.followUp({
             embeds: [new AnimeEmbed(data)]
         });
     };
@@ -35,7 +44,7 @@ export default class AnimeCommandInteraction {
 
         const data = await searchAnimeByName(name);
 
-        await this.interaction.reply({
+        await this.interaction.followUp({
             embeds: [new AnimeEmbed(data)]
         });
     };
