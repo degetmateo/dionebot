@@ -9,6 +9,13 @@ module.exports = {
     once: false,
     execute: async (interaction: ChatInputCommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
+
+        await interaction.deferReply();
+
+        await interaction.editReply({
+            content: "interactionCreate"
+        });
+
         try {
             const bot = interaction.client as Bot;
             const command = bot.commands.get(interaction.commandName);
@@ -17,6 +24,10 @@ module.exports = {
                 console.error(`🟥 | No command matching ${interaction.commandName} was found.`);
                 throw new GenericError();
             };
+
+            await interaction.followUp({
+                content: "interactionCreate command"
+            });
 
             const cooldowns = bot.cooldowns;
 
@@ -42,12 +53,14 @@ module.exports = {
                 };
             };
 
+            await interaction.followUp({
+                content: "interactionCreate setTimeout"
+            });
+
             timestamps?.set(interaction.user.id, now);
             setTimeout(() => timestamps?.delete(interaction.user.id), cooldownAmount);
 
-            await interaction.deferReply();
-
-            await interaction.editReply({
+            await interaction.followUp({
                 content: "interactionCreate command.execute"
             });
 
