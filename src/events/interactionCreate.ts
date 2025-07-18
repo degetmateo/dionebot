@@ -45,6 +45,12 @@ module.exports = {
             timestamps?.set(interaction.user.id, now);
             setTimeout(() => timestamps?.delete(interaction.user.id), cooldownAmount);
 
+            await interaction.deferReply();
+
+            await interaction.editReply({
+                content: "interactionCreate command.execute"
+            });
+
             await command.execute(interaction);
         } catch (error: any) {
             console.error(error);

@@ -13,10 +13,14 @@ export default class AnimeCommandInteraction {
     };
 
     async execute () {
-        await this.interaction.deferReply();
+        // await this.interaction.deferReply();
 
         const args = this.interaction.options.getString('name-or-id') as string;
         
+        await this.interaction.followUp({
+            content: "AnimeCommandInteraction.Helpers.IsNumber"
+        });
+
         Helpers.isNumber(args) ?
             await this.searchById(args) :
             await this.searchByName(args);
@@ -25,7 +29,15 @@ export default class AnimeCommandInteraction {
     async searchById (id: any) {
         AnimeValidator.validateId(id);
 
+        await this.interaction.followUp({
+            content: "AnimeCommandInteraction.SearchById"
+        });
+
         const data = await searchAnimeById(id);
+
+        await this.interaction.followUp({
+            content: "AnimeCommandInteraction.interaction.FollowUp"
+        });
 
         await this.interaction.editReply({
             embeds: [new AnimeEmbed(data)]
@@ -35,7 +47,15 @@ export default class AnimeCommandInteraction {
     async searchByName (name: string) {
         AnimeValidator.validateName(name);
 
+        await this.interaction.followUp({
+            content: "AnimeCommandInteraction.SearchByName"
+        });
+
         const data = await searchAnimeByName(name);
+
+        await this.interaction.followUp({
+            content: "AnimeCommandInteraction.interaction.FollowUp"
+        });
 
         await this.interaction.editReply({
             embeds: [new AnimeEmbed(data)]
