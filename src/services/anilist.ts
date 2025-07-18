@@ -1,6 +1,5 @@
 import GenericError from "../errors/genericError";
 import { codes } from "./codes";
-import fetch from 'node-fetch';
 
 export default class Anilist {
     private static readonly URL: string = 'https://graphql.anilist.co';
