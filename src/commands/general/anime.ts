@@ -20,10 +20,6 @@ module.exports = {
         ),
     execute: async (interaction: ChatInputCommandInteraction) => {
         try {
-            await interaction.editReply({
-                content: "commands.general.anime.AnimeCommandInteraction.execute"
-            });
-
             await new AnimeCommandInteraction(interaction).execute();
         } catch (error) {
             console.error(error);

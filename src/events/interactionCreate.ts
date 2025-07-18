@@ -8,15 +8,8 @@ module.exports = {
     name: Events.InteractionCreate,
     once: false,
     execute: async (interaction: ChatInputCommandInteraction) => {
-        
         try {
             if (!interaction.isChatInputCommand()) return;
-    
-            // await interaction.deferReply();
-    
-            await interaction.reply({
-                content: "interactionCreate"
-            });
 
             const bot = interaction.client as Bot;
             const command = bot.commands.get(interaction.commandName);
@@ -25,10 +18,6 @@ module.exports = {
                 console.error(`🟥 | No command matching ${interaction.commandName} was found.`);
                 throw new GenericError();
             };
-
-            await interaction.editReply({
-                content: "interactionCreate command"
-            });
 
             const cooldowns = bot.cooldowns;
 
@@ -54,28 +43,20 @@ module.exports = {
                 };
             };
 
-            await interaction.editReply({
-                content: "interactionCreate setTimeout"
-            });
-
             timestamps?.set(interaction.user.id, now);
             setTimeout(() => timestamps?.delete(interaction.user.id), cooldownAmount);
-
-            await interaction.editReply({
-                content: "interactionCreate command.execute"
-            });
 
             await command.execute(interaction);
         } catch (error: any) {
             console.error(error);
 
             if (interaction.replied || interaction.deferred) {
-                await interaction.editReply({ 
-                    embeds: [new ErrorEmbed(error.message)]
+                await interaction.followUp({ 
+                    embeds: [new ErrorEmbed(error.message)], flags: [MessageFlags.Ephemeral]
                 });
             } else {
                 await interaction.reply({ 
-                    embeds: [new ErrorEmbed(error.message)], flags: MessageFlags.Ephemeral 
+                    embeds: [new ErrorEmbed(error.message)], flags: [MessageFlags.Ephemeral]
                 });
             };
         };

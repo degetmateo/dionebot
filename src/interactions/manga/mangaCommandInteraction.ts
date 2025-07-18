@@ -13,8 +13,6 @@ export default class MangaCommandInteraction {
     };
 
     async execute () {
-        await this.interaction.deferReply();
-
         const args = this.interaction.options.getString('name-or-id') as string;
         
         Helpers.isNumber(args) ?
@@ -27,7 +25,7 @@ export default class MangaCommandInteraction {
 
         const data = await searchMangaById(id);
 
-        await this.interaction.editReply({
+        await this.interaction.reply({
             embeds: [new MangaEmbed(data)]
         });
     };
@@ -37,7 +35,7 @@ export default class MangaCommandInteraction {
 
         const data = await searchMangaByName(name);
 
-        await this.interaction.editReply({
+        await this.interaction.reply({
             embeds: [new MangaEmbed(data)]
         });
     };
