@@ -1,26 +1,32 @@
 import postgres from "postgres";
+import { POSTGRES_DB_NAME, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_URL, POSTGRES_USERNAME } from "../consts";
 
-export default class Postgres {
-    private static db: postgres.Sql<{}>;
+class Postgres {
+    public database: postgres.Sql<{}> | null;
 
-    public static init () {
+    constructor () {
+        this.database = null;
+    };
+
+    init () {
         try {
-            this.db = postgres ({
-                host: process.env.POSTGRES_URL,
-                port: parseInt(process.env.POSTGRES_PORT) || 5432,
-                database: process.env.POSTGRES_DB_NAME,
-                username: process.env.POSTGRES_USERNAME,
-                password: process.env.POSTGRES_PASSWORD,
+            this.database = postgres({
+                host: POSTGRES_URL,
+                port: POSTGRES_PORT,
+                database: POSTGRES_DB_NAME,
+                username: POSTGRES_USERNAME,
+                password: POSTGRES_PASSWORD,
                 ssl: 'require'
-            });   
-
-            console.log('✅ | Base de datos Postgres conectada.');
+            });
         } catch (error) {
-            console.error('🟥 | Error: ', error);
-        }
-    }
+            console.error(error);
+        };
+    };
 
-    public static query (): postgres.Sql<{}> {
-        return this.db;
-    }
-}
+    sql () {
+        if (!this.database) throw new Error('Database is not connected.');
+        return this.database;
+    };
+};
+
+export default new Postgres();
