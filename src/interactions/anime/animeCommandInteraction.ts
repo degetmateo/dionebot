@@ -17,7 +17,7 @@ export default class AnimeCommandInteraction {
 
         const args = this.interaction.options.getString('name-or-id') as string;
         
-        await this.interaction.followUp({
+        await this.interaction.editReply({
             content: "AnimeCommandInteraction.Helpers.IsNumber"
         });
 
@@ -29,13 +29,13 @@ export default class AnimeCommandInteraction {
     async searchById (id: any) {
         AnimeValidator.validateId(id);
 
-        await this.interaction.followUp({
+        await this.interaction.editReply({
             content: "AnimeCommandInteraction.SearchById"
         });
 
         const data = await searchAnimeById(id);
 
-        await this.interaction.followUp({
+        await this.interaction.editReply({
             content: "AnimeCommandInteraction.interaction.FollowUp"
         });
 
@@ -47,13 +47,13 @@ export default class AnimeCommandInteraction {
     async searchByName (name: string) {
         AnimeValidator.validateName(name);
 
-        await this.interaction.followUp({
+        await this.interaction.editReply({
             content: "AnimeCommandInteraction.SearchByName"
         });
 
         const data = await searchAnimeByName(name);
 
-        await this.interaction.followUp({
+        await this.interaction.editReply({
             content: "AnimeCommandInteraction.interaction.FollowUp"
         });
 

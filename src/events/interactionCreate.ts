@@ -8,15 +8,16 @@ module.exports = {
     name: Events.InteractionCreate,
     once: false,
     execute: async (interaction: ChatInputCommandInteraction) => {
-        if (!interaction.isChatInputCommand()) return;
-
-        // await interaction.deferReply();
-
-        await interaction.reply({
-            content: "interactionCreate"
-        });
-
+        
         try {
+            if (!interaction.isChatInputCommand()) return;
+    
+            // await interaction.deferReply();
+    
+            await interaction.reply({
+                content: "interactionCreate"
+            });
+            
             const bot = interaction.client as Bot;
             const command = bot.commands.get(interaction.commandName);
 
