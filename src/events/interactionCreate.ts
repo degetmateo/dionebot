@@ -52,7 +52,9 @@ module.exports = {
 
             try {
                 if (interaction.replied || interaction.deferred) {
-                    await interaction.editReply({ 
+                    const response = await interaction.fetchReply();
+
+                    await response.edit({ 
                         embeds: [new ErrorEmbed(error.message)]
                     });
                 } else {

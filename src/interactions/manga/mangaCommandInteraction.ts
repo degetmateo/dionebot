@@ -16,8 +16,9 @@ export default class MangaCommandInteraction {
     };
 
     async execute () {
-        await this.interaction.reply({
-            embeds: [new SuccessEmbed('Buscando...')]
+        const response = await this.interaction.reply({
+            embeds: [new SuccessEmbed('Buscando...')],
+            withResponse: true
         });
 
         const args = this.interaction.options.getString('name-or-id') as string;
@@ -26,7 +27,7 @@ export default class MangaCommandInteraction {
             await this.searchById(args) :
             await this.searchByName(args);
 
-        await this.interaction.editReply({
+        await response.resource.message.edit({
             embeds: [new SuccessEmbed('¡Resultados listos!')]
         });
     };
