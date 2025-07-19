@@ -52,14 +52,13 @@ module.exports = {
 
             try {
                 if (interaction.replied || interaction.deferred) {
-                    const response = await interaction.fetchReply();
-
-                    await response.edit({ 
+                    await interaction.editReply({
                         embeds: [new ErrorEmbed(error.message)]
                     });
                 } else {
                     await interaction.reply({ 
-                        embeds: [new ErrorEmbed(error.message)], flags: [MessageFlags.Ephemeral]
+                        embeds: [new ErrorEmbed(error.message)], 
+                        flags: [MessageFlags.Ephemeral]
                     });
                 };
             } catch (e: any) {

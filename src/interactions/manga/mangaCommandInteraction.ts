@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, InteractionCallbackResponse } from "discord.js";
 import Helpers from "../../helpers";
 import AnimeValidator from "../../validators/animeValidator";
 import searchMangaByName from "./searchMangaByName";
@@ -10,13 +10,14 @@ import GenericError from "../../errors/genericError";
 
 export default class MangaCommandInteraction {
     private interaction: ChatInputCommandInteraction;
+    private response: InteractionCallbackResponse;
     
     constructor (interaction: ChatInputCommandInteraction) {
         this.interaction = interaction;
     };
 
     async execute () {
-        const response = await this.interaction.reply({
+        this.response = await this.interaction.reply({
             embeds: [new SuccessEmbed('Buscando...')],
             withResponse: true
         });
@@ -26,16 +27,12 @@ export default class MangaCommandInteraction {
         Helpers.isNumber(args) ?
             await this.searchById(args) :
             await this.searchByName(args);
-
-        await response.resource.message.edit({
-            embeds: [new SuccessEmbed('¡Resultados listos!')]
-        });
     };
 
     async searchById (id: any) {
         AnimeValidator.validateId(id);
         const data = await searchMangaById(id);
-        await this.interaction.channel.send({
+        await this.response.resource.message.edit({
             embeds: [new MangaEmbed(data)]
         });
     };
@@ -44,7 +41,7 @@ export default class MangaCommandInteraction {
         AnimeValidator.validateName(name);
         const data: { media: any[] } = await searchMangaByName(name);
         if (data.media.length <= 0) throw new GenericError('No se han encontrado resultados.');
-        const carrousel = new MangaCarrousel(this.interaction, data.media);
+        const carrousel = new MangaCarrousel(this.response, data.media);
         await carrousel.execute();
     };
 };

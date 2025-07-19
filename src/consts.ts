@@ -7,3 +7,5 @@ export const POSTGRES_PORT = parseInt(process.env.POSTGRES_PORT as string);
 export const POSTGRES_DB_NAME = process.env.POSTGRES_DB_NAME as string;
 export const POSTGRES_USERNAME = process.env.POSTGRES_USERNAME as string;
 export const POSTGRES_PASSWORD = process.env.POSTGRES_PASSWORD as string;
+
+export const ANILIST_AUTH_URL = process.env.ANILIST_AUTH_URL as string;

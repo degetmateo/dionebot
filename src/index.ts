@@ -49,8 +49,8 @@ for (const file of restEventsFiles) {
     const event = require(filePath);
 
     event.once ?
-        client.rest.once(event.name, (...args) => event.execute(...args)) :
-        client.rest.on(event.name, (...args) => event.execute(...args));
+        client.rest.once(event.name, (...args: any) => event.execute(client, ...args)) :
+        client.rest.on(event.name, (...args: any) => event.execute(client, ...args));
 };
 
 client.login(TOKEN);

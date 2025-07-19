@@ -1,13 +1,13 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, InteractionCallbackResponse } from "discord.js";
 import AnimeEmbed from "../../embeds/animeEmbed";
 
 export default class AnimeCarrousel {
-    private interaction: ChatInputCommandInteraction;
+    private response: InteractionCallbackResponse;
     private embeds: EmbedBuilder[];
     private index: number;
 
-    constructor (interaction: ChatInputCommandInteraction, media: any[]) {
-        this.interaction = interaction;
+    constructor (response: InteractionCallbackResponse, media: any[]) {
+        this.response = response;
         this.embeds = new Array<EmbedBuilder>();
         this.embeds = media.map(m => new AnimeEmbed(m));
         this.index = 0;
@@ -25,12 +25,12 @@ export default class AnimeCarrousel {
             .setStyle(ButtonStyle.Primary);
         row.addComponents(backButton, nextButton);
 
-        const response = await this.interaction.channel.send({
+        await this.response.resource.message.edit({
             embeds: [this.embeds[this.index]],
             components: [row]
         });
 
-        const collector = response.createMessageComponentCollector({
+        const collector = this.response.resource.message.createMessageComponentCollector({
             time: 300000
         });
 

@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, MessageFlags } from "discord.js";
+import { ChatInputCommandInteraction, InteractionCallbackResponse, MessageFlags } from "discord.js";
 import Helpers from "../../helpers";
 import AnimeValidator from "../../validators/animeValidator";
 import AnimeEmbed from "../../embeds/animeEmbed";
@@ -10,13 +10,14 @@ import AnimeCarrousel from "./animeCarrousel";
 
 export default class AnimeCommandInteraction {
     private interaction: ChatInputCommandInteraction;
+    private response: InteractionCallbackResponse;
     
     constructor (interaction: ChatInputCommandInteraction) {
         this.interaction = interaction;
     };
 
     async execute () {
-        const response = await this.interaction.reply({
+        this.response = await this.interaction.reply({
             embeds: [new SuccessEmbed('Buscando...')],
             withResponse: true
         });
@@ -26,16 +27,12 @@ export default class AnimeCommandInteraction {
         Helpers.isNumber(args) ?
             await this.searchById(args) :
             await this.searchByName(args);
-
-        await response.resource.message.edit({
-            embeds: [new SuccessEmbed('¡Resultados listos!')]
-        });
     };
 
     async searchById (id: any) {
         AnimeValidator.validateId(id);
         const data = await searchAnimeById(id);
-        await this.interaction.channel.send({
+        this.response.resource.message.edit({
             embeds: [new AnimeEmbed(data)]
         });
     };
@@ -44,7 +41,7 @@ export default class AnimeCommandInteraction {
         AnimeValidator.validateName(name);
         const data: { media: any[] } = await searchAnimeByName(name);
         if (data.media.length <= 0) throw new GenericError('No se han encontrado resultados.');
-        const carrousel = new AnimeCarrousel(this.interaction, data.media);
+        const carrousel = new AnimeCarrousel(this.response, data.media);
         await carrousel.execute();
     };
 };

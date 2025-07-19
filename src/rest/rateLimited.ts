@@ -1,13 +1,14 @@
 import { RateLimitData, RESTEvents } from "discord.js";
+import Bot from "../extensions/bot";
 
 module.exports = {
     name: RESTEvents.RateLimited,
     once: false,
-    execute: async (data: RateLimitData) => {
-        console.log('Rate limit hit!');
-        console.log(`Method: ${data.method}`);
-        console.log(`Path: ${data.route}`);
-        console.log(`Timeout: ${data.timeToReset}ms`);
-        console.log(`Global: ${data.global}`);
-    }   
+    execute: async (bot: Bot, data: RateLimitData) => {
+        bot.rateLimited = true;
+
+        setTimeout(() => {
+            bot.rateLimited = false;
+        }, data.timeToReset);
+    }
 };
