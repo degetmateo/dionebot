@@ -5,6 +5,8 @@ import AnimeEmbed from "../../embeds/animeEmbed";
 import searchAnimeById from "./searchAnimeById";
 import searchAnimeByName from "./searchAnimeByName";
 import SuccessEmbed from "../../embeds/successEmbed";
+import GenericError from "../../errors/genericError";
+import AnimeCarrousel from "./animeCarrousel";
 
 export default class AnimeCommandInteraction {
     private interaction: ChatInputCommandInteraction;
@@ -31,9 +33,7 @@ export default class AnimeCommandInteraction {
 
     async searchById (id: any) {
         AnimeValidator.validateId(id);
-
         const data = await searchAnimeById(id);
-
         await this.interaction.channel.send({
             embeds: [new AnimeEmbed(data)]
         });
@@ -41,11 +41,9 @@ export default class AnimeCommandInteraction {
 
     async searchByName (name: string) {
         AnimeValidator.validateName(name);
-
-        const data = await searchAnimeByName(name);
-
-        await this.interaction.channel.send({
-            embeds: [new AnimeEmbed(data)]
-        });
+        const data: { media: any[] } = await searchAnimeByName(name);
+        if (data.media.length <= 0) throw new GenericError('No se han encontrado resultados.');
+        const carrousel = new AnimeCarrousel(this.interaction, data.media);
+        await carrousel.execute();
     };
 };

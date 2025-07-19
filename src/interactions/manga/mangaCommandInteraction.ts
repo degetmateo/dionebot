@@ -5,6 +5,8 @@ import searchMangaByName from "./searchMangaByName";
 import searchMangaById from "./searchMangaById";
 import MangaEmbed from "../../embeds/mangaEmbed";
 import SuccessEmbed from "../../embeds/successEmbed";
+import MangaCarrousel from "./mangaCarrousel";
+import GenericError from "../../errors/genericError";
 
 export default class MangaCommandInteraction {
     private interaction: ChatInputCommandInteraction;
@@ -31,9 +33,7 @@ export default class MangaCommandInteraction {
 
     async searchById (id: any) {
         AnimeValidator.validateId(id);
-
         const data = await searchMangaById(id);
-
         await this.interaction.channel.send({
             embeds: [new MangaEmbed(data)]
         });
@@ -41,11 +41,9 @@ export default class MangaCommandInteraction {
 
     async searchByName (name: string) {
         AnimeValidator.validateName(name);
-
-        const data = await searchMangaByName(name);
-
-        await this.interaction.channel.send({
-            embeds: [new MangaEmbed(data)]
-        });
+        const data: { media: any[] } = await searchMangaByName(name);
+        if (data.media.length <= 0) throw new GenericError('No se han encontrado resultados.');
+        const carrousel = new MangaCarrousel(this.interaction, data.media);
+        await carrousel.execute();
     };
 };

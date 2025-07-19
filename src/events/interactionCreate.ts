@@ -50,14 +50,18 @@ module.exports = {
         } catch (error: any) {
             console.error(error);
 
-            if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ 
-                    embeds: [new ErrorEmbed(error.message)], flags: [MessageFlags.Ephemeral]
-                });
-            } else {
-                await interaction.reply({ 
-                    embeds: [new ErrorEmbed(error.message)], flags: [MessageFlags.Ephemeral]
-                });
+            try {
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.editReply({ 
+                        embeds: [new ErrorEmbed(error.message)]
+                    });
+                } else {
+                    await interaction.reply({ 
+                        embeds: [new ErrorEmbed(error.message)], flags: [MessageFlags.Ephemeral]
+                    });
+                };
+            } catch (e: any) {
+                console.error(e);
             };
         };
     }

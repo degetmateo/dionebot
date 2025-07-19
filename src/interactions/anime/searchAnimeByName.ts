@@ -1,139 +1,75 @@
-// import GenericError from "../../errors/genericError";
 import Anilist from "../../services/anilist";
 
 export default async (name: string) => {
     const query = `
         query  {
-            Media (search: "${name}", type: ANIME) {
-                id idMal
-                title {
-                    romaji
-                    english
-                    native
-                    userPreferred
+            Page (perPage: 10) {
+                media (search: "${name}", type: ANIME) {
+                    ...media
                 }
-                type
-                format
-                status
-                description
-                startDate {
-                    year
-                    month
-                    day
-                }
-                endDate {
-                    year
-                    month
-                    day
-                }
-                season
-                episodes
-                duration
-                chapters
-                volumes
-                source
-                trailer {
-                    id
-                    site
-                    thumbnail
-                }
-                updatedAt
-                coverImage {
-                    extraLarge
-                    large
-                    medium
-                    color
-                }
-                bannerImage
-                genres
-                synonyms
-                averageScore
-                meanScore
-                popularity
-                favourites
-                studios {
-                    edges {
-                        node {
-                            id
-                            name
-                        }
+            }    
+        }
+        
+        fragment media on Media {
+            id
+            idMal
+            title {
+                romaji
+                english
+                native
+                userPreferred
+            }
+            type
+            format
+            status
+            description
+            startDate {
+                year
+                month
+                day
+            }
+            endDate {
+                year
+                month
+                day
+            }
+            season
+            episodes
+            duration
+            chapters
+            volumes
+            source
+            trailer {
+                id
+                site
+                thumbnail
+            }
+            updatedAt
+            coverImage {
+                extraLarge
+                large
+                medium
+                color
+            }
+            bannerImage
+            genres
+            synonyms
+            averageScore
+            meanScore
+            popularity
+            favourites
+            studios {
+                edges {
+                    node {
+                        id
+                        name
                     }
                 }
-                siteUrl
             }
+            siteUrl
         }
     `;
 
-    // const query = `
-    //     query  {
-    //         Page (perPage: 10) {
-    //             media (search: "${name}", type: ANIME) {
-    //                 ...media
-    //             }
-    //         }    
-    //     }
-        
-    //     fragment media on Media {
-    //         id
-    //         idMal
-    //         title {
-    //             romaji
-    //             english
-    //             native
-    //             userPreferred
-    //         }
-    //         type
-    //         format
-    //         status
-    //         description
-    //         startDate {
-    //             year
-    //             month
-    //             day
-    //         }
-    //         endDate {
-    //             year
-    //             month
-    //             day
-    //         }
-    //         season
-    //         episodes
-    //         duration
-    //         chapters
-    //         volumes
-    //         source
-    //         trailer {
-    //             id
-    //             site
-    //             thumbnail
-    //         }
-    //         updatedAt
-    //         coverImage {
-    //             extraLarge
-    //             large
-    //             medium
-    //             color
-    //         }
-    //         bannerImage
-    //         genres
-    //         synonyms
-    //         averageScore
-    //         meanScore
-    //         popularity
-    //         favourites
-    //         studios {
-    //             edges {
-    //                 node {
-    //                     id
-    //                     name
-    //                 }
-    //             }
-    //         }
-    //         siteUrl
-    //     }
-    // `;
-
     const data = await Anilist.query(query);
-    // if (data.Page.media.length <= 0) throw new GenericError('No se han encontrado resultados.');
-    return data.Media;
+    return data.Page;
 };
