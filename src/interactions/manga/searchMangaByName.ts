@@ -3,7 +3,7 @@ import Anilist from "../../services/anilist";
 export default async (name: string) => {
     const query = `
         query  {
-            Page (perPage: 10) {
+            Page (perPage: 3) {
                 media (search: "${name}", type: MANGA) {
                     ...media
                 }
