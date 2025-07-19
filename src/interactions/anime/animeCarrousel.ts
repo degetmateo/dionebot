@@ -36,8 +36,6 @@ export default class AnimeCarrousel {
 
         collector.on('collect', async (button) => {
             try {
-                await button.deferUpdate();
-
                 if (button.customId === 'next') {
                     this.index++;
                     if (this.index > this.embeds.length - 1) {
@@ -51,11 +49,18 @@ export default class AnimeCarrousel {
                         this.index = this.embeds.length - 1;
                     };
                 };
-    
-                await button.editReply({
-                    embeds: [this.embeds[this.index]],
-                    components: [row]
-                });
+
+                if (button.replied || button.deferred) {
+                    await button.editReply({
+                        embeds: [this.embeds[this.index]],
+                        components: [row]
+                    });
+                } else {
+                    await button.update({
+                        embeds: [this.embeds[this.index]],
+                        components: [row]
+                    });
+                };
             } catch (error) {
                 console.error(error);
             };
