@@ -1,59 +1,17 @@
 import 'dotenv/config';
 import path from 'path';
-import fs from 'fs';
 import express from 'express';
 import { INVITE_URL, PORT, TOKEN } from "./consts";
 import Bot from './extensions/bot';
 import postgres from './database/postgres';
+import CommandsHandler from './handlers/commandsHandler';
+import EventsHandler from './handlers/eventsHandler';
 
-const client = new Bot();
+const bot = new Bot();
 postgres.init();
-
-const foldersPath = path.join(__dirname, 'commands');
-const commandFolders = fs.readdirSync(foldersPath);
-
-for (const folder of commandFolders) {
-    const commandsPath = path.join(foldersPath, folder);
-    const commandFiles = fs.readdirSync(commandsPath)
-        .filter(file => file.endsWith('.js') || file.endsWith('.ts'));
-    
-    for (const file of commandFiles) {
-        const filePath = path.join(commandsPath, file);
-        const command = require(filePath);
-
-        if ('data' in command && 'execute' in command) {
-            client.commands.set(command.data.name, command);
-        } else {
-            console.log(`🟧 | The command at ${filePath} is missing a required "data" or "execute" property.`);
-        };
-    };
-};
-
-const eventsPath = path.join(__dirname, 'events');
-const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js') || file.endsWith('.ts'));
-
-for (const file of eventFiles) {
-    const filePath = path.join(eventsPath, file);
-    const event = require(filePath);
-
-    event.once ?
-        client.once(event.name, (...args) => event.execute(...args)) :
-        client.on(event.name, (...args) => event.execute(...args));
-};
-
-const restEventsPath = path.join(__dirname, 'rest');
-const restEventsFiles = fs.readdirSync(restEventsPath).filter(file => file.endsWith('.js') || file.endsWith('.ts'));
-
-for (const file of restEventsFiles) {
-    const filePath = path.join(restEventsPath, file);
-    const event = require(filePath);
-
-    event.once ?
-        client.rest.once(event.name, (...args: any) => event.execute(client, ...args)) :
-        client.rest.on(event.name, (...args: any) => event.execute(client, ...args));
-};
-
-client.login(TOKEN);
+CommandsHandler.load(bot);
+EventsHandler.load(bot);
+bot.login(TOKEN);
 
 const app = express();
 

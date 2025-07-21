@@ -4,6 +4,7 @@ import postgres from "../../database/postgres";
 import GenericError from "../../errors/genericError";
 import searchUser from "./searchUser";
 import UserEmbed from "../../embeds/userEmbed";
+import AnilistUser from "../../models/anilist/anilistUser";
 
 export default class UserCommandInteraction {
     private interaction: ChatInputCommandInteraction;
@@ -28,7 +29,7 @@ export default class UserCommandInteraction {
         const user = await searchUser(member.anilist_id);
 
         await this.interaction.editReply({
-            embeds: [new UserEmbed(user)]
+            embeds: [new UserEmbed(new AnilistUser(user))]
         });
     };
 };

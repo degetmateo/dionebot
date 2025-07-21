@@ -1,113 +1,45 @@
 import { ColorResolvable, EmbedBuilder } from "discord.js";
 import toHex from 'colornames';
 import Helpers from "../helpers";
+import AnilistUser from "../models/anilist/anilistUser";
 
 export default class UserEmbed extends EmbedBuilder {
-    constructor (user: any) {
+    constructor (user: AnilistUser) {
         super();
         
         this
-            .setColor(user.options.profileColor ? (toHex(user.options.profileColor) as ColorResolvable) : 'Random')
-            .setImage(user.bannerImage)
-            .setThumbnail(user.avatar.large || user.avatar.medium)
+            .setColor((toHex(user.getProfileColor()) as ColorResolvable))
+            .setImage(user.getBannerURL())
+            .setThumbnail(user.getAvatarURL())
 
-        const date = new Date(user.createdAt * 1000);
+        const bestBayesianScores = user.getGenresSortedByBayesianScore().slice(0, 3).map(g => g.genre);
 
-        const statistics = user.statistics;
-        const animeGenres = statistics.anime.genres;
-        const mangaGenres = statistics.manga.genres;
-
-        let mostConsumedGenre = null;
-
-        for (const ga of animeGenres) {
-            if (!mostConsumedGenre) mostConsumedGenre = ga;
-            const gm = mangaGenres.find(g => g.genre === ga.genre);
-            if (!gm) continue;
-            const count = ga.count + gm.count;
-            (count > mostConsumedGenre.count) ? mostConsumedGenre = ga : null;
-        };
-
-        const genres: Array<{
-            genre: string;
-            count: number;
-            meanScore: number;
-        }> = animeGenres;
-
-        for (const mangaGenre of mangaGenres) {
-            const genre = genres.find(g => g.genre === mangaGenre.genre);
-            
-            if (!genre) {
-                 genres.push({
-                    genre: mangaGenre.genre,
-                    count: mangaGenre.count,
-                    meanScore: mangaGenre.meanScore,
-                 });
-
-                 continue;
-            };
-
-            genre.count += mangaGenre.count;
-            genre.meanScore = (genre.meanScore + mangaGenre.meanScore) / 2;
-        };
-
-        let meanScore = 0;
-
-        for (const genre of genres) {
-            meanScore = meanScore + genre.meanScore;
-        };
-
-        meanScore = meanScore / genres.length;
-
-        const bayesianGenres = (genres.map(genre => {
-            const score = (5 * meanScore + genre.meanScore * genre.count) / (5 + genre.count);
-            return {
-                ...genre,
-                bayesianScore: score
-            };
-        }));
-
-        const genresSortedByQuantity = Array.from(genres).sort((a, b) => b.count - a.count);
-        const genresSortedByBayesianScore = Array.from(bayesianGenres).sort((a, b) => b.bayesianScore - a.bayesianScore);
-        const genresSortedByMeanScore = Array.from(genres).sort((a, b) => b.meanScore - a.meanScore);
-
-        mostConsumedGenre = genresSortedByQuantity[0] ||
-        { genre: 'N/A', count: '[-]', meanScore: 0, bayesianScore: 0 };
-
-        const leastConsumedGenre = genresSortedByQuantity[genresSortedByQuantity.length - 1] || 
-        { genre: 'N/A', count: '[-]', meanScore: 0, bayesianScore: 0 };
-
-        const bestRatedGenre = genresSortedByMeanScore[0] ||
-        { genre: 'N/A', count: '[-]', meanScore: 0, bayesianScore: 0 };
-
-        const worstRatedGenre = genresSortedByMeanScore[genresSortedByMeanScore.length - 1] ||
-        { genre: 'N/A', count: '[-]', meanScore: 0, bayesianScore: 0 };
-
-        const bestBayesianScores = genresSortedByBayesianScore.slice(0, 3).map(g => g.genre);
-
-        const worstBayesianScores = genresSortedByBayesianScore.slice(genresSortedByBayesianScore.length - 3, genresSortedByBayesianScore.length).map(g => g.genre);
+        const worstBayesianScores = user.getGenresSortedByBayesianScore().slice(user.getGenresSortedByBayesianScore().length - 3, user.getGenresSortedByBayesianScore().length).map(g => g.genre);
 
 
         this.setDescription((`
-**[${user.name}](${user.siteUrl})**
-↪ Se unio el **${date.toLocaleDateString()}**
+**[${user.getName()}](${user.getSiteURL()})**
+↪ Se unio el **${user.getCreatedAt().toLocaleDateString()}**
 
-**[Anime](${user.siteUrl}/animelist)**
-↪ Cantidad: **${user.statistics.anime.count}**
-↪ Episodios Vistos: **${user.statistics.anime.episodesWatched}**
-↪ Tiempo Visto: **${(user.statistics.anime.minutesWatched / 60).toFixed(1)} horas**
-↪ Calificación Promedio: **${user.statistics.anime.meanScore}**
+**[Anime](${user.getSiteURL()}/animelist)**
+↪ Cantidad: **${user.getAnimeCount()}**
+↪ Episodios Vistos: **${user.getAnimeEpisodesWatched()}**
+↪ Tiempo Visto: **${(user.getAnimeHoursWatched()).toFixed(1)} horas**
+↪ Calificación Promedio: **${user.getAnimeMeanScore()}**
 
-**[Manga](${user.siteUrl}/mangalist)**
-↪ Cantidad: **${user.statistics.manga.count}**
-↪ Capítulos Leídos: **${user.statistics.manga.chaptersRead}**
-↪ Volúmenes Leídos: **${user.statistics.manga.volumesRead}**
-↪ Calificación Promedio: **${user.statistics.manga.meanScore}**
+**[Manga](${user.getSiteURL()}/mangalist)**
+↪ Cantidad: **${user.getMangaCount()}**
+↪ Capítulos Leídos: **${user.getMangaChaptersRead()}**
+↪ Volúmenes Leídos: **${user.getMangaVolumesRead()}**
+↪ Calificación Promedio: **${user.getMangaMeanScore()}**
 
 **Tendencias**
-↪ Más consumido: **${Helpers.capitalizeText(mostConsumedGenre.genre)} [${mostConsumedGenre.count}]**
-↪ Menos consumido: **${Helpers.capitalizeText(leastConsumedGenre.genre)} [${leastConsumedGenre.count}]**
-↪ Mejor calificado: **${Helpers.capitalizeText(bestRatedGenre.genre)} [${bestRatedGenre.meanScore.toFixed(2)}]** 
-↪ Peor calificado: **${Helpers.capitalizeText(worstRatedGenre.genre)} [${worstRatedGenre.meanScore.toFixed(2)}]**
+↪ Más consumido: **${Helpers.capitalizeText(user.getMostConsumedGenre().genre)} [${user.getMostConsumedGenre().count}]**
+↪ Menos consumido: **${Helpers.capitalizeText(user.getLeastConsumedGenre().genre)} [${user.getLeastConsumedGenre().count}]**
+
+↪ Mejor calificado: **${Helpers.capitalizeText(user.getBestRatedGenre().genre)} [${user.getBestRatedGenre().meanScore.toFixed(2)}]** 
+↪ Peor calificado: **${Helpers.capitalizeText(user.getWorstRatedGenre().genre)} [${user.getWorstRatedGenre().meanScore.toFixed(2)}]**
+
 ↪ Suele gustarle: **${Helpers.capitalizeText(bestBayesianScores.join(' - '))}** 
 ↪ Suele odiar: **${Helpers.capitalizeText(worstBayesianScores.join(' - '))}**
     `).trim());
