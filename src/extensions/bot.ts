@@ -1,6 +1,11 @@
 import { Client, Collection, GatewayIntentBits, SlashCommandBuilder } from "discord.js";
+import CommandsHandler from "../handlers/commandsHandler";
+import EventsHandler from "../handlers/eventsHandler";
 
 export default class Bot extends Client<true> {
+    public commandsHandler: CommandsHandler;
+    public eventsHandler: EventsHandler;
+
     public commands: Collection<string, {
         cooldown: number;
         data: SlashCommandBuilder,
@@ -9,8 +14,6 @@ export default class Bot extends Client<true> {
 
     public cooldowns: Collection<string, Collection<string, any>>;
 
-    public rateLimited: boolean;
-
     constructor () {
         super({
             intents: [GatewayIntentBits.Guilds]
@@ -18,6 +21,11 @@ export default class Bot extends Client<true> {
 
         this.commands = new Collection();
         this.cooldowns = new Collection();
-        this.rateLimited = false;
+
+        this.commandsHandler = new CommandsHandler(this);
+        this.eventsHandler = new EventsHandler(this);
+
+        this.commandsHandler.load();
+        this.eventsHandler.load();
     };
 };

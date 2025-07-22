@@ -3,13 +3,15 @@ import fs from 'fs';
 import Bot from '../extensions/bot';
 
 class CommandsHandler {
+    private bot: Bot;
     public paths: string[];
 
-    constructor () {
+    constructor (bot: Bot) {
+        this.bot = bot;
         this.paths = [];
     };
 
-    public load (bot: Bot) {
+    public load () {
         this.paths = [];
         
         const foldersPath = path.join(__dirname, '../commands');
@@ -24,7 +26,7 @@ class CommandsHandler {
                 const command = require(filePath);
 
                 if ('data' in command && 'execute' in command) {
-                    bot.commands.set(command.data.name, command);
+                    this.bot.commands.set(command.data.name, command);
                     this.paths.push(filePath);
                 } else {
                     console.log(`🟧 | The command at ${filePath} is missing a required "data" or "execute" property.`);
@@ -33,15 +35,15 @@ class CommandsHandler {
         };
     };
 
-    public reload (bot: Bot) {
+    public reload () {
         for (const p of this.paths) {
             delete require.cache[require.resolve(p)];
             const newCommand = require(p);
-            bot.commands.set(newCommand.data.name, newCommand);
+            this.bot.commands.set(newCommand.data.name, newCommand);
         };
 
-        this.load(bot);
+        this.load();
     };
 };
 
-export default new CommandsHandler();
+export default CommandsHandler;

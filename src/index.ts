@@ -4,13 +4,9 @@ import express from 'express';
 import { INVITE_URL, PORT, TOKEN } from "./consts";
 import Bot from './extensions/bot';
 import postgres from './database/postgres';
-import CommandsHandler from './handlers/commandsHandler';
-import EventsHandler from './handlers/eventsHandler';
 
 const bot = new Bot();
 postgres.init();
-CommandsHandler.load(bot);
-EventsHandler.load(bot);
 bot.login(TOKEN);
 
 const app = express();

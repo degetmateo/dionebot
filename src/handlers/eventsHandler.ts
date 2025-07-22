@@ -3,7 +3,13 @@ import fs from 'fs';
 import Bot from "../extensions/bot";
 
 class EventsHandler {
-    public load (bot: Bot) {
+    private bot: Bot;
+
+    constructor (bot: Bot) {
+        this.bot = bot;
+    };
+
+    public load () {
         const eventsPath = path.join(__dirname, '../events');
         const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js') || file.endsWith('.ts'));
 
@@ -12,10 +18,10 @@ class EventsHandler {
             const event = require(filePath);
 
             event.once ?
-                bot.once(event.name, (...args) => event.execute(...args)) :
-                bot.on(event.name, (...args) => event.execute(...args));
+                this.bot.once(event.name, (...args) => event.execute(...args)) :
+                this.bot.on(event.name, (...args) => event.execute(...args));
         };
     };
 };
 
-export default new EventsHandler();
+export default EventsHandler;

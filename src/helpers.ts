@@ -26,4 +26,42 @@ export default class Helpers {
     public static capitalizeWord (word: string): string {
         return word.charAt(0).toUpperCase() + word.slice(1);
     };
+
+    public static pearson (
+        a: Array<{ mediaId: number; score: number }>, 
+        b: Array<{ mediaId: number; score: number }>
+    ): number {
+        const mapB = new Map(b.map(m => [m.mediaId, m.score]));
+
+        const common: Array<[number, number]> = [];
+        for (const entry of a) {
+            const bScore = mapB.get(entry.mediaId);
+            
+            if (bScore != null) {
+                common.push([entry.score, bScore]);
+            };
+        };
+
+        const n = common.length;
+        if (n === 0) return 0;
+
+        const sumA = common.reduce((sum, [a]) => sum + a, 0);
+        const sumB = common.reduce((sum, [, b]) => sum + b, 0);
+        const meanA = sumA / n;
+        const meanB = sumB / n;
+
+        let num = 0;
+        let denA = 0;
+        let denB = 0;
+
+        for (const [a, b] of common) {
+            num += (a - meanA) * (b - meanB);
+            denA += (a - meanA) ** 2;
+            denB += (b - meanB) ** 2;
+        }
+
+        if (denA === 0 || denB === 0) return 0;
+
+        return (num / Math.sqrt(denA * denB)) * 100;
+    };
 };
