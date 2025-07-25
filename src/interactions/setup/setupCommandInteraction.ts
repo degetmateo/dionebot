@@ -25,7 +25,7 @@ export default class SetupCommandInteraction {
             SELECT * FROM member WHERE discord_id = ${this.interaction.user.id};
         `)[0];
 
-        if (member) throw new GenericError('¡Ya estás registrado!');
+        if (member) throw new GenericError('¡Ya estás registrado! Utilizá \`/show-scores\` para mostrar tus puntuaciones en este servidor.');
 
         const response = await this.interaction.editReply({
             embeds: [new SetupInstructionsEmbed()],
@@ -49,23 +49,39 @@ export default class SetupCommandInteraction {
                     const token = modal.fields.getTextInputValue(SetupCollectorModal.inputId);
                     const viewer = await searchViewer(token);
     
-                    await postgres.sql()`
-                        INSERT INTO 
-                            member (
-                                discord_id,
-                                anilist_id,
-                                anilist_token                        
-                            )
-                            VALUES (
-                                ${this.interaction.user.id},
-                                ${viewer.id},
-                                ${token}
-                            );
-                    `;
+                    await postgres.sql().begin(async transaction => {
+                        (await transaction`
+                            INSERT INTO 
+                                member (
+                                    discord_id,
+                                    anilist_id,
+                                    anilist_token                        
+                                )
+                                VALUES (
+                                    ${this.interaction.user.id},
+                                    ${viewer.id},
+                                    ${token}
+                                );
+                        `);
+
+                        (await transaction`
+                            INSERT INTO
+                                membership (
+                                    member_discord_id, 
+                                    guild_discord_id,
+                                    scores
+                                )
+                                VALUES (
+                                    ${this.interaction.user.id},
+                                    ${this.interaction.guild.id},
+                                    'ENABLED'
+                                );
+                        `);
+                    });
     
                     await modal.editReply({
                         embeds: [new SuccessEmbed((`
-                            Autentificación completada correctamente como [${viewer.name}](${viewer.siteUrl}).
+                            Autentificación completada correctamente como [${viewer.name}](${viewer.siteUrl}). Utilizá \`/show-scores\` para decidir si mostrar tus puntuaciones en este servidor.
                         `).trim())]
                     });
                 } catch (error) {

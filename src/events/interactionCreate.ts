@@ -53,12 +53,16 @@ module.exports = {
             try {
                 if (interaction.replied || interaction.deferred) {
                     await interaction.editReply({
-                        embeds: [new ErrorEmbed(error.message)]
+                        embeds: [new ErrorEmbed(error.message)],
+                        components: [],
+                        content: null
                     });
                 } else {
                     await interaction.reply({ 
                         embeds: [new ErrorEmbed(error.message)], 
-                        flags: [MessageFlags.Ephemeral]
+                        flags: [MessageFlags.Ephemeral],
+                        components: [],
+                        content: null
                     });
                 };
             } catch (e: any) {

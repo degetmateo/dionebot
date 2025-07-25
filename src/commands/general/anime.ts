@@ -23,11 +23,8 @@ module.exports = {
             await new AnimeCommandInteraction(interaction).execute();
         } catch (error) {
             console.error(error);
-
             if (error instanceof GenericError) throw error;
-            else {
-                throw new GenericError();
-            };
+            else throw new GenericError();
         };
     }
 };

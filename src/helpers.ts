@@ -34,6 +34,7 @@ export default class Helpers {
         const mapB = new Map(b.map(m => [m.mediaId, m.score]));
 
         const common: Array<[number, number]> = [];
+
         for (const entry of a) {
             const bScore = mapB.get(entry.mediaId);
             
@@ -58,7 +59,7 @@ export default class Helpers {
             num += (a - meanA) * (b - meanB);
             denA += (a - meanA) ** 2;
             denB += (b - meanB) ** 2;
-        }
+        };
 
         if (denA === 0 || denB === 0) return 0;
 

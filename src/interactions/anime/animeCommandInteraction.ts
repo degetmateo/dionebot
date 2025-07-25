@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, InteractionCallbackResponse, MessageFlags } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction } from "discord.js";
 import Helpers from "../../helpers";
 import AnimeValidator from "../../validators/animeValidator";
 import AnimeEmbed from "../../embeds/animeEmbed";
@@ -6,42 +6,147 @@ import searchAnimeById from "./searchAnimeById";
 import searchAnimeByName from "./searchAnimeByName";
 import SuccessEmbed from "../../embeds/successEmbed";
 import GenericError from "../../errors/genericError";
-import AnimeCarrousel from "./animeCarrousel";
+import postgres from "../../database/postgres";
+import ErrorEmbed from "../../embeds/errorEmbed";
+import ScoresEmbed from "../../embeds/scoresEmbed";
+import searchScores from "../../apis/anilist/searchScores";
 
 export default class AnimeCommandInteraction {
     private interaction: ChatInputCommandInteraction;
-    private response: InteractionCallbackResponse;
     
     constructor (interaction: ChatInputCommandInteraction) {
         this.interaction = interaction;
     };
 
     async execute () {
-        this.response = await this.interaction.reply({
-            embeds: [new SuccessEmbed('Buscando...')],
-            withResponse: true
+        await this.interaction.reply({
+            embeds: [new SuccessEmbed('Buscando...')]
         });
 
         const args = this.interaction.options.getString('name-or-id') as string;
 
-        Helpers.isNumber(args) ?
-            await this.searchById(args) :
-            await this.searchByName(args);
-    };
+        const members: Array<{ discord_id: string; anilist_id: string }> = (await postgres.sql()`
+            SELECT
+                m.discord_id,
+                m.anilist_id
+            FROM
+                membership ms
+            LEFT JOIN
+                member m ON m.discord_id = ms.member_discord_id
+            WHERE
+                guild_discord_id = ${this.interaction.guild.id} AND
+                scores = 'ENABLED';
+        `);
 
-    async searchById (id: any) {
-        AnimeValidator.validateId(id);
-        const data = await searchAnimeById(id);
-        this.response.resource.message.edit({
-            embeds: [new AnimeEmbed(data)]
-        });
-    };
+        if (Helpers.isNumber(args)) {
+            AnimeValidator.validateId(args);
 
-    async searchByName (name: string) {
-        AnimeValidator.validateName(name);
-        const data: { media: any[] } = await searchAnimeByName(name);
-        if (data.media.length <= 0) throw new GenericError('No se han encontrado resultados.');
-        const carrousel = new AnimeCarrousel(this.response, data.media);
-        await carrousel.execute();
+            const data = await searchAnimeById(args);
+            
+            if (members.length <= 0) {
+                return await this.interaction.editReply({
+                    embeds: [new AnimeEmbed(data)]
+                });
+            };
+
+            await this.interaction.editReply({
+                embeds: [new AnimeEmbed(data), new SuccessEmbed('Buscando puntuaciones...')]
+            });
+
+            const scores = await searchScores(args, members.map(m => m.anilist_id));
+
+            const embed = scores.length > 0 ?
+                new ScoresEmbed(scores) :
+                new ErrorEmbed('¡Parece que nadie conoce esto!');
+
+            await this.interaction.editReply({
+                embeds: [new AnimeEmbed(data), embed]
+            });
+        } else {
+            AnimeValidator.validateName(args);
+
+            const data: { media: any[] } = await searchAnimeByName(args);
+            if (data.media.length <= 0) throw new GenericError('¡No encontramos resultados!');
+            
+            const media = data.media;
+            const embeds = media.map(m => new AnimeEmbed(m));
+            const scores = [];
+
+            let index = 0;
+
+            const row = new ActionRowBuilder<ButtonBuilder>();
+            const backButton = new ButtonBuilder()
+                .setCustomId('back')
+                .setLabel('←')
+                .setStyle(ButtonStyle.Primary);
+            const nextButton = new ButtonBuilder()
+                .setCustomId('next')
+                .setLabel('→')
+                .setStyle(ButtonStyle.Primary);
+            row.addComponents(backButton, nextButton);
+
+            if (members.length <= 0) {
+                scores[index] = new ErrorEmbed('¡Parece que nadie conoce esto!');
+            } else {
+                const s = await searchScores(media[index].id, members.map(m => m.anilist_id));
+
+                scores[index] = s.length > 0 ?
+                    new ScoresEmbed(s) :
+                    new ErrorEmbed('¡Parece que nadie conoce esto!');
+            };
+            
+            const response = await this.interaction.editReply({
+                embeds: [embeds[index], scores[index]],
+                components: [row]
+            });
+
+            const collector = response.createMessageComponentCollector({
+                time: 300000
+            });
+
+            collector.on('collect', async (button) => {
+                try {
+                    if (button.customId === 'next') {
+                        index++;
+                        if (index > embeds.length - 1) {
+                            index = 0;
+                        };
+                    };
+        
+                    if (button.customId === 'back') {
+                        index--;
+                        if (index < 0) {
+                            index = embeds.length - 1;
+                        };
+                    };
+
+                    if (!scores[index]) {
+                        if (members.length <= 0) {
+                            scores[index] = new ErrorEmbed('¡Parece que nadie conoce esto!');
+                        } else {
+                            const s = await searchScores(media[index].id, members.map(m => m.anilist_id));
+    
+                            scores[index] = s.length > 0 ?
+                                new ScoresEmbed(s) :
+                                new ErrorEmbed('¡Parece que nadie conoce esto!');
+                        };
+                    };
+
+                    if (button.replied || button.deferred) {
+                        await button.editReply({
+                            embeds: [embeds[index], scores[index]],
+                            components: [row]
+                        });
+                    } else {
+                        await button.update({
+                            embeds: [embeds[index], scores[index]],
+                            components: [row]
+                        });
+                    };
+                } catch (error) {
+                    console.error(error);
+                };
+            });
+        };
     };
 };

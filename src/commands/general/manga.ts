@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import GenericError from "../../errors/genericError";
 import MangaCommandInteraction from "../../interactions/manga/mangaCommandInteraction";
+import BChatInputCommandInteraction from "../../extensions/interaction";
 
 module.exports = {
     cooldown: 10,
@@ -18,7 +19,7 @@ module.exports = {
                 .setDescriptionLocalization('es-ES', 'Nombre o ID del manga.')
                 .setRequired(true)
         ),
-    execute: async (interaction: ChatInputCommandInteraction) => {
+    execute: async (interaction: BChatInputCommandInteraction) => {
         try {
             await new MangaCommandInteraction(interaction).execute();
         } catch (error) {

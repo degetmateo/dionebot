@@ -5,6 +5,8 @@ import GenericError from "../../errors/genericError";
 import BChatInputCommandInteraction from "../../extensions/interaction";
 import Helpers from "../../helpers";
 import Anilist from "../../services/anilist";
+import { MediaEntry } from "../../types/anilist";
+import searchEntries from "./searchEntries";
 
 export default class AffinityCommandInteraction {
     private interaction: BChatInputCommandInteraction;
@@ -43,49 +45,7 @@ export default class AffinityCommandInteraction {
             if (!qOptionsMember) throw new GenericError(`<@${member.id}> no está registrado. 💔`);
         });
 
-        const query = `
-            query {
-                u1_anime: MediaListCollection(userId: ${qInteractionMember.anilist_id}, type: ANIME, status: COMPLETED) {
-                    lists {
-                        entries {
-                            mediaId
-                            score(format: POINT_100)
-                        }
-                    }
-                }
-
-                u1_manga: MediaListCollection(userId: ${qInteractionMember.anilist_id}, type: MANGA, status: COMPLETED) {
-                    lists {
-                        entries {
-                            mediaId
-                            score(format: POINT_100)
-                        }
-                    }
-                }
-
-                u2_anime: MediaListCollection(userId: ${qOptionsMember.anilist_id}, type: ANIME, status: COMPLETED) {
-                    lists {
-                        entries {
-                            mediaId
-                            score(format: POINT_100)
-                        }
-                    }
-                }
-
-                u2_manga: MediaListCollection(userId: ${qOptionsMember.anilist_id}, type: MANGA, status: COMPLETED) {
-                    lists {
-                        entries {
-                            mediaId
-                            score(format: POINT_100)
-                        }
-                    }
-                }
-            }
-        `;
-
-        const data = await Anilist.query(query);
-
-        type MediaEntry = { mediaId: number; score: number; };
+        const data = await searchEntries(qInteractionMember.anilist_id, qOptionsMember.anilist_id);
 
         const interactionUserAnime: Array<MediaEntry> = data.u1_anime.lists[0].entries;
         const interactionUserManga: Array<MediaEntry> = data.u1_manga.lists[0].entries;
