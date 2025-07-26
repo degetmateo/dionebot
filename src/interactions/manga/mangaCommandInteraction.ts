@@ -11,6 +11,7 @@ import searchMangaById from "./searchMangaById";
 import MangaEmbed from "../../embeds/mangaEmbed";
 import searchMangaByName from "./searchMangaByName";
 import searchScores from "../../apis/anilist/searchScores";
+import LoadingEmbed from "../../embeds/loadingEmbed";
 
 export default class MangaCommandInteraction {
     private interaction: BChatInputCommandInteraction;
@@ -21,7 +22,7 @@ export default class MangaCommandInteraction {
 
     async execute () {
         await this.interaction.reply({
-            embeds: [new SuccessEmbed('Buscando...')]
+            embeds: [new LoadingEmbed()]
         });
 
         const args = this.interaction.options.getString('name-or-id') as string;
@@ -146,6 +147,7 @@ export default class MangaCommandInteraction {
                     };
                 } catch (error) {
                     console.error(error);
+                    collector.stop();
                 };
             });
         };
