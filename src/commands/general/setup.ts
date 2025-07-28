@@ -3,7 +3,7 @@ import SetupCommandInteraction from "../../interactions/setup/setupCommandIntera
 import GenericError from "../../errors/genericError";
 
 module.exports = {
-    cooldown: 10,
+    cooldown: 60,
     data: new SlashCommandBuilder()
         .setName('setup')
         .setDescription('Sign in with your Anilist account.')
