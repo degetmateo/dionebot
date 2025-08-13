@@ -1,5 +1,5 @@
 export default class AnilistUser {
-    private data: any;
+    public data: any;
     
     constructor (data: any) {
         this.data = data;

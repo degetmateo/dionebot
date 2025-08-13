@@ -14,9 +14,11 @@ export default class UserCommandInteraction {
     };
 
     async execute () {
-        await this.interaction.reply({
-            embeds: [new SuccessEmbed('Espere...')]
-        });
+        // await this.interaction.reply({
+        //     embeds: [new SuccessEmbed('Espere...')]
+        // });
+
+        await this.interaction.deferReply();
 
         const memberId = this.interaction.options.getUser('member')?.id || this.interaction.user.id;
 

@@ -12,10 +12,12 @@ export default class ShowScoresCommandInteraction {
     };
 
     async execute () {
-        await this.interaction.reply({
-            embeds: [new SuccessEmbed('Espere...')],
-            flags: [MessageFlags.Ephemeral]
-        });
+        // await this.interaction.reply({
+        //     embeds: [new SuccessEmbed('Espere...')],
+        //     flags: [MessageFlags.Ephemeral]
+        // });
+
+        await this.interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
         
         const enabled = this.interaction.options.getBoolean('enabled', true);
     

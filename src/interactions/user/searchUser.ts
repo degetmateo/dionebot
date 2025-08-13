@@ -16,26 +16,36 @@ export default async (id: string) => {
                 }
                 statistics {
                     anime {
-                    count
-                    meanScore
-                    minutesWatched
-                    episodesWatched
-                    genres {
-                        genre
+                        statuses {
+                            status
+                            count
+                            meanScore
+                        }
                         count
                         meanScore
-                    }
+                        minutesWatched
+                        episodesWatched
+                        genres {
+                            genre
+                            count
+                            meanScore
+                        }
                     }
                     manga {
-                    count
-                    meanScore
-                    chaptersRead
-                    volumesRead
-                    genres {
-                        genre
+                        statuses {
+                            status
+                            count
+                            meanScore
+                        }
                         count
                         meanScore
-                    }
+                        chaptersRead
+                        volumesRead
+                        genres {
+                            genre
+                            count
+                            meanScore
+                        }
                     }
                 }
                 siteUrl

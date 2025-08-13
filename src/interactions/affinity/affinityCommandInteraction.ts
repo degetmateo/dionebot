@@ -16,9 +16,11 @@ export default class AffinityCommandInteraction {
     };
 
     async execute () {
-        await this.interaction.reply({
-            embeds: [new SuccessEmbed('Espere...')]
-        });
+        // await this.interaction.reply({
+        //     embeds: [new SuccessEmbed('Espere...')]
+        // });
+
+        await this.interaction.deferReply();
 
         const member = this.interaction.options.getUser('member', true);
 

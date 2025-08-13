@@ -20,9 +20,11 @@ export default class AnimeCommandInteraction {
     };
 
     async execute () {
-        await this.interaction.reply({
-            embeds: [new LoadingEmbed()]
-        });
+        // await this.interaction.reply({
+        //     embeds: [new LoadingEmbed()]
+        // });
+
+        await this.interaction.deferReply();
 
         const args = this.interaction.options.getString('name-or-id') as string;
 

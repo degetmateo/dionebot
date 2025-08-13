@@ -16,10 +16,12 @@ export default class SetupCommandInteraction {
     };
 
     async execute () {
-        await this.interaction.reply({
-            embeds: [new SuccessEmbed('Espere...')],
-            flags: [MessageFlags.Ephemeral]
-        });
+        // await this.interaction.reply({
+        //     embeds: [new SuccessEmbed('Espere...')],
+        //     flags: [MessageFlags.Ephemeral]
+        // });
+
+        await this.interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
 
         const member = (await postgres.sql()`
             SELECT * FROM member WHERE discord_id = ${this.interaction.user.id};
