@@ -14,7 +14,8 @@ export default class HelpEmbed extends EmbedBuilder {
             '\`/anime\` ▸ Busca un anime, muestra su información y calificaciones.\n' + 
             '\`/manga\` ▸ Busca un manga, muestra su información y calificaciones.\n' + 
             '\`/vn\` ▸ Busca una novela visual y muestra su información.\n' +
-            '\`/affinity\` ▸ Calcula tu afinidad con la de otro usuario basándose en sus calificaciones.'
+            '\`/affinity\` ▸ Calcula tu afinidad con la de otro usuario basándose en sus calificaciones.\n\n' +
+            `[¡Invítame a tu servidor!](https://discord.com/oauth2/authorize?client_id=705972499367591953) ▸ Dione Beta 3.`
         );
     };
 };
