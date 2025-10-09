@@ -1,5 +1,4 @@
-import { ChatInputCommandInteraction, MessageFlags } from "discord.js";
-import SuccessEmbed from "../../embeds/successEmbed";
+import { ChatInputCommandInteraction } from "discord.js";
 import postgres from "../../database/postgres";
 import GenericError from "../../errors/genericError";
 import searchUser from "./searchUser";
@@ -14,10 +13,6 @@ export default class UserCommandInteraction {
     };
 
     async execute () {
-        // await this.interaction.reply({
-        //     embeds: [new SuccessEmbed('Espere...')]
-        // });
-
         await this.interaction.deferReply();
 
         const memberId = this.interaction.options.getUser('member')?.id || this.interaction.user.id;
