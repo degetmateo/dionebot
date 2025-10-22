@@ -42,5 +42,5 @@ export default async (aId: string, bId: string) => {
     `;
 
     const response = await Anilist.query(query);
-    return response.data;
+    return response;
 };
