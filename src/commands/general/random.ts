@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { InteractionContextType, SlashCommandBuilder } from "discord.js";
 import BChatInputCommandInteraction from "../../extensions/interaction";
 import GenericError from "../../errors/genericError";
 import RandomCommandInteraction from "../../interactions/random/randomCommandInteraction";
@@ -9,6 +9,7 @@ module.exports = {
         .setName('random')
         .setDescription('Get a ramdom anime or manga recomendation from your PTW list.')
         .setNSFW(false)
+        .setContexts(InteractionContextType.Guild)
         .addStringOption(option => {
             return option
                 .setName('type')
