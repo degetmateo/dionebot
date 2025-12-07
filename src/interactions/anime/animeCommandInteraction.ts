@@ -10,7 +10,6 @@ import postgres from "../../database/postgres";
 import ErrorEmbed from "../../embeds/errorEmbed";
 import ScoresEmbed from "../../embeds/scoresEmbed";
 import searchScores from "../../apis/anilist/searchScores";
-import LoadingEmbed from "../../embeds/loadingEmbed";
 
 export default class AnimeCommandInteraction {
     private interaction: ChatInputCommandInteraction;
@@ -20,10 +19,6 @@ export default class AnimeCommandInteraction {
     };
 
     async execute () {
-        // await this.interaction.reply({
-        //     embeds: [new LoadingEmbed()]
-        // });
-
         await this.interaction.deferReply();
 
         const args = this.interaction.options.getString('name-or-id') as string;

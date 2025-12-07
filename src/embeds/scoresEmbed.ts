@@ -22,6 +22,10 @@ export default class ScoresEmbed extends EmbedBuilder {
 
         let description = '';
 
+        const meanServerScore = results.reduce((acc, curr) => acc + curr.score, 0) / results.length;
+
+        description += `Promedio del Servidor: **[${meanServerScore.toFixed(2)}]**\n\n`;
+
         if (completed.length > 0) {
             description += `▸ Completed: ${completed.map(r => `**${r.user.name} [${r.score}] [x${r.repeat+1}]**`).join(' - ')}\n\n`;
         };
@@ -43,11 +47,11 @@ export default class ScoresEmbed extends EmbedBuilder {
         };
 
         if (planning.length > 0) {
-            description += `▸ Planning: ${planning.map(r => `**${r.user.name}**`).join(' - ')}`;
+            description += `▸ Planning: ${planning.map(r => `**${r.user.name}**`).join(' - ')}\n\n`;
         };
 
         if (description.length > 4096) {
-            description = description.slice(0, 4090) + '...';
+            description = description.slice(0, 4000) + '...';
         };
 
         this.setColor('Green');
