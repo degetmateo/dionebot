@@ -22,7 +22,7 @@ export default class ScoresEmbed extends EmbedBuilder {
 
         let description = '';
 
-        const meanServerScore = results.reduce((acc, curr) => acc + curr.score, 0) / results.length;
+        const meanServerScore = completed.reduce((acc, r) => acc + r.score, 0) / (completed.length || 1);
 
         description += `Promedio del Servidor: **[${meanServerScore.toFixed(2)}]**\n\n`;
 
