@@ -140,14 +140,14 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
 };
 
 module.exports = {
-    cooldown: 10,
+    cooldown: 25,
     data: new SlashCommandBuilder()
         .setName('user')
         .setContexts(InteractionContextType.Guild)
         .setNSFW(false)
-        .setDescription('ANILIST or MAL user information.')
-        .setDescriptionLocalization('es-ES', 'Información de ANILIST o MAL de un usuario.')
-        .setDescriptionLocalization('es-419', 'Información de ANILIST o MAL de un usuario.')
+        .setDescription('All the information related to an user.')
+        .setDescriptionLocalization('es-ES', 'Toda la información relacionada a un usuario.')
+        .setDescriptionLocalization('es-419', 'Toda la información relacionada a un usuario.')
         .addUserOption(option => 
             option
                 .setName('member')
