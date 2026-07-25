@@ -29,8 +29,6 @@ const vndbRequestScores = async (members: Array<{
         const score = results[0];
         if (!score) continue;
 
-        console.log(score);
-
         const statusMap: any = {
             1: "PLAYING",
             2: "FINISHED",

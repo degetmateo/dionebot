@@ -37,7 +37,9 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
 
     let index = 0;
 
-    const scores = await vndb.scores(members.map(member => {
+    let selectedMembers = members.slice(0, 5);
+
+    const scores = await vndb.scores(selectedMembers.map(member => {
         return {
             userId: member.vndb.id,
             username: member.vndb.username,
@@ -57,7 +59,7 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
     };
 
     const id = interaction.client.set({
-        members,
+        members: selectedMembers,
         media,
         index,
         vnsEmbeds,

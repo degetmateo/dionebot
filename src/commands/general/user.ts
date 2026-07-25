@@ -118,18 +118,91 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
     };
 
     if (member.vndb) {
-        const vnuserReq: any = await vndb.user({ id: member.vndb.id, token: member.vndb.auth.token });
-        const vnuser: {
+        const vnuserRequest: {
+            more: boolean;
+            results: Array<{
+                id: string;
+                vn: any;
+                vote: number | null;
+            }>;
+        } = await vndb.user({
+            id: member.vndb.id,
+            token: member.vndb.auth.token
+        }) as any;
+
+        let data = vnuserRequest.results;
+
+        let parsed: Array<{
             id: string;
-            lengthvotes: number;
-            lengthvotes_sum: number;
-            username: string;
-        } = vnuserReq[`${member.vndb.id}`];
-        
+            title: string;
+            vote: number;
+            length: number;
+            developers: any[];
+            tags: Array<{
+                id: string;
+                category: string;
+                name: string;
+            }>;
+        }> = data.map(d => {
+            return {
+                id: d.id,
+                title: d.vn.title,
+                vote: d.vote || 0,
+                length: d.vn.length,
+                developers: d.vn.developers,
+                tags: d.vn.tags,
+            }
+        });
+
+        parsed.sort((a, b) => b.vote - a.vote);
+
+        let tags: Array<{
+            id: string;
+            name: string;
+            category: string;
+            count: number;
+        }> = [];
+
+        for (const vn of parsed) {
+            for (const tag of vn.tags) {
+                let found = false;
+                for (let i = 0; i < tags.length; i++) {
+                    if (tags[i].id === tag.id) {
+                        found = true;
+                        tags[i].count = tags[i].count + 1;
+                        break;
+                    };
+                };
+
+                if (!found) {
+                    tags.push({
+                        id: tag.id,
+                        name: tag.name,
+                        category: tag.category,
+                        count: 1
+                    });
+                };
+            };
+        };
+
+        const tagsSortedByCount = tags.sort((a, b) => b.count - a.count);
+        const tagsText = tagsSortedByCount.slice(0, 12).map(t => `\`${t.name} [${t.count}]\``).join(' ');
+
+        const bestScores = parsed.slice(0, 10);
+        const vnText = bestScores.map(vn => `[\`${vn.title} [${vn.vote}]\`](https://vndb.org/${vn.id})`).join(' ');
+
         description += `\n\n`;
         description +=
             `**Información de VNDB**\n`+
-            `▸ Conocido como [\`${vnuser.username}\`](https://vndb.org/${vnuser.id})`;
+            `▸ Conocido como [\`${member.vndb.username}\`](https://vndb.org/${member.vndb.id})\n`;
+
+        if (vnText && vnText.length > 1) {
+            description += `▸ Top novelas:\n${vnText}\n`;
+        };
+
+        if (tagsText && tagsText.length > 1) {
+            description += `▸ Etiquetas más consumidas:\n${tagsText}`;
+        };
     };
 
     embed.setDescription(description);

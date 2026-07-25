@@ -45,10 +45,11 @@ const commonRequestsSearchScores = async (
         const aniusersScores = await anilist.search.scores(media.id, aniusers.map(m => m.anilist.id));
 
         const malusers: any = members.filter(member => member.preferred_platform === 'mal');
+        const selectedMalusers = malusers.slice(0, 5);
         const malusersScores = await mal.search.scores({
             id: media.idMal,
             type: media.type
-        }, malusers);
+        }, selectedMalusers);
 
         for (const aniscore of aniusersScores) {
             scores.push({
