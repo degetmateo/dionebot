@@ -1,4 +1,7 @@
 import GenericError from "../../errors/genericError";
+import vndbRequestScore from "./requests/vndb.request.score";
+import vndbRequestScores from "./requests/vndb.request.scores";
+import vndbRequestUser from "./requests/vndb.request.user";
 
 const auth = async (token: string): Promise<{
     id: string;
@@ -29,7 +32,10 @@ const request = async (uri: string, options: RequestInit) => {
 
 const vndb = {
     request,
-    auth
+    auth,
+    score: vndbRequestScore,
+    scores: vndbRequestScores,
+    user: vndbRequestUser
 };
 
 export default vndb;

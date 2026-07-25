@@ -1,8 +1,8 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder, MessageFlags } from "discord.js";
-import Bot from "../extensions/bot.extension";
-import ErrorEmbed from "../embeds/errorEmbed";
-import SetupInstructionsEmbed from "../builders/embeds/setupInstructions.embed";
-import { ANILIST_AUTH_URL } from "../consts";
+import Bot from "../../extensions/bot.extension";
+import ErrorEmbed from "../../embeds/errorEmbed";
+import SetupInstructionsEmbed from "../../builders/embeds/setupInstructions.embed";
+import { ANILIST_AUTH_URL } from "../../consts";
 
 module.exports = {
     id: 'setup-anilist-button',

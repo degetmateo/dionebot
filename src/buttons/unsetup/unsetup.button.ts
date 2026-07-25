@@ -1,7 +1,7 @@
 import { ButtonInteraction, MessageFlags } from "discord.js";
-import mongo from "../database/mongo";
-import ErrorEmbed from "../embeds/errorEmbed";
-import SuccessEmbed from "../embeds/successEmbed";
+import mongo from "../../database/mongo";
+import ErrorEmbed from "../../embeds/errorEmbed";
+import SuccessEmbed from "../../embeds/successEmbed";
 
 module.exports = {
     id: 'unsetup-button',

@@ -1,9 +1,8 @@
 import { ButtonInteraction, EmbedBuilder, MessageFlags } from "discord.js";
-import ErrorEmbed from "../embeds/errorEmbed";
-import ScoresEmbed from "../embeds/scoresEmbed";
-import Bot from "../extensions/bot.extension";
-import anilist from "../apis/anilist/anilist";
-import commonRequests from "../apis/common/common.requests";
+import ErrorEmbed from "../../embeds/errorEmbed";
+import commonRequests from "../../apis/common/common.requests";
+import ScoresEmbed from "../../embeds/scoresEmbed";
+import Bot from "../../extensions/bot.extension";
 
 module.exports = {
     id: 'media-back-button',

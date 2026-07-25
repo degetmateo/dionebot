@@ -1,7 +1,7 @@
 import { ButtonInteraction, MessageFlags } from "discord.js";
-import ErrorEmbed from "../embeds/errorEmbed";
-import mongo from "../database/mongo";
-import SuccessEmbed from "../embeds/successEmbed";
+import ErrorEmbed from "../../embeds/errorEmbed";
+import mongo from "../../database/mongo";
+import SuccessEmbed from "../../embeds/successEmbed";
 
 const execute = async (interaction: ButtonInteraction) => {
     const values = interaction.customId.split('_');

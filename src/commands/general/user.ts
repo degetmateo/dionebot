@@ -7,11 +7,13 @@ import anilist from "../../apis/anilist/anilist";
 import Aniuser from "../../apis/anilist/models/aniuser";
 import mal from "../../apis/mal/mal";
 import Helpers from "../../helpers";
+import vndb from "../../apis/vndb/vndb";
 
 const execute = async (interaction: GuildChatInputCommandInteraction) => {
     await interaction.deferReply();
 
-    const memberId = interaction.options.getUser('member')?.id || interaction.user.id;
+    const discordMember = interaction.options.getUser('member') || interaction.user;
+    const memberId = discordMember.id;
 
     const members = mongo.collection('members');
     const member = await members.findOne(
@@ -30,9 +32,9 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
 
     let embed: EmbedBuilder = new EmbedBuilder();
 
-    embed.setTitle(interaction.user.globalName);
+    embed.setTitle(discordMember.globalName);
 
-    let description = `Intercambios completados: **[${member.exchanges.completed_count}]**\n\n`;
+    let description = `Intercambios completados: **[${member.exchanges.completed_count || 0}]**\n\n`;
 
     if (member.preferred_platform) {
         if (member.preferred_platform === 'mal') {
@@ -44,7 +46,7 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
     
             description += 
                 `**Información de MyAnimeList**\n`+
-                `▸ Conocido como \`${maluser.name}\`\n`+
+                `▸ Conocido como [\`${maluser.name}\`](https://myanimelist.net/profile/${maluser.name})\n`+
                 `▸ Se unió el \`${new Date(maluser.joined_at).toDateString()}\`\n`+
                 `▸ Cumpleaños: \`${new Date(maluser.birthday).toDateString()}\`\n`+
                 `▸ Género: \`${maluser.gender || 'desconocido'}\`\n`+
@@ -81,7 +83,7 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
     
             description +=
                 `**Información de ANILIST**\n` +
-                `▸ Conocido como \`${aniuser.getName()}\`\n`+
+                `▸ Conocido como [\`${aniuser.getName()}\`](${aniuser.getSiteURL()})\n`+
                 `▸ Se unio el **${aniuser.getCreatedAt().toLocaleDateString()}**\n\n` +
     
                 `**[Anime](${aniuser.getSiteURL()}/animelist)**\n` +
@@ -102,11 +104,9 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
     
                 `**Tendencias**\n`+
                 `▸ Más consumido: **${Helpers.capitalizeText(aniuser.getMostConsumedGenre()?.genre)} [${aniuser.getMostConsumedGenre()?.count}]**\n`+
-                `▸ Menos consumido: **${Helpers.capitalizeText(aniuser.getLeastConsumedGenre()?.genre)} [${aniuser.getLeastConsumedGenre()?.count}]**\n\n`+
-    
+                `▸ Menos consumido: **${Helpers.capitalizeText(aniuser.getLeastConsumedGenre()?.genre)} [${aniuser.getLeastConsumedGenre()?.count}]**\n`+
                 `▸ Mejor calificado: **${Helpers.capitalizeText(aniuser.getBestRatedGenre()?.genre)} [${aniuser.getBestRatedGenre().meanScore.toFixed(2)}]**\n`+
-                `▸ Peor calificado: **${Helpers.capitalizeText(aniuser.getWorstRatedGenre()?.genre)} [${aniuser.getWorstRatedGenre()?.meanScore.toFixed(2)}]**\n\n`+
-    
+                `▸ Peor calificado: **${Helpers.capitalizeText(aniuser.getWorstRatedGenre()?.genre)} [${aniuser.getWorstRatedGenre()?.meanScore.toFixed(2)}]**\n`+
                 `▸ Suele gustarle: **${Helpers.capitalizeText(bestBayesianScores.join(' - '))}**\n`+
                 `▸ No suele gustarle: **${Helpers.capitalizeText(worstBayesianScores.join(' - '))}**`
             ;
@@ -114,10 +114,22 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
     } else {
         embed.setThumbnail(interaction.user.avatarURL());
         embed.setImage(interaction.user.bannerURL() || null);
-        embed.setColor(interaction.user.hexAccentColor as ColorResolvable || null);
+        embed.setColor("Random");
+    };
 
+    if (member.vndb) {
+        const vnuserReq: any = await vndb.user({ id: member.vndb.id, token: member.vndb.auth.token });
+        const vnuser: {
+            id: string;
+            lengthvotes: number;
+            lengthvotes_sum: number;
+            username: string;
+        } = vnuserReq[`${member.vndb.id}`];
+        
+        description += `\n\n`;
         description +=
-            `Para agregar más información debes iniciar sesión con **ANILIST** o **MyAnimeList** usando \`/setup\`.`;
+            `**Información de VNDB**\n`+
+            `▸ Conocido como [\`${vnuser.username}\`](https://vndb.org/${vnuser.id})`;
     };
 
     embed.setDescription(description);

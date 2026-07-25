@@ -1,5 +1,5 @@
 import { ButtonInteraction, LabelBuilder, MessageFlags, ModalBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
-import ErrorEmbed from "../embeds/errorEmbed";
+import ErrorEmbed from "../../embeds/errorEmbed";
 
 const execute = async (interaction: ButtonInteraction) => {
     const values = interaction.customId.split('_');

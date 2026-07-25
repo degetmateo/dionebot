@@ -1,8 +1,8 @@
 import { ButtonInteraction, MessageFlags } from "discord.js";
-import Bot from "../extensions/bot.extension";
-import ErrorEmbed from "../embeds/errorEmbed";
-import mongo from "../database/mongo";
-import SuccessEmbed from "../embeds/successEmbed";
+import Bot from "../../extensions/bot.extension";
+import ErrorEmbed from "../../embeds/errorEmbed";
+import mongo from "../../database/mongo";
+import SuccessEmbed from "../../embeds/successEmbed";
 
 const execute = async (interaction: ButtonInteraction) => {
     const bot = interaction.client as Bot;

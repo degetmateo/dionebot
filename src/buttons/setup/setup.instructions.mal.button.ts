@@ -1,14 +1,14 @@
 import { ButtonInteraction, LabelBuilder, MessageFlags, ModalBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
 import { ObjectId } from "mongodb";
-import Bot from "../extensions/bot.extension";
-import ErrorEmbed from "../embeds/errorEmbed";
+import Bot from "../../extensions/bot.extension";
+import ErrorEmbed from "../../embeds/errorEmbed";
 
 module.exports = {
-    id: 'setup-instructions-vndb-button',
+    id: 'setup-instructions-mal-button',
     execute: async (interaction: ButtonInteraction, member: {
         _id: ObjectId;
         discord_id: string;
-        key: string;
+        key:string;
     }) => {
         const bot = interaction.client as Bot;
 
@@ -29,17 +29,17 @@ module.exports = {
         bot.update(member.key, member, 60_000);
 
         const modal = new ModalBuilder();
-        modal.setCustomId(`setup-instructions-vndb-modal_${member.key}`) 
-        modal.setTitle('Formulario de VNDB.');
+        modal.setCustomId(`setup-instructions-mal-modal_${member.key}`);
+        modal.setTitle('Formulario para autentificarte.');
 
         const input = new TextInputBuilder()
-            .setCustomId('setup-instructions-vndb-input') 
+            .setCustomId('setup-instructions-mal-input') 
             .setStyle(TextInputStyle.Paragraph) 
-            .setPlaceholder('Pegá tu token acá...')
+            .setPlaceholder('Pegá tu código acá...')
             .setRequired(true); 
 
         const label = new LabelBuilder({
-            label: 'Ingresá tu token.'
+            label: 'Ingresá tu código.'
         }).setTextInputComponent(input);
 
         modal.addLabelComponents(label);

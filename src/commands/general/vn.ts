@@ -1,75 +1,72 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, InteractionContextType, SlashCommandBuilder } from "discord.js";
+import { EmbedBuilder, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import GuildChatInputCommandInteraction from "../../extensions/guildChatInputCommandInteraction.extension";
 import VNDB from "../../apis/vndb/vndb.old";
 import VNEmbed from "../../embeds/vnEmbed";
+import mongo from "../../database/mongo";
+import VNRowComponent from "../../builders/components/vn.row.component";
+import vndb from "../../apis/vndb/vndb";
+import VNScoresEmbed from "../../builders/embeds/vn.scores.embed";
+import ErrorEmbed from "../../embeds/errorEmbed";
 
 const execute = async (interaction: GuildChatInputCommandInteraction) => {
     await interaction.deferReply();
 
     const args = interaction.options.getString('name-or-id', true);
     const data = await VNDB.query(args);
+    const media = data.results;
 
-    if (data.results.length === 1) {
-        return await interaction.editReply({
-            embeds: [new VNEmbed(data.results[0])]
-        });
-    };
+    const vnsEmbeds = media.map(vn => new VNEmbed(vn));
+    const scoresEmbeds: EmbedBuilder[] = [];
 
-    const embeds = data.results.map(vn => new VNEmbed(vn));
+    const collection = mongo.collection('members');
+    const members = await collection.find(
+        {
+            $and: [
+                {
+                    "guilds.id": interaction.guild.id
+                },
+                {
+                    "guilds.show_scores": true
+                },
+                {
+                    vndb: { $ne: null }
+                }
+            ]
+        }
+    ).toArray();
 
     let index = 0;
 
-    const row = new ActionRowBuilder<ButtonBuilder>();
-    const backButton = new ButtonBuilder()
-        .setCustomId('back')
-        .setLabel('←')
-        .setStyle(ButtonStyle.Primary);
-    const nextButton = new ButtonBuilder()
-        .setCustomId('next')
-        .setLabel('→')
-        .setStyle(ButtonStyle.Primary);
-    row.addComponents(backButton, nextButton);
+    const scores = await vndb.scores(members.map(member => {
+        return {
+            userId: member.vndb.id,
+            username: member.vndb.username,
+            userToken: member.vndb.auth.token,
+            vnId: media[index].id
+        }
+    }));
 
-    const response = await interaction.editReply({
-        embeds: [embeds[index]],
-        components: [row]
-    });
+    scoresEmbeds[index] = scores.length > 0 ?
+        new VNScoresEmbed(scores):
+        new ErrorEmbed('No hay votos para esta novela visual.');
 
-    const collector = response.createMessageComponentCollector({
-        time: 300000
-    });
+    if (media.length === 1) {
+        return await interaction.editReply({
+            embeds: [vnsEmbeds[index], scoresEmbeds[index]]
+        });
+    };
 
-    collector.on('collect', async collected => {
-        try {
-            if (collected.customId === 'next') {
-                index++;
-                if (index > embeds.length - 1) {
-                    index = 0;
-                };
-            };
+    const id = interaction.client.set({
+        members,
+        media,
+        index,
+        vnsEmbeds,
+        scoresEmbeds
+    }, 60_000);
 
-            if (collected.customId === 'back') {
-                index--;
-                if (index < 0) {
-                    index = embeds.length - 1;
-                };
-            };
-
-            if (collected.replied || collected.deferred) {
-                await collected.editReply({
-                    embeds: [embeds[index]],
-                    components: [row]
-                });
-            } else {
-                await collected.update({
-                    embeds: [embeds[index]],
-                    components: [row]
-                });
-            };
-        } catch (error) {
-            console.error(error);
-            collector.stop();
-        };
+    await interaction.editReply({
+        embeds: [vnsEmbeds[index], scoresEmbeds[index]],
+        components: [new VNRowComponent(id)]
     });
 };
 
