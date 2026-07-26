@@ -12,7 +12,7 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
     await interaction.deferReply();
 
     const args = interaction.options.getString('name-or-id', true);
-    const data = await VNDB.query(args);
+    const data = await vndb.vn(args);
     const media = data.results;
 
     const vnsEmbeds = media.map(vn => new VNEmbed(vn));

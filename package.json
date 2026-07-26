@@ -9,6 +9,8 @@
     "migrate": "tsx --env-file=.env ./scripts/migrate.ts",
     "build": "tsc",
     
+    "characters": "tsx --env-file=.env ./scripts/characters.ts",
+
     "deploy-commands-global": "tsx --env-file=.env ./scripts/deploy-commands-global.ts",
     "deploy-commands-guild": "ts-node ./scripts/deploy-commands-guild.ts",
 
