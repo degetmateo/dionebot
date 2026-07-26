@@ -42,7 +42,7 @@ module.exports = {
 
         await interaction.update({
             embeds: [data.embeds['anilist']],
-            components: [buttons]
+            components: buttons.isValid() ? [buttons] : []
         });
     }
 };

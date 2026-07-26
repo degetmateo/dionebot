@@ -44,7 +44,7 @@ const userExecute = async (interaction: GuildChatInputCommandInteraction) => {
 
     await interaction.editReply({
         embeds: [embeds['profile']],
-        components: [buttons]
+        components: buttons.isValid() ? [buttons] : []
     });
 };
 
