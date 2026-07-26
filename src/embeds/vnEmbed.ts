@@ -1,18 +1,30 @@
 import { EmbedBuilder } from "discord.js";
-import { DEVSTATUS, VN } from "../apis/vndb/vndbTypes";
+import { DEVSTATUS, T_VN } from "../apis/vndb/vndbTypes";
 import VNDB from "../apis/vndb/vndb.old";
 import Helpers from "../helpers";
 
 export default class VNEmbed extends EmbedBuilder {
-    constructor (vn: VN) {
+    constructor (vn: T_VN) {
         super();
         
+        const thumbnail = vn.image.sexual === 0 && vn.image.violence === 0 ?
+            vn.image.url : null;
+
         this.setTitle(vn.title);
         this.setURL(VNDB.URL + '/' + vn.id);
         this.setColor("Random");
         this.setDescription(vn.description ? Helpers.clearHTML(vn.description) : null);
-        this.setThumbnail(vn.image.url);
-        this.setImage(Helpers.getRandomElement(vn.screenshots)?.url || null);
+        this.setThumbnail(thumbnail);
+
+        let safeScreenshots = vn.screenshots.filter(screenshot => 
+            screenshot.sexual === 0 && screenshot.violence === 0
+        );
+
+        const randomScreenshot = Helpers.getRandomElement(safeScreenshots);
+
+        if (randomScreenshot) {
+            this.setImage(randomScreenshot.url);
+        };
 
         if (vn.aliases.length > 0) {
             this.setFooter({

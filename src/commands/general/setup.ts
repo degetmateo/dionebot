@@ -20,6 +20,7 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
             member = {
                 _id: new UUID(uuid.v7()) as any,
                 discord_id: interaction.user.id,
+                created_at: new Date(),
                 exchanges: {
                     completed_count: 0,
                     active: null,
@@ -31,32 +32,52 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
                 guilds: [{
                     id: interaction.guild.id,
                     show_scores: true
-                }]
+                }],
+                profile: {
+                    color: null,
+                    preferred_platform: null,
+                    avatar_url: null,
+                    banner_url: null
+                }
             };
 
             await members.insertOne(member);
 
-            embed.setDescription('Hemos registrado tu perfil. ¿Deseas vincular una plataforma? Ten en cuenta que aún no implementamos todas las funcionalidades para MAL.');
+            let desc = 
+                `**¡Perfil creado correctamente!**\n`+
+                `¿Deseas customizarlo o vincular una plataforma?\n\n`+
+                `▸ Ten en cuenta que MAL y VNDB aún posee algunas limitaciones que estamos intentando solucionar.`;
+
+            embed.setDescription(desc);
         } else {
-            embed.setDescription('Ya tienes un perfil. ¿Deseas vincular una plataforma? Ten en cuenta que aún no implementamos todas las funcionalidades para MAL.');
+            let desc = 
+                `**¡Ya tienes un perfil!**\n`+
+                `¿Deseas customizarlo o vincular una plataforma?\n\n`+
+                `▸ Ten en cuenta que \`MyAnimeList\` y \`VNDB\` aún posee limitaciones que estamos intentando solucionar.`;
+
+            embed.setDescription(desc);
         };
 
-        const cacheID = interaction.client.set(member, 60_000);
+        const id = interaction.client.set(member, 60_000);
 
         const row = new ActionRowBuilder<ButtonBuilder>();
         row.addComponents([
             new ButtonBuilder()
-                .setCustomId(`setup-anilist-button_${cacheID}`)
+                .setCustomId(`setup-profile-button_${id}`)
+                .setLabel('Customizar')
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+                .setCustomId(`setup-anilist-button_${id}`)
                 .setLabel('ANILIST')
-                .setStyle(ButtonStyle.Primary),
+                .setStyle(ButtonStyle.Secondary),
             new ButtonBuilder()
-                .setCustomId(`setup-mal-button_${cacheID}`)
+                .setCustomId(`setup-mal-button_${id}`)
                 .setLabel('MyAnimeList')
-                .setStyle(ButtonStyle.Primary),
+                .setStyle(ButtonStyle.Secondary),
             new ButtonBuilder()
-                .setCustomId(`setup-vndb-button_${cacheID}`)
+                .setCustomId(`setup-vndb-button_${id}`)
                 .setLabel('VNDB')
-                .setStyle(ButtonStyle.Primary)
+                .setStyle(ButtonStyle.Secondary)
         ]);
 
         await interaction.editReply({
@@ -70,7 +91,7 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
 };
 
 module.exports = {
-    cooldown: 60,
+    cooldown: 30,
     data: new SlashCommandBuilder()
         .setName('setup')
         .setDescription('Setup your profile.')

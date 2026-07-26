@@ -1,4 +1,4 @@
-export type VN = {
+export type T_VN = {
     id: string;
     aliases: Array<any>;
     average: number;
@@ -7,6 +7,8 @@ export type VN = {
     image: {
         url: string;
         thumbnail: string;
+        sexual: 0 | 1 | 2;
+        violence: 0 | 1 | 2;
     };
     languages: Array<any>;
     length_minutes: number;
@@ -24,6 +26,8 @@ export type VN = {
     screenshots: Array<{
         url: string;
         votecount: number;
+        sexual: 0 | 1 | 2;
+        violence: 0 | 1 | 2;
     }>;
 };
 

@@ -1,7 +1,7 @@
 import GenericError from "../../errors/genericError";
 import Helpers from "../../helpers";
 import { codes } from "../../static/codes";
-import { VN } from "./vndbTypes";
+import { T_VN } from "./vndbTypes";
 
 export default class VNDB {
     private static readonly ENDPOINT: string = 'https://api.vndb.org/kana';
@@ -19,31 +19,36 @@ export default class VNDB {
                 "page": 1,
                 "filters": [Helpers.isNumber(args) ? "id" : "search", "=", args],
                 "fields": `
-                    title, 
-                    aliases, 
-                    olang, 
-                    devstatus,
-                    released,
-                    languages,
-                    platforms,
-                    length_votes,
-                    length_minutes,
-                    description,
-                    average,
-                    rating,
-                    votecount,
-                    image.url,
-                    image.thumbnail,
-                    tags.name,
-                    screenshots.url,
-                    screenshots.votecount`
+                        title, 
+                        aliases, 
+                        olang, 
+                        devstatus,
+                        released,
+                        languages,
+                        platforms,
+                        length_votes,
+                        length_minutes,
+                        description,
+                        average,
+                        rating,
+                        votecount,
+                        image.url,
+                        image.thumbnail,
+                        image.sexual,
+                        image.violence,
+                        tags.name,
+                        screenshots.url,
+                        screenshots.votecount,
+                        screenshots.sexual,
+                        screenshots.violence
+                    `
             })
         });
 
         if (!request.ok) throw new GenericError(codes[request.status] || null);
         return await request.json() as {
             more: boolean;
-            results: Array<VN>;
+            results: Array<T_VN>;
         };
     };
 };

@@ -14,40 +14,45 @@ const vndbRequestScores = async (members: Array<{
     }> = [];
 
     for (const member of members) {
-        const scoreRequest: any = await vndb.score({
-            userId: member.userId,
-            userToken: member.userToken,
-            vnId: member.vnId
-        });
-
-        const results: Array<{
-            id: string;
-            vote: number;
-            labels: Array<{ id: number; label: string; }>;
-        }> = scoreRequest.results;
-
-        const score = results[0];
-        if (!score) continue;
-
-        const statusMap: any = {
-            1: "PLAYING",
-            2: "FINISHED",
-            3: "PAUSED",
-            4: "DROPPED",
-            5: "SIN ASIGNAR",
+        try {
+            const scoreRequest: any = await vndb.score({
+                userId: member.userId,
+                userToken: member.userToken,
+                vnId: member.vnId
+            });
+    
+            const results: Array<{
+                id: string;
+                vote: number;
+                labels: Array<{ id: number; label: string; }>;
+            }> = scoreRequest.results;
+    
+            const score = results[0];
+            if (!score) continue;
+    
+            const statusMap: any = {
+                1: "PLAYING",
+                2: "FINISHED",
+                3: "PAUSED",
+                4: "DROPPED",
+                5: "SIN ASIGNAR",
+            };
+    
+            const label = score.labels.find(l => l.id <= 4);
+            const status = label ?
+                statusMap[label.id] :
+                "UNKNOWN";       
+    
+            scores.push({
+                id: member.userId,
+                username: member.username,
+                vote: Number(score.vote),
+                status: status
+            });
+        } catch (error) {
+            console.error(error);
+            continue;
         };
-
-        const label = score.labels.find(l => l.id <= 4);
-        const status = label ?
-            statusMap[label.id] :
-            "UNKNOWN";       
-
-        scores.push({
-            id: member.userId,
-            username: member.username,
-            vote: Number(score.vote),
-            status: status
-        });
     };
 
     return scores;

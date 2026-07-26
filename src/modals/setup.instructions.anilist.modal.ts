@@ -4,6 +4,7 @@ import mongo from "../database/mongo";
 import ErrorEmbed from "../embeds/errorEmbed";
 import SetupSuccessEmbed from "../builders/embeds/setupSuccess.embed";
 import anilist from "../apis/anilist/anilist";
+import { Document, Filter, MatchKeysAndValues, UpdateFilter } from "mongodb";
 
 module.exports = {
     id: 'setup-instructions-anilist-modal',
@@ -34,8 +35,10 @@ module.exports = {
     
         const members = mongo.collection('members');
 
+        const filter: Filter<Document> = { _id: member._id };
+
         const query = await members.findOneAndUpdate(
-            { _id: member._id },
+            filter,
             { 
                 $set: {
                     preferred_platform: 'anilist', 
@@ -44,7 +47,8 @@ module.exports = {
                         token: token 
                     } 
                 } 
-            }
+            },
+            { upsert: false }
         );
     
         if (!query) {
