@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, InteractionContextType, SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import GuildChatInputCommandInteraction from "../../extensions/guildChatInputCommandInteraction.extension";
 import mongo from "../../database/mongo";
 import { Document, WithId } from "mongodb";

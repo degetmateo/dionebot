@@ -5,7 +5,6 @@ import ErrorEmbed from "../../embeds/errorEmbed";
 import Bot from "../../extensions/bot.extension";
 import mongo from "../../database/mongo";
 import SuccessEmbed from "../../embeds/successEmbed";
-import GenericError from "../../errors/genericError";
 
 module.exports = {
     id: 'ch-claim-button',
@@ -34,11 +33,11 @@ module.exports = {
 
         const now = Date.now();
         const timestamps = cooldowns.get('ch-claim-button');
-        const defaultCooldown = 60;
-        const cooldownAmount = (defaultCooldown) * 1000;
+        const DEFAULT_COOLDOWN = 60;
+        const FINAL_COOLDOWN = (DEFAULT_COOLDOWN) * 1000;
 
         if (timestamps?.has(interaction.user.id)) {
-            const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount;
+            const expirationTime = timestamps.get(interaction.user.id) + FINAL_COOLDOWN;
 
             if (now < expirationTime) {
                 const expirationSeconds = ((expirationTime - now) / 1000).toFixed(0);
@@ -59,7 +58,7 @@ module.exports = {
                     content: `<@${interaction.user.id}>: ¡Puedes volver a reclamar!`
                 });
             };
-        }, cooldownAmount);
+        }, FINAL_COOLDOWN);
 
         const guilds = mongo.collection('guilds');
         

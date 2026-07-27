@@ -14,6 +14,7 @@ module.exports = {
             .setColor('DarkOrange')
             .setThumbnail(interaction.client.user.avatarURL())
             .setDescription(
+                `▸ \`27-07-2026\` ¡Reclama personajes en tus servidores!: \`/ch\`\n`+
                 `▸ \`26-07-2026\` Este comando.\n`+
                 `▸ \`25-07-2026\` Customización de perfil en \`/setup\`.\n`+
                 `▸ \`25-07-2026\` Ahora se pueden vincular cuentas de \`VNDB\`.\n\n`+
