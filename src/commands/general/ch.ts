@@ -26,7 +26,7 @@ module.exports = {
             claimed_count: character.claimed_count || 0
         });
 
-        const cache_id = interaction.client.set(character, 10_000);
+        const cache_id = interaction.client.set(character, 25_000);
 
         const row = new ActionRowBuilder<ButtonBuilder>()
             .addComponents(
