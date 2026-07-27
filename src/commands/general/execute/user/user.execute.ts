@@ -7,7 +7,7 @@ import createUserEmbed from "./create.user.embed";
 const userExecute = async (interaction: GuildChatInputCommandInteraction) => {
     await interaction.deferReply();
 
-    const user = interaction.options.getUser('member') || interaction.user;
+    const user = await (interaction.options.getUser('member') || interaction.user).fetch(true);
     const memberId = user.id;
 
     const members = mongo.collection('members');

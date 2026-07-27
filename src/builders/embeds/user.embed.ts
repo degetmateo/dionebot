@@ -53,7 +53,7 @@ export default class UserEmbed extends EmbedBuilder {
         };
 
         if (!this.avatarURL) this.avatarURL = data.discord_user.avatarURL();
-        if (!this.bannerURL) this.bannerURL = data.discord_user.bannerURL() || null;
+        if (!this.bannerURL) this.bannerURL = data.discord_user.bannerURL({ size: 1024 }) || null;
         if (!this.color) this.color = "Random";
 
         if (this.avatarURL) this.setThumbnail(this.avatarURL);
