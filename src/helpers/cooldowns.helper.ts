@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Collection } from "discord.js";
+import { Channel, ChatInputCommandInteraction, Collection } from "discord.js";
 import Bot from "../extensions/bot.extension";
 import GenericError from "../errors/genericError";
 import cooldownMessages from "../static/cooldownMessages";
@@ -30,6 +30,8 @@ const execute = (interaction: ChatInputCommandInteraction) => {
     timestamps?.set(interaction.user.id, now);
     setTimeout(() => timestamps?.delete(interaction.user.id), cooldownAmount);
 };
+
+const cooldowns = new Collection<string, Collection<string, any>>();
 
 const cooldownsHelper = {
     execute

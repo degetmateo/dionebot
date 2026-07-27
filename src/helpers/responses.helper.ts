@@ -30,7 +30,7 @@ const execute = async (interaction: Interaction, embeds: EmbedBuilder[], options
         } else {
             await interaction.reply({
                 embeds,
-                options
+                ...options
             });
         };
     } catch (e1: any) {

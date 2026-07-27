@@ -7,6 +7,7 @@ export const memberModel = {
             _id: new UUID(uuid.v7()) as any,
             discord_id: user_id,
             created_at: new Date(),
+            renas: 0,
             exchanges: {
                 completed_count: 0,
                 active: null,

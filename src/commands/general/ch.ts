@@ -22,7 +22,6 @@ module.exports = {
             name: character.name,
             site_url: character.url,
             image_url: character.images[0].url,
-            favourites_count: character.favourites || 0,
             claimed_count: character.claimed_count || 0
         });
 

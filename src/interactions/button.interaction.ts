@@ -19,9 +19,9 @@ export default {
         } catch (error: any) {
             console.error(error);
             if (error instanceof GenericError) {
-                await responsesHelper.execute(interaction, [new ErrorEmbed(error.message)], { flags: [MessageFlags.Ephemeral] });
+                await responsesHelper.execute(interaction, [new ErrorEmbed(error.message)], { flags: "Ephemeral" });
             } else {
-                await responsesHelper.execute(interaction, [new ErrorEmbed('Ha ocurrido un error inesperado.')], { flags: [MessageFlags.Ephemeral] });
+                await responsesHelper.execute(interaction, [new ErrorEmbed('Ha ocurrido un error inesperado.')], { flags: "Ephemeral" });
             };        
         };
     }

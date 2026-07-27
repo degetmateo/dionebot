@@ -5,6 +5,7 @@ import ErrorEmbed from "../../embeds/errorEmbed";
 import GuildChatInputCommandInteraction from "../../extensions/guildChatInputCommandInteraction.extension";
 import mongo from "../../database/mongo";
 import { UUID } from "mongodb";
+import { memberModel } from "../../database/models/member.model";
 
 const execute = async (interaction: GuildChatInputCommandInteraction) => {
     try {
@@ -17,30 +18,7 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
         embed.setColor(Colors.DarkOrange);
 
         if (!member) {
-            member = {
-                _id: new UUID(uuid.v7()) as any,
-                discord_id: interaction.user.id,
-                created_at: new Date(),
-                exchanges: {
-                    completed_count: 0,
-                    active: null,
-                    history: []
-                },
-                preferred_platform: null,
-                anilist: null,
-                mal: null,
-                guilds: [{
-                    id: interaction.guild.id,
-                    show_scores: true
-                }],
-                profile: {
-                    color: null,
-                    preferred_platform: null,
-                    avatar_url: null,
-                    banner_url: null
-                }
-            };
-
+            member = memberModel.create(interaction.user.id, interaction.guild.id as string);
             await members.insertOne(member);
 
             let desc = 
