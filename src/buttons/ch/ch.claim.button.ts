@@ -1,10 +1,11 @@
-import { ButtonInteraction } from "discord.js";
+import { ButtonInteraction, Collection } from "discord.js";
 import { ObjectId, UUID } from "mongodb";
 import * as uuid from 'uuid';
 import ErrorEmbed from "../../embeds/errorEmbed";
 import Bot from "../../extensions/bot.extension";
 import mongo from "../../database/mongo";
 import SuccessEmbed from "../../embeds/successEmbed";
+import GenericError from "../../errors/genericError";
 
 module.exports = {
     id: 'ch-claim-button',
@@ -24,6 +25,33 @@ module.exports = {
 
         const bot = interaction.client as Bot;
         bot.delete(character.key);
+
+        const cooldowns = bot.cooldowns;
+
+        if (!cooldowns.has('ch-claim-button')) {
+            cooldowns.set('ch-claim-button', new Collection());
+        };
+
+        const now = Date.now();
+        const timestamps = cooldowns.get('ch-claim-button');
+        const defaultCooldown = 60;
+        const cooldownAmount = (defaultCooldown) * 1000;
+
+        if (timestamps?.has(interaction.user.id)) {
+            const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount;
+
+            if (now < expirationTime) {
+                const expirationSeconds = ((expirationTime - now) / 1000).toFixed(0);
+
+                return await interaction.reply({
+                    flags: "Ephemeral",
+                    embeds: [new ErrorEmbed(`Podrás volver a reclamar en \`${expirationSeconds} segundos\`.`)]
+                });
+            };
+        };
+
+        timestamps?.set(interaction.user.id, now);
+        setTimeout(() => timestamps?.delete(interaction.user.id), cooldownAmount);
 
         const guilds = mongo.collection('guilds');
         
