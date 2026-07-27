@@ -51,7 +51,15 @@ module.exports = {
         };
 
         timestamps?.set(interaction.user.id, now);
-        setTimeout(() => timestamps?.delete(interaction.user.id), cooldownAmount);
+        setTimeout(() => {
+            timestamps?.delete(interaction.user.id);
+
+            if (interaction.channel?.isSendable()) {
+                interaction.channel.send({
+                    content: `<@${interaction.user.id}>: ¡Puedes volver a reclamar!`
+                });
+            };
+        }, cooldownAmount);
 
         const guilds = mongo.collection('guilds');
         
