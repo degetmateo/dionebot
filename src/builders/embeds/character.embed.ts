@@ -6,6 +6,7 @@ export default class CharacterEmbed extends EmbedBuilder {
         site_url: string;
         image_url: string;
         claimed_count: number;
+        user_id: null | string;
     }) {
         super();
 
@@ -14,7 +15,11 @@ export default class CharacterEmbed extends EmbedBuilder {
         this.setImage(character.image_url);
         this.setColor("Random");
         this.setFooter({
-            text: `▸ Se ha reclamado ${character.claimed_count} veces.`
+            text: `Se ha reclamado ${character.claimed_count === 1 ? '1 vez' : `${character.claimed_count} veces`}.`
         });
+
+        if (character.user_id) {
+            this.setDescription(`<@${character.user_id}>`)
+        };
     };
 };

@@ -16,6 +16,7 @@ module.exports = {
         name: string;
         site_url: string;
         image_url: string;
+        owner_id: string | null;
     }) => {
         if (!character) {
             return await interaction.reply({
@@ -27,10 +28,28 @@ module.exports = {
         const bot = interaction.client as Bot;
         bot.delete(character.key);
 
+        const guilds = mongo.collection('guilds');
+        const members = mongo.collection('members');
+
+        if (character.owner_id) {
+            members.updateOne(
+                {
+                    discord_id: character.owner_id
+                },
+                {
+                    $inc: {
+                        renas: 10
+                    }
+                }
+            );
+
+            return await interaction.reply({
+                embeds: [new ErrorEmbed(`¡**${character.name}** ya pertenece a <@${character.owner_id}>!`)]
+            });
+        };
+
         claimCooldownHelper.execute(interaction);
 
-        const guilds = mongo.collection('guilds');
-        
         let guild = await guilds.findOne(
             { 
                 discord_id: interaction.guild?.id
@@ -44,30 +63,6 @@ module.exports = {
                 claimed_characters: []
             };
             await guilds.insertOne(guild);
-        };
-
-        const claimedCharacter: {
-            character_id: ObjectId;
-            member_discord_id: string;
-        } = guild.claimed_characters.find((ch: any) => ch.character_id.toString() == character._id.toString());
-
-        const members = mongo.collection('members');
-
-        if (claimedCharacter) {
-            members.updateOne(
-                {
-                    discord_id: claimedCharacter.member_discord_id
-                },
-                {
-                    $inc: {
-                        renas: 10
-                    }
-                }
-            );
-
-            return await interaction.reply({
-                embeds: [new ErrorEmbed(`¡**${character.name}** ya pertenece a <@${claimedCharacter.member_discord_id}>!`)]
-            });
         };
 
         await guilds.updateOne(

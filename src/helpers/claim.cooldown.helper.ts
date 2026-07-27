@@ -3,7 +3,7 @@ import GenericError from "../errors/genericError";
 
 const cooldowns: Collection<string, Collection<string, any>> = new Collection<string, Collection<string, any>>();
 
-const DEFAULT_COOLDOWN = 60;
+const DEFAULT_COOLDOWN = 300;
 const FINAL_COOLDOWN = (DEFAULT_COOLDOWN) * 1000;
 
 const execute = (interaction: ButtonInteraction) => {
@@ -20,10 +20,6 @@ const execute = (interaction: ButtonInteraction) => {
         if (now < expirationTime) {
             const expirationSeconds = ((expirationTime - now) / 1000).toFixed(0);
             throw new GenericError(`Podrás volver a reclamar en \`${expirationSeconds} segundos\`.`);
-            // return await interaction.reply({
-            //     flags: "Ephemeral",
-            //     embeds: [new ErrorEmbed(`Podrás volver a reclamar en \`${expirationSeconds} segundos\`.`)]
-            // });
         };
     };
 
