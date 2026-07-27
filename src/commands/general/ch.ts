@@ -2,9 +2,10 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Interaction
 import GuildChatInputCommandInteraction from "../../extensions/guildChatInputCommandInteraction.extension";
 import mongo from "../../database/mongo";
 import { Document, WithId } from "mongodb";
+import CharacterEmbed from "../../builders/embeds/character.embed";
 
 module.exports = {
-    cooldown: 1,
+    cooldown: 5,
     data: new SlashCommandBuilder()
         .setName('ch')
         .setDescription('Tirar por un personaje al azar para reclamar.')
@@ -17,18 +18,20 @@ module.exports = {
 
         if (!character) return;
         
-        const embed = new EmbedBuilder()
-            .setTitle(character.name)
-            .setURL(character.url)
-            .setImage(character.images[0].url)
-            .setColor('Random')
-            .setFooter({ text: `${character.favourites || 0} favs` })
-        ;
+        const embed = new CharacterEmbed({
+            name: character.name,
+            site_url: character.url,
+            image_url: character.images[0].url,
+            favourites_count: character.favourites || 0,
+            claimed_count: character.claimed_count || 0
+        });
+
+        const cache_id = interaction.client.set(character, 10_000);
 
         const row = new ActionRowBuilder<ButtonBuilder>()
             .addComponents(
                 new ButtonBuilder()
-                    .setCustomId('ch-claim-button')
+                    .setCustomId(`ch-claim-button_${cache_id}`)
                     .setEmoji('❤️')
                     .setStyle(ButtonStyle.Secondary)
             )

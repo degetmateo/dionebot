@@ -34,7 +34,7 @@ export default class UserEmbed extends EmbedBuilder {
 
         this.description =
             `▸ Se unió el \`${new Date(data.member.created_at).toDateString()}\`\n` +
-            `▸ Intercambios completados: \`${data.member.exchanges.completed_count || 0}\`\n\n`;
+            `▸ Personajes reclamados: \`${data.member.claimed_characters_count || 0}\`\n\n`;
 
         if (data.platform) {
             switch (data.platform) {
