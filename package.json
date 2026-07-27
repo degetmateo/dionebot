@@ -13,7 +13,7 @@
     "remove-dup-characters": "tsx --env-file=.env ./scripts/remove-dup-characters.ts",
 
     "deploy-commands-global": "tsx --env-file=.env ./scripts/deploy-commands-global.ts",
-    "deploy-commands-guild": "ts-node ./scripts/deploy-commands-guild.ts",
+    "deploy-commands-guild": "tsx --env-file=.env ./scripts/deploy-commands-guild.ts",
 
     "delete-command-global": "tsx --env-file=.env ./scripts/delete-command-global.ts",
 

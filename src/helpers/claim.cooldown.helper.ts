@@ -1,12 +1,14 @@
 import { ButtonInteraction, Collection } from "discord.js";
 import GenericError from "../errors/genericError";
+import Bot from "../extensions/bot.extension";
 
 const cooldowns: Collection<string, Collection<string, any>> = new Collection<string, Collection<string, any>>();
 
-const DEFAULT_COOLDOWN = 300;
-const FINAL_COOLDOWN = (DEFAULT_COOLDOWN) * 1000;
-
 const execute = (interaction: ButtonInteraction) => {
+    const bot = interaction.client as Bot;
+    const DEFAULT_COOLDOWN = bot.settings.ch_claim_cooldown;
+    const FINAL_COOLDOWN = (DEFAULT_COOLDOWN) * 1000;
+
     if (!cooldowns.has('ch-claim-button')) {
         cooldowns.set('ch-claim-button', new Collection());
     };

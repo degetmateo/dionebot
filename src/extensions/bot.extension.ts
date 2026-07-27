@@ -25,6 +25,10 @@ export default class Bot extends Client<true> {
 
     public cache: Map<string, any>;
 
+    public settings = {
+        ch_claim_cooldown: 300
+    };
+
     constructor () {
         super({
             intents: [
