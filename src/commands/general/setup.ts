@@ -1,10 +1,8 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder, Interaction, InteractionContextType, MessageFlags, SlashCommandBuilder } from "discord.js";
-import * as uuid from 'uuid';
 import responsesHelper from "../../helpers/responses.helper";
 import ErrorEmbed from "../../embeds/errorEmbed";
 import GuildChatInputCommandInteraction from "../../extensions/guildChatInputCommandInteraction.extension";
 import mongo from "../../database/mongo";
-import { UUID } from "mongodb";
 import { memberModel } from "../../database/models/member.model";
 
 const execute = async (interaction: GuildChatInputCommandInteraction) => {

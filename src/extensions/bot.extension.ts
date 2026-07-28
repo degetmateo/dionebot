@@ -3,6 +3,7 @@ import eventsHandler from "../handlers/events.handler";
 import commandsHandler from "../handlers/commands.handler";
 import buttonsHandler from "../handlers/buttons.handler";
 import modalsHandler from "../handlers/modals.handler";
+import { Settings } from "../modules/settings.module";
 
 export default class Bot extends Client<true> {
     public commands: Collection<string, {
@@ -25,11 +26,9 @@ export default class Bot extends Client<true> {
 
     public cache: Map<string, any>;
 
-    public settings = {
-        ch_claim_cooldown: 300
-    };
+    public settings: Settings;
 
-    constructor () {
+    constructor (settings: Settings) {
         super({
             intents: [
                 GatewayIntentBits.Guilds,
@@ -38,6 +37,7 @@ export default class Bot extends Client<true> {
             ]
         });
 
+        this.settings = settings;
         this.commands = new Collection();
         this.buttons = new Collection();
         this.modals = new Collection();

@@ -2,10 +2,12 @@
 
 import Bot from './extensions/bot.extension';
 import mongo from "./database/mongo";
+import SettingsModule from './modules/settings.module';
 
 const init = async () => {
     await mongo.init();
-    new Bot().login(process.env.TOKEN);
+    const settings = await SettingsModule.read();
+    new Bot(settings).login(process.env.TOKEN);
 };
 
 init();

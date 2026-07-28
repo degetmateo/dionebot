@@ -32,19 +32,20 @@ module.exports = {
         const members = mongo.collection('members');
 
         if (character.owner_id) {
+            const renas = bot.settings.renas_per_reclaim;
             members.updateOne(
                 {
                     discord_id: character.owner_id
                 },
                 {
                     $inc: {
-                        renas: 10
+                        renas: renas
                     }
                 }
             );
 
             return await interaction.reply({
-                embeds: [new ErrorEmbed(`¡**${character.name}** ya pertenece a <@${character.owner_id}>!`)]
+                embeds: [new ErrorEmbed(`¡**${character.name}** ya pertenece a <@${character.owner_id}>! \`(+${renas} renas)\``)]
             });
         };
 

@@ -6,7 +6,7 @@ const cooldowns: Collection<string, Collection<string, any>> = new Collection<st
 
 const execute = (interaction: ButtonInteraction) => {
     const bot = interaction.client as Bot;
-    const DEFAULT_COOLDOWN = bot.settings.ch_claim_cooldown;
+    const DEFAULT_COOLDOWN = bot.settings.character_claim_cooldown;
     const FINAL_COOLDOWN = (DEFAULT_COOLDOWN) * 1000;
 
     if (!cooldowns.has('ch-claim-button')) {
