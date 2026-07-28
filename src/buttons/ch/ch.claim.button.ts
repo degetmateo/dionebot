@@ -1,12 +1,12 @@
-import { ButtonInteraction, Collection } from "discord.js";
-import { ObjectId, UUID } from "mongodb";
-import * as uuid from 'uuid';
+import { ButtonInteraction } from "discord.js";
+import { ObjectId} from "mongodb";
 import ErrorEmbed from "../../embeds/errorEmbed";
 import Bot from "../../extensions/bot.extension";
 import mongo from "../../database/mongo";
 import SuccessEmbed from "../../embeds/successEmbed";
 import claimCooldownHelper from "../../helpers/claim.cooldown.helper";
 import { memberModel } from "../../database/models/member.model";
+import guildsRepository from "../../repositories/guilds/guilds.repository";
 
 module.exports = {
     id: 'ch-claim-button',
@@ -50,20 +50,7 @@ module.exports = {
 
         claimCooldownHelper.execute(interaction);
 
-        let guild = await guilds.findOne(
-            { 
-                discord_id: interaction.guild?.id
-            }
-        );
-
-        if (!guild) {
-            guild = {
-                _id: new UUID(uuid.v7()) as any,
-                discord_id: interaction.guild?.id,
-                claimed_characters: []
-            };
-            await guilds.insertOne(guild);
-        };
+        const guild = await guildsRepository.findsert(interaction.guild?.id as string);
 
         await guilds.updateOne(
             {

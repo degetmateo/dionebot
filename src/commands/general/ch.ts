@@ -1,8 +1,8 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import GuildChatInputCommandInteraction from "../../extensions/guildChatInputCommandInteraction.extension";
 import mongo from "../../database/mongo";
-import { Document, UUID, WithId } from "mongodb";
-import CharacterEmbed from "../../builders/embeds/character.embed";
+import { Document, WithId } from "mongodb";
+import ChEmbed from "../../builders/embeds/ch.embed";
 
 module.exports = {
     cooldown: 5,
@@ -34,7 +34,7 @@ module.exports = {
         
         const owner_id = claimSearch ? claimSearch.claimed_characters[0].member_discord_id : null;
 
-        const embed = new CharacterEmbed({
+        const embed = new ChEmbed({
             name: character.name,
             site_url: character.url,
             image_url: character.images[0].url,
@@ -43,6 +43,7 @@ module.exports = {
         });
 
         character.owner_id = owner_id;
+
         const cache_id = interaction.client.set(character, 25_000);
 
         const row = new ActionRowBuilder<ButtonBuilder>()

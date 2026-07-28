@@ -1,5 +1,7 @@
 import GenericError from "../../errors/genericError";
 import { codes } from "../../static/codes";
+import ANILIST_GET_CHARACTER_ID from "./queries/anilist.get.character.id";
+import ANILIST_GET_CHARACTER_NAME from "./queries/anilist.get.character.name";
 import anilistRandom from "./queries/anilist.random";
 import anilistSearchAnimeById from "./queries/anilist.search.anime.id";
 import anilistSearchAnimeByName from "./queries/anilist.search.anime.name";
@@ -70,6 +72,12 @@ const anilist = {
         manga: {
             id: anilistSearchMangaById,
             name: anilistSearchMangaByName
+        }
+    },
+    get: {
+        character: {
+            id: ANILIST_GET_CHARACTER_ID,
+            name: ANILIST_GET_CHARACTER_NAME
         }
     },
     random: anilistRandom
