@@ -51,10 +51,20 @@ export default class CharacterEmbed extends EmbedBuilder {
                 `\n▸ Reclamado: \`${character.claimed_count} veces\``;
         };
 
-        desc +=
-            `\n▸ Edad: \`${character.age || 'desconocida'}\``+
-            `\n▸ Género: \`${character.gender || 'desconocido'}\``+
-            `\n▸ Tipo de sangre: \`${character.bloodType || 'desconocido'}\``;
+        if (character.age) {
+            desc +=
+                `\n▸ Edad: \`${character.age || 'desconocida'}\``;
+        };
+
+        if (character.gender) {
+            desc +=
+                `\n▸ Género: \`${character.gender || 'desconocido'}\``;
+        };
+
+        if (character.bloodType) {
+            desc +=
+                `\n▸ Tipo de sangre: \`${character.bloodType || 'desconocido'}\``;
+        };
 
         this.setDescription(desc);
     };
