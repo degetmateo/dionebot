@@ -15,7 +15,7 @@ export default class HelpEmbed extends EmbedBuilder {
             '\`/manga\` ▸ Busca un manga, muestra su información y calificaciones.\n' + 
             '\`/vn\` ▸ Busca una novela visual y muestra su información.\n' +
             '\`/affinity\` ▸ Calcula la afinidad entre dos usuarios basándose en sus calificaciones. Solo para usuarios de \`MyAnimeList\`.\n' +
-            '\`/random\` ▸ Devuelve un anime o manga aleatorio de tu PTW. Solo para usuarios de \`MyAnimeList\`.\n\n' +
+            '\`/random\` ▸ Devuelve un anime o manga aleatorio de tu PTW. Solo para usuarios de \`MyAnimeList\`.\n' +
             '\`/character\` ▸ Devuelve la información de un personaje.\n' +
             '\`/ch\` ▸ Tirada para reclamar personajes.\n' +
             '\`/gacha buy-pulls\` ▸ Adquiere \`pulls\` usando \`renas\`.\n' +
