@@ -16,6 +16,10 @@ export default class HelpEmbed extends EmbedBuilder {
             '\`/vn\` ▸ Busca una novela visual y muestra su información.\n' +
             '\`/affinity\` ▸ Calcula la afinidad entre dos usuarios basándose en sus calificaciones. Solo para usuarios de \`MyAnimeList\`.\n' +
             '\`/random\` ▸ Devuelve un anime o manga aleatorio de tu PTW. Solo para usuarios de \`MyAnimeList\`.\n\n' +
+            '\`/character\` ▸ Devuelve la información de un personaje.\n' +
+            '\`/ch\` ▸ Tirada para reclamar personajes.\n' +
+            '\`/gacha buy-pulls\` ▸ Adquiere \`pulls\` usando \`renas\`.\n' +
+            '\`/gacha buy-claims\` ▸ Adquiere \`claims\` usando \`renas\`.\n\n' +
             `[¡Invítame a tu servidor!](https://discord.com/oauth2/authorize?client_id=705972499367591953)`
         );
     };

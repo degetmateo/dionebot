@@ -1,4 +1,5 @@
 import { CollectionOptions, Db, MongoClient } from "mongodb";
+import migration from "./migration";
 
 class MongoDB {
     private connected: Boolean;
@@ -17,6 +18,7 @@ class MongoDB {
             await this.client.connect();
             this.db = this.client.db(process.env.MONGODB_DATABASE_NAME);
             this.connected = true;
+            await migration.execute();
             console.log('✅ | MongoDB connected.');
         } catch (error) {
             this.connected = false;

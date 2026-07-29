@@ -3,6 +3,10 @@ import GuildChatInputCommandInteraction from "../../extensions/guildChatInputCom
 import mongo from "../../database/mongo";
 import { Document, WithId } from "mongodb";
 import ChEmbed from "../../builders/embeds/ch.embed";
+import ErrorEmbed from "../../embeds/errorEmbed";
+import membersRepository from "../../repositories/members/members.repository";
+import guildsRepository from "../../repositories/guilds/guilds.repository";
+import charactersRepository from "../../repositories/characters/characters.repository";
 
 module.exports = {
     cooldown: 5,
@@ -12,27 +16,21 @@ module.exports = {
         .setContexts(InteractionContextType.Guild)
         .setNSFW(false),
     execute: async (interaction: GuildChatInputCommandInteraction) => {
-        const collection = mongo.collection('characters');
-        const result: any[] = await collection.aggregate([{ $sample: { size: 1 } }]).toArray();
-        const character: null | WithId<Document> = result.length > 0 ? result[0] : null;
-        // const character = await collection.findOne({ _id: new UUID('019f9f2d-74df-71a8-a510-8e5d47992fa8') as any })
-        if (!character) return;
+        const member: any = await membersRepository.findsert(interaction.user.id, interaction.guild.id);
 
-        const guilds = mongo.collection('guilds');
-        const claimSearch: any = await guilds.findOne(
-            {
-                discord_id: interaction.guild.id,
-                "claimed_characters.character_id": character._id
-            },
-            {
-                projection: {
-                    _id: 0,
-                    "claimed_characters.$": 1
-                }
-            }
-        );
-        
-        const owner_id = claimSearch ? claimSearch.claimed_characters[0].member_discord_id : null;
+        if (member.gacha.pulls <= 0) {
+            return interaction.reply({
+                flags: "Ephemeral",
+                embeds: [new ErrorEmbed('**¡No tienes más pulls!** Volverás a tener \`20 pulls\` en la siguiente hora (esto no se acumula). También puedes comprar \`1 pull\` por \`10 renas\` en \`/gacha buy-pulls\`.')]
+            });
+        };
+
+        membersRepository.decreasePulls(member._id);
+
+        const character = await charactersRepository.random(); 
+
+        const claim: any = await guildsRepository.getClaim(interaction.guild.id, character._id);
+        const owner_id = claim ? claim.member_discord_id : null;
 
         const embed = new ChEmbed({
             name: character.name,

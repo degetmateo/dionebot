@@ -7,6 +7,9 @@ import SuccessEmbed from "../../embeds/successEmbed";
 import claimCooldownHelper from "../../helpers/claim.cooldown.helper";
 import { memberModel } from "../../database/models/member.model";
 import guildsRepository from "../../repositories/guilds/guilds.repository";
+import membersRepository from "../../repositories/members/members.repository";
+import GenericError from "../../errors/genericError";
+import charactersRepository from "../../repositories/characters/characters.repository";
 
 module.exports = {
     id: 'ch-claim-button',
@@ -26,83 +29,39 @@ module.exports = {
         };
 
         const bot = interaction.client as Bot;
-        bot.delete(character.key);
-
-        const guilds = mongo.collection('guilds');
-        const members = mongo.collection('members');
 
         if (character.owner_id) {
             const renas = bot.settings.renas_per_reclaim;
-            members.updateOne(
-                {
-                    discord_id: character.owner_id
-                },
-                {
-                    $inc: {
-                        renas: renas
-                    }
-                }
-            );
+            membersRepository.increaseRenas(character.owner_id, renas);
 
             return await interaction.reply({
                 embeds: [new ErrorEmbed(`¡**${character.name}** ya pertenece a <@${character.owner_id}>! \`(+${renas} renas)\``)]
             });
         };
 
+        const memberWhoWantsToClaim: any = await membersRepository.findsert(interaction.user.id, interaction.guild?.id as string);
+
+        if (memberWhoWantsToClaim.gacha.claims <= 0) {
+            return interaction.reply({
+                flags: "Ephemeral",
+                embeds: [new ErrorEmbed(`**¡Te has quedado sin claims!** Volerás a tener \`2 claims\` en la siguiente hora (esto no se acumula). También puedes comprar \`1 claim\` por \`100 renas\` en \`/gacha buy-claims\`.`)]
+            });
+        };
+
+        const race = bot.get(character.key);
+        if (!race) throw new GenericError('Esta interacción ha expirado.');
+        bot.delete(character.key);
+
         claimCooldownHelper.execute(interaction);
 
         const guild = await guildsRepository.findsert(interaction.guild?.id as string);
-
-        await guilds.updateOne(
-            {
-                _id: guild._id
-            },
-            {
-                $push: {
-                    claimed_characters: {
-                        character_id: character._id,
-                        member_discord_id: interaction.user.id
-                    } as any
-                }
-            }
-        );
+        guildsRepository.pushClaim(guild._id, { character_id: character._id, member_discord_id: interaction.user.id });
 
         interaction.reply({
             embeds: [new SuccessEmbed(`¡<@${interaction.user.id}> ha reclamado a **${character.name}**!`)]
         });
 
-        const procedure = async () => {
-            let member = await members.findOne({ discord_id: interaction.user.id });
-
-            if (!member) {
-                member = memberModel.create(interaction.user.id, interaction.guild?.id as string);
-                await members.insertOne(member);
-            };
-
-            members.updateOne(
-                { 
-                    discord_id: interaction.user.id
-                },
-                {
-                    $inc: {
-                        claimed_characters_count: 1
-                    }
-                }
-            );
-
-            const characters = mongo.collection('characters');
-            characters.updateOne(
-                { 
-                    _id: character._id
-                },
-                {
-                    $inc: {
-                        claimed_count: 1
-                    }
-                }
-            );
-        };
-
-        procedure();
+        membersRepository.increaseClaimCount(memberWhoWantsToClaim._id);
+        charactersRepository.increaseClaimCount(character._id);
     }
 };

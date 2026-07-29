@@ -26,6 +26,10 @@ export const memberModel = {
                 preferred_platform: null,
                 avatar_url: null,
                 banner_url: null
+            },
+            gacha: {
+                pulls: 20,
+                claims: 2
             }
         };
     }

@@ -8,15 +8,11 @@
     "dev": "tsx --env-file=.env ./src/index.ts",
     "migrate": "tsx --env-file=.env ./scripts/migrate.ts",
     "build": "tsc",
-    
     "characters": "tsx --env-file=.env ./scripts/characters.ts",
     "remove-dup-characters": "tsx --env-file=.env ./scripts/remove-dup-characters.ts",
-
     "deploy-commands-global": "tsx --env-file=.env ./scripts/deploy-commands-global.ts",
     "deploy-commands-guild": "tsx --env-file=.env ./scripts/deploy-commands-guild.ts",
-
     "delete-command-global": "tsx --env-file=.env ./scripts/delete-command-global.ts",
-
     "delete-command-guild": "ts-node ./scripts/delete-command-guild.ts",
     "delete-commands-global": "ts-node ./scripts/delete-commands-global.ts",
     "delete-commands-guild": "ts-node ./scripts/delete-commands-guild.ts",
@@ -40,6 +36,7 @@
     "discord.js": "^14.26.4",
     "iso-639-1": "^3.1.5",
     "mongodb": "^7.5.0",
+    "node-cron": "^4.6.0",
     "uuid": "^14.0.1"
   },
   "devDependencies": {
