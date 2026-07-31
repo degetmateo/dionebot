@@ -44,7 +44,7 @@ module.exports = {
         if (memberWhoWantsToClaim.gacha.claims <= 0) {
             return interaction.reply({
                 flags: "Ephemeral",
-                embeds: [new ErrorEmbed(`**¡Te has quedado sin claims!** Volerás a tener \`2 claims\` en la siguiente hora (esto no se acumula). También puedes comprar \`1 claim\` por \`100 renas\` en \`/gacha buy-claims\`.`)]
+                embeds: [new ErrorEmbed(`**¡Te has quedado sin claims!** Volverás a tener \`2 claims\` en la siguiente hora (esto no se acumula). También puedes comprar \`1 claim\` por \`100 renas\` en \`/gacha buy-claims\`.`)]
             });
         };
 
@@ -57,11 +57,12 @@ module.exports = {
         const guild = await guildsRepository.findsert(interaction.guild?.id as string);
         guildsRepository.pushClaim(guild._id, { character_id: character._id, member_discord_id: interaction.user.id });
 
+        membersRepository.decreaseClaims(memberWhoWantsToClaim._id);
+        membersRepository.increaseClaimCount(memberWhoWantsToClaim._id);
+        charactersRepository.increaseClaimCount(character._id);
+
         interaction.reply({
             embeds: [new SuccessEmbed(`¡<@${interaction.user.id}> ha reclamado a **${character.name}**!`)]
         });
-
-        membersRepository.increaseClaimCount(memberWhoWantsToClaim._id);
-        charactersRepository.increaseClaimCount(character._id);
     }
 };

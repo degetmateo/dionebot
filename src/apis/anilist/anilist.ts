@@ -1,5 +1,6 @@
 import GenericError from "../../errors/genericError";
 import { codes } from "../../static/codes";
+import { getAuthorizedUser } from "./authorized/get.authorized.user";
 import ANILIST_GET_CHARACTER_ID from "./queries/anilist.get.character.id";
 import ANILIST_GET_CHARACTER_NAME from "./queries/anilist.get.character.name";
 import anilistRandom from "./queries/anilist.random";
@@ -80,7 +81,13 @@ const anilist = {
             name: ANILIST_GET_CHARACTER_NAME
         }
     },
-    random: anilistRandom
+    random: anilistRandom,
+
+    authorized: {
+        get: {
+            user: getAuthorizedUser
+        }
+    }
 };
 
 export default anilist;

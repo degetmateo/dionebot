@@ -30,33 +30,6 @@ module.exports = {
                             .setValue(data.profile ? data.profile.color || '' : '')
                     ),
                 new LabelBuilder()
-                    .setLabel('Plataforma preferida para mostrar datos.')
-                    .setDescription('Será la plataforma por defecto con la cual se mostrarán datos en tu perfil de usuario.')
-                    .setStringSelectMenuComponent(
-                        new StringSelectMenuBuilder()
-                            .setCustomId('setup-profile-modal-select-preferred-platform')
-                            .setMaxValues(1)
-                            .setMinValues(1)
-                            .setOptions(
-                                new StringSelectMenuOptionBuilder()
-                                    .setDefault(data.profile ? !data.profile.preferred_platform : false)
-                                    .setLabel('Sin especificar')
-                                    .setValue('NONE'),
-                                new StringSelectMenuOptionBuilder()
-                                    .setDefault(data.profile ? data.profile.preferred_platform === 'ANILIST' : false)
-                                    .setLabel('ANILIST')
-                                    .setValue('ANILIST'),
-                                new StringSelectMenuOptionBuilder()
-                                    .setDefault(data.profile ? data.profile.preferred_platform === 'MAL' : false)
-                                    .setLabel('MyAnimeList')
-                                    .setValue('MAL'),
-                                new StringSelectMenuOptionBuilder()
-                                    .setDefault(data.profile ? data.profile.preferred_platform === 'VNDB' : false)
-                                    .setLabel('Visual Novel Database')
-                                    .setValue('VNDB')
-                            )
-                    ),
-                new LabelBuilder()
                     .setLabel('Avatar de perfil.')
                     .setDescription('URL de una imagen que usaremos como tu avatar de perfil.')
                     .setTextInputComponent(

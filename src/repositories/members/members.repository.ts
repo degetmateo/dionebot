@@ -25,6 +25,20 @@ const membersRepository = {
         );
     },
 
+    decreaseClaims: async (_id: ObjectId) => {
+        const members = mongo.collection('members');
+        await members.updateOne(
+            {
+                _id
+            },
+            {
+                $inc: {
+                    "gacha.claims": -1
+                }
+            }
+        );
+    },
+
     increaseRenas: async (discord_id: string, renas: number) => {
         const members = mongo.collection('members');
         members.updateOne(

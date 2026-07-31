@@ -1,8 +1,9 @@
 import { ButtonInteraction, User } from "discord.js";
 import ErrorEmbed from "../../embeds/errorEmbed";
 import Bot from "../../extensions/bot.extension";
-import createUserEmbed from "../../commands/general/execute/user/create.user.embed";
 import UserRowComponent from "../../builders/components/user.row.component";
+import UserMALEmbed from "../../builders/embeds/user/user.mal.embed";
+import mal from "../../apis/mal/mal";
 
 module.exports = {
     id: 'user-mal-button',
@@ -26,7 +27,13 @@ module.exports = {
         };
 
         if (!data.embeds['mal']) {
-            data.embeds['mal'] = await createUserEmbed('MAL', data.member, data.user);
+            const maluser: any = await mal.user.get({ id: data.member.mal.id, token: data.member.mal.auth.access_token });
+            
+            if (data.member.profile) {
+                maluser.color = data.member.profile.color;
+            };
+            
+            data.embeds['mal'] = new UserMALEmbed(maluser);
         };
 
         const bot = interaction.client as Bot;
@@ -34,9 +41,9 @@ module.exports = {
 
         const buttons = new UserRowComponent({
             id: data.key,
-            anilist: data.platform != 'ANILIST' && data.member.anilist,
+            anilist: data.member.anilist,
             mal: false,
-            vndb: data.platform != 'VNDB' && data.member.vndb,
+            vndb: data.member.vndb,
             profile: true
         });
 

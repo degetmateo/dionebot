@@ -21,7 +21,7 @@ export default class UserRowComponent extends ActionRowBuilder<ButtonBuilder> {
             this.addComponents(
                 new ButtonBuilder()
                     .setCustomId(`user-anilist-button_${data.id}`)
-                    .setLabel('ANILIST')
+                    .setLabel('Ver ANILIST')
                     .setStyle(ButtonStyle.Primary)
             );
         };
@@ -31,7 +31,7 @@ export default class UserRowComponent extends ActionRowBuilder<ButtonBuilder> {
             this.addComponents(
                 new ButtonBuilder()
                     .setCustomId(`user-mal-button_${data.id}`)
-                    .setLabel('MAL')
+                    .setLabel('Ver MAL')
                     .setStyle(ButtonStyle.Primary)
             );
         };
@@ -41,7 +41,7 @@ export default class UserRowComponent extends ActionRowBuilder<ButtonBuilder> {
             this.addComponents(
                 new ButtonBuilder()
                     .setCustomId(`user-vndb-button_${data.id}`)
-                    .setLabel('VNDB')
+                    .setLabel('Ver VNDB')
                     .setStyle(ButtonStyle.Primary)
             );
         };
@@ -51,7 +51,7 @@ export default class UserRowComponent extends ActionRowBuilder<ButtonBuilder> {
             this.addComponents(
                 new ButtonBuilder()
                     .setCustomId(`user-default-button_${data.id}`)
-                    .setLabel('PERFIL')
+                    .setLabel('Ver PERFIL')
                     .setStyle(ButtonStyle.Primary)
             );
         };

@@ -1,8 +1,10 @@
 import { ButtonInteraction, User } from "discord.js";
 import ErrorEmbed from "../../embeds/errorEmbed";
 import Bot from "../../extensions/bot.extension";
-import createUserEmbed from "../../commands/general/execute/user/create.user.embed";
 import UserRowComponent from "../../builders/components/user.row.component";
+import UserAnilistEmbed from "../../builders/embeds/user/user.anilist.embed";
+import anilist from "../../apis/anilist/anilist";
+import Aniuser from "../../apis/anilist/models/aniuser";
 
 module.exports = {
     id: 'user-anilist-button',
@@ -26,7 +28,8 @@ module.exports = {
         };
 
         if (!data.embeds['anilist']) {
-            data.embeds['anilist'] = await createUserEmbed('ANILIST', data.member, data.user);
+            const aniuser = new Aniuser(await anilist.authorized.get.user(data.member.anilist.id, data.member.anilist.token));
+            data.embeds['anilist'] = new UserAnilistEmbed(aniuser);
         };
 
         const bot = interaction.client as Bot;
@@ -35,8 +38,8 @@ module.exports = {
         const buttons = new UserRowComponent({
             id: data.key,
             anilist: false,
-            mal: data.platform != 'MAL' && data.member.mal,
-            vndb: data.platform !='VNDB' && data.member.vndb,
+            mal: data.member.mal,
+            vndb: data.member.vndb,
             profile: true
         });
 

@@ -1,8 +1,8 @@
 import { ButtonInteraction, User } from "discord.js";
 import ErrorEmbed from "../../embeds/errorEmbed";
 import Bot from "../../extensions/bot.extension";
-import createUserEmbed from "../../commands/general/execute/user/create.user.embed";
 import UserRowComponent from "../../builders/components/user.row.component";
+import UserProfileEmbed from "../../builders/embeds/user/user.profile.embed";
 
 module.exports = {
     id: 'user-default-button',
@@ -26,7 +26,7 @@ module.exports = {
         };
 
         if (!data.embeds['default']) {
-            data.embeds['default'] = await createUserEmbed(data.platform, data.member, data.user);
+            data.embeds['default'] = new UserProfileEmbed({ member: data.member, user: data.user });
         };
 
         const bot = interaction.client as Bot;
@@ -34,9 +34,9 @@ module.exports = {
 
         const buttons = new UserRowComponent({
             id: data.key,
-            anilist: data.platform != 'ANILIST' && data.member.anilist,
-            mal: data.platform != 'MAL' && data.member.mal,
-            vndb: data.platform !='VNDB' && data.member.vndb,
+            anilist: data.member.anilist,
+            mal: data.member.mal,
+            vndb: data.member.vndb,
             profile: false
         });
 

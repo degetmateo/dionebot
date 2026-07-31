@@ -1,8 +1,8 @@
 import UserRowComponent from "../../../../builders/components/user.row.component";
+import UserProfileEmbed from "../../../../builders/embeds/user/user.profile.embed";
 import mongo from "../../../../database/mongo";
 import GenericError from "../../../../errors/genericError";
 import GuildChatInputCommandInteraction from "../../../../extensions/guildChatInputCommandInteraction.extension";
-import createUserEmbed from "./create.user.embed";
 
 const userExecute = async (interaction: GuildChatInputCommandInteraction) => {
     await interaction.deferReply();
@@ -21,8 +21,6 @@ const userExecute = async (interaction: GuildChatInputCommandInteraction) => {
         };
     };
 
-    const platform: null | 'ANILIST' | 'MAL' | 'VNDB' = member.profile ? member.profile.preferred_platform || null : null;
-
     const embeds: any = {
         profile: null,
         anilist: null,
@@ -30,15 +28,15 @@ const userExecute = async (interaction: GuildChatInputCommandInteraction) => {
         vndb: null
     };
 
-    embeds['profile'] = await createUserEmbed(platform, member, user);
+    embeds['profile'] = new UserProfileEmbed({ member, user });
 
-    const id = interaction.client.set({ platform, member, user, embeds }, 120_000);
+    const id = interaction.client.set({ member, user, embeds }, 120_000);
 
     const buttons = new UserRowComponent({
         id: id,
-        anilist: platform != 'ANILIST' && member.anilist,
-        mal: platform != 'MAL' && member.mal,
-        vndb: platform !='VNDB' && member.vndb,
+        anilist: member.anilist,
+        mal: member.mal,
+        vndb: member.vndb,
         profile: false
     });
 

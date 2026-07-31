@@ -1,8 +1,9 @@
 import { ButtonInteraction, User } from "discord.js";
 import ErrorEmbed from "../../embeds/errorEmbed";
 import Bot from "../../extensions/bot.extension";
-import createUserEmbed from "../../commands/general/execute/user/create.user.embed";
 import UserRowComponent from "../../builders/components/user.row.component";
+import vndb from "../../apis/vndb/vndb";
+import UserVNDBEmbed from "../../builders/embeds/user/user.vndb.embed";
 
 module.exports = {
     id: 'user-vndb-button',
@@ -26,7 +27,17 @@ module.exports = {
         };
 
         if (!data.embeds['vndb']) {
-            data.embeds['vndb'] = await createUserEmbed('VNDB', data.member, data.user);
+            const vndbuser: any = await vndb.user({ id: data.member.vndb.id, token: data.member.vndb.auth.token });
+            vndbuser.name = data.member.vndb.username;
+            vndbuser.id = data.member.vndb.id;
+
+            if (data.member.profile) {
+                vndbuser.color = data.member.profile.color;
+                vndbuser.avatar = data.member.profile.avatar_url;
+                vndbuser.banner = data.member.profile.banner_url;
+            };
+
+            data.embeds['vndb'] = new UserVNDBEmbed(vndbuser);
         };
 
         const bot = interaction.client as Bot;
@@ -34,8 +45,8 @@ module.exports = {
 
         const buttons = new UserRowComponent({
             id: data.key,
-            anilist: data.platform != 'ANILIST' && data.member.anilist,
-            mal: data.platform != 'MAL' && data.member.mal,
+            anilist: data.member.anilist,
+            mal: data.member.mal,
             vndb: false,
             profile: true
         });
