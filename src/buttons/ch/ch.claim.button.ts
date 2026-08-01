@@ -31,6 +31,8 @@ module.exports = {
         const bot = interaction.client as Bot;
 
         if (character.owner_id) {
+            bot.delete(character.key);
+
             const renas = bot.settings.renas_per_reclaim;
             if (character.owner_id != interaction.user.id) {
                 const dividedRenas = Math.floor(renas / 2);
