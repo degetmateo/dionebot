@@ -34,7 +34,19 @@ module.exports = {
                         .setRequired(true)
                         .setMinValue(1)
                 )
-        ),
+        )
+        // .addSubcommand(subcommand => 
+        //     subcommand
+        //         .setName('trade')
+        //         .setDescription('¡Intercambiar personajes con otro usuario!')
+        //         .addUserOption(option => 
+        //             option
+        //                 .setName('user')
+        //                 .setDescription('Usuario con el que quieres intercambiar un personaje.')
+        //                 .setRequired(true)
+        //         )
+        // )
+        ,
     execute: async (interaction: GuildChatInputCommandInteraction) => { 
         const member: any = await membersRepository.findsert(interaction.user.id, interaction.guild.id);
         

@@ -1,4 +1,4 @@
-import { CollectionOptions, Db, MongoClient } from "mongodb";
+import { CollectionOptions, Db, MongoClient, Collection, Document } from "mongodb";
 import migration from "./migration";
 
 class MongoDB {
@@ -6,19 +6,37 @@ class MongoDB {
     private client: MongoClient;
     public db: Db;
     
+    public guilds: Collection<Document>;
+    public users: Collection<Document>;
+    public characters: Collection<Document>;
+    public claims: Collection<Document>;
+
     constructor () {
         this.connected = false;
         this.client = {} as MongoClient;
         this.db = {} as Db;
+        this.guilds = {} as Collection;
+        this.users = {} as Collection;
+        this.characters = {} as Collection;
+        this.claims = {} as Collection;
     };
 
     async init () {
         try {
             this.client = new MongoClient(process.env.MONGODB_DATABASE_KEY);
+            
             await this.client.connect();
+            
             this.db = this.client.db(process.env.MONGODB_DATABASE_NAME);
             this.connected = true;
+
+            this.guilds = this.collection('guilds');
+            this.users = this.collection('users');
+            this.characters = this.collection('characters');
+            this.claims = this.collection('claims');
+
             await migration.execute();
+
             console.log('✅ | MongoDB connected.');
         } catch (error) {
             this.connected = false;

@@ -8,11 +8,9 @@ module.exports = {
     once: false,
     execute: async (guild: Guild) => {
         try {
-            const guilds = mongo.collection('guilds');
-            const _id = uuid.v7();
-            await guilds.insertOne({
-                _id: new UUID(_id) as any,
-                discord_id: guild.id
+            await mongo.guilds.insertOne({
+                _id: guild.id as any,
+                affinities: []
             });
         } catch (error) {
             console.error(error);

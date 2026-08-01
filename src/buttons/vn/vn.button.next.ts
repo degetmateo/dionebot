@@ -7,7 +7,7 @@ import VNScoresEmbed from "../../builders/embeds/vn.scores.embed";
 module.exports = {
     id: 'vn-button-next',
     execute: async (interaction: ButtonInteraction, data: {
-        members: WithId<Document>[];
+        users: WithId<Document>[];
         media: any[];
         index: number;
         vnsEmbeds: EmbedBuilder[];
@@ -24,11 +24,11 @@ module.exports = {
         if (data.index > data.vnsEmbeds.length - 1) data.index = 0;
     
         if (!data.scoresEmbeds[data.index]) {
-            const scores = await vndb.scores(data.members.map(member => {
+            const scores = await vndb.scores(data.users.map(user => {
                 return {
-                    userId: member.vndb.id,
-                    username: member.vndb.username,
-                    userToken: member.vndb.auth.token,
+                    userId: user.vndb.id,
+                    username: user.vndb.username,
+                    userToken: user.vndb.auth.token,
                     vnId: data.media[data.index].id
                 }
             }));

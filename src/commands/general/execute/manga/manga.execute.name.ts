@@ -11,13 +11,12 @@ import commonRequests from "../../../../apis/common/common.requests";
 
 const mangaExecuteName = async (interaction: GuildChatInputCommandInteraction) => {
     const name = interaction.options.getString('name-or-id') as string;
-    const collection = mongo.collection('members');
 
-    const members = await collection.find(
+    const members = await mongo.users.find(
         { 
             $and: [
                 { 
-                    'guilds.id': interaction.guild.id 
+                    'guilds._id': interaction.guild.id 
                 }, 
                 { 
                     'guilds.show_scores': true 

@@ -9,15 +9,14 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
     try {
         await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
 
-        const members = mongo.collection('members');
-        let member = await members.findOne({ discord_id: interaction.user.id });
+        let user = await mongo.users.findOne({ _id: interaction.user.id as any });
 
         const embed = new EmbedBuilder();
         embed.setColor(Colors.DarkOrange);
 
-        if (!member) {
-            member = memberModel.create(interaction.user.id, interaction.guild.id as string);
-            await members.insertOne(member);
+        if (!user) {
+            user = memberModel.create(interaction.user.id, interaction.guild.id as string);
+            await mongo.users.insertOne(user);
 
             let desc = 
                 `**¡Perfil creado correctamente!**\n`+
@@ -34,7 +33,7 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
             embed.setDescription(desc);
         };
 
-        const id = interaction.client.set(member, 60_000);
+        const id = interaction.client.set(user, 60_000);
 
         const row = new ActionRowBuilder<ButtonBuilder>();
         row.addComponents([

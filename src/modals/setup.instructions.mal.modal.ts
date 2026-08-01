@@ -1,5 +1,4 @@
 import { EmbedBuilder, MessageFlags, ModalSubmitInteraction } from "discord.js";
-import { ObjectId } from "mongodb";
 import ErrorEmbed from "../embeds/errorEmbed";
 import mongo from "../database/mongo";
 import mal from "../apis/mal/mal";
@@ -7,7 +6,7 @@ import mal from "../apis/mal/mal";
 module.exports = {
     id: 'setup-instructions-mal-modal',
     execute: async (interaction: ModalSubmitInteraction, data: {
-        _id: ObjectId;
+        _id: string;
         discord_id: string;
         key: string;
         code_verifier: string;
@@ -19,7 +18,7 @@ module.exports = {
             });
         };
 
-        if (interaction.user.id != data.discord_id) {
+        if (interaction.user.id != data._id) {
             return await interaction.reply({
                 flags: [MessageFlags.Ephemeral],
                 embeds: [new ErrorEmbed('No tienes permiso para realizar esta acción.')]
@@ -53,14 +52,12 @@ module.exports = {
 
         const tokens = await mal.token(code, data.code_verifier);
         const maluser = await mal.user.me(tokens.access_token);
-        
-        const members = mongo.collection('members');
 
-        await members.updateOne(
-            { _id: data._id },
+        await mongo.users.updateOne(
+            { _id: data._id as any },
             {
                 $set: {
-                    preferred_platform: 'mal',
+                    preferred_platform: 'mal', 
                     mal: {
                         id: maluser.id,
                         name: maluser.name,

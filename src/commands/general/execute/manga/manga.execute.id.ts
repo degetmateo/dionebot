@@ -9,13 +9,12 @@ import AnimeValidator from "../../../../validators/animeValidator";
 
 const mangaExecuteId = async (interaction: GuildChatInputCommandInteraction) => {
     const id = interaction.options.getString('name-or-id') as string;
-    const collection = mongo.collection('members');
 
-    const members = await collection.find(
+    const users = await mongo.users.find(
         { 
             $and: [
                 { 
-                    'guilds.id': interaction.guild.id 
+                    'guilds._id': interaction.guild.id 
                 }, 
                 { 
                     'guilds.show_scores': true 
@@ -33,7 +32,7 @@ const mangaExecuteId = async (interaction: GuildChatInputCommandInteraction) => 
 
     const mangaEmbed = new MangaEmbed(data);
 
-    if (members.length <= 0) {
+    if (users.length <= 0) {
         return await interaction.editReply({
             embeds: [mangaEmbed]
         });
@@ -42,7 +41,7 @@ const mangaExecuteId = async (interaction: GuildChatInputCommandInteraction) => 
     const scores = await commonRequests.search.scores({
         ...data,
         type: 'MANGA'
-    }, members as any);
+    }, users as any);
 
     const scoresEmbed = scores.length > 0 ?
         new ScoresEmbed(scores) :

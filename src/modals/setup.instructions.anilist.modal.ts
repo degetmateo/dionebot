@@ -4,7 +4,7 @@ import mongo from "../database/mongo";
 import ErrorEmbed from "../embeds/errorEmbed";
 import SetupSuccessEmbed from "../builders/embeds/setupSuccess.embed";
 import anilist from "../apis/anilist/anilist";
-import { Document, Filter, MatchKeysAndValues, UpdateFilter } from "mongodb";
+import { Document, Filter } from "mongodb";
 
 module.exports = {
     id: 'setup-instructions-anilist-modal',
@@ -21,7 +21,7 @@ module.exports = {
             });
         };
 
-        if (interaction.user.id != member.discord_id) {
+        if (interaction.user.id != member._id) {
             return await interaction.reply({
                 flags: [MessageFlags.Ephemeral],
                 embeds: [new ErrorEmbed('No tienes permiso para realizar esta acción.')]
@@ -32,12 +32,10 @@ module.exports = {
 
         const token = interaction.fields.getTextInputValue('setup-instructions-anilist-input');
         const viewer = await anilist.viewer(token);
-    
-        const members = mongo.collection('members');
 
         const filter: Filter<Document> = { _id: member._id };
 
-        const query = await members.findOneAndUpdate(
+        const query = await mongo.users.findOneAndUpdate(
             filter,
             { 
                 $set: {

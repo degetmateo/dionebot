@@ -10,10 +10,10 @@ import ErrorEmbed from "../../embeds/errorEmbed";
 import { MediaEntry } from "../../apis/anilist/types";
 
 const execute = async (interaction: GuildChatInputCommandInteraction) => {
-    const memberOptionA = interaction.options.getUser('member', true);
-    const memberOptionB = interaction.options.getUser('member-b', false) || interaction.user;
+    const userOptionA = interaction.options.getUser('member', true);
+    const userOptionB = interaction.options.getUser('member-b', false) || interaction.user;
     
-    if (memberOptionA.id == memberOptionB.id) {
+    if (userOptionA.id == userOptionB.id) {
         return await interaction.reply({
             flags: [MessageFlags.Ephemeral],            
             embeds: [new ErrorEmbed('No puedes calcular la afinidad contigo mismo.')]
@@ -22,11 +22,10 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
 
     await interaction.deferReply();
 
-    const members = mongo.collection('members');
-    const memberB = await members.findOne({
+    const memberB = await mongo.users.findOne({
         $and: [
             { 
-                discord_id: memberOptionB.id
+                _id: userOptionB.id as any
             }, 
             { 
                 anilist: { $ne: null }
@@ -35,17 +34,17 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
     });
 
     if (!memberB) { 
-        if(memberOptionB.id === interaction.user.id) {
-            throw new GenericError('No estás registrado o no registraste tu ANILIST. 💔');
+        if(userOptionB.id === interaction.user.id) {
+            throw new GenericError('No estás registrado o no registraste tu \`ANILIST\`. 💔');
         } else {
-            throw new GenericError(`<@${memberOptionB.id}> no está registrado o no registró su ANILIST. 💔`);
+            throw new GenericError(`<@${userOptionB.id}> no está registrado o no registró su \`ANILIST\`. 💔`);
         };
     };
 
-    const memberA = await members.findOne({
+    const memberA = await mongo.users.findOne({
         $and: [
             { 
-                discord_id: memberOptionA.id
+                _id: userOptionA.id as any
             }, 
             { 
                 anilist: { $ne: null }
@@ -53,7 +52,7 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
         ]
     });
     
-    if (!memberA) throw new GenericError(`<@${memberOptionA.id}> no está registrado o no registró su ANILIST. 💔`);
+    if (!memberA) throw new GenericError(`<@${userOptionA.id}> no está registrado o no registró su \`ANILIST\`. 💔`);
 
     const data = await anilist.search.entries(memberB.anilist.id, memberA.anilist.id);
 
@@ -71,16 +70,16 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
     await interaction.editReply({
         embeds: [new AffinityEmbed({ 
             affinity: pearson, 
-            userAId: memberOptionA.id, 
-            userBId: memberOptionB.id 
+            userAId: userOptionA.id, 
+            userBId: userOptionB.id 
         })]
     });
 
     guildsRepository.update.affinityTop(interaction.guild.id, {
         pearson: pearson,
         pair: {
-            a: { discord_id: memberOptionA.id },
-            b: { discord_id: memberOptionB.id }
+            a: { discord_id: userOptionA.id },
+            b: { discord_id: userOptionB.id }
         }
     });
 };

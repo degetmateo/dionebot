@@ -11,11 +11,10 @@ const membersRepository = {
         }
     },
 
-    decreasePulls: async (_id: ObjectId) => {
-        const members = mongo.collection('members');
-        await members.updateOne(
+    decreasePulls: async (_id: string) => {
+        await mongo.users.updateOne(
             {
-                _id
+                _id: _id as any
             },
             {
                 $inc: {
@@ -25,11 +24,10 @@ const membersRepository = {
         );
     },
 
-    decreaseClaims: async (_id: ObjectId) => {
-        const members = mongo.collection('members');
-        await members.updateOne(
+    decreaseClaims: async (_id: string) => {
+        await mongo.users.updateOne(
             {
-                _id
+                _id: _id as any
             },
             {
                 $inc: {
@@ -39,11 +37,10 @@ const membersRepository = {
         );
     },
 
-    increaseRenas: async (discord_id: string, renas: number) => {
-        const members = mongo.collection('members');
-        members.updateOne(
+    increaseRenas: async (_id: string, renas: number) => {
+        await mongo.users.updateOne(
             {
-                discord_id: discord_id
+                _id: _id as any
             },
             {
                 $inc: {
@@ -53,11 +50,10 @@ const membersRepository = {
         );
     },
 
-    increaseClaimCount: async (_id: ObjectId) => {
-        const members = mongo.collection('members');
-        await members.updateOne(
+    increaseClaimCount: async (_id: string) => {
+        await mongo.users.updateOne(
             { 
-                _id
+                _id: _id as any
             },
             {
                 $inc: {
@@ -67,11 +63,10 @@ const membersRepository = {
         );
     },
 
-    buyPulls: async (_id: ObjectId, pulls: number, price: number) => {
-        const members = mongo.collection('members');
-        await members.updateOne(
+    buyPulls: async (_id: string, pulls: number, price: number) => {
+        await mongo.users.updateOne(
             {
-                _id
+                _id: _id as any
             },
             {
                 $inc: {
@@ -81,11 +76,11 @@ const membersRepository = {
             }
         )
     },
-    buyClaims: async (_id: ObjectId, claims: number, price: number) => {
-        const members = mongo.collection('members');
-        await members.updateOne(
+
+    buyClaims: async (_id: string, claims: number, price: number) => {
+        await mongo.users.updateOne(
             {
-                _id
+                _id: _id as any
             },
             {
                 $inc: {

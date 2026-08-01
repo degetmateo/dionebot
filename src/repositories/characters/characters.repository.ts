@@ -3,17 +3,15 @@ import mongo from "../../database/mongo";
 
 const charactersRepository = {
     random: async () => {
-        const characters = mongo.collection('characters');
-        const result: any[] = await characters.aggregate([{ $sample: { size: 1 } }]).toArray();
+        const result: any[] = await mongo.characters.aggregate([{ $sample: { size: 1 } }]).toArray();
         const character: WithId<Document> = result.length > 0 ? result[0] : null;
         return character;
     },
 
-    increaseClaimCount: async (_id: ObjectId) => {
-        const characters = mongo.collection('characters');
-        characters.updateOne(
+    increaseClaimCount: async (_id: number) => {
+        await mongo.characters.updateOne(
             { 
-                _id
+                _id: _id as any
             },
             {
                 $inc: {

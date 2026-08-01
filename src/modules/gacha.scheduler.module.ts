@@ -4,21 +4,20 @@ import mongo from '../database/mongo';
 const SCHEDULE_PULLS_RESET = async () => {
     cron.schedule('0 * * * *', async () => {
         console.log('EJECUTANDO RESET PULLS');
-        const members = mongo.collection('members');
 
         try {
-            await members.updateMany(
+            await mongo.users.updateMany(
                 {
-                    "gacha.pulls": { $lt: 20 }
+                    "gacha.pulls": { $lt: 15 }
                 },
                 {
                     $set: {
-                        "gacha.pulls": 20
+                        "gacha.pulls": 15
                     }
                 }
             );
 
-            await members.updateMany(
+            await mongo.users.updateMany(
                 {
                     "gacha.claims": { $lt: 2 }
                 },

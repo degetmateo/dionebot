@@ -1,11 +1,9 @@
-import { UUID } from 'mongodb';
-import * as uuid from 'uuid';
+import { Document, ObjectId, WithId } from "mongodb";
 
 export const memberModel = {
-    create: (user_id: string, guild_id: string) => {
+    create: (user_id: string, guild_id: string): WithId<Document> => {
         return {
-            _id: new UUID(uuid.v7()) as any,
-            discord_id: user_id,
+            _id: user_id as any,
             created_at: new Date(),
             renas: 0,
             exchanges: {
@@ -13,13 +11,11 @@ export const memberModel = {
                 active: null,
                 history: []
             },
-            preferred_platform: null,
             anilist: null,
             mal: null,
             guilds: [{
-                id: guild_id,
-                show_scores: true,
-                claimed_characters: []
+                _id: guild_id,
+                show_scores: true
             }],
             profile: {
                 color: null,

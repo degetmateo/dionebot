@@ -12,21 +12,17 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
 
     const type = interaction.options.getString('type', true) as "ANIME" | "MANGA";
 
-    const members = mongo.collection('members');
-    const member = await members.findOne({
-        $and: [
-            { 
-                discord_id: interaction.user.id
-            }, 
-            { 
-                preferred_platform: 'anilist'
-            }
-        ]
-    });
+    const user = await mongo.users.findOne({ _id: interaction.user.id as any });
 
-    if (!member) throw new GenericError('No estás registrado. Usa el comando `/setup` para registrarte. Este comando solo funciona para ANILIST.');
+    if (!user) {
+        throw new GenericError('No estás registrado. Usa el comando `/setup` para registrarte.');
+    };
 
-    const media = await anilist.random({ type: type, user_id: member.anilist.id });
+    if (!user.anilist) {
+        throw new GenericError('Este comando solo funciona para \`ANILIST\`. Usa \`/setup\` para vincular tu cuenta de \`ANILIST\`.');
+    };
+
+    const media = await anilist.random({ type: type, user_id: user.anilist.id });
     
     if (media.length <= 0) throw new GenericError(`¡No tienes ${type.toUpperCase()} en tu PTW!`);
 

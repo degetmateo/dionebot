@@ -1,4 +1,3 @@
-import mongo from "../../../../database/mongo";
 import GuildChatInputCommandInteraction from "../../../../extensions/guildChatInputCommandInteraction.extension";
 import Helpers from "../../../../helpers";
 import animeExecuteId from "./anime.execute.id";

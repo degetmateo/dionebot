@@ -10,15 +10,10 @@ module.exports = {
         const colorValue = interaction.fields.getTextInputValue('setup-profile-modal-input-color').trim();
         const color = colorValue as ColorResolvable;
 
-        const platforms = interaction.fields.getStringSelectValues('setup-profile-modal-select-preferred-platform');
-        const platform = platforms[0];
-
         const avatarURL = interaction.fields.getTextInputValue('setup-profile-modal-input-avatar-url').trim();
         const bannerURL = interaction.fields.getTextInputValue('setup-profile-modal-input-banner-url').trim();
 
-        const collection = mongo.collection('members');
-
-        const filter: Filter<Document> = { discord_id: interaction.user.id };
+        const filter: Filter<Document> = { _id: interaction.user.id as any };
         const set: MatchKeysAndValues<Document> = {};
 
         if (colorValue && colorValue.length > 0) {
@@ -27,20 +22,11 @@ module.exports = {
             set['profile.color'] = null;
         };
 
-        if (platform) {
-            if (platform === 'NONE') {
-                set['profile.preferred_platform'] = null;
-            } else {
-                set['profile.preferred_platform'] = platform;
-            };
-        };
-
         if (avatarURL && avatarURL.length > 0) {
             set['profile.avatar_url'] = avatarURL;
         } else {
             set['profile.avatar_url'] = null;
         };
-
 
         if (bannerURL && bannerURL.length > 0) {
             set['profile.banner_url'] = bannerURL;
@@ -50,9 +36,9 @@ module.exports = {
 
         const update: UpdateFilter<Document> = { $set: set };
 
-        const member = await collection.findOneAndUpdate(filter, update, { upsert: false });
+        const user = await mongo.users.findOneAndUpdate(filter, update, { upsert: false });
 
-        if (!member) {
+        if (!user) {
             return interaction.reply({
                 flags: "Ephemeral",
                 embeds: [new ErrorEmbed('No estás registrado. Utiliza \`/setup\` para registrarte.')]

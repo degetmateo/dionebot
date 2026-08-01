@@ -9,13 +9,12 @@ import AnimeValidator from "../../../../validators/animeValidator";
 
 const animeExecuteId = async (interaction: GuildChatInputCommandInteraction) => {
     const id = interaction.options.getString('name-or-id') as string;
-    const collection = mongo.collection('members');
 
-    const members = await collection.find(
+    const members = await mongo.users.find(
         { 
             $and: [
                 { 
-                    'guilds.id': interaction.guild.id 
+                    'guilds._id': interaction.guild.id 
                 }, 
                 { 
                     'guilds.show_scores': true 

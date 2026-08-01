@@ -1,20 +1,15 @@
-import * as uuid from 'uuid';
 import mongo from "../../database/mongo";
-import { UUID } from 'mongodb';
 
-const guildsRepositoryFindsert = async (id: string) => {
-    const guilds = mongo.collection('guilds');
-    
-    let guild = await guilds.findOne({ discord_id: id });
+const guildsRepositoryFindsert = async (_id: string) => {
+    let guild = await mongo.guilds.findOne({ _id: _id as any });
 
     if (!guild) {
         guild = {
-            _id: new UUID(uuid.v7()) as any,
-            discord_id: id,
-            claimed_characters: []
+            _id: _id as any,
+            affinities: []
         };
 
-        await guilds.insertOne(guild);
+        await mongo.guilds.insertOne(guild);
     };
 
     return guild;

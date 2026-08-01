@@ -1,12 +1,11 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, InteractionContextType, SlashCommandBuilder } from "discord.js";
 import GuildChatInputCommandInteraction from "../../extensions/guildChatInputCommandInteraction.extension";
-import mongo from "../../database/mongo";
-import { Document, WithId } from "mongodb";
 import ChEmbed from "../../builders/embeds/ch.embed";
 import ErrorEmbed from "../../embeds/errorEmbed";
 import membersRepository from "../../repositories/members/members.repository";
 import guildsRepository from "../../repositories/guilds/guilds.repository";
 import charactersRepository from "../../repositories/characters/characters.repository";
+import mongo from "../../database/mongo";
 
 module.exports = {
     cooldown: 5,
@@ -21,7 +20,7 @@ module.exports = {
         if (member.gacha.pulls <= 0) {
             return interaction.reply({
                 flags: "Ephemeral",
-                embeds: [new ErrorEmbed('**¡No tienes más pulls!** Volverás a tener \`20 pulls\` en la siguiente hora (esto no se acumula). También puedes comprar \`1 pull\` por \`10 renas\` en \`/gacha buy-pulls\`.')]
+                embeds: [new ErrorEmbed('**¡No tienes más pulls!** Volverás a tener \`15 pulls\` en la siguiente hora (esto no se acumula). También puedes comprar \`1 pull\` por \`10 renas\` en \`/gacha buy-pulls\`.')]
             });
         };
 
@@ -29,8 +28,13 @@ module.exports = {
 
         const character = await charactersRepository.random(); 
 
-        const claim: any = await guildsRepository.getClaim(interaction.guild.id, character._id);
-        const owner_id = claim ? claim.member_discord_id : null;
+        const claim = await mongo.claims.findOne(
+            {
+                _id: `${interaction.guild.id}_${character._id}` as any
+            }
+        );
+
+        const owner_id = claim ? claim.user_id : null;
 
         const embed = new ChEmbed({
             name: character.name,

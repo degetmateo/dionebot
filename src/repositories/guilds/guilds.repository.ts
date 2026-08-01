@@ -9,11 +9,10 @@ const guildsRepository = {
     },
     findsert: guildsRepositoryFindsert,
 
-    getClaim: async (guild_discord_id: string, character_id: ObjectId) => {
-        const guilds = mongo.collection('guilds');
-        const claim = await guilds.findOne(
+    getClaim: async (guild_id: string, character_id: ObjectId) => {
+        const claim = await mongo.guilds.findOne(
             {
-                discord_id: guild_discord_id,
+                _id: guild_id as any,
                 "claimed_characters.character_id": character_id
             },
             {
@@ -25,23 +24,6 @@ const guildsRepository = {
         );
 
         return claim ? claim.claimed_characters[0] : null;
-    },
-
-    pushClaim: async (_id: ObjectId, claim: { character_id: ObjectId, member_discord_id: string }) => {
-        const guilds = mongo.collection('guilds');
-        await guilds.updateOne(
-            {
-                _id: _id
-            },
-            {
-                $push: {
-                    claimed_characters: {
-                        character_id: claim.character_id,
-                        member_discord_id: claim.member_discord_id
-                    } as any
-                }
-            }
-        );
     }
 };
 

@@ -1,12 +1,10 @@
 import { InteractionContextType, SlashCommandBuilder } from "discord.js";
-import * as uuid from 'uuid';
 import GuildChatInputCommandInteraction from "../../extensions/guildChatInputCommandInteraction.extension";
 import Helpers from "../../helpers";
 import anilist from "../../apis/anilist/anilist";
 import ErrorEmbed from "../../embeds/errorEmbed";
 import mongo from "../../database/mongo";
 import CharacterEmbed from "../../builders/embeds/character.embed";
-import { UUID } from "mongodb";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -34,8 +32,7 @@ module.exports = {
             });
         };
 
-        const characters = mongo.collection('characters');
-        const char = await characters.findOne({ anilist_id: data.id });
+        const char = await mongo.characters.findOne({ _id: data.id });
 
         let owner_id: string | null = null;
         let claimed_count: number | null = null;
@@ -43,27 +40,18 @@ module.exports = {
         if (char) {
             claimed_count = char.claimed_count;
             
-            const guilds = mongo.collection('guilds');
-            const claimSearch: any = await guilds.findOne(
+            const claim = await mongo.claims.findOne(
                 {
-                    discord_id: interaction.guild.id,
-                    "claimed_characters.character_id": char._id
-                },
-                {
-                    projection: {
-                        _id: 0,
-                        "claimed_characters.$": 1
-                    }
+                    _id: `${interaction.guild.id}_${char._id}` as any
                 }
             );
 
-            if (claimSearch) {
-                owner_id = claimSearch.claimed_characters[0].member_discord_id;
+            if (claim) {
+                owner_id = claim.user_id;
             };
         } else {
-            characters.insertOne({
-                _id: new UUID(uuid.v7()) as any,
-                anilist_id: data.id,
+            mongo.characters.insertOne({
+                _id: data.id,
                 url: data.siteUrl,
                 gender: data.gender || null,
                 age: data.age || null,

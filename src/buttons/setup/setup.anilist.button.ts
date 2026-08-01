@@ -19,7 +19,7 @@ module.exports = {
             });
         };
 
-        if (interaction.user.id != member.discord_id) {
+        if (interaction.user.id != member._id) {
             return await interaction.reply({
                 flags: [MessageFlags.Ephemeral],
                 embeds: [new ErrorEmbed('No tienes permiso para realizar esta acción.')]

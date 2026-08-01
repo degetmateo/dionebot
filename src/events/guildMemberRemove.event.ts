@@ -4,17 +4,15 @@ import mongo from "../database/mongo";
 module.exports = {
     name: Events.GuildMemberRemove,
     once: false,
-    execute: async (guildMember: GuildMember) => {
+    execute: async (member: GuildMember) => {
         try {        
-            const members = mongo.collection('members');
-            const member = await members.findOne({ discord_id: guildMember.id });
+            const user = await mongo.users.findOne({ _id: member.id as any });
+            if (!user) return;
 
-            if (!member) return;
+            const guilds = user.guilds.filter((guild: any) => guild._id != member.guild.id);
 
-            const guilds = member.guilds.filter((g: any) => g.id != guildMember.guild.id);
-
-            await members.updateOne(
-                { _id: member._id },
+            await mongo.users.updateOne(
+                { _id: user._id },
                 { $set: { guilds } }
             );
         } catch (error) {

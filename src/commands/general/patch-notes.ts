@@ -14,6 +14,8 @@ module.exports = {
             .setColor('DarkOrange')
             .setThumbnail(interaction.client.user.avatarURL())
             .setDescription(
+                `\`01-08-2026\` ¡Hemos reiniciado el gacha!\n`+
+                `▸ Ahora puedes presionar el botón de los personajes ya reclamados para obtener \`renas\`.\n`+
                 `\`29-07-2026\` Ahora puedes comprar \`pulls\` y \`claims\` en \`/gacha buy\`\n`+
                 `▸ Ahora hay usos limitados del comando \`/ch\`. Estos usos se reestablecen cada hora o puedes comprarlos.\n`+
                 `▸ Ahora hay \`claims\` limitados. Se reestablecen por hora o puedes comprarlos.\n`+
@@ -25,7 +27,7 @@ module.exports = {
                 `\`25-07-2026\` Ahora se pueden vincular cuentas de \`VNDB\`.\n\n`+
                 `[¡Invítame a tu servidor!](https://discord.com/oauth2/authorize?client_id=705972499367591953)`
             )
-            .setFooter({ text: 'Dione v4.1.1' });
+            .setFooter({ text: 'Dione v4.1.2' });
         
         return await interaction.reply({
             embeds: [embed]

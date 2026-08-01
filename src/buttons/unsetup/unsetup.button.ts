@@ -8,10 +8,9 @@ module.exports = {
     execute: async (interaction: ButtonInteraction) => {
         await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
 
-        const members = mongo.collection('members');
-        const member = await members.findOneAndDelete({ discord_id: interaction.user.id });
+        const user = await mongo.users.findOneAndDelete({ _id: interaction.user.id as any });
 
-        if (!member) {
+        if (!user) {
             return await interaction.editReply({
                 embeds: [new ErrorEmbed('¡No estás registrado!')]
             });

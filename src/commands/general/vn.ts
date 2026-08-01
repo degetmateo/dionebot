@@ -18,12 +18,11 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
     const vnsEmbeds = media.map(vn => new VNEmbed(vn));
     const scoresEmbeds: EmbedBuilder[] = [];
 
-    const collection = mongo.collection('members');
-    const members = await collection.find(
+    const users = await mongo.users.find(
         {
             $and: [
                 {
-                    "guilds.id": interaction.guild.id
+                    "guilds._id": interaction.guild.id
                 },
                 {
                     "guilds.show_scores": true
@@ -37,13 +36,13 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
 
     let index = 0;
 
-    let selectedMembers = members.slice(0, 5);
+    let selectedUsers = users.slice(0, 5);
 
-    const scores = await vndb.scores(selectedMembers.map(member => {
+    const scores = await vndb.scores(selectedUsers.map(user => {
         return {
-            userId: member.vndb.id,
-            username: member.vndb.username,
-            userToken: member.vndb.auth.token,
+            userId: user.vndb.id,
+            username: user.vndb.username,
+            userToken: user.vndb.auth.token,
             vnId: media[index].id
         }
     }));
@@ -59,7 +58,7 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
     };
 
     const id = interaction.client.set({
-        members: selectedMembers,
+        users: selectedUsers,
         media,
         index,
         vnsEmbeds,

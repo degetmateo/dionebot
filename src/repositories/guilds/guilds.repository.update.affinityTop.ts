@@ -2,21 +2,21 @@ import { Document, UUID, WithId } from "mongodb";
 import * as uuid from 'uuid';
 import mongo from "../../database/mongo";
 
-const guildsRepositoryUpdateAffinityTop = async (guildId: string, affinity: {
+const guildsRepositoryUpdateAffinityTop = async (guild_id: string, affinity: {
     pearson: number;
     pair: { a: { discord_id: string }, b: { discord_id: string } };
 }) => {
     try {
-        const guilds = mongo.collection('guilds');
-        let guild: WithId<Document> | null = await guilds.findOne({ discord_id: guildId });
+        let guild: WithId<Document> | null = await mongo.guilds.findOne({ _id: guild_id as any });
 
         if (!guild) {
             guild = {
-                _id: new UUID(uuid.v7()) as any,
-                discord_id: guildId,
+                _id: guild_id as any,
                 affinities: []
             };
         };
+
+        if (!guild.affinities) guild.affinities = [];
 
         let i = 0;
         let found = false;
@@ -43,7 +43,7 @@ const guildsRepositoryUpdateAffinityTop = async (guildId: string, affinity: {
             guild.affinities.push(affinity);
         };
 
-        await guilds.updateOne(
+        await mongo.guilds.updateOne(
             { _id: guild._id },
             { $set: guild },
             { upsert: true }

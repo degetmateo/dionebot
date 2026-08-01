@@ -8,15 +8,14 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
     await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
     
     const enabled = interaction.options.getBoolean('enabled', true);
-    const members = mongo.collection('members');
-    const member = await members.findOne({ discord_id: interaction.user.id });
+    const user = await mongo.users.findOne({ _id: interaction.user.id as any });
     
-    if (!member) throw new GenericError('No estás registrado. Usa \`/setup\`.');
+    if (!user) throw new GenericError('No estás registrado. Usa \`/setup\`.');
 
     let i = 0;
     let found = false;
-    while (i < member.guilds.length) {
-        if (member.guilds[i].id == interaction.guild.id) {
+    while (i < user.guilds.length) {
+        if (user.guilds[i]._id == interaction.guild.id) {
             found = true;
             break;
         };
@@ -25,17 +24,17 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
     };
 
     if (found) {
-        member.guilds[i].show_scores = enabled;
+        user.guilds[i].show_scores = enabled;
     } else {
-        member.guilds.push({
-            id: interaction.guild.id,
+        user.guilds.push({
+            _id: interaction.guild.id,
             show_scores: enabled
         });
     };
 
-    await members.updateOne(
-        { _id: member._id },
-        { $set: { guilds: member.guilds } }
+    await mongo.users.updateOne(
+        { _id: user._id },
+        { $set: { guilds: user.guilds } }
     );
 
     await interaction.editReply({

@@ -1,13 +1,11 @@
 import { ButtonInteraction, LabelBuilder, MessageFlags, ModalBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
-import { ObjectId } from "mongodb";
 import Bot from "../../extensions/bot.extension";
 import ErrorEmbed from "../../embeds/errorEmbed";
 
 module.exports = {
     id: 'setup-instructions-vndb-button',
     execute: async (interaction: ButtonInteraction, member: {
-        _id: ObjectId;
-        discord_id: string;
+        _id: string;
         key: string;
     }) => {
         const bot = interaction.client as Bot;
@@ -19,7 +17,7 @@ module.exports = {
             });
         };
 
-        if (interaction.user.id != member.discord_id) {
+        if (interaction.user.id != member._id) {
             return await interaction.reply({
                 flags: [MessageFlags.Ephemeral],
                 embeds: [new ErrorEmbed('No tienes permiso para realizar esta acción.')]

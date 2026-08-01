@@ -1,21 +1,19 @@
 import { ButtonInteraction } from "discord.js";
-import { ObjectId} from "mongodb";
 import ErrorEmbed from "../../embeds/errorEmbed";
 import Bot from "../../extensions/bot.extension";
-import mongo from "../../database/mongo";
 import SuccessEmbed from "../../embeds/successEmbed";
 import claimCooldownHelper from "../../helpers/claim.cooldown.helper";
-import { memberModel } from "../../database/models/member.model";
 import guildsRepository from "../../repositories/guilds/guilds.repository";
 import membersRepository from "../../repositories/members/members.repository";
 import GenericError from "../../errors/genericError";
 import charactersRepository from "../../repositories/characters/characters.repository";
+import mongo from "../../database/mongo";
 
 module.exports = {
     id: 'ch-claim-button',
     execute: async (interaction: ButtonInteraction, character: {
         key: string;
-        _id: ObjectId;
+        _id: number;
         name: string;
         site_url: string;
         image_url: string;
@@ -76,11 +74,16 @@ module.exports = {
 
         claimCooldownHelper.execute(interaction);
 
-        const guild = await guildsRepository.findsert(interaction.guild?.id as string);
-        guildsRepository.pushClaim(guild._id, { character_id: character._id, member_discord_id: interaction.user.id });
+        mongo.claims.insertOne({
+            _id: `${interaction.guild?.id}_${character._id}` as any,
+            guild_id: interaction.guild?.id,
+            character_id: character._id,
+            user_id: interaction.user.id
+        });
 
         membersRepository.decreaseClaims(memberWhoWantsToClaim._id);
         membersRepository.increaseClaimCount(memberWhoWantsToClaim._id);
+
         charactersRepository.increaseClaimCount(character._id);
 
         interaction.reply({

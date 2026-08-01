@@ -7,8 +7,7 @@ import Bot from "../../extensions/bot.extension";
 module.exports = {
     id: 'setup-mal-button',
     execute: async (interaction: ButtonInteraction, member: {
-        _id: ObjectId;
-        discord_id: string;
+        _id: string;
         key: string;
         code_verifier: string;
     }) => {
@@ -19,7 +18,7 @@ module.exports = {
             });
         };
 
-        if (interaction.user.id != member.discord_id) {
+        if (interaction.user.id != member._id) {
             return await interaction.reply({
                 flags: [MessageFlags.Ephemeral],
                 embeds: [new ErrorEmbed('No tienes permiso para realizar esta acción.')]

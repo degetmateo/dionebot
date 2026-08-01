@@ -1,12 +1,12 @@
 import mongo from "../../database/mongo";
 import GenericError from "../../errors/genericError";
 
-const membersRepositoryUpdateMalTokens = async (discord_id: string, tokens: any) => {
+const membersRepositoryUpdateMalTokens = async (_id: string, tokens: any) => {
     try {
-        const members = mongo.collection('members');
-
-        await members.updateOne(
-            { discord_id: discord_id },
+        await mongo.users.updateOne(
+            { 
+                _id: _id as any
+            },
             { 
                 $set: {
                     'mal.auth.access_token': tokens.access_token,

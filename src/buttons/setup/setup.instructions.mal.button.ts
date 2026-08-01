@@ -6,7 +6,7 @@ import ErrorEmbed from "../../embeds/errorEmbed";
 module.exports = {
     id: 'setup-instructions-mal-button',
     execute: async (interaction: ButtonInteraction, member: {
-        _id: ObjectId;
+        _id: string;
         discord_id: string;
         key:string;
     }) => {
@@ -19,7 +19,7 @@ module.exports = {
             });
         };
 
-        if (interaction.user.id != member.discord_id) {
+        if (interaction.user.id != member._id) {
             return await interaction.reply({
                 flags: [MessageFlags.Ephemeral],
                 embeds: [new ErrorEmbed('No tienes permiso para realizar esta acción.')]

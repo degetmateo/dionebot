@@ -7,17 +7,15 @@ import GuildChatInputCommandInteraction from "../../../../extensions/guildChatIn
 const userExecute = async (interaction: GuildChatInputCommandInteraction) => {
     await interaction.deferReply();
 
-    const user = await (interaction.options.getUser('member') || interaction.user).fetch(true);
-    const memberId = user.id;
-
-    const members = mongo.collection('members');
-    const member = await members.findOne({ discord_id: memberId });
+    const optionUser = await (interaction.options.getUser('member') || interaction.user).fetch(true);
+    const userId = optionUser.id;
+    const user = await mongo.users.findOne({ _id: userId as any  });
     
-    if (!member) {
-        if (memberId === interaction.user.id) {
+    if (!user) {
+        if (userId === interaction.user.id) {
             throw new GenericError(`No estás registrado. Usá \`/setup\` para registrarte.`);
         } else {
-            throw new GenericError(`<@${memberId}> no está registrado. Debe usar \`/setup\` para registrarse.`);
+            throw new GenericError(`<@${userId}> no está registrado. Debe usar \`/setup\` para registrarse.`);
         };
     };
 
@@ -28,15 +26,15 @@ const userExecute = async (interaction: GuildChatInputCommandInteraction) => {
         vndb: null
     };
 
-    embeds['profile'] = new UserProfileEmbed({ member, user });
+    embeds['profile'] = new UserProfileEmbed({ member: user, user: optionUser });
 
-    const id = interaction.client.set({ member, user, embeds }, 120_000);
+    const id = interaction.client.set({ member: user, user: optionUser, embeds }, 120_000);
 
     const buttons = new UserRowComponent({
         id: id,
-        anilist: member.anilist,
-        mal: member.mal,
-        vndb: member.vndb,
+        anilist: user.anilist,
+        mal: user.mal,
+        vndb: user.vndb,
         profile: false
     });
 
