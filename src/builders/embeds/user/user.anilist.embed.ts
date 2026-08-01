@@ -13,7 +13,20 @@ export default class UserAnilistEmbed extends EmbedBuilder {
         this.setURL(aniuser.getSiteURL());
         this.setThumbnail(aniuser.getAvatarURL());
         this.setImage(aniuser.getBannerURL());
-        this.setColor((toHex(aniuser.getProfileColor()) as ColorResolvable));
+        const profileColor = aniuser.getProfileColor();
+
+        let color: ColorResolvable;
+        if (profileColor) {
+            if (profileColor.startsWith('#')) {
+                color = profileColor as ColorResolvable;
+            } else {
+                color = toHex(profileColor) as ColorResolvable;
+            };
+        } else {
+            color = "Random";
+        };
+
+        this.setColor(color);
 
         const bestBayesianScores = aniuser.getGenresSortedByBayesianScore().slice(0, 3).map(g => g.genre);
         const worstBayesianScores = aniuser.getGenresSortedByBayesianScore().slice(aniuser.getGenresSortedByBayesianScore().length - 3, aniuser.getGenresSortedByBayesianScore().length).map(g => g.genre);
