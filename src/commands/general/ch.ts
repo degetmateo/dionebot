@@ -48,7 +48,7 @@ module.exports = {
             .addComponents(
                 new ButtonBuilder()
                     .setCustomId(`ch-claim-button_${cache_id}`)
-                    .setEmoji('❤️')
+                    .setEmoji((!owner_id) ? '❤️' : '💰')
                     .setStyle(ButtonStyle.Secondary)
             )
 

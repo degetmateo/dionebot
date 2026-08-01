@@ -32,11 +32,31 @@ module.exports = {
 
         if (character.owner_id) {
             const renas = bot.settings.renas_per_reclaim;
-            membersRepository.increaseRenas(character.owner_id, renas);
+            if (character.owner_id != interaction.user.id) {
+                const dividedRenas = Math.floor(renas / 2);
+                membersRepository.increaseRenas(character.owner_id, dividedRenas);
+                membersRepository.increaseRenas(interaction.user.id, dividedRenas);
+                const desc = 
+                    `¡**${character.name}** ya pertenece a <@${character.owner_id}>!\n\n`+
+                    `\`(+${dividedRenas} renas)\` <@${character.owner_id}>\n`+
+                    `\`(+${dividedRenas} renas)\` <@${interaction.user.id}>\n`
+                ;
 
-            return await interaction.reply({
-                embeds: [new ErrorEmbed(`¡**${character.name}** ya pertenece a <@${character.owner_id}>! \`(+${renas} renas)\``)]
-            });
+                return await interaction.reply({
+                    embeds: [new ErrorEmbed(desc)]
+                });
+            } else {
+                membersRepository.increaseRenas(character.owner_id, renas);
+
+                const desc = 
+                    `¡**${character.name}** ya pertenece a <@${character.owner_id}>!\n\n`+
+                    `\`(+${renas} renas)\` <@${character.owner_id}>\n`
+                ;
+
+                return await interaction.reply({
+                    embeds: [new ErrorEmbed(desc)]
+                });
+            };
         };
 
         const memberWhoWantsToClaim: any = await membersRepository.findsert(interaction.user.id, interaction.guild?.id as string);
