@@ -72,7 +72,7 @@ module.exports = {
         if (!race) throw new GenericError('Esta interacción ha expirado.');
         bot.delete(character.key);
 
-        claimCooldownHelper.execute(interaction);
+        // claimCooldownHelper.execute(interaction);
 
         mongo.claims.insertOne({
             _id: `${interaction.guild?.id}_${character._id}` as any,

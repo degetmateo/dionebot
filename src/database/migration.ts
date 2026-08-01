@@ -13,6 +13,32 @@ export default {
             //     }
             // );
 
+            // await mongo.users.updateMany(
+            //     {
+            //         "gacha.pulls": {
+            //             $lt: 20
+            //         }
+            //     },
+            //     {
+            //         $set: {
+            //             "gacha.pulls": 20
+            //         }
+            //     }
+            // )
+
+            // await mongo.users.updateMany(
+            //     {
+            //         "gacha.claims": {
+            //             $lt: 3
+            //         }
+            //     },
+            //     {
+            //         $set: {
+            //             "gacha.claims": 3
+            //         }
+            //     }
+            // )
+
             // for await (const doc of cursor) {
             //     const updatedArray = doc.guilds.map((guild: any) => {
             //         guild._id = guild.id;
