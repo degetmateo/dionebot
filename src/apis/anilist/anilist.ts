@@ -26,13 +26,12 @@ const request = async (query: string) => {
     });
 
     const response: any = await request.json();
-
     if (!request.ok) {
         const error = codes[response.errors[0].status];
 
         if (error) {
             if (error === 'r') {
-                throw new GenericError(error, response.errors[0].message);
+                throw new GenericError(response.errors[0].message, response.errors[0].status);
             } else {
                 throw new GenericError(error, response.errors[0].status);
             };
