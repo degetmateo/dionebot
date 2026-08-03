@@ -23,7 +23,7 @@ export type CharacterClaimCardComponentData = {
     owner_id: string | null;
     interaction_id: string;
 
-    users_who_want?: string[];
+    users_who_want?: any[];
 };
 
 class CharacterClaimCardComponent extends ContainerBuilder {
@@ -55,7 +55,7 @@ class CharacterClaimCardComponent extends ContainerBuilder {
 
         if (data.users_who_want && data.users_who_want.length > 0) {
             characterInfoContent +=
-                `Deseado por: ${data.users_who_want.map(i => `<@${i}>`).join(' ')}`;
+                `Deseado por: ${data.users_who_want.map(fav => `<@${fav.user_id}>`).join(' ')}`;
         };
 
         const characterInfo = new TextDisplayBuilder().setContent(characterInfoContent);
@@ -87,13 +87,13 @@ class CharacterClaimCardComponent extends ContainerBuilder {
             );
         };
 
-        // buttons.push(
-        //     new ButtonBuilder()
-        //         .setEmoji('💘')
-        //         .setLabel('Lo quiero')
-        //         .setStyle(ButtonStyle.Secondary)
-        //         .setCustomId(`fav-button_${data.interaction_id}`)
-        // );
+        buttons.push(
+            new ButtonBuilder()
+                .setEmoji('💘')
+                .setLabel('Lo quiero')
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId(`fav-button_${data.interaction_id}`)
+        );
 
         this.addActionRowComponents(row => 
             row.addComponents(buttons)

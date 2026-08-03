@@ -10,6 +10,7 @@ class MongoDB {
     public users: Collection<Document>;
     public characters: Collection<Document>;
     public claims: Collection<Document>;
+    public favourites: Collection<Document>;
 
     constructor () {
         this.connected = false;
@@ -19,6 +20,7 @@ class MongoDB {
         this.users = {} as Collection;
         this.characters = {} as Collection;
         this.claims = {} as Collection;
+        this.favourites = {} as Collection;
     };
 
     async init () {
@@ -34,6 +36,7 @@ class MongoDB {
             this.users = this.collection('users');
             this.characters = this.collection('characters');
             this.claims = this.collection('claims');
+            this.favourites = this.collection('favourites');
 
             await migration.execute();
 

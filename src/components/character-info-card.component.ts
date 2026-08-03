@@ -82,19 +82,19 @@ class CharacterInfoCardComponent extends ContainerBuilder {
         const characterImage = new MediaGalleryItemBuilder().setURL(data.image.url);
         characterPortrait.addItems(characterImage);
 
-        // const buttons: ButtonBuilder[] = [];
+        const buttons: ButtonBuilder[] = [];
 
-        // buttons.push(
-        //     new ButtonBuilder()
-        //         .setEmoji('💘')
-        //         .setLabel('Lo quiero')
-        //         .setStyle(ButtonStyle.Secondary)
-        //         .setCustomId(`fav-button_${data.interaction_id}`)
-        // );
+        buttons.push(
+            new ButtonBuilder()
+                .setEmoji('💘')
+                .setLabel('Lo quiero')
+                .setStyle(ButtonStyle.Secondary)
+                .setCustomId(`fav-button_${data.interaction_id}`)
+        );
 
-        // this.addActionRowComponents(row => 
-        //     row.addComponents(buttons)
-        // );
+        this.addActionRowComponents(row => 
+            row.addComponents(buttons)
+        );
     };
 };
 

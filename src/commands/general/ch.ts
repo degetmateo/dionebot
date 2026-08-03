@@ -49,7 +49,14 @@ module.exports = {
             selectedMedia = popularMedia[0];
         };
 
-        const interaction_id = interaction.client.set(character, 25_000);
+        const favs: any[] = await mongo.favourites.find(
+            {
+                guild_id: interaction.guild.id,
+                character_id: character._id
+            }
+        ).toArray();
+
+        const interaction_id = interaction.client.set(character, 60_000);
 
         const card = new CharacterClaimCardComponent({
             id: Number(character._id),
@@ -60,7 +67,8 @@ module.exports = {
             claimed_count: character.claimed_count || 0,
             fav_count: character.favourites || 0,
             owner_id: owner_id,
-            interaction_id: interaction_id
+            interaction_id: interaction_id,
+            users_who_want: favs
         });
 
         await interaction.reply({
