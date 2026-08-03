@@ -1,11 +1,12 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, InteractionContextType, SlashCommandBuilder } from "discord.js";
+import { InteractionContextType, MessageFlags, SlashCommandBuilder } from "discord.js";
 import GuildChatInputCommandInteraction from "../../extensions/guildChatInputCommandInteraction.extension";
-import ChEmbed from "../../builders/embeds/ch.embed";
 import ErrorEmbed from "../../embeds/errorEmbed";
 import membersRepository from "../../repositories/members/members.repository";
-import guildsRepository from "../../repositories/guilds/guilds.repository";
 import charactersRepository from "../../repositories/characters/characters.repository";
 import mongo from "../../database/mongo";
+import CharacterClaimCardComponent from "../../components/character-claim-card.component";
+import Helpers from "../../helpers";
+import updateCharacterHelper from "../../helpers/update-character.helper";
 
 module.exports = {
     cooldown: 5,
@@ -28,6 +29,10 @@ module.exports = {
 
         const character = await charactersRepository.random(); 
 
+        if ((!character.updated_at) || (Helpers.hasPassedMoreThanAMonth(character.updated_at, new Date()))) {
+            updateCharacterHelper(character._id as any);
+        };
+
         const claim = await mongo.claims.findOne(
             {
                 _id: `${interaction.guild.id}_${character._id}` as any
@@ -35,30 +40,32 @@ module.exports = {
         );
 
         const owner_id = claim ? claim.user_id : null;
-
-        const embed = new ChEmbed({
-            name: character.name,
-            site_url: character.url,
-            image_url: character.images[0].url,
-            claimed_count: character.claimed_count || 0,
-            user_id: owner_id
-        });
-
         character.owner_id = owner_id;
 
-        const cache_id = interaction.client.set(character, 25_000);
+        let popularMedia: any = null;
+        let selectedMedia: any = null;
+        if (character.media && character.media.length > 0) {
+            popularMedia = character.media.sort((a:any, b:any) => b.favourites - a.favourites);
+            selectedMedia = popularMedia[0];
+        };
 
-        const row = new ActionRowBuilder<ButtonBuilder>()
-            .addComponents(
-                new ButtonBuilder()
-                    .setCustomId(`ch-claim-button_${cache_id}`)
-                    .setEmoji((!owner_id) ? '❤️' : '💰')
-                    .setStyle(ButtonStyle.Secondary)
-            )
+        const interaction_id = interaction.client.set(character, 25_000);
 
-        return await interaction.reply({
-            embeds: [embed],
-            components: [row]
+        const card = new CharacterClaimCardComponent({
+            id: Number(character._id),
+            name: character.name,
+            image: character.images[0],
+            url: character.url,
+            media: selectedMedia,
+            claimed_count: character.claimed_count || 0,
+            fav_count: character.favourites || 0,
+            owner_id: owner_id,
+            interaction_id: interaction_id
+        });
+
+        await interaction.reply({
+            flags: [MessageFlags.IsComponentsV2],
+            components: [card]
         });
     }
 };

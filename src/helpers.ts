@@ -1,3 +1,5 @@
+import { RGBTuple } from "discord.js";
+
 export default class Helpers {
     public static readonly STRING_WITHOUT_HTML: RegExp = /(<([^>]+)>|&\w+;)/gi;
 
@@ -70,5 +72,27 @@ export default class Helpers {
         if (arr.length === 0) return undefined;
         const randomIndex = Math.floor(Math.random() * arr.length);
         return arr[randomIndex];
+    };
+
+    public static getRandomRGBTuple (): RGBTuple {
+        const R = Math.floor(Math.random() * 256);
+        const G = Math.floor(Math.random() * 256);
+        const B = Math.floor(Math.random() * 256);
+        return [R, G, B];
+    };
+
+    public static hasPassedMoreThanAMonth (a: Date, b: Date): boolean {
+        const start = new Date(a);
+        const end = new Date(b);
+
+        if (end <= start) {
+            return false;
+        };
+
+        const limit = new Date(start);
+
+        limit.setMonth(limit.getMonth() + 1);
+
+        return end > limit;
     };
 };
