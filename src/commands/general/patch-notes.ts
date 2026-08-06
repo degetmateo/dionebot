@@ -14,6 +14,7 @@ module.exports = {
             .setColor('DarkOrange')
             .setThumbnail(interaction.client.user.avatarURL())
             .setDescription(
+                `\`06-08-2026\` Puedes usar \`/gacha inventory (user)\` para ver todos los personajes de un usuario.\n`+
                 `\`03-08-2026\` Cuando se use \`/ch\` o \`/character\`, podrás indicar que deseas ese personaje.\n`+
                 `▸ Al usar \`/ch\`, si un personaje es deseado por alguien se va mencionará a ese usuario.\n`+
                 `▸ Si un personaje que ya está reclamado aparece en \`/ch\`, usando el botón \`recompensa\` se podrá reclamar una recompensa que se dividirá entre el dueño del personaje y la persona que presionó el botón.\n`+
