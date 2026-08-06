@@ -1,4 +1,4 @@
-import { ButtonInteraction } from "discord.js";
+import { ButtonInteraction, MessageFlags } from "discord.js";
 import Bot from "../../extensions/bot.extension";
 import membersRepository from "../../repositories/members/members.repository";
 import ErrorEmbed from "../../embeds/errorEmbed";
@@ -13,10 +13,18 @@ module.exports = {
         image_url: string;
         owner_id: string;
     }) => {
+        if (!character) {
+            return await interaction.reply({
+                flags: [MessageFlags.Ephemeral],
+                embeds: [new ErrorEmbed('Esta interacción ha expirado o se te han adelantado.')]
+            });
+        };
+
         const bot = interaction.client as Bot;
         bot.delete(character.key);
 
         const renas = bot.settings.renas_per_reclaim;
+
         if (character.owner_id != interaction.user.id) {
             const dividedRenas = Math.floor(renas / 2);
             membersRepository.increaseRenas(character.owner_id, dividedRenas);

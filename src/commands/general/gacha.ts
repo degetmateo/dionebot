@@ -1,8 +1,8 @@
 import { InteractionContextType, SlashCommandBuilder } from "discord.js";
 import GuildChatInputCommandInteraction from "../../extensions/guildChatInputCommandInteraction.extension";
-import membersRepository from "../../repositories/members/members.repository";
-import GenericError from "../../errors/genericError";
-import SuccessEmbed from "../../embeds/successEmbed";
+import { gachaBuyPullsSubcommand } from "./gacha/gacha.buy-pulls.subcommand";
+import { gachaBuyClaimsSubcommand } from "./gacha/gacha.buy-claims.subcommand";
+import { gachaInventorySubcommand } from "./gacha/gacha.inventory.subcommand";
 
 module.exports = {
     cooldown: 10,
@@ -35,39 +35,30 @@ module.exports = {
                         .setMinValue(1)
                 )
         )
-        // .addSubcommand(subcommand => 
-        //     subcommand
-        //         .setName('trade')
-        //         .setDescription('¡Intercambiar personajes con otro usuario!')
-        //         .addUserOption(option => 
-        //             option
-        //                 .setName('user')
-        //                 .setDescription('Usuario con el que quieres intercambiar un personaje.')
-        //                 .setRequired(true)
-        //         )
-        // )
-        ,
+        .addSubcommand(subcommand => 
+            subcommand
+                .setName('inventory')
+                .setDescription('Lista de los personajes que posees tu u otro usuario.')
+                .addUserOption(option => 
+                    option
+                        .setName('user')
+                        .setDescription('Mostrar la lista de este usuario.')
+                        .setRequired(false)
+                )
+        ),
     execute: async (interaction: GuildChatInputCommandInteraction) => { 
-        const member: any = await membersRepository.findsert(interaction.user.id, interaction.guild.id);
-        
-        if (interaction.options.getSubcommand() === 'buy-pulls') {
-            const pulls = interaction.options.getNumber('pulls', true);
-            const price = pulls * 10;
-            if (member.renas < price) throw new GenericError(`No tienes suficientes \`renas\` para comprar \`${pulls} pulls\` (necesitas \`$${price}\`).`);
-            await membersRepository.buyPulls(member._id, pulls, price);
-            interaction.reply({
-                flags: "Ephemeral",
-                embeds: [new SuccessEmbed(`Has comprado \`${pulls} pulls\`.`)]
-            });
-        } else if (interaction.options.getSubcommand() === 'buy-claims') {
-            const claims = interaction.options.getNumber('claims', true);
-            const price = claims * 100;
-            if (member.renas < price) throw new GenericError(`No tienes suficientes \`renas\` para comprar \`${claims} claims\` (necesitas \`$${price})\`.`);
-            await membersRepository.buyClaims(member._id, claims, price);
-            interaction.reply({
-                flags: "Ephemeral",
-                embeds: [new SuccessEmbed(`Has comprado \`${claims} claims\`.`)]
-            });
+        const subcommand = interaction.options.getSubcommand();
+
+        if (subcommand === 'buy-pulls') {
+            return await gachaBuyPullsSubcommand(interaction);
+        };
+
+        if (subcommand === 'buy-claims') {
+            return await gachaBuyClaimsSubcommand(interaction);
+        };
+
+        if (subcommand === 'inventory') {
+            return await gachaInventorySubcommand(interaction);
         };
     }
 };

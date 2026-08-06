@@ -14,10 +14,14 @@ export default {
             };
 
             const args = interaction.customId.split('_');
+
             const id = args[0];
+            
             const modal = bot.modals.get(id);
+            
             const cache = args[1];
             const data = cache ? bot.get(cache) : null;
+            
             if (modal) {
                 return await modal.execute(interaction, data);
             };

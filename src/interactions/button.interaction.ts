@@ -8,14 +8,18 @@ export default {
     execute: async (interaction: ButtonInteraction) => {
         try {
             const bot = interaction.client as Bot;
+            
             if (bot.settings.maintenance) {
                 throw new GenericError('¡Estoy en mantenimiento! Inténtalo de nuevo más tarde.');
             };
+
             const args = interaction.customId.split('_');
+            
             const id = args[0];
             const button = bot.buttons.get(id);
             const cache = args[1];
             const data = cache ? bot.get(cache) : null;
+
             if (button) {
                 return await button.execute(interaction, data);
             };

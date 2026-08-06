@@ -72,10 +72,13 @@ export default class Bot extends Client<true> {
     update (key: string, data: any, expireIn?: number) {
         if (expireIn) {
             clearTimeout(data.timeout);
+            
             data.timeout = setTimeout(() => {
                 this.cache.delete(key);
-            }, expireIn || 60_000);
+            }, expireIn);
         };
+
+        if (!data.key) data.key = key;
 
         this.cache.set(key, data);
     };

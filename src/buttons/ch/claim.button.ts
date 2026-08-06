@@ -1,4 +1,4 @@
-import { ButtonInteraction } from "discord.js";
+import { ButtonInteraction, MessageFlags } from "discord.js";
 import ErrorEmbed from "../../embeds/errorEmbed";
 import Bot from "../../extensions/bot.extension";
 import SuccessEmbed from "../../embeds/successEmbed";
@@ -19,7 +19,7 @@ module.exports = {
         if (!character) {
             return await interaction.reply({
                 flags: "Ephemeral",
-                embeds: [new ErrorEmbed('Esta interacción ha expirado.')]
+                embeds: [new ErrorEmbed('Este personaje ha expirado o se te han adelantado.')]
             });
         };
 
@@ -34,7 +34,14 @@ module.exports = {
         };
 
         const race = bot.get(character.key);
-        if (!race) throw new GenericError('Esta interacción ha expirado.');
+        
+        if (!race) {
+            return await interaction.reply({
+                flags: [MessageFlags.Ephemeral],
+                embeds: [new ErrorEmbed('¡Se te han adelantado!')]
+            });
+        };
+        
         bot.delete(character.key);
 
         mongo.claims.insertOne({
