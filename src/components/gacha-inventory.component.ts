@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ContainerBuilder, resolvePartialEmoji, SectionBuilder, SeparatorBuilder, SeparatorSpacingSize, TextDisplayBuilder, ThumbnailBuilder, User } from "discord.js";
+import { ButtonBuilder, ButtonStyle, ContainerBuilder, SectionBuilder, SeparatorBuilder, SeparatorSpacingSize, TextDisplayBuilder, ThumbnailBuilder, User } from "discord.js";
 import Helpers from "../helpers";
 
 type GachaInventoryComponentData = {
@@ -9,7 +9,6 @@ type GachaInventoryComponentData = {
     pageNumber: number;
     pageTotal: number;
     showIndex: boolean;
-    charactersCount: number;
 
     characters: Array<{
         name: string;

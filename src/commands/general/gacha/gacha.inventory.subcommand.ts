@@ -51,8 +51,7 @@ export const gachaInventorySubcommand = async (interaction: GuildChatInputComman
             characters: c,
             pageNumber: i,
             pageTotal: t,
-            showIndex,
-            charactersCount: claimedCharacters.length
+            showIndex
         }));
 
         i++;

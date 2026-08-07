@@ -3,6 +3,7 @@ import GuildChatInputCommandInteraction from "../../extensions/guildChatInputCom
 import { gachaBuyPullsSubcommand } from "./gacha/gacha.buy-pulls.subcommand";
 import { gachaBuyClaimsSubcommand } from "./gacha/gacha.buy-claims.subcommand";
 import { gachaInventorySubcommand } from "./gacha/gacha.inventory.subcommand";
+import { gachaTradeSubcommand } from "./gacha/gacha.trade.subcommand";
 
 module.exports = {
     cooldown: 10,
@@ -45,6 +46,29 @@ module.exports = {
                         .setDescription('Mostrar la lista de este usuario.')
                         .setRequired(false)
                 )
+        )
+        .addSubcommand(subcommand => 
+            subcommand
+                .setName('trade')
+                .setDescription('Intercambia un personaje con otro usuario.')
+                .addUserOption(option =>
+                    option
+                        .setName('user')
+                        .setDescription('¿Con quién vas a intercambiar?')
+                        .setRequired(true)
+                )
+                .addStringOption(option =>
+                    option
+                        .setName('cname_a')
+                        .setDescription('¿Qué personaje darás?')
+                        .setRequired(true)
+                )
+                .addStringOption(option =>
+                    option
+                        .setName('cname_b')
+                        .setDescription('¿Qué personaje quieres?')
+                        .setRequired(true)
+                )
         ),
     execute: async (interaction: GuildChatInputCommandInteraction) => { 
         const subcommand = interaction.options.getSubcommand();
@@ -59,6 +83,10 @@ module.exports = {
 
         if (subcommand === 'inventory') {
             return await gachaInventorySubcommand(interaction);
+        };
+
+        if (subcommand === 'trade') {
+            return await gachaTradeSubcommand(interaction);
         };
     }
 };
