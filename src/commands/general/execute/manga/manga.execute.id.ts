@@ -10,14 +10,18 @@ import AnimeValidator from "../../../../validators/animeValidator";
 const mangaExecuteId = async (interaction: GuildChatInputCommandInteraction) => {
     const id = interaction.options.getString('name-or-id') as string;
 
+    const memberships = await mongo.memberships.find({
+        guild_id: interaction.guild.id,
+        show_scores: true
+    }).toArray();
+
     const users = await mongo.users.find(
         { 
             $and: [
-                { 
-                    'guilds._id': interaction.guild.id 
-                }, 
-                { 
-                    'guilds.show_scores': true 
+                {
+                    _id: {
+                        $in: memberships.map(m => m.user_id)
+                    }
                 },
                 {
                     preferred_platform: { $ne: null } 

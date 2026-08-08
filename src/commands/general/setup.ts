@@ -18,6 +18,13 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
             user = memberModel.create(interaction.user.id, interaction.guild.id as string);
             await mongo.users.insertOne(user);
 
+            await mongo.memberships.insertOne({
+                _id: `${interaction.guild.id}_${interaction.user.id}` as any,
+                guild_id: interaction.guild.id,
+                user_id: interaction.user.id,
+                show_scores: true
+            });
+
             let desc = 
                 `**¡Perfil creado correctamente!**\n`+
                 `¿Deseas customizarlo o vincular una plataforma?\n\n`+

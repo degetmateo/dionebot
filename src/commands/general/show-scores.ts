@@ -8,34 +8,32 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
     await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
     
     const enabled = interaction.options.getBoolean('enabled', true);
-    const user = await mongo.users.findOne({ _id: interaction.user.id as any });
-    
-    if (!user) throw new GenericError('No estás registrado. Usa \`/setup\`.');
 
-    let i = 0;
-    let found = false;
-    while (i < user.guilds.length) {
-        if (user.guilds[i]._id == interaction.guild.id) {
-            found = true;
-            break;
+    let membership = await mongo.memberships.findOne({
+        _id: `${interaction.guild.id}_${interaction.user.id}` as any
+    });
+
+    if (!membership) {
+        membership = {
+            _id: `${interaction.guild.id}_${interaction.user.id}` as any,
+            guild_id: interaction.guild.id,
+            user_id: interaction.user.id,
+            show_scores: enabled
         };
 
-        i++;
-    };
-
-    if (found) {
-        user.guilds[i].show_scores = enabled;
+        await mongo.memberships.insertOne(membership);
     } else {
-        user.guilds.push({
-            _id: interaction.guild.id,
-            show_scores: enabled
-        });
+        await mongo.memberships.updateOne(
+            {
+                _id: membership._id
+            },
+            {
+                $set: {
+                    show_scores: enabled
+                }
+            }
+        );
     };
-
-    await mongo.users.updateOne(
-        { _id: user._id },
-        { $set: { guilds: user.guilds } }
-    );
 
     await interaction.editReply({
         embeds: [new SuccessEmbed(enabled ? 'Ahora tus puntuaciones se mostrarán en este servidor.' : 'Ahora tus puntuaciones NO se mostrarán en este servidor.')]

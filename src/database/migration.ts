@@ -1,10 +1,28 @@
-import { ObjectId } from "mongodb";
-import * as uuid from 'uuid';
+import { Document, WithId } from "mongodb";
 import mongo from "./mongo";
 
 export default {
     execute: async () => {
         try {
+            // const users = await mongo.users.find().toArray();
+
+            // const inserts: Array<WithId<Document>> = [];
+
+            // for (const user of users) {
+            //     const guilds = user.guilds;
+
+            //     for (const guild of guilds) {
+            //         inserts.push({
+            //             _id: `${guild._id}_${user._id}` as any,
+            //             guild_id: guild._id,
+            //             user_id: user._id,
+            //             show_scores: guild.show_scores
+            //         });
+            //     };
+            // };
+            
+            // await mongo.memberships.insertMany(inserts);
+
             // const cursor = mongo.users.find(
             //     { 
             //         "guilds.id": { 

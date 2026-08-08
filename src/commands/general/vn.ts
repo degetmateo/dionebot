@@ -18,19 +18,23 @@ const execute = async (interaction: GuildChatInputCommandInteraction) => {
     const vnsEmbeds = media.map(vn => new VNEmbed(vn));
     const scoresEmbeds: EmbedBuilder[] = [];
 
+    const memberships = await mongo.memberships.find({
+        guild_id: interaction.guild.id,
+        show_scores: true
+    }).toArray();
+
     const users = await mongo.users.find(
-        {
+        { 
             $and: [
                 {
-                    "guilds._id": interaction.guild.id
-                },
-                {
-                    "guilds.show_scores": true
+                    _id: {
+                        $in: memberships.map(m => m.user_id)
+                    }
                 },
                 {
                     vndb: { $ne: null }
                 }
-            ]
+            ] 
         }
     ).toArray();
 
