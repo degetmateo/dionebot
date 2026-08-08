@@ -38,6 +38,19 @@ module.exports = {
         let claimed_count: number = 0;
         let images = [{ url: data.image.large || data.image.medium }];
         
+        const parsed = {
+            _id: data.id,
+            url: data.siteUrl,
+            gender: data.gender || null,
+            age: data.age || null,
+            favourites: data.favourites || 0,
+            name: data.name.full || data.name.userPreferred,
+            media: data.media.nodes,
+            images: images,
+            claimed_count: 0,
+            updated_at: new Date()
+        };
+
         if (char) {
             claimed_count = char.claimed_count;
             
@@ -85,7 +98,7 @@ module.exports = {
         const popularMedia = data.media.nodes.sort((a:any, b:any) => b.favourites - a.favourites);
         const selectedMedia = popularMedia[0]
 
-        const interaction_id = interaction.client.set(data, 120_000);
+        const interaction_id = interaction.client.set(parsed, 120_000);
 
         const card = new CharacterInfoCardComponent({
             id: data.id,
