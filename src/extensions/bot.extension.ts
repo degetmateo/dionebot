@@ -3,7 +3,7 @@ import eventsHandler from "../handlers/events.handler";
 import commandsHandler from "../handlers/commands.handler";
 import buttonsHandler from "../handlers/buttons.handler";
 import modalsHandler from "../handlers/modals.handler";
-import { Settings } from "../modules/settings.module";
+import SettingsModule, { Settings } from "../modules/settings.module";
 
 export default class Bot extends Client<true> {
     public commands: Collection<string, {
@@ -28,7 +28,7 @@ export default class Bot extends Client<true> {
 
     public settings: Settings;
 
-    constructor (settings: Settings) {
+    constructor () {
         super({
             intents: [
                 GatewayIntentBits.Guilds,
@@ -37,7 +37,7 @@ export default class Bot extends Client<true> {
             ]
         });
 
-        this.settings = settings;
+        this.settings = {} as Settings;
         this.commands = new Collection();
         this.buttons = new Collection();
         this.modals = new Collection();
@@ -89,5 +89,11 @@ export default class Bot extends Client<true> {
 
     delete (key: string) {
         this.cache.delete(key);
+    };
+
+    async login (token?: string): Promise<string> {
+        const settings = await SettingsModule.read();
+        this.settings = settings;
+        return await super.login(token);
     };
 };
