@@ -1,10 +1,12 @@
 import anilist from "../anilist";
+import Anianime from "../models/anianime";
 
 const anilistSearchAnimeById = async (id: string | number) => {
     const query = `
         query  {
             Media (id: ${id}, type: ANIME) {
-                id idMal
+                id
+                idMal
                 title {
                     romaji
                     english
@@ -68,7 +70,7 @@ const anilistSearchAnimeById = async (id: string | number) => {
     `;
 
     const data = await anilist.request(query);
-    return data.Media;
+    return new Anianime(data.Media);
 };
 
 export default anilistSearchAnimeById;

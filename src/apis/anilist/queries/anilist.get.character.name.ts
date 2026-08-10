@@ -3,7 +3,8 @@ import anilist from "../anilist";
 const ANILIST_GET_CHARACTER_NAME = async (name: string) => {
     const query = `
         query  {
-            Character (search: "${name}") {
+            Page (perPage: 5) {
+                characters (search: "${name}") {
                 id
                 name {
                     full
@@ -12,7 +13,6 @@ const ANILIST_GET_CHARACTER_NAME = async (name: string) => {
                 siteUrl
                 age
                 bloodType
-                description
                 favourites
                 gender
                 image {
@@ -21,20 +21,21 @@ const ANILIST_GET_CHARACTER_NAME = async (name: string) => {
                 }
                 media {
                     nodes {
-                        id
-                        favourites
-                        siteUrl
-                        title {
-                            userPreferred
-                        }      
+                    id
+                    favourites
+                    siteUrl
+                    title {
+                        userPreferred
                     }
+                    }
+                }
                 }
             }
         }
     `;
 
     const data = await anilist.request(query);
-    return data.Character;
+    return data.Page.characters;
 };
 
 export default ANILIST_GET_CHARACTER_NAME;

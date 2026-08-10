@@ -1,6 +1,8 @@
+import GenericError from "../../../errors/genericError";
 import anilist from "../anilist";
+import Anianime from "../models/anianime";
 
-const anilistSearchAnimeByName = async (name: string) => {
+const anilistSearchAnimeByName = async (name: string): Promise<Anianime[]> => {
     const query = `
         query  {
             Page (perPage: 3) {
@@ -75,7 +77,14 @@ const anilistSearchAnimeByName = async (name: string) => {
     `;
 
     const data = await anilist.request(query);
-    return data.Page;
+
+    const page = data.Page;
+    if (!page) throw new GenericError('¡No encontramos resultados!');
+
+    const media = page.media;
+    if (!media || media.length <= 0) throw new GenericError('¡No encontramos resultados!');
+
+    return data.Page.media.map((p: any) => new Anianime(p));
 };
 
 export default anilistSearchAnimeByName;

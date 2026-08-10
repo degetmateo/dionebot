@@ -33,7 +33,6 @@ const animeExecuteId = async (interaction: GuildChatInputCommandInteraction) => 
     AnimeValidator.validateId(id);
 
     const data = await anilist.search.anime.id(id);
-    data.type = 'ANIME';
 
     const animeEmbed = new AnimeEmbed(data);
 
@@ -44,13 +43,19 @@ const animeExecuteId = async (interaction: GuildChatInputCommandInteraction) => 
     };
 
     const scores = await commonRequests.search.scores({
-        ...data,
+        id: data.getId(),
+        idMal: data.getMalId(),
         type: 'ANIME'
     }, members as any);
 
     const scoresEmbed = scores.length > 0 ?
         new ScoresEmbed(scores) :
         new ErrorEmbed('¡Parece que nadie conoce esto!');
+
+    // await interaction.editReply({
+    //     flags: [MessageFlags.IsComponentsV2],
+    //     components: [AnimeComponent(data)]
+    // });
 
     await interaction.editReply({
         embeds: [animeEmbed, scoresEmbed]

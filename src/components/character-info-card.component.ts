@@ -16,7 +16,7 @@ export type CharacterInfoCardComponentData = {
     };
 
     fav_count: number;
-    claimed_count: number;
+    claimed_count: number | null;
 
     gender: string | null;
     age: string | null;
@@ -26,6 +26,8 @@ export type CharacterInfoCardComponentData = {
     interaction_id: string;
 
     users_who_want?: string[];
+
+    page_buttons?: boolean;
 };
 
 class CharacterInfoCardComponent extends ContainerBuilder {
@@ -50,8 +52,13 @@ class CharacterInfoCardComponent extends ContainerBuilder {
         };
 
         characterInfoContent +=
-            `Favoritos: \`${data.fav_count}\`\n` +
-            `Claims: \`${data.claimed_count}\`\n`;
+            `ID: \`${data.id}\`\n`+
+            `Favoritos: \`${data.fav_count}\`\n`;
+
+        if (data.claimed_count) {
+            characterInfoContent +=
+                `Claims: \`${data.claimed_count}\`\n`;
+        };
 
         if (data.gender) {
             characterInfoContent +=
@@ -84,10 +91,22 @@ class CharacterInfoCardComponent extends ContainerBuilder {
 
         const buttons: ButtonBuilder[] = [];
 
+        if (data.page_buttons) {
+            buttons.push(
+                new ButtonBuilder()
+                    .setEmoji('⬅️')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setCustomId(`character-back-button_${data.interaction_id}`),
+                new ButtonBuilder()
+                    .setEmoji('➡️')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setCustomId(`character-next-button_${data.interaction_id}`),
+            )
+        };
+
         buttons.push(
             new ButtonBuilder()
                 .setEmoji('💘')
-                .setLabel('Lo quiero')
                 .setStyle(ButtonStyle.Secondary)
                 .setCustomId(`fav-button_${data.interaction_id}`)
         );

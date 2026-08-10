@@ -8,6 +8,7 @@ import ErrorEmbed from "../../../../embeds/errorEmbed";
 import ScoresEmbed from "../../../../embeds/scoresEmbed";
 import anilist from "../../../../apis/anilist/anilist";
 import commonRequests from "../../../../apis/common/common.requests";
+import Anianime from "../../../../apis/anilist/models/anianime";
 
 const animeExecuteName = async (interaction: GuildChatInputCommandInteraction) => {
     const name = interaction.options.getString('name-or-id') as string;
@@ -34,20 +35,18 @@ const animeExecuteName = async (interaction: GuildChatInputCommandInteraction) =
 
     AnimeValidator.validateName(name);
 
-    const data: { media: any[] } = await anilist.search.anime.name(name);
-    if (data.media.length <= 0) throw new GenericError('¡No encontramos resultados!');
-    
-    const media = data.media;
-    const embeds = media.map(m => new AnimeEmbed(m));
+    const media = await anilist.search.anime.name(name);    
+    const embeds = media.map((m: Anianime) => new AnimeEmbed(m));
     const scoresEmbeds: EmbedBuilder[] = [];
-    
+
     let index = 0;    
 
     if (members.length <= 0) {
         scoresEmbeds[index] = new ErrorEmbed('¡Parece que nadie conoce esto!');
     } else {
         const scores = await commonRequests.search.scores({
-            ...media[index],
+            id: media[index].getId(),
+            idMal: media[index].getMalId(),
             type: 'ANIME'
         }, members as any);
 
@@ -59,7 +58,7 @@ const animeExecuteName = async (interaction: GuildChatInputCommandInteraction) =
     const cacheId = interaction.client.set({
         members: members,
         embeds: embeds,
-        media: media,
+        media: media.map(m => m.data),
         scores: scoresEmbeds,
         index: index
     }, 180_000);

@@ -27,7 +27,7 @@ module.exports = {
         .addSubcommand(subcommand => 
             subcommand
                 .setName('buy-claims')
-                .setDescription('1 claim = 50 renas.')
+                .setDescription('1 claim = 100 renas.')
                 .addNumberOption(option => 
                     option
                         .setName('claims')
@@ -59,13 +59,13 @@ module.exports = {
                 )
                 .addStringOption(option =>
                     option
-                        .setName('cname_a')
+                        .setName('ca_name-or-id')
                         .setDescription('¿Qué personaje darás?')
                         .setRequired(true)
                 )
                 .addStringOption(option =>
                     option
-                        .setName('cname_b')
+                        .setName('cb_name-or-id')
                         .setDescription('¿Qué personaje quieres?')
                         .setRequired(true)
                 )

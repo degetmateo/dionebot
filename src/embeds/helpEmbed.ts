@@ -19,7 +19,9 @@ export default class HelpEmbed extends EmbedBuilder {
             '\`/character\` ▸ Devuelve la información de un personaje.\n' +
             '\`/ch\` ▸ Tirada para reclamar personajes.\n' +
             '\`/gacha buy-pulls\` ▸ Adquiere \`pulls\` usando \`renas\`.\n' +
-            '\`/gacha buy-claims\` ▸ Adquiere \`claims\` usando \`renas\`.\n\n' +
+            '\`/gacha buy-claims\` ▸ Adquiere \`claims\` usando \`renas\`.\n' +
+            '\`/gacha inventory\` ▸ Lista de personajes de un usuario.\n' +
+            '\`/gacha trade\` ▸ Intercambiar dos personajes con otro usuario.\n\n' +
             `[¡Invítame a tu servidor!](https://discord.com/oauth2/authorize?client_id=705972499367591953)`
         );
     };

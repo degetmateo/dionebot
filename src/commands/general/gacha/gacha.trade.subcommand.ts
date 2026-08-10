@@ -5,6 +5,8 @@ import GenericError from "../../../errors/genericError";
 import { RGB_COLORS } from "../../../static/rgb-colors";
 import GachaTradeErrorComponent from "../../../components/gacha-trade-error.component";
 import GachaTradeConfirmCardComponent from "../../../components/gacha-trade-confirm-card.component";
+import { Document, WithId } from "mongodb";
+import Helpers from "../../../helpers";
 
 export const gachaTradeSubcommand = async (interaction: GuildChatInputCommandInteraction) => {
     const optionsUser = interaction.options.getUser('user', true);
@@ -13,24 +15,34 @@ export const gachaTradeSubcommand = async (interaction: GuildChatInputCommandInt
         throw new GenericError('¡No puedes intercambiar personajes contigo mismo!');
     };
 
-    const characterNameA = interaction.options.getString('cname_a', true);
-    const characterNameB = interaction.options.getString('cname_b', true);
+    const characterArgsA = interaction.options.getString('ca_name-or-id', true);
+    const characterArgsB = interaction.options.getString('cb_name-or-id', true);
 
-    function escapeRegex(text: string): string {
-        return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-    };
+    let characterA: WithId<Document> | null = null;
 
-    const characterA = await mongo.characters.findOne(
-        {
-            name: {
-                $regex: escapeRegex(characterNameA),
-                $options: 'i'
+    if (Helpers.isNumber(characterArgsA)) {
+        characterA = await mongo.characters.findOne(
+            {
+                _id: Number(characterArgsA) as any
             }
-        }
-    );
+        );
 
-    if (!characterA) {
-        throw new GenericError(`No hemos encontrado un personaje llamado \`${characterNameA}\`.`);
+        if (!characterA) {
+            throw new GenericError(`No hemos encontrado un personaje con ID: \`${characterArgsA}\`.`);
+        };
+    } else {
+        characterA = await mongo.characters.findOne(
+            {
+                name: {
+                    $regex: characterArgsA,
+                    $options: 'i'
+                }
+            }
+        );
+
+        if (!characterA) {
+            throw new GenericError(`No hemos encontrado un personaje llamado: \`${characterArgsA}\`.`);
+        };
     };
 
     const claimA = await mongo.claims.findOne({
@@ -46,17 +58,31 @@ export const gachaTradeSubcommand = async (interaction: GuildChatInputCommandInt
         });
     };
 
-    const characterB = await mongo.characters.findOne(
-        {
-            name: {
-                $regex: escapeRegex(characterNameB),
-                $options: 'i'
-            }
-        }
-    );
+    let characterB: WithId<Document> | null = null;
 
-    if (!characterB) {
-        throw new GenericError(`No hemos encontrado un personaje llamado \`${characterNameB}\`.`);
+    if (Helpers.isNumber(characterArgsB)) {
+        characterB = await mongo.characters.findOne(
+            {
+                _id: Number(characterArgsB) as any
+            }
+        );
+
+        if (!characterB) {
+            throw new GenericError(`No hemos encontrado un personaje con ID: \`${characterArgsB}\`.`);
+        };
+    } else {
+        characterB = await mongo.characters.findOne(
+            {
+                name: {
+                    $regex: characterArgsB,
+                    $options: 'i'
+                }
+            }
+        );
+
+        if (!characterB) {
+            throw new GenericError(`No hemos encontrado un personaje llamado: \`${characterArgsB}\`.`);
+        };
     };
 
     const claimB = await mongo.claims.findOne({

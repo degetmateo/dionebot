@@ -1,62 +1,67 @@
 import { ColorResolvable, EmbedBuilder } from "discord.js";
 import Helpers from "../helpers";
+import Anianime from "../apis/anilist/models/anianime";
 
 export default class AnimeEmbed extends EmbedBuilder {
-    constructor (data: any) {
+    constructor (anime: Anianime) {
         super();
 
-        let titles = [];
-        if (data.title.romaji) titles.push(data.title.romaji);
-        if (data.title.english) titles.push(data.title.english);
-        if (data.title.native) titles.push(data.title.native);
-        titles = Helpers.deleteRepeatedElements(titles);
+        let description = anime.getDescription();
 
-        if (data.description) {
-            data.description = Helpers.clearHTML(data.description);
-
-            if (data.description.length > 4096) {
-                data.description = data.description.slice(0, 4090) + '...';
+        if (description) {
+            if (description.length > 4096) {
+                description = description.slice(0, 4090) + '...';
             };
         };
 
-        this.setColor(data.coverImage.color as ColorResolvable || null);
-        this.setThumbnail(data.coverImage.extraLarge || data.coverImage.large || data.coverImage.medium || null);
-        this.setTitle(data.title.userPreferred);
-        this.setURL(data.siteUrl || null);
-        this.setDescription(data.description || null);
-        this.setImage(data.bannerImage || null);
-        this.setFooter({ text: titles.join(' | ') });
+        this.setColor(anime.getColorAsResolvable());
+        this.setThumbnail(anime.getCoverImageUrl());
+        this.setTitle(anime.getTitle());
+        this.setURL(anime.getSiteUrl());
+        this.setDescription(description);
+        this.setImage(anime.getBannerImageUrl());
+        this.setFooter({ text: anime.getSynonyms().join(' | ') });
 
-        const informacionCampos1 = `
-            ‣ **Formato**: ${data.format || 'Desconocido'}\n‣ **Estado**: ${data.status || 'Desconocido'}\n‣ **Calificación**: ${data.meanScore ? data.meanScore + '/100' : 'Desconocida'}\n‣ **Popularidad**: ${data.popularity || 'Desconocida'}\n‣ **Favoritos**: ${data.favourites || 'Desconocido'}
-        `;
+        const field_a_text = 
+            `‣ **ID**: \`${anime.getId()}\`\n` +
+            `‣ **Fuente**: \`${anime.getSource() || 'IDK'}\`\n` +
+            `‣ **Formato**: \`${anime.getFormat() || 'IDK'}\`\n` + 
+            `‣ **Estado**: \`${anime.getStatus() || 'IDK'}\`\n` +
+            `‣ **Emisión**: \`${anime.getStartDate() || 'IDK'}\``
+        ;
 
-        const fechaEmision = data.startDate;
-        const fechaString = `${fechaEmision.day}/${fechaEmision.month}/${fechaEmision.year}`;
+        const field_b_text = 
+            `‣ **Temporada**: \`${anime.getSeason() || 'IDK'}\`\n`+
+            `‣ **Episodios**: \`${anime.getEpisodes() || 'IDK'}\`\n`+
+            `‣ **Calificación**: \`${anime.getMeanScore() ? anime.getMeanScore() + '/100' : 'IDK'}\`\n`+
+            `‣ **Popularidad**: \`${anime.getPopularity() || 'IDK'}\`\n`+
+            `‣ **Favoritos**: \`${anime.getFavourites() || 'IDK'}\``
+        ;
 
-        const informacionCampos2 = `
-            ‣ **ID**: ${data.id}\n‣ **Temporada**: ${data.season || 'Desconocida'}\n‣ **Emisión**: ${fechaString || 'Desconocida'}\n‣ **Episodios**: ${data.episodes || 'Desconocidos'}\n‣ **Fuente**: ${data.source || 'Desconocido'}
-        `;
+        this.addFields(
+            { name: "▾", value: field_a_text, inline: true },
+            { name: "▾", value: field_b_text, inline: true }
+        );
 
-        this.addFields({ name: "▾", value: informacionCampos1, inline: true },
-                        { name: "▾", value: informacionCampos2, inline: true });
-
-        const valueGenres = data.genres.length >= 1 ?
-            '`' + data.genres.join('` - `') + '`' : '`Desconocidos`';
+        const genres = anime.getGenres().length >= 1 ?
+            '`' + anime.getGenres().join('` - `') + '`' : 
+            '`Desconocidos`'
+        ;
         
-        const valueStudios = data.studios.edges.length >= 1 ?
-            '`' + data.studios.edges.map((e:any) => e.node.name).join('` - `') + '`' : '`Desconocidos`';
+        const studios = anime.getStudios().length >= 1 ?
+            '`' + anime.getStudios().join('` - `') + '`' : 
+            '`Desconocidos`'
+        ;
 
-        this.addFields({ name: "▾ Géneros", value: valueGenres, inline: false });
-        this.addFields({ name: "▾ Estudios", value: valueStudios, inline: false });
+        const tags = anime.getNoSpoilerTags().length >= 1 ?
+            '`' + anime.getNoSpoilerTags().join('` - `') + '`' : 
+            '`Desconocidas`'
+        ;
 
-        const tagsData = data.tags || [];
-        const tags = tagsData.filter((t: { name: string; isMediaSpoiler: boolean }) => !t.isMediaSpoiler);
-        const tagsMapped = tags.map((t: any) => t.name);
-
-        const tagsValue = tags.length >= 1 ?
-            '`' + tagsMapped.join('` - `') + '`' : '`Desconocidos`';
-
-        this.addFields({ name: "▾ Etiquetas", value: tagsValue, inline: false });    
+        this.addFields(
+            { name: "▾ Géneros", value: genres, inline: false },
+            { name: "▾ Estudios", value: studios, inline: false },
+            { name: "▾ Etiquetas", value: tags, inline: false }
+        );
     };
 };
