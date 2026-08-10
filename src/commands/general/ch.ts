@@ -1,4 +1,4 @@
-import { InteractionContextType, MessageFlags, SlashCommandBuilder } from "discord.js";
+import { InteractionContextType, MessageFlags, SlashCommandBuilder, User } from "discord.js";
 import GuildChatInputCommandInteraction from "../../extensions/guildChatInputCommandInteraction.extension";
 import ErrorEmbed from "../../embeds/errorEmbed";
 import membersRepository from "../../repositories/members/members.repository";
@@ -9,7 +9,7 @@ import Helpers from "../../helpers";
 import updateCharacterHelper from "../../helpers/update-character.helper";
 
 module.exports = {
-    cooldown: 5,
+    cooldown: 1,
     data: new SlashCommandBuilder()
         .setName('ch')
         .setDescription('Tirar por un personaje al azar para reclamar.')
@@ -39,8 +39,13 @@ module.exports = {
             }
         );
 
-        const owner_id = claim ? claim.user_id : null;
-        character.owner_id = owner_id;
+        let owner: User | null = null;
+
+        if (claim) {
+            owner = await interaction.client.users.fetch(claim.user_id);
+        };
+
+        character.owner_id = owner?.id;
 
         let popularMedia: any = null;
         let selectedMedia: any = null;
@@ -66,7 +71,7 @@ module.exports = {
             media: selectedMedia,
             claimed_count: character.claimed_count || 0,
             fav_count: character.favourites || 0,
-            owner_id: owner_id,
+            owner: owner,
             interaction_id: interaction_id,
             users_who_want: favs
         });

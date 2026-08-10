@@ -1,4 +1,4 @@
-import { ButtonBuilder, ButtonStyle, ContainerBuilder, MediaGalleryBuilder, MediaGalleryItemBuilder, SeparatorBuilder, SeparatorSpacingSize, TextDisplayBuilder } from "discord.js";
+import { ButtonBuilder, ButtonStyle, ContainerBuilder, MediaGalleryBuilder, MediaGalleryItemBuilder, SeparatorBuilder, SeparatorSpacingSize, TextDisplayBuilder, User } from "discord.js";
 import Helpers from "../helpers";
 
 export type CharacterInfoCardComponentData = {
@@ -22,7 +22,8 @@ export type CharacterInfoCardComponentData = {
     age: string | null;
     bloodType: string | null;
 
-    owner_id: string | null;
+    owner?: { username: string; } | null;
+
     interaction_id: string;
 
     users_who_want?: string[];
@@ -46,9 +47,9 @@ class CharacterInfoCardComponent extends ContainerBuilder {
         
         let characterInfoContent = '';
 
-        if (data.owner_id) {
+        if (data.owner) {
             characterInfoContent +=
-                `Pertenece a <@${data.owner_id}>\n`;
+                `Pertenece a **${data.owner.username}**\n`;
         };
 
         characterInfoContent +=

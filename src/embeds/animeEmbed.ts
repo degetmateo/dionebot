@@ -20,7 +20,10 @@ export default class AnimeEmbed extends EmbedBuilder {
         this.setURL(anime.getSiteUrl());
         this.setDescription(description);
         this.setImage(anime.getBannerImageUrl());
-        this.setFooter({ text: anime.getSynonyms().join(' | ') });
+
+        if (anime.getSynonyms().length > 0) {
+            this.setFooter({ text: anime.getSynonyms().join(' | ') });
+        };
 
         const field_a_text = 
             `‣ **ID**: \`${anime.getId()}\`\n` +

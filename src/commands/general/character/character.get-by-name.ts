@@ -4,6 +4,7 @@ import CharacterInfoCardComponent from "../../../components/character-info-card.
 import mongo from "../../../database/mongo";
 import ErrorEmbed from "../../../embeds/errorEmbed";
 import GuildChatInputCommandInteraction from "../../../extensions/guildChatInputCommandInteraction.extension";
+import Bot from "../../../extensions/bot.extension";
 
 export const characterGetbyName = async (interaction: GuildChatInputCommandInteraction) => {
     const args: string = interaction.options.getString('name-or-id', true);
@@ -35,13 +36,17 @@ export const characterGetbyName = async (interaction: GuildChatInputCommandInter
         const popularMedia = elem.media.nodes.sort((a:any, b:any) => b.favourites - a.favourites);
         const selectedMedia = popularMedia[0];
 
+        const owner = claim ?
+            await (interaction.client as Bot).users.fetch(claim.user_id):
+            null;
+
         const card = new CharacterInfoCardComponent({
             id: elem.id,
             name: elem.name.full,
             fav_count: elem.favourites,
             url: elem.siteUrl,
             interaction_id: key,
-            owner_id: claim ? claim.user_id : null,
+            owner: owner ? { username: owner.username } : undefined,
             media: {
                 id: selectedMedia.id,
                 siteUrl: selectedMedia.siteUrl,

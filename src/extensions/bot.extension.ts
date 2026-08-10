@@ -91,6 +91,10 @@ export default class Bot extends Client<true> {
         this.cache.delete(key);
     };
 
+    async fetchUser (id: string) {
+        return await this.users.fetch(id);
+    };
+
     async login (token?: string): Promise<string> {
         const settings = await SettingsModule.read();
         this.settings = settings;

@@ -1,4 +1,4 @@
-import { MessageFlags } from "discord.js";
+import { MessageFlags, User } from "discord.js";
 import anilist from "../../../apis/anilist/anilist";
 import CharacterInfoCardComponent from "../../../components/character-info-card.component";
 import mongo from "../../../database/mongo";
@@ -22,7 +22,7 @@ export const characterGetbyId = async (interaction: GuildChatInputCommandInterac
     let owner_id: string | null = null;
     let claimed_count: number = 0;
     let images = [{ url: data.image.large || data.image.medium }];
-    
+
     const parsed = {
         _id: data.id,
         url: data.siteUrl,
@@ -80,6 +80,12 @@ export const characterGetbyId = async (interaction: GuildChatInputCommandInterac
         });
     };
 
+    let owner: User | undefined;
+    
+    if (owner_id) {
+        owner = await interaction.client.users.fetch(owner_id);
+    };
+
     const popularMedia = data.media.nodes.sort((a:any, b:any) => b.favourites - a.favourites);
     const selectedMedia = popularMedia[0]
 
@@ -91,7 +97,7 @@ export const characterGetbyId = async (interaction: GuildChatInputCommandInterac
         fav_count: data.favourites,
         url: data.siteUrl,
         interaction_id: interaction_id,
-        owner_id: owner_id,
+        owner: owner ? { username: owner.username } : undefined,
         media: {
             id: selectedMedia.id,
             siteUrl: selectedMedia.siteUrl,

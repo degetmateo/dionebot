@@ -20,8 +20,10 @@ export type CharacterClaimCardComponentData = {
     fav_count: number;
     claimed_count: number;
 
-    owner_id: string | null;
+
     interaction_id: string;
+
+    owner?: { username: string } | null;
 
     users_who_want?: any[];
 };
@@ -44,9 +46,9 @@ class CharacterClaimCardComponent extends ContainerBuilder {
         
         let characterInfoContent = '';
 
-        if (data.owner_id) {
+        if (data.owner) {
             characterInfoContent +=
-                `Pertenece a <@${data.owner_id}>\n`;
+                `Pertenece a **${data.owner.username}**\n`;
         };
 
         characterInfoContent +=
@@ -69,7 +71,7 @@ class CharacterClaimCardComponent extends ContainerBuilder {
 
         const buttons: ButtonBuilder[] = [];
 
-        if (data.owner_id) {
+        if (data.owner) {
             buttons.push(
                 new ButtonBuilder()
                     .setEmoji('💰')
