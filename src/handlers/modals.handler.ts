@@ -3,7 +3,7 @@ import fs from 'fs';
 import Bot from "../extensions/bot.extension";
 
 const load = (bot: Bot) => {
-    const dir = path.join(__dirname, '../modals');
+    const dir = path.join(__dirname, '../interactions/modals');
     const files = fs.readdirSync(dir).filter(file => file.endsWith('.js') || file.endsWith('.ts'));
 
     for (const file of files) {

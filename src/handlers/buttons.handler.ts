@@ -3,7 +3,7 @@ import fs from 'fs';
 import Bot from "../extensions/bot.extension";
 
 const load = (bot: Bot) => {
-    const buttonsDir = path.join(__dirname, '../buttons');
+    const buttonsDir = path.join(__dirname, '../interactions/buttons');
     const buttonsFolders = fs.readdirSync(buttonsDir);
 
     
