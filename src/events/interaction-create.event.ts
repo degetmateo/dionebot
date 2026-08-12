@@ -1,7 +1,9 @@
-import { Events, Interaction } from 'discord.js';
+import { Events, Interaction, MessageFlags } from 'discord.js';
 import Bot from '../extensions/bot.extension';
 import GenericError from '../errors/genericError';
 import cooldownsHelper from '../helpers/cooldowns.helper';
+import responsesHelper from '../helpers/responses.helper';
+import ErrorEmbed from '../embeds/errorEmbed';
 
 module.exports = {
     name: Events.InteractionCreate,
@@ -56,8 +58,14 @@ module.exports = {
                     };
                 };
             };
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
+
+            if (error instanceof GenericError) {
+                await responsesHelper.execute(interaction, [new ErrorEmbed(error.message)], { flags: [MessageFlags.Ephemeral] });
+            } else {
+                await responsesHelper.execute(interaction, [new ErrorEmbed('Ha ocurrido un error inesperado.')], { flags: [MessageFlags.Ephemeral] });
+            };
         };
     }
 };
