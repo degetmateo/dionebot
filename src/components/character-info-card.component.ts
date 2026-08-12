@@ -32,8 +32,10 @@ export type CharacterInfoCardComponentData = {
 };
 
 class CharacterInfoCardComponent extends ContainerBuilder {
+    public character_data: CharacterInfoCardComponentData;
     constructor (data: CharacterInfoCardComponentData) {
         super();
+        this.character_data = data;
         this.setAccentColor(Helpers.getRandomRGBTuple());
 
         const characterName = new TextDisplayBuilder().setContent(`### [**${data.name}**](${data.url})`);
@@ -109,7 +111,7 @@ class CharacterInfoCardComponent extends ContainerBuilder {
             new ButtonBuilder()
                 .setEmoji('💘')
                 .setStyle(ButtonStyle.Secondary)
-                .setCustomId(`fav-button_${data.interaction_id}`)
+                .setCustomId(`character-fav-button_${data.interaction_id}`)
         );
 
         this.addActionRowComponents(row => 

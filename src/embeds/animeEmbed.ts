@@ -18,7 +18,7 @@ export default class AnimeEmbed extends EmbedBuilder {
         this.setThumbnail(anime.getCoverImageUrl());
         this.setTitle(anime.getTitle());
         this.setURL(anime.getSiteUrl());
-        this.setDescription(description);
+        if (description) this.setDescription(description);
         this.setImage(anime.getBannerImageUrl());
 
         if (anime.getSynonyms().length > 0) {

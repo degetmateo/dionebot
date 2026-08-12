@@ -89,7 +89,7 @@ export const characterGetbyId = async (interaction: GuildChatInputCommandInterac
     const popularMedia = data.media.nodes.sort((a:any, b:any) => b.favourites - a.favourites);
     const selectedMedia = popularMedia[0]
 
-    const interaction_id = interaction.client.set(parsed, 120_000);
+    const interaction_id = interaction.client.set({}, 120_000);
 
     const card = new CharacterInfoCardComponent({
         id: data.id,
@@ -110,6 +110,11 @@ export const characterGetbyId = async (interaction: GuildChatInputCommandInterac
         age: data.age || null,
         bloodType: data.bloodType || null
     }); 
+
+    interaction.client.update(interaction_id, {
+        index: 0,
+        cards: [card]
+    }, 120_000);
 
     await interaction.reply({
         flags: [MessageFlags.IsComponentsV2],

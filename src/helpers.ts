@@ -8,6 +8,7 @@ export default class Helpers {
     };
 
     public static clearHTML (text: string) {
+        if (!text) return '';
         if (text.length <= 0) return '';
         return text.replace(this.STRING_WITHOUT_HTML, '');
     };

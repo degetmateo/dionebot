@@ -4,6 +4,7 @@ import { gachaBuyPullsSubcommand } from "./gacha/gacha.buy-pulls.subcommand";
 import { gachaBuyClaimsSubcommand } from "./gacha/gacha.buy-claims.subcommand";
 import { gachaInventorySubcommand } from "./gacha/gacha.inventory.subcommand";
 import { gachaTradeSubcommand } from "./gacha/gacha.trade.subcommand";
+import { gachaAuctionSubcommand } from "./gacha/gacha.auction.subcommand";
 
 module.exports = {
     cooldown: 10,
@@ -69,6 +70,24 @@ module.exports = {
                         .setDescription('¿Qué personaje quieres?')
                         .setRequired(true)
                 )
+        )
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('auction')
+                .setDescription('Subastar un personaje al mejor postor.')
+                .addStringOption(option =>
+                    option
+                        .setName('name-or-id')
+                        .setDescription('¿Qué personaje quieres subastar?')
+                        .setRequired(true)
+                )
+                .addNumberOption(option =>
+                    option
+                        .setName('base-price')
+                        .setDescription('Precio base que propones para empezar a pujar.')
+                        .setMinValue(0)
+                        .setRequired(true)
+                )
         ),
     execute: async (interaction: GuildChatInputCommandInteraction) => { 
         const subcommand = interaction.options.getSubcommand();
@@ -87,6 +106,10 @@ module.exports = {
 
         if (subcommand === 'trade') {
             return await gachaTradeSubcommand(interaction);
+        };
+
+        if (subcommand === 'auction') {
+            return await gachaAuctionSubcommand(interaction);
         };
     }
 };
