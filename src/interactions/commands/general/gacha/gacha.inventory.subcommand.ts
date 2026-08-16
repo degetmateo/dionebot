@@ -4,6 +4,8 @@ import mongo from "../../../../database/mongo";
 import GachaInventoryComponent from "../../../../components/gacha-inventory.component";
 
 export const gachaInventorySubcommand = async (interaction: GuildChatInputCommandInteraction) => {
+    await interaction.deferReply();
+
     const optionsUser: User = interaction.options.getUser('user', false) || interaction.user;
     
     const claims = await mongo.claims.find({
@@ -62,7 +64,7 @@ export const gachaInventorySubcommand = async (interaction: GuildChatInputComman
         index: 0
     }, 120_000);
 
-    await interaction.reply({
+    await interaction.editReply({
         flags: [MessageFlags.IsComponentsV2],
         components: [cards[0]]
     });
