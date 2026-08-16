@@ -15,10 +15,6 @@ const ok = async (interaction: Interaction, options: InteractionReplyOptions) =>
     };   
 };
 
-const error = async (interaction: ChatInputCommandInteraction, error: any) => {
-
-};
-
 const execute = async (interaction: Interaction, embeds: EmbedBuilder[], options?: InteractionReplyOptions) => {
     try {
         if (!interaction.isRepliable()) return;
@@ -50,7 +46,6 @@ const execute = async (interaction: Interaction, embeds: EmbedBuilder[], options
 
 const responsesHelper = {
     ok,
-    error,
     execute
 };
 

@@ -1,4 +1,4 @@
-import { ButtonBuilder, ButtonStyle, ContainerBuilder, MediaGalleryBuilder, MediaGalleryItemBuilder, SeparatorBuilder, SeparatorSpacingSize, TextDisplayBuilder } from "discord.js";
+import { ButtonBuilder, ButtonStyle, ContainerBuilder, MediaGalleryBuilder, MediaGalleryItemBuilder, SeparatorBuilder, SeparatorSpacingSize, TextDisplayBuilder, User } from "discord.js";
 import Helpers from "../helpers";
 
 export type CharacterClaimCardComponentData = {
@@ -23,7 +23,7 @@ export type CharacterClaimCardComponentData = {
 
     interaction_id: string;
 
-    owner?: { username: string } | null;
+    owner?: User | null | undefined;
 
     users_who_want?: any[];
 };
@@ -48,7 +48,7 @@ class CharacterClaimCardComponent extends ContainerBuilder {
 
         if (data.owner) {
             characterInfoContent +=
-                `Pertenece a **${data.owner.username}**\n`;
+                `Pertenece a **${data.owner.displayName}**\n`;
         };
 
         characterInfoContent +=

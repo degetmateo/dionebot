@@ -7,9 +7,11 @@ import { TOKEN } from './consts';
 
 const init = async () => {
     await mongo.init();
-    GachaSchedulerModule.SCHEDULE_PULLS_RESET();
+
     const bot = new Bot();
     await bot.login(TOKEN);
+
+    GachaSchedulerModule.SCHEDULE_PULLS_RESET(bot);
 };
 
 init();

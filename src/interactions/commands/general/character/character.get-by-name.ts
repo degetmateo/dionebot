@@ -30,7 +30,7 @@ export const characterGetbyName = async (interaction: GuildChatInputCommandInter
     const key = interaction.client.set({}, 120_000);
 
     for (const elem of data) {
-        const claim = claims.find(c => c._id === elem.id);
+        const claim = claims.find(c => c.character_id === elem.id);
 
         const images = [{ url: elem.image.large || elem.image.medium }];
         const popularMedia = elem.media.nodes.sort((a:any, b:any) => b.favourites - a.favourites);
@@ -46,7 +46,7 @@ export const characterGetbyName = async (interaction: GuildChatInputCommandInter
             fav_count: elem.favourites,
             url: elem.siteUrl,
             interaction_id: key,
-            owner: owner ? { username: owner.username } : undefined,
+            owner: owner ? owner : undefined,
             media: {
                 id: selectedMedia.id,
                 siteUrl: selectedMedia.siteUrl,

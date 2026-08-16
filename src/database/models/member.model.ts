@@ -24,8 +24,10 @@ export const memberModel = {
                 banner_url: null
             },
             gacha: {
-                pulls: 20,
-                claims: 2
+                pulls: 15,
+                claims: 2,
+                last_channel_id: null,
+                last_guild_id: null
             }
         };
     }

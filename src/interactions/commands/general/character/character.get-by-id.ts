@@ -81,7 +81,7 @@ export const characterGetbyId = async (interaction: GuildChatInputCommandInterac
     };
 
     let owner: User | undefined;
-    
+
     if (owner_id) {
         owner = await interaction.client.users.fetch(owner_id);
     };
@@ -97,7 +97,7 @@ export const characterGetbyId = async (interaction: GuildChatInputCommandInterac
         fav_count: data.favourites,
         url: data.siteUrl,
         interaction_id: interaction_id,
-        owner: owner ? { username: owner.username } : undefined,
+        owner: owner ? owner : undefined,
         media: {
             id: selectedMedia.id,
             siteUrl: selectedMedia.siteUrl,

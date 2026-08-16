@@ -22,7 +22,7 @@ export type CharacterInfoCardComponentData = {
     age: string | null;
     bloodType: string | null;
 
-    owner?: { username: string; } | null;
+    owner?: User | undefined;
 
     interaction_id: string;
 
@@ -51,7 +51,7 @@ class CharacterInfoCardComponent extends ContainerBuilder {
 
         if (data.owner) {
             characterInfoContent +=
-                `Pertenece a **${data.owner.username}**\n`;
+                `Pertenece a **${data.owner.displayName}**\n`;
         };
 
         characterInfoContent +=

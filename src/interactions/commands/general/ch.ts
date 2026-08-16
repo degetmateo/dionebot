@@ -49,6 +49,7 @@ module.exports = {
 
         let popularMedia: any = null;
         let selectedMedia: any = null;
+        
         if (character.media && character.media.length > 0) {
             popularMedia = character.media.sort((a:any, b:any) => b.favourites - a.favourites);
             selectedMedia = popularMedia[0];
