@@ -1,4 +1,4 @@
-import { InteractionContextType, MessageFlags, SlashCommandBuilder, User } from "discord.js";
+import { InteractionContextType, MessageFlags, SlashCommandBuilder, TextDisplayBuilder, User } from "discord.js";
 import GuildChatInputCommandInteraction from "../../../extensions/guildChatInputCommandInteraction.extension";
 import membersRepository from "../../../repositories/members/members.repository";
 import ErrorEmbed from "../../../embeds/errorEmbed";
@@ -20,8 +20,13 @@ module.exports = {
 
         if (member.gacha.pulls <= 0) {
             return interaction.reply({
-                flags: "Ephemeral",
-                embeds: [new ErrorEmbed('**¡No tienes más pulls!** Volverás a tener \`15 pulls\` en la siguiente hora (esto no se acumula). También puedes comprar \`1 pull\` por \`10 renas\` en \`/gacha buy-pulls\`.')]
+                flags: [MessageFlags.IsComponentsV2],
+                components: [
+                    new TextDisplayBuilder()
+                        .setContent(`## 🥀 ¡No tienes más pulls!`),
+                    new TextDisplayBuilder()
+                        .setContent(`Volverás a tener \`15 pulls\` en la siguiente hora (esto no se acumula). También puedes comprar \`1 pull\` por \`10 renas\` en \`/gacha buy-pulls\`.`)
+                ]
             });
         };
 
