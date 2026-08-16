@@ -26,8 +26,7 @@ export const memberModel = {
             gacha: {
                 pulls: 15,
                 claims: 2,
-                last_channel_id: null,
-                last_guild_id: null
+                last_channel_id: null
             }
         };
     }

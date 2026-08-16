@@ -25,7 +25,7 @@ module.exports = {
             });
         };
 
-        membersRepository.decreasePulls(member._id);
+        membersRepository.decreasePulls(member._id, interaction.channel.id);
 
         const character = await charactersRepository.random(); 
 

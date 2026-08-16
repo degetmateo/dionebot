@@ -11,7 +11,7 @@ const membersRepository = {
         }
     },
 
-    decreasePulls: async (_id: string) => {
+    decreasePulls: async (_id: string, channel_id: string) => {
         await mongo.users.updateOne(
             {
                 _id: _id as any
@@ -19,6 +19,9 @@ const membersRepository = {
             {
                 $inc: {
                     "gacha.pulls": -1
+                },
+                $set: {
+                    "gacha.last_channel_id": channel_id
                 }
             }
         );
