@@ -43,16 +43,14 @@ export const notifyUsers = async (bot: Bot) => {
             const channel = channels.get(cId);
             if (!channel) continue;
 
-            if (channel) {
-                if (channel.isSendable()) {
-                    await channel.send({
-                        flags: [MessageFlags.IsComponentsV2],
-                        components: [
-                            new TextDisplayBuilder()
-                                .setContent(`💥 <@${pullUser._id}> ¡Se han repuesto las pulls!`)
-                        ]
-                    });
-                };
+            if (channel.isSendable()) {
+                await channel.send({
+                    flags: [MessageFlags.IsComponentsV2],
+                    components: [
+                        new TextDisplayBuilder()
+                            .setContent(`💥 <@${pullUser._id}> ¡Se han repuesto las pulls!`)
+                    ]
+                });
             };
         };
     } catch (error) {

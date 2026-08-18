@@ -20,6 +20,8 @@ module.exports = {
             });
         };
 
+        await interaction.deferUpdate();
+
         data.index = data.index - 1;
         if (data.index < 0) data.index = data.vnsEmbeds.length - 1;
     
@@ -38,7 +40,7 @@ module.exports = {
                 new ErrorEmbed('No hay votos para esta novela visual.');
         };
 
-        await interaction.update({
+        await interaction.editReply({
             embeds: [data.vnsEmbeds[data.index], data.scoresEmbeds[data.index]]
         });
     }
