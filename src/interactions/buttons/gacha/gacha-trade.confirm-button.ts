@@ -1,7 +1,7 @@
 import { ButtonInteraction, MessageFlags, User } from "discord.js";
 import { Document, WithId } from "mongodb";
 import GenericError from "../../../errors/genericError";
-import Bot from "../../../extensions/bot.extension";
+import Bot from "../../../bot/bot";
 import GachaTradeAcceptCardComponent from "../../../components/gacha-trade-accept-card.component";
 
 module.exports = {

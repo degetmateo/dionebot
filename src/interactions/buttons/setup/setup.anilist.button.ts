@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, MessageFlags } from "discord.js";
-import Bot from "../../../extensions/bot.extension";
+import Bot from "../../../bot/bot";
 import ErrorEmbed from "../../../embeds/errorEmbed";
 import { ANILIST_AUTH_URL } from "../../../consts";
 import SetupInstructionsEmbed from "../../../builders/embeds/setupInstructions.embed";

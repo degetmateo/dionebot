@@ -3,7 +3,7 @@ import ErrorEmbed from "../../../embeds/errorEmbed";
 import vndb from "../../../apis/vndb/vndb";
 import UserVNDBEmbed from "../../../builders/embeds/user/user.vndb.embed";
 import UserRowComponent from "../../../builders/components/user.row.component";
-import Bot from "../../../extensions/bot.extension";
+import Bot from "../../../bot/bot";
 
 module.exports = {
     id: 'user-vndb-button',

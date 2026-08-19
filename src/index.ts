@@ -1,6 +1,6 @@
 /// <reference path="../env.d.ts" />
 
-import Bot from './extensions/bot.extension';
+import Bot from './bot/bot';
 import mongo from "./database/mongo";
 import GachaSchedulerModule from './modules/gacha.scheduler.module';
 import { TOKEN } from './consts';

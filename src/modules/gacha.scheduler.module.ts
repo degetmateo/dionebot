@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import mongo from '../database/mongo';
-import Bot from '../extensions/bot.extension';
+import Bot from '../bot/bot';
 import { notifyUsers } from '../helpers/notify-users.helper';
 
 const SCHEDULE_PULLS_RESET = async (bot: Bot) => {

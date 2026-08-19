@@ -1,5 +1,5 @@
 import { ButtonInteraction, LabelBuilder, MessageFlags, ModalBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
-import Bot from "../../../extensions/bot.extension";
+import Bot from "../../../bot/bot";
 import ErrorEmbed from "../../../embeds/errorEmbed";
 
 module.exports = {

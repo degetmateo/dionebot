@@ -46,6 +46,18 @@ export default class AnimeEmbed extends EmbedBuilder {
             { name: "▾", value: field_b_text, inline: true }
         );
 
+        // this.addFields(
+        //     { name: 'ID', value: `\`${anime.getId()}\``, inline: true },
+        //     { name: 'Fuente', value: `\`${anime.getSource() || 'Desconocida'}\``, inline: true },
+        //     { name: 'Formato', value: `\`${anime.getFormat() || 'Desconocido'}\``, inline: true },
+        //     { name: 'Estado', value: `\`${anime.getStatus() || 'Desconocido'}\``, inline: true },
+        //     { name: 'Emisión', value: `\`${anime.getStartDate() || 'Desconocida'}\``, inline: true },
+        //     { name: 'Temporada', value: `\`${anime.getSeason() || 'Desconocida'}\``, inline: true },
+        //     { name: 'Episodios', value: `\`${anime.getEpisodes() || 'Desconocidos'}\``, inline: true },
+        //     { name: 'Calificación', value: `\`${anime.getMeanScore() ? anime.getMeanScore() + '/100' : 'Desconocida'}\``, inline: true },
+        //     { name: 'Favoritos', value: `\`${anime.getFavourites() || 'Desconocidos'}\``, inline: true },
+        // )
+
         const genres = anime.getGenres().length >= 1 ?
             '`' + anime.getGenres().join('` - `') + '`' : 
             '`Desconocidos`'
@@ -62,9 +74,9 @@ export default class AnimeEmbed extends EmbedBuilder {
         ;
 
         this.addFields(
-            { name: "▾ Géneros", value: genres, inline: false },
-            { name: "▾ Estudios", value: studios, inline: false },
-            { name: "▾ Etiquetas", value: tags, inline: false }
+            { name: "Géneros", value: genres, inline: false },
+            { name: "Estudios", value: studios, inline: false },
+            { name: "Etiquetas", value: tags, inline: false }
         );
     };
 };

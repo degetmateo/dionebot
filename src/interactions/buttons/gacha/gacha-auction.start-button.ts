@@ -1,7 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ContainerBuilder, MediaGalleryBuilder, MediaGalleryItemBuilder, MessageFlags, TextDisplayBuilder } from "discord.js";
 import { Document, WithId } from "mongodb";
 import ErrorEmbed from "../../../embeds/errorEmbed";
-import Bot from "../../../extensions/bot.extension";
+import Bot from "../../../bot/bot";
 import Helpers from "../../../helpers";
 
 module.exports = {

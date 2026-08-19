@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import Bot from '../extensions/bot.extension';
+import Bot from '../bot/bot';
 
 let paths: string[] = [];
 

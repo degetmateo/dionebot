@@ -5,7 +5,7 @@ import buttonsHandler from "../handlers/buttons.handler";
 import modalsHandler from "../handlers/modals.handler";
 import SettingsModule, { Settings } from "../modules/settings.module";
 
-export default class Bot extends Client<true> {
+class Bot extends Client<true> {
     public commands: Collection<string, {
         cooldown: number;
         data: SlashCommandBuilder,
@@ -101,3 +101,5 @@ export default class Bot extends Client<true> {
         return await super.login(token);
     };
 };
+
+export default Bot;

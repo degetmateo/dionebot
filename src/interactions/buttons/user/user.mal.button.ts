@@ -3,7 +3,7 @@ import ErrorEmbed from "../../../embeds/errorEmbed";
 import mal from "../../../apis/mal/mal";
 import UserMALEmbed from "../../../builders/embeds/user/user.mal.embed";
 import UserRowComponent from "../../../builders/components/user.row.component";
-import Bot from "../../../extensions/bot.extension";
+import Bot from "../../../bot/bot";
 
 module.exports = {
     id: 'user-mal-button',

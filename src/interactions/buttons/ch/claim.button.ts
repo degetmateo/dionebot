@@ -1,7 +1,7 @@
 import { ButtonInteraction, MessageFlags } from "discord.js";
 import ErrorEmbed from "../../../embeds/errorEmbed";
 import membersRepository from "../../../repositories/members/members.repository";
-import Bot from "../../../extensions/bot.extension";
+import Bot from "../../../bot/bot";
 import mongo from "../../../database/mongo";
 import charactersRepository from "../../../repositories/characters/characters.repository";
 import SuccessEmbed from "../../../embeds/successEmbed";

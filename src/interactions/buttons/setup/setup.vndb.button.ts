@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, Colors, EmbedBuilder, MessageFlags } from "discord.js";
 import ErrorEmbed from "../../../embeds/errorEmbed";
-import Bot from "../../../extensions/bot.extension";
+import Bot from "../../../bot/bot";
 
 module.exports = {
     id: 'setup-vndb-button',

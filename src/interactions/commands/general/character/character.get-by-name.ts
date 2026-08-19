@@ -4,7 +4,7 @@ import anilist from "../../../../apis/anilist/anilist";
 import ErrorEmbed from "../../../../embeds/errorEmbed";
 import mongo from "../../../../database/mongo";
 import CharacterInfoCardComponent from "../../../../components/character-info-card.component";
-import Bot from "../../../../extensions/bot.extension";
+import Bot from "../../../../bot/bot";
 
 export const characterGetbyName = async (interaction: GuildChatInputCommandInteraction) => {
     const args: string = interaction.options.getString('name-or-id', true);

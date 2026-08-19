@@ -3,7 +3,7 @@ import ErrorEmbed from "../../../embeds/errorEmbed";
 import Aniuser from "../../../apis/anilist/models/aniuser";
 import anilist from "../../../apis/anilist/anilist";
 import UserAnilistEmbed from "../../../builders/embeds/user/user.anilist.embed";
-import Bot from "../../../extensions/bot.extension";
+import Bot from "../../../bot/bot";
 import UserRowComponent from "../../../builders/components/user.row.component";
 
 module.exports = {

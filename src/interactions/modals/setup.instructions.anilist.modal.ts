@@ -1,6 +1,6 @@
 import { MessageFlags, ModalSubmitInteraction } from "discord.js";
 import { Document, Filter } from "mongodb";
-import Bot from "../../extensions/bot.extension";
+import Bot from "../../bot/bot";
 import ErrorEmbed from "../../embeds/errorEmbed";
 import anilist from "../../apis/anilist/anilist";
 import mongo from "../../database/mongo";

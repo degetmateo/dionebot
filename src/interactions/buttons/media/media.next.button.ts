@@ -2,7 +2,7 @@ import { ButtonInteraction, EmbedBuilder, MessageFlags } from "discord.js";
 import ErrorEmbed from "../../../embeds/errorEmbed";
 import commonRequests from "../../../apis/common/common.requests";
 import ScoresEmbed from "../../../embeds/scoresEmbed";
-import Bot from "../../../extensions/bot.extension";
+import Bot from "../../../bot/bot";
 
 module.exports = {
     id: 'media-next-button',

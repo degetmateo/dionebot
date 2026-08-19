@@ -1,6 +1,6 @@
 import { ButtonInteraction, Collection } from "discord.js";
 import GenericError from "../errors/genericError";
-import Bot from "../extensions/bot.extension";
+import Bot from "../bot/bot";
 
 const cooldowns: Collection<string, Collection<string, any>> = new Collection<string, Collection<string, any>>();
 

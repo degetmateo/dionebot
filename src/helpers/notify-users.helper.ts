@@ -1,5 +1,5 @@
 import { Channel, MessageFlags, TextDisplayBuilder } from "discord.js";
-import Bot from "../extensions/bot.extension";
+import Bot from "../bot/bot";
 import mongo from "../database/mongo";
 
 export const notifyUsers = async (bot: Bot) => {

@@ -1,7 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, Colors, EmbedBuilder, MessageFlags } from "discord.js";
 import crypto from 'crypto';
 import ErrorEmbed from "../../../embeds/errorEmbed";
-import Bot from "../../../extensions/bot.extension";
+import Bot from "../../../bot/bot";
 
 module.exports = {
     id: 'setup-mal-button',

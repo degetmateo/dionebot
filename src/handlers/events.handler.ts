@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import Bot from "../extensions/bot.extension";
+import Bot from "../bot/bot";
 
 const load = (bot: Bot) => {
     const eventsPath = path.join(__dirname, '../events');

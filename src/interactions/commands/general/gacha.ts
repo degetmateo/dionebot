@@ -5,6 +5,7 @@ import { gachaInventorySubcommand } from "./gacha/gacha.inventory.subcommand";
 import { gachaTradeSubcommand } from "./gacha/gacha.trade.subcommand";
 import { gachaAuctionSubcommand } from "./gacha/gacha.auction.subcommand";
 import GuildChatInputCommandInteraction from "../../../extensions/guildChatInputCommandInteraction.extension";
+import { gachaSellSubcommand } from "./gacha/gacha.sell.subcommand";
 
 module.exports = {
     cooldown: 10,
@@ -73,22 +74,46 @@ module.exports = {
         )
         .addSubcommand(subcommand =>
             subcommand
-                .setName('auction')
-                .setDescription('Subastar un personaje al mejor postor.')
+                .setName('sell')
+                .setDescription('Vender un personaje.')
                 .addStringOption(option =>
                     option
                         .setName('name-or-id')
-                        .setDescription('¿Qué personaje quieres subastar?')
+                        .setDescription('¿Qué personaje quieres vender?')
+                        .setRequired(true)
+                )
+                .addUserOption(option =>
+                    option
+                        .setName('user')
+                        .setDescription('¿A quién le vas a vender el personaje?')
                         .setRequired(true)
                 )
                 .addNumberOption(option =>
                     option
-                        .setName('base-price')
-                        .setDescription('Precio base que propones para empezar a pujar.')
-                        .setMinValue(0)
+                        .setName('price')
+                        .setDescription('¿Qué precio le pondrás al personaje?')
                         .setRequired(true)
+                        .setMinValue(0)
                 )
         ),
+        // .addSubcommand(subcommand =>
+        //     subcommand
+        //         .setName('auction')
+        //         .setDescription('Subastar un personaje al mejor postor.')
+        //         .addStringOption(option =>
+        //             option
+        //                 .setName('name-or-id')
+        //                 .setDescription('¿Qué personaje quieres subastar?')
+        //                 .setRequired(true)
+        //         )
+        //         .addNumberOption(option =>
+        //             option
+        //                 .setName('base-price')
+        //                 .setDescription('Precio base que propones para comenzar a pujar.')
+        //                 .setMinValue(0)
+        //                 .setRequired(true)
+        //         )
+        // ),
     execute: async (interaction: GuildChatInputCommandInteraction) => { 
         const subcommand = interaction.options.getSubcommand();
 
@@ -110,6 +135,10 @@ module.exports = {
 
         if (subcommand === 'auction') {
             return await gachaAuctionSubcommand(interaction);
+        };
+
+        if (subcommand === 'sell') {
+            return await gachaSellSubcommand(interaction);
         };
     }
 };

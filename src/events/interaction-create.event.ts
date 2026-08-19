@@ -1,5 +1,5 @@
 import { Events, Interaction, MessageFlags } from 'discord.js';
-import Bot from '../extensions/bot.extension';
+import Bot from '../bot/bot';
 import GenericError from '../errors/genericError';
 import cooldownsHelper from '../helpers/cooldowns.helper';
 import responsesHelper from '../helpers/responses.helper';

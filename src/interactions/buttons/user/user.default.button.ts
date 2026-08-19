@@ -1,7 +1,7 @@
 import { ButtonInteraction, User } from "discord.js";
 import ErrorEmbed from "../../../embeds/errorEmbed";
 import UserProfileEmbed from "../../../builders/embeds/user/user.profile.embed";
-import Bot from "../../../extensions/bot.extension";
+import Bot from "../../../bot/bot";
 import UserRowComponent from "../../../builders/components/user.row.component";
 
 module.exports = {

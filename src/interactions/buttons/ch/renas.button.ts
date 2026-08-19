@@ -1,6 +1,6 @@
 import { ButtonInteraction, MessageFlags } from "discord.js";
 import ErrorEmbed from "../../../embeds/errorEmbed";
-import Bot from "../../../extensions/bot.extension";
+import Bot from "../../../bot/bot";
 import membersRepository from "../../../repositories/members/members.repository";
 
 module.exports = {
