@@ -55,7 +55,7 @@ module.exports = {
 
         charactersRepository.increaseClaimCount(character._id);
 
-        interaction.reply({
+        await interaction.reply({
             embeds: [new SuccessEmbed(`¡<@${interaction.user.id}> ha reclamado a **${character.name}**!`)]
         });
     }

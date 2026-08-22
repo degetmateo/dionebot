@@ -4,8 +4,13 @@ import commandsHandler from "../handlers/commands.handler";
 import buttonsHandler from "../handlers/buttons.handler";
 import modalsHandler from "../handlers/modals.handler";
 import SettingsModule, { Settings } from "../modules/settings.module";
+import InteractionsManager from "./modules/interactions-manager";
+import mongo from "../database/mongo";
+import { memoryModule } from "../modules/mem.module";
 
 class Bot extends Client<true> {
+    public interactionsManager: InteractionsManager;
+
     public commands: Collection<string, {
         cooldown: number;
         data: SlashCommandBuilder,
@@ -37,7 +42,10 @@ class Bot extends Client<true> {
             ]
         });
 
+        this.interactionsManager = new InteractionsManager();
+
         this.settings = {} as Settings;
+        
         this.commands = new Collection();
         this.buttons = new Collection();
         this.modals = new Collection();
@@ -98,6 +106,10 @@ class Bot extends Client<true> {
     async login (token?: string): Promise<string> {
         const settings = await SettingsModule.read();
         this.settings = settings;
+
+        const chars = await mongo.characters.find().toArray();
+        memoryModule.characters = chars;
+
         return await super.login(token);
     };
 };

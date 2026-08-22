@@ -7,6 +7,7 @@ import Helpers from "../../../helpers";
 import updateCharacterHelper from "../../../helpers/update-character.helper";
 import mongo from "../../../database/mongo";
 import CharacterClaimCardComponent from "../../../components/character-claim-card.component";
+import { memoryModule } from "../../../modules/mem.module";
 
 module.exports = {
     cooldown: 5,
@@ -32,17 +33,17 @@ module.exports = {
 
         membersRepository.decreasePulls(member._id, interaction.channel.id);
 
-        const character = await charactersRepository.random(); 
+        // const character = await charactersRepository.random(); 
+
+        const character = Helpers.getRandomElement(memoryModule.characters);
 
         if ((!character.updated_at) || (Helpers.hasPassedMoreThanAMonth(character.updated_at, new Date()))) {
             updateCharacterHelper(character._id as any);
         };
 
-        const claim = await mongo.claims.findOne(
-            {
-                _id: `${interaction.guild.id}_${character._id}` as any
-            }
-        );
+        const claim = await mongo.claims.findOne({
+            _id: `${interaction.guild.id}_${character._id}` as any
+        });
 
         let owner: User | null = null;
 
@@ -60,12 +61,10 @@ module.exports = {
             selectedMedia = popularMedia[0];
         };
 
-        const favs: any[] = await mongo.favourites.find(
-            {
-                guild_id: interaction.guild.id,
-                character_id: character._id
-            }
-        ).toArray();
+        const favs: any[] = await mongo.favourites.find({
+            guild_id: interaction.guild.id,
+            character_id: character._id
+        }).toArray();
 
         const interaction_id = interaction.client.set(character, 60_000);
 

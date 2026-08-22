@@ -1,4 +1,4 @@
-import { ButtonInteraction, MessageFlags } from "discord.js";
+import { ButtonInteraction, MessageFlags, SeparatorBuilder, SeparatorSpacingSize, TextDisplayBuilder } from "discord.js";
 import ErrorEmbed from "../../../embeds/errorEmbed";
 import Bot from "../../../bot/bot";
 import membersRepository from "../../../repositories/members/members.repository";
@@ -23,31 +23,47 @@ module.exports = {
         const bot = interaction.client as Bot;
         bot.delete(character.key);
 
+        const owner = await (interaction.client as Bot).users.fetch(character.owner_id);
         const renas = bot.settings.renas_per_reclaim;
 
         if (character.owner_id != interaction.user.id) {
             const dividedRenas = Math.floor(renas / 2);
+            
             membersRepository.increaseRenas(character.owner_id, dividedRenas);
             membersRepository.increaseRenas(interaction.user.id, dividedRenas);
-            const desc = 
-                `¡**${character.name}** ya pertenece a <@${character.owner_id}>!\n\n`+
-                `\`(+${dividedRenas} renas)\` <@${character.owner_id}>\n`+
-                `\`(+${dividedRenas} renas)\` <@${interaction.user.id}>\n`
-            ;
 
-            return await interaction.reply({
-                embeds: [new ErrorEmbed(desc)]
+            const comps = [
+                new TextDisplayBuilder()
+                    .setContent(`¡**${character.name}** ya pertenece a **${owner.displayName}**!`),
+                new SeparatorBuilder()
+                    .setDivider(true)
+                    .setSpacing(SeparatorSpacingSize.Small),
+                new TextDisplayBuilder()
+                    .setContent(`\`(+${dividedRenas} renas)\` para **${owner.displayName}**\n`),
+                new TextDisplayBuilder()
+                    .setContent(`\`(+${dividedRenas} renas)\` para **${interaction.user.displayName}**\n`)
+            ];
+
+            await interaction.reply({
+                flags: [MessageFlags.IsComponentsV2],
+                components: comps
             });
         } else {
             membersRepository.increaseRenas(character.owner_id, renas);
 
-            const desc = 
-                `¡**${character.name}** ya pertenece a <@${character.owner_id}>!\n\n`+
-                `\`(+${renas} renas)\` <@${character.owner_id}>\n`
-            ;
+            const comps = [
+                new TextDisplayBuilder()
+                    .setContent(`¡**${character.name}** ya pertenece a **${owner.displayName}**!`),
+                new SeparatorBuilder()
+                    .setDivider(true)
+                    .setSpacing(SeparatorSpacingSize.Small),
+                new TextDisplayBuilder()
+                    .setContent(`\`(+${renas} renas)\` para **${owner.displayName}**\n`)
+            ];
 
-            return await interaction.reply({
-                embeds: [new ErrorEmbed(desc)]
+            await interaction.reply({
+                flags: [MessageFlags.IsComponentsV2],
+                components: comps
             });
         };
     }
