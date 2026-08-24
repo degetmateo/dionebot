@@ -94,7 +94,7 @@ class CharacterClaimCardComponent extends ContainerBuilder {
                 .setEmoji('💘')
                 .setLabel('Lo quiero')
                 .setStyle(ButtonStyle.Secondary)
-                .setCustomId(`fav-button_${data.interaction_id}`)
+                .setCustomId(`fav-button_${data.interaction_id}_${data.id}`)
         );
 
         this.addActionRowComponents(row => 

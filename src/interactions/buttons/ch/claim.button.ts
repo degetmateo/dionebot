@@ -1,10 +1,8 @@
-import { ButtonInteraction, MessageFlags } from "discord.js";
-import ErrorEmbed from "../../../embeds/errorEmbed";
+import { ButtonInteraction, MessageFlags, TextDisplayBuilder } from "discord.js";
 import membersRepository from "../../../repositories/members/members.repository";
 import Bot from "../../../bot/bot";
 import mongo from "../../../database/mongo";
 import charactersRepository from "../../../repositories/characters/characters.repository";
-import SuccessEmbed from "../../../embeds/successEmbed";
 
 module.exports = {
     id: 'claim-button',
@@ -17,8 +15,11 @@ module.exports = {
     }) => {
         if (!character) {
             return await interaction.reply({
-                flags: "Ephemeral",
-                embeds: [new ErrorEmbed('Este personaje ha expirado o se te han adelantado.')]
+                flags: [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral],
+                components: [
+                    new TextDisplayBuilder()
+                        .setContent(`Este personaje ha expirado o se te han adelantado.`)
+                ]
             });
         };
 
@@ -26,9 +27,12 @@ module.exports = {
         const memberWhoWantsToClaim: any = await membersRepository.findsert(interaction.user.id, interaction.guild?.id as string);
 
         if (memberWhoWantsToClaim.gacha.claims <= 0) {
-            return interaction.reply({
-                flags: "Ephemeral",
-                embeds: [new ErrorEmbed(`**¡Te has quedado sin claims!** Volverás a tener \`2 claims\` en la siguiente hora (esto no se acumula). También puedes comprar \`1 claim\` por \`100 renas\` en \`/gacha buy-claims\`.`)]
+            return await interaction.reply({
+                flags: [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral],
+                components: [
+                    new TextDisplayBuilder()
+                        .setContent(`**¡Te has quedado sin claims!** Volverás a tener \`2 claims\` en la siguiente hora (esto no se acumula). También puedes comprar \`1 claim\` por \`100 renas\` en \`/gacha buy-claims\`.`)
+                ]
             });
         };
 
@@ -36,8 +40,11 @@ module.exports = {
         
         if (!race) {
             return await interaction.reply({
-                flags: [MessageFlags.Ephemeral],
-                embeds: [new ErrorEmbed('¡Se te han adelantado!')]
+                flags: [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral],
+                components: [
+                    new TextDisplayBuilder()
+                        .setContent(`¡Se te han adelantado!`)
+                ]
             });
         };
         
@@ -56,7 +63,11 @@ module.exports = {
         charactersRepository.increaseClaimCount(character._id);
 
         await interaction.reply({
-            embeds: [new SuccessEmbed(`¡<@${interaction.user.id}> ha reclamado a **${character.name}**!`)]
+            flags: [MessageFlags.IsComponentsV2],
+            components: [
+                new TextDisplayBuilder()
+                    .setContent(`¡<@${interaction.user.id}> ha reclamado a **${character.name}**!`)
+            ]
         });
     }
 };

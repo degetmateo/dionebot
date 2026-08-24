@@ -1,31 +1,26 @@
-import { ButtonInteraction, MessageFlags } from "discord.js";
-import ErrorEmbed from "../../../embeds/errorEmbed";
+import { ButtonInteraction, MessageFlags, TextDisplayBuilder } from "discord.js";
 import mongo from "../../../database/mongo";
-import SuccessEmbed from "../../../embeds/successEmbed";
+import { memoryModule } from "../../../modules/mem.module";
 
 module.exports = {
     id: 'fav-button',
-    execute: async (interaction: ButtonInteraction, character: {
-        key: string;
-        _id: number;
-        name: string;
-    }) => {
-        if (!character) {
-            return await interaction.reply({
-                flags: [MessageFlags.Ephemeral],
-                embeds: [new ErrorEmbed('Esta interacción ha expirado.')]
-            });
-        };
+    execute: async (interaction: ButtonInteraction) => {
+        const interactionId = interaction.customId;
+        const characterId = interactionId.split('_')[2];
+        const character = memoryModule.characters.find(char => Number(char._id) === Number(characterId));
 
-        const _id = `${interaction.guild?.id}_${character._id}_${interaction.user.id}` as any;
+        const _id = `${interaction.guild?.id}_${characterId}_${interaction.user.id}` as any;
         const fav = await mongo.favourites.findOne({ _id });
 
         if (fav) {
             mongo.favourites.deleteOne({ _id });
             
-            return await interaction.reply({
-                flags: [MessageFlags.Ephemeral],
-                embeds: [new ErrorEmbed(`¡Ya no quieres a **${character.name}**!`)]
+            await interaction.reply({
+                flags: [MessageFlags.Ephemeral, MessageFlags.IsComponentsV2],
+                components: [
+                    new TextDisplayBuilder()
+                        .setContent(`Has indicado que **no** quieres a \`${character.name}\`.`)
+                ]
             });
         } else {
             mongo.favourites.insertOne({
@@ -35,9 +30,12 @@ module.exports = {
                 character_id: character._id
             });
 
-            return await interaction.reply({
-                flags: [MessageFlags.Ephemeral],
-                embeds: [new SuccessEmbed(`¡Has indicado que quieres a **${character.name}**!`)]
+            await interaction.reply({
+                flags: [MessageFlags.Ephemeral, MessageFlags.IsComponentsV2],
+                components: [
+                    new TextDisplayBuilder()
+                        .setContent(`Has indicado que quieres a \`${character.name}\`.`)
+                ]
             });
         };
     }
