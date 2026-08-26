@@ -1,12 +1,11 @@
-import { ObjectId } from "mongodb";
 import GenericError from "../../../errors/genericError";
+import mal from "../mal";
 
 const malRequestSearchScores = async (media: {
     id: number;
     type: 'ANIME' | 'MANGA';
 }, malusers: Array<{
-    _id: ObjectId,
-    discord_id: string;
+    _id: string,
     mal: {
         id: number;
         name: string;
@@ -31,7 +30,11 @@ const malRequestSearchScores = async (media: {
                 }
             });
             
-            if (!req.ok) continue;
+            if (!req.ok) {
+                if (req.status === 401) {
+                    await mal.refresh(maluser.mal.auth.refresh_token, maluser._id);
+                };
+            };
 
             const res: any = await req.json();
 

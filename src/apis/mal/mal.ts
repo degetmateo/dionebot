@@ -1,6 +1,5 @@
 import GenericError from "../../errors/genericError";
 import membersRepository from "../../repositories/members/members.repository";
-import malRequestRefresh from "./requests/mal.request.refresh";
 import malRequestSearchScores from "./requests/mal.request.search.scores";
 import malRequestToken from "./requests/mal.request.token";
 import malRequestUser from "./requests/mal.request.user";
