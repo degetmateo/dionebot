@@ -52,13 +52,25 @@ const authorizedRequest = async (query: string, token: string) => {
             'Accept': 'application/json'
         },
         body: JSON.stringify ({ query })
-    })
+    });
 
     const response: any = await request.json();
     
     if (!request.ok) {
-        const message: any = codes[response.errors[0].status];
-        if (message) throw new GenericError(message, response.errors[0].status);
+        const status = response.errors[0].status;
+
+        const anilistMessage: string = response.errors[0].message;
+        if (anilistMessage) {
+            if (anilistMessage.trim().toLowerCase() == 'invalid token') {
+                throw new GenericError('\`Dione\` no puede acceder a esta cuenta de \`ANILIST\`. El propietario debe usar \`/setup\` y vincular su cuenta nuevamente.', status);
+            };
+        };
+
+        const codeMessage: any = codes[status];
+        if (codeMessage) {
+            throw new GenericError(codeMessage, status);
+        }
+
         else throw response.errors[0];
     };
 
